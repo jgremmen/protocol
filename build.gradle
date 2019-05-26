@@ -1,0 +1,23 @@
+plugins {
+  id 'idea'
+  id 'java-library'
+}
+
+
+description 'Protocol Library'
+group 'de.sayayi.lib'
+version '0.1.0'
+
+
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
+
+repositories {
+  jcenter()
+}
+
+
+dependencies {
+  testCompile group: 'junit', name: 'junit', version: '4.12'
+}
