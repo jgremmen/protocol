@@ -41,7 +41,11 @@ public class ProtocolFactoryImpl implements ProtocolFactory
 
 
   @SuppressWarnings("SuspiciousMethodCalls")
-  boolean isRegisteredTag(Tag tag) {
+  boolean isRegisteredTag(Tag tag)
+  {
+    if (tag == null)
+      throw new NullPointerException("tag must not be null");
+
     return registeredTags.values().contains(tag);
   }
 
@@ -49,6 +53,9 @@ public class ProtocolFactoryImpl implements ProtocolFactory
   @Override
   public TagBuilder createTag(String name)
   {
+    if (name == null || name.isEmpty())
+      throw new IllegalArgumentException("name must not be empty");
+
     if (hasTag(name))
       throw new IllegalArgumentException("tag with name " + name + " already exists");
 
@@ -62,6 +69,9 @@ public class ProtocolFactoryImpl implements ProtocolFactory
   @Override
   public TagBuilder modifyTag(String name)
   {
+    if (name == null || name.isEmpty())
+      throw new IllegalArgumentException("name must not be empty");
+
     TagImpl tag = registeredTags.get(name);
     if (tag == null)
       throw new IllegalArgumentException("tag with name " + name + " does not exist");
@@ -71,13 +81,21 @@ public class ProtocolFactoryImpl implements ProtocolFactory
 
 
   @Override
-  public TagImpl getTagByName(String name) {
+  public TagImpl getTagByName(String name)
+  {
+    if (name == null || name.isEmpty())
+      throw new IllegalArgumentException("name must not be empty");
+
     return registeredTags.get(name);
   }
 
 
   @Override
-  public boolean hasTag(String name) {
+  public boolean hasTag(String name)
+  {
+    if (name == null || name.isEmpty())
+      throw new IllegalArgumentException("name must not be empty");
+
     return registeredTags.containsKey(name);
   }
 
@@ -113,6 +131,11 @@ public class ProtocolFactoryImpl implements ProtocolFactory
     @Override
     public TagBuilder match(LevelMatch match, Level level)
     {
+      if (match == null)
+        throw new NullPointerException("match must not be null");
+      if (level == null)
+        throw new NullPointerException("level must not be null");
+
       tag.match = match;
       tag.level = level;
 
@@ -121,7 +144,7 @@ public class ProtocolFactoryImpl implements ProtocolFactory
 
 
     @Override
-    public TagBuilder implies(String... tags)
+    public TagBuilder implies(String ... tags)
     {
       for(String tagName: tags)
       {
@@ -135,7 +158,7 @@ public class ProtocolFactoryImpl implements ProtocolFactory
 
 
     @Override
-    public TagBuilder dependsOn(String... tags)
+    public TagBuilder dependsOn(String ... tags)
     {
       for(String tagName: tags)
       {
@@ -185,7 +208,7 @@ public class ProtocolFactoryImpl implements ProtocolFactory
   }
 
 
-  class TagImpl implements Tag, Comparable<TagImpl>
+  static class TagImpl implements Tag, Comparable<TagImpl>
   {
     private final int id;
     private final String name;
@@ -223,6 +246,9 @@ public class ProtocolFactoryImpl implements ProtocolFactory
     @Override
     public boolean isMatch(Level level)
     {
+      if (level == null)
+        throw new NullPointerException("level must not be null");
+
       switch(match)
       {
         case AT_LEAST:
@@ -253,7 +279,7 @@ public class ProtocolFactoryImpl implements ProtocolFactory
     }
 
 
-    void collectImpliedTags(Set<Tag> tags)
+    private void collectImpliedTags(Set<Tag> tags)
     {
       tags.add(this);
 

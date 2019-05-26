@@ -9,6 +9,7 @@ import de.sayayi.lib.protocol.Tag;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 
 @SuppressWarnings("unchecked")
@@ -29,60 +30,51 @@ abstract class AbstractParameterBuilder<P extends MessageParameterBuilder, B ext
   @Override
   public P with(Map<String, Object> parameterValues)
   {
-    message.parameterValues.putAll(parameterValues);
+    for(Entry<String,Object> entry: parameterValues.entrySet())
+      with(entry.getKey(), entry.getValue());
+
     return (P)this;
   }
 
 
   @Override
-  public P with(String parameter, boolean value)
-  {
-    //noinspection UnnecessaryBoxing
-    message.parameterValues.put(parameter, Boolean.valueOf(value));
-    return (P)this;
+  public P with(String parameter, boolean value) {
+    return with(parameter, Boolean.valueOf(value));
   }
 
 
   @Override
-  public P with(String parameter, int value)
-  {
-    //noinspection UnnecessaryBoxing
-    message.parameterValues.put(parameter, Integer.valueOf(value));
-    return (P)this;
+  public P with(String parameter, int value) {
+    return with(parameter, Integer.valueOf(value));
   }
 
 
   @Override
-  public P with(String parameter, long value)
-  {
-    //noinspection UnnecessaryBoxing
-    message.parameterValues.put(parameter, Long.valueOf(value));
-    return (P)this;
+  public P with(String parameter, long value) {
+    return with(parameter, Long.valueOf(value));
   }
 
 
   @Override
-  public P with(String parameter, float value)
-  {
-    //noinspection UnnecessaryBoxing
-    message.parameterValues.put(parameter, Float.valueOf(value));
-    return (P)this;
+  public P with(String parameter, float value) {
+    return with(parameter, Float.valueOf(value));
   }
 
 
   @Override
-  public P with(String parameter, double value)
-  {
-    //noinspection UnnecessaryBoxing
-    message.parameterValues.put(parameter, Double.valueOf(value));
-    return (P)this;
+  public P with(String parameter, double value) {
+    return with(parameter, Double.valueOf(value));
   }
 
 
   @Override
   public P with(String parameter, Object value)
   {
+    if (parameter == null || parameter.isEmpty())
+      throw new IllegalArgumentException("parameter must not be empty");
+
     message.parameterValues.put(parameter, value);
+
     return (P)this;
   }
 

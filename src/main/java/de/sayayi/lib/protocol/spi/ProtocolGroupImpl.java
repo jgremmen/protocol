@@ -172,7 +172,7 @@ public final class ProtocolGroupImpl extends AbstractProtocol<ProtocolMessageBui
 
   private static class GroupMessage extends ProtocolMessageEntry
   {
-    public GroupMessage(String message) {
+    GroupMessage(String message) {
       super(ALL, null, message);
     }
 

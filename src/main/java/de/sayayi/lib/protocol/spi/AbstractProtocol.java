@@ -55,6 +55,11 @@ public abstract class AbstractProtocol<B extends ProtocolMessageBuilder> impleme
   @Override
   public boolean isMatch(Level level, Tag tag)
   {
+    if (level == null)
+      throw new NullPointerException("level must not be null");
+    if (tag == null)
+      throw new NullPointerException("tag must not be null");
+
     for(ProtocolEntry entry: entries)
       if (entry.isMatch(level, tag))
         return true;
@@ -66,6 +71,11 @@ public abstract class AbstractProtocol<B extends ProtocolMessageBuilder> impleme
   @Override
   public List<ProtocolEntry> getEntries(Level level, Tag tag)
   {
+    if (level == null)
+      throw new NullPointerException("level must not be null");
+    if (tag == null)
+      throw new NullPointerException("tag must not be null");
+
     List<ProtocolEntry> filteredEntries = new ArrayList<ProtocolEntry>();
 
     for(ProtocolEntry entry: entries)

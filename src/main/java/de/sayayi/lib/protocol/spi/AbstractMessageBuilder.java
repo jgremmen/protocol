@@ -34,6 +34,9 @@ abstract class AbstractMessageBuilder<B extends ProtocolMessageBuilder,M extends
   @Override
   public B forTag(Tag tag)
   {
+    if (tag == null)
+      throw new NullPointerException("tag must not be null");
+
     if (!protocol.factory.isRegisteredTag(tag))
       throw new IllegalArgumentException("tag with name " + tag.getName() + " is not registered for this protocol");
 
@@ -72,6 +75,9 @@ abstract class AbstractMessageBuilder<B extends ProtocolMessageBuilder,M extends
   @Override
   public M message(String message)
   {
+    if (message == null)
+      throw new NullPointerException("message must not be null");
+
     Set<Tag> allTags = new HashSet<Tag>();
     for(Tag tag: tags)
       allTags.addAll(tag.getImpliedTags());
@@ -84,7 +90,11 @@ abstract class AbstractMessageBuilder<B extends ProtocolMessageBuilder,M extends
 
 
   @Override
-  public M messageKey(String key) {
+  public M messageKey(String key)
+  {
+    if (key == null)
+      throw new NullPointerException("key must not be null");
+
     throw new UnsupportedOperationException();
   }
 }

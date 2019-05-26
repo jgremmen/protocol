@@ -31,13 +31,25 @@ class ProtocolMessageEntry implements ProtocolEntry.Message
 
 
   @Override
-  public boolean isMatch(Level level, Tag tag) {
+  public boolean isMatch(Level level, Tag tag)
+  {
+    if (level == null)
+      throw new NullPointerException("level must not be null");
+    if (tag == null)
+      throw new NullPointerException("tag must not be null");
+
     return this.level.severity() >= level.severity() && this.tags.contains(tag) && tag.isMatch(level);
   }
 
 
   @Override
-  public List<ProtocolEntry> getEntries(Level level, Tag tag) {
+  public List<ProtocolEntry> getEntries(Level level, Tag tag)
+  {
+    if (level == null)
+      throw new NullPointerException("level must not be null");
+    if (tag == null)
+      throw new NullPointerException("tag must not be null");
+
     return isMatch(level, tag) ? Collections.<ProtocolEntry>singletonList(this) : Collections.<ProtocolEntry>emptyList();
   }
 
