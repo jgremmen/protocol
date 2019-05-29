@@ -29,7 +29,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
   protected AbstractProtocolFactory()
   {
     id = FACTORY_ID.incrementAndGet();
-    defaultTag = createTag("system").getTag();
+    defaultTag = createTag(DEFAULT_TAG_NAME).getTag();
   }
 
 

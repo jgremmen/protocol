@@ -78,16 +78,30 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder,P exten
     if (message == null)
       throw new NullPointerException("message must not be null");
 
-    Set<Tag> allTags = new HashSet<Tag>();
-    for(Tag tag: tags)
-      allTags.addAll(tag.getImpliedTags());
-
+    Set<Tag> allTags = resolveTags(level);
     M processedMessage = protocol.factory.processMessage(message);
     ProtocolMessageEntry<M> msg = new ProtocolMessageEntry<M>(level, allTags, processedMessage);
 
-    protocol.entries.add(msg);
-    protocol.updateTagAndLevel(allTags, level);
+    if (!allTags.isEmpty())
+    {
+      protocol.entries.add(msg);
+      protocol.updateTagAndLevel(allTags, level);
+    }
 
     return createMessageParameterBuilder(msg);
+  }
+
+
+  private Set<Tag> resolveTags(Level level)
+  {
+    Set<Tag> resolvedTags = new HashSet<Tag>();
+
+    // add implied dependencies
+    for(Tag tag: tags)
+      for(Tag impliedTag: tag.getImpliedTags())
+        if (impliedTag.isMatch(level))
+          resolvedTags.add(impliedTag);
+
+    return resolvedTags;
   }
 }

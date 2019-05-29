@@ -13,6 +13,8 @@ import java.util.Set;
  */
 public interface ProtocolFactory<M>
 {
+  String DEFAULT_TAG_NAME = "default";
+
   Protocol createProtocol();
 
   TagBuilder createTag(String name);
@@ -46,7 +48,8 @@ public interface ProtocolFactory<M>
    * </p>
    *
    * @param message  message
-   * @return
+   *
+   * @return  internal representation for {@code message}
    */
   M processMessage(String message);
 
