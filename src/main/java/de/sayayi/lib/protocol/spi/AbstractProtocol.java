@@ -9,19 +9,37 @@ import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.Tag;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
-public abstract class AbstractProtocol<B extends ProtocolMessageBuilder> implements Protocol
+public abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder> implements Protocol
 {
-  final ProtocolFactoryImpl factory;
+  final AbstractProtocolFactory<M> factory;
   final List<ProtocolEntry> entries;
 
+  private Set<Tag> tags;
+  private Level maxLevel;
 
-  AbstractProtocol(ProtocolFactoryImpl factory)
+
+  AbstractProtocol(AbstractProtocolFactory<M> factory)
   {
     this.factory = factory;
     entries = new ArrayList<ProtocolEntry>(8);
+
+    tags = new HashSet<Tag>();
+    maxLevel = Shared.ALL;
+  }
+
+
+  protected void updateTagAndLevel(Set<Tag> tags, Level level)
+  {
+    if (tags != null)
+      this.tags.addAll(tags);
+
+    if (level != null && level.severity() > maxLevel.severity())
+      maxLevel = level;
   }
 
 
@@ -53,29 +71,14 @@ public abstract class AbstractProtocol<B extends ProtocolMessageBuilder> impleme
 
 
   @Override
-  public boolean isMatch(Level level, Tag tag)
-  {
-    if (level == null)
-      throw new NullPointerException("level must not be null");
-    if (tag == null)
-      throw new NullPointerException("tag must not be null");
-
-    for(ProtocolEntry entry: entries)
-      if (entry.isMatch(level, tag))
-        return true;
-
-    return false;
+  public boolean isMatch(Level level, Tag tag) {
+    return maxLevel.severity() >= level.severity() && tag.isMatch(level) && tags.contains(tag);
   }
 
 
   @Override
   public List<ProtocolEntry> getEntries(Level level, Tag tag)
   {
-    if (level == null)
-      throw new NullPointerException("level must not be null");
-    if (tag == null)
-      throw new NullPointerException("tag must not be null");
-
     List<ProtocolEntry> filteredEntries = new ArrayList<ProtocolEntry>();
 
     for(ProtocolEntry entry: entries)
@@ -89,7 +92,8 @@ public abstract class AbstractProtocol<B extends ProtocolMessageBuilder> impleme
   @Override
   public ProtocolGroup createGroup()
   {
-    ProtocolGroupImpl group = new ProtocolGroupImpl(this);
+    @SuppressWarnings("unchecked")
+    ProtocolGroupImpl group = new ProtocolGroupImpl<M>((AbstractProtocol<M,ProtocolMessageBuilder>)this);
 
     entries.add(group);
 

@@ -13,14 +13,14 @@ import java.util.Map.Entry;
 
 
 @SuppressWarnings("unchecked")
-abstract class AbstractParameterBuilder<P extends MessageParameterBuilder, B extends ProtocolMessageBuilder>
+abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder, B extends ProtocolMessageBuilder>
     implements MessageParameterBuilder
 {
-  private final AbstractProtocol protocol;
-  private final ProtocolMessageEntry message;
+  private final AbstractProtocol<M,B> protocol;
+  private final ProtocolMessageEntry<M> message;
 
 
-  AbstractParameterBuilder(AbstractProtocol protocol, ProtocolMessageEntry message)
+  AbstractParameterBuilder(AbstractProtocol<M,B> protocol, ProtocolMessageEntry<M> message)
   {
     this.protocol = protocol;
     this.message = message;
@@ -80,32 +80,41 @@ abstract class AbstractParameterBuilder<P extends MessageParameterBuilder, B ext
 
 
   @Override
+  public P withThrowable(Throwable throwable)
+  {
+    message.throwable = throwable;
+
+    return (P)this;
+  }
+
+
+  @Override
   public B debug() {
-    return (B)protocol.debug();
+    return protocol.debug();
   }
 
 
   @Override
   public B info() {
-    return (B)protocol.info();
+    return protocol.info();
   }
 
 
   @Override
   public B warn() {
-    return (B)protocol.warn();
+    return protocol.warn();
   }
 
 
   @Override
   public B error() {
-    return (B)protocol.error();
+    return protocol.error();
   }
 
 
   @Override
   public B add(Level level) {
-    return (B)protocol.add(level);
+    return protocol.add(level);
   }
 
 

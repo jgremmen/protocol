@@ -52,13 +52,21 @@ public interface Protocol extends ProtocolQuery
     ProtocolMessageBuilder forTags(String ... tagNames);
 
     MessageParameterBuilder message(String message);
-
-    MessageParameterBuilder messageKey(String key);
   }
 
 
   interface MessageParameterBuilder extends Protocol
   {
+    /**
+     * <p>
+     *   Associate the provided {@code parameterValues} with this message. New parameters are added, existing
+     *   parameters are overridden.
+     * </p>
+     *
+     * @param parameterValues  map with parameter values. the parameter name must not be {@code null} or empty.
+     *
+     * @return  paramter builder instance for the current message
+     */
     MessageParameterBuilder with(Map<String,Object> parameterValues);
 
     MessageParameterBuilder with(String parameter, boolean value);
@@ -72,5 +80,7 @@ public interface Protocol extends ProtocolQuery
     MessageParameterBuilder with(String parameter, double value);
 
     MessageParameterBuilder with(String parameter, Object value);
+
+    MessageParameterBuilder withThrowable(Throwable throwable);
   }
 }

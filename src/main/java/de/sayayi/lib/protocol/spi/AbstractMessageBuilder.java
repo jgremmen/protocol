@@ -10,25 +10,25 @@ import java.util.Set;
 
 
 @SuppressWarnings("unchecked")
-abstract class AbstractMessageBuilder<B extends ProtocolMessageBuilder,M extends MessageParameterBuilder>
+abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder,P extends MessageParameterBuilder>
     implements ProtocolMessageBuilder
 {
-  private final AbstractProtocol protocol;
+  private final AbstractProtocol<M,B> protocol;
   private final Level level;
   private final Set<Tag> tags;
 
 
-  AbstractMessageBuilder(AbstractProtocol protocol, Level level)
+  AbstractMessageBuilder(AbstractProtocol<M,B> protocol, Level level)
   {
     this.protocol = protocol;
     this.level = level;
 
     tags = new HashSet<Tag>();
-    tags.add(protocol.factory.systemTag);
+    tags.add(protocol.factory.getDefaultTag());
   }
 
 
-  protected abstract M createMessageParameterBuilder(ProtocolMessageEntry message);
+  protected abstract P createMessageParameterBuilder(ProtocolMessageEntry<M> message);
 
 
   @Override
@@ -47,7 +47,7 @@ abstract class AbstractMessageBuilder<B extends ProtocolMessageBuilder,M extends
 
 
   @Override
-  public B forTags(Tag... tags)
+  public B forTags(Tag ... tags)
   {
     for(Tag tag: tags)
       forTag(tag);
@@ -57,7 +57,7 @@ abstract class AbstractMessageBuilder<B extends ProtocolMessageBuilder,M extends
 
 
   @Override
-  public B forTags(String... tagNames)
+  public B forTags(String ... tagNames)
   {
     for(String tagName: tagNames)
     {
@@ -73,7 +73,7 @@ abstract class AbstractMessageBuilder<B extends ProtocolMessageBuilder,M extends
 
 
   @Override
-  public M message(String message)
+  public P message(String message)
   {
     if (message == null)
       throw new NullPointerException("message must not be null");
@@ -82,19 +82,12 @@ abstract class AbstractMessageBuilder<B extends ProtocolMessageBuilder,M extends
     for(Tag tag: tags)
       allTags.addAll(tag.getImpliedTags());
 
-    ProtocolMessageEntry msg = new ProtocolMessageEntry(level, allTags, message);
+    M processedMessage = protocol.factory.processMessage(message);
+    ProtocolMessageEntry<M> msg = new ProtocolMessageEntry<M>(level, allTags, processedMessage);
+
     protocol.entries.add(msg);
+    protocol.updateTagAndLevel(allTags, level);
 
     return createMessageParameterBuilder(msg);
-  }
-
-
-  @Override
-  public M messageKey(String key)
-  {
-    if (key == null)
-      throw new NullPointerException("key must not be null");
-
-    throw new UnsupportedOperationException();
   }
 }

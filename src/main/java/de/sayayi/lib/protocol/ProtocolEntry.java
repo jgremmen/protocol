@@ -1,18 +1,28 @@
 package de.sayayi.lib.protocol;
 
-import java.util.Locale;
+import java.util.Map;
 
 
 public interface ProtocolEntry extends ProtocolQuery
 {
-  interface Message extends ProtocolEntry
+  interface BasicMessage<M> extends ProtocolEntry
   {
-    String format(Locale locale);
+    M getMessage();
+
+    Map<String,Object> getParameterValues();
   }
 
 
-  interface Group extends ProtocolEntry
+  interface Message<M> extends BasicMessage<M>
   {
-    String formatGroupMessage(Locale locale);
+    Level getLevel();
+
+    Throwable getThrowable();
+  }
+
+
+  interface Group<M> extends ProtocolEntry
+  {
+    BasicMessage<M> getGroupMessage();
   }
 }

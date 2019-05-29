@@ -47,9 +47,6 @@ public interface ProtocolGroup extends Protocol
   MessageParameterBuilder setGroupMessage(String message);
 
 
-  MessageParameterBuilder setGroupMessageKey(String key);
-
-
   boolean isHeaderVisible(Level level, Tag tag);
 
   ProtocolMessageBuilder debug();
@@ -77,8 +74,6 @@ public interface ProtocolGroup extends Protocol
     ProtocolMessageBuilder forTags(String ... tagNames);
 
     MessageParameterBuilder message(String message);
-
-    MessageParameterBuilder messageKey(String key);
   }
 
 
@@ -97,6 +92,8 @@ public interface ProtocolGroup extends Protocol
     ProtocolGroup.MessageParameterBuilder with(String parameter, double value);
 
     ProtocolGroup.MessageParameterBuilder with(String parameter, Object value);
+
+    ProtocolGroup.MessageParameterBuilder withThrowable(Throwable throwable);
   }
 
 

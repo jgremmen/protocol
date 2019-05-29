@@ -1,6 +1,5 @@
 package de.sayayi.lib.protocol;
 
-import de.sayayi.lib.protocol.spi.ProtocolFactoryImpl;
 import org.junit.Test;
 
 import static de.sayayi.lib.protocol.Level.Shared.DEBUG;
@@ -13,7 +12,7 @@ public class ProtocolTest
   @Test
   public void testBasics()
   {
-    ProtocolFactory factory = new ProtocolFactoryImpl();
+    ProtocolFactory factory = new DefaultProtocolFactory();
 
     factory.createTag("ui").match(AT_LEAST, INFO)
            .createTag("technical").dependsOn("ui").implies("system");
@@ -22,15 +21,12 @@ public class ProtocolTest
 
     Protocol protocol = factory.createProtocol();
 
-
     protocol.add(DEBUG).message("Just sayin'")
-            .debug().forTags(ui).message("MSG-048");
-
+            .warn().forTags(ui).message("MSG-048").withThrowable(new NullPointerException());
 
     ProtocolGroup gp = protocol.createGroup().setGroupMessage("Huhu");
 
-    gp.debug().message("MSG-104").with("test", true)
+    gp.error().message("MSG-104").with("test", true)
         .setGroupMessage("GRP-771").with("idx", 45);
-
   }
 }

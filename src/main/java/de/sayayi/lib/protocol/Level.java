@@ -17,7 +17,7 @@ public interface Level
    */
   int severity();
 
-
+  
   /**
    * Level constants
    */

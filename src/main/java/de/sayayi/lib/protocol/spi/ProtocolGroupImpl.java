@@ -10,7 +10,7 @@ import de.sayayi.lib.protocol.Tag;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
+import java.util.Set;
 
 import static de.sayayi.lib.protocol.Level.Shared.ALL;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.HIDDEN;
@@ -18,20 +18,29 @@ import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_IF_NOT
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ONLY;
 
 
-public final class ProtocolGroupImpl extends AbstractProtocol<ProtocolMessageBuilder> implements ProtocolGroup, Group
+public final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder>
+    implements ProtocolGroup, Group<M>
 {
-  private final AbstractProtocol parent;
+  private final AbstractProtocol<M,Protocol.ProtocolMessageBuilder> parent;
 
   private Visibility visibility;
-  private ProtocolMessageEntry groupMessage;
+  private ProtocolMessageEntry<M> groupMessage;
 
 
-  ProtocolGroupImpl(AbstractProtocol parent)
+  ProtocolGroupImpl(AbstractProtocol<M,Protocol.ProtocolMessageBuilder> parent)
   {
     super(parent.factory);
 
     this.parent = parent;
     visibility = SHOW_HEADER_IF_NOT_EMPTY;
+  }
+
+
+  @Override
+  protected void updateTagAndLevel(Set<Tag> tags, Level level)
+  {
+    parent.updateTagAndLevel(tags, level);
+    super.updateTagAndLevel(tags, level);
   }
 
 
@@ -112,23 +121,15 @@ public final class ProtocolGroupImpl extends AbstractProtocol<ProtocolMessageBui
     if (message == null)
       throw new NullPointerException("message must not be null");
 
-    return new ParameterBuilderImpl(groupMessage = new GroupMessage(message));
+    M processedMessage = factory.processMessage(message);
+
+    return new ParameterBuilderImpl(groupMessage = new GroupMessage<M>(processedMessage));
   }
 
 
   @Override
-  public ProtocolGroup.MessageParameterBuilder setGroupMessageKey(String key)
-  {
-    if (key == null)
-      throw new NullPointerException("key must not be null");
-
-    throw new UnsupportedOperationException();
-  }
-
-
-  @Override
-  public String formatGroupMessage(Locale locale) {
-    return groupMessage.format(locale);
+  public BasicMessage<M> getGroupMessage() {
+    return groupMessage;
   }
 
 
@@ -155,7 +156,7 @@ public final class ProtocolGroupImpl extends AbstractProtocol<ProtocolMessageBui
 
 
   private class MessageBuilder
-      extends AbstractMessageBuilder<ProtocolGroup.ProtocolMessageBuilder,ProtocolGroup.MessageParameterBuilder>
+      extends AbstractMessageBuilder<M,ProtocolGroup.ProtocolMessageBuilder,ProtocolGroup.MessageParameterBuilder>
       implements ProtocolGroup.ProtocolMessageBuilder
   {
     MessageBuilder(Level level) {
@@ -164,15 +165,15 @@ public final class ProtocolGroupImpl extends AbstractProtocol<ProtocolMessageBui
 
 
     @Override
-    protected ProtocolGroup.MessageParameterBuilder createMessageParameterBuilder(ProtocolMessageEntry message) {
+    protected ProtocolGroup.MessageParameterBuilder createMessageParameterBuilder(ProtocolMessageEntry<M> message) {
       return new ParameterBuilderImpl(message);
     }
   }
 
 
-  private static class GroupMessage extends ProtocolMessageEntry
+  private static class GroupMessage<M> extends ProtocolMessageEntry<M>
   {
-    GroupMessage(String message) {
+    GroupMessage(M message) {
       super(ALL, null, message);
     }
 
@@ -203,10 +204,10 @@ public final class ProtocolGroupImpl extends AbstractProtocol<ProtocolMessageBui
 
 
   private class ParameterBuilderImpl
-      extends AbstractParameterBuilder<ProtocolGroup.MessageParameterBuilder,ProtocolGroup.ProtocolMessageBuilder>
+      extends AbstractParameterBuilder<M,ProtocolGroup.MessageParameterBuilder,ProtocolGroup.ProtocolMessageBuilder>
       implements ProtocolGroup.MessageParameterBuilder
   {
-    ParameterBuilderImpl(ProtocolMessageEntry message) {
+    ParameterBuilderImpl(ProtocolMessageEntry<M> message) {
       super(ProtocolGroupImpl.this, message);
     }
 
@@ -238,12 +239,6 @@ public final class ProtocolGroupImpl extends AbstractProtocol<ProtocolMessageBui
     @Override
     public ProtocolGroup.MessageParameterBuilder setGroupMessage(String message) {
       return ProtocolGroupImpl.this.setGroupMessage(message);
-    }
-
-
-    @Override
-    public ProtocolGroup.MessageParameterBuilder setGroupMessageKey(String key) {
-      return ProtocolGroupImpl.this.setGroupMessageKey(key);
     }
 
 

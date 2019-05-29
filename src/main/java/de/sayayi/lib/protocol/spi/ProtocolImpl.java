@@ -6,14 +6,14 @@ import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
-public class ProtocolImpl extends AbstractProtocol<ProtocolMessageBuilder>
+public class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder>
 {
   private static final AtomicInteger PROTOCOL_ID = new AtomicInteger(0);
 
   private final int id;
 
 
-  ProtocolImpl(ProtocolFactoryImpl factory)
+  ProtocolImpl(AbstractProtocolFactory<M> factory)
   {
     super(factory);
 
@@ -31,7 +31,7 @@ public class ProtocolImpl extends AbstractProtocol<ProtocolMessageBuilder>
   }
 
 
-  private class MessageBuilder extends AbstractMessageBuilder<ProtocolMessageBuilder,MessageParameterBuilder>
+  private class MessageBuilder extends AbstractMessageBuilder<M,ProtocolMessageBuilder,MessageParameterBuilder>
   {
     MessageBuilder(Level level) {
       super(ProtocolImpl.this, level);
@@ -39,15 +39,15 @@ public class ProtocolImpl extends AbstractProtocol<ProtocolMessageBuilder>
 
 
     @Override
-    protected MessageParameterBuilder createMessageParameterBuilder(ProtocolMessageEntry message) {
+    protected MessageParameterBuilder createMessageParameterBuilder(ProtocolMessageEntry<M> message) {
       return new ParameterBuilder(message);
     }
   }
 
 
-  private class ParameterBuilder extends AbstractParameterBuilder<MessageParameterBuilder,ProtocolMessageBuilder>
+  private class ParameterBuilder extends AbstractParameterBuilder<M,MessageParameterBuilder,ProtocolMessageBuilder>
   {
-    ParameterBuilder(ProtocolMessageEntry message) {
+    ParameterBuilder(ProtocolMessageEntry<M> message) {
       super(ProtocolImpl.this, message);
     }
   }

@@ -16,32 +16,36 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static de.sayayi.lib.protocol.Level.Shared.ALL;
 
 
-public class ProtocolFactoryImpl implements ProtocolFactory
+public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 {
   private static final AtomicInteger FACTORY_ID = new AtomicInteger(0);
   private static final AtomicInteger TAG_ID = new AtomicInteger(0);
 
   private final Map<String,TagImpl> registeredTags = new TreeMap<String,TagImpl>();
   private final int id;
+  private final Tag defaultTag;
 
-  final Tag systemTag;
 
-
-  public ProtocolFactoryImpl()
+  protected AbstractProtocolFactory()
   {
     id = FACTORY_ID.incrementAndGet();
-    systemTag = createTag("system").getTag();
+    defaultTag = createTag("system").getTag();
+  }
+
+
+  public Tag getDefaultTag() {
+    return defaultTag;
   }
 
 
   @Override
   public Protocol createProtocol() {
-    return new ProtocolImpl(this);
+    return new ProtocolImpl<M>(this);
   }
 
 
   @SuppressWarnings("SuspiciousMethodCalls")
-  boolean isRegisteredTag(Tag tag)
+  public boolean isRegisteredTag(Tag tag)
   {
     if (tag == null)
       throw new NullPointerException("tag must not be null");
@@ -148,7 +152,7 @@ public class ProtocolFactoryImpl implements ProtocolFactory
     {
       for(String tagName: tags)
       {
-        TagImpl impliedTag = ProtocolFactoryImpl.this.getTagByName(tagName);
+        TagImpl impliedTag = AbstractProtocolFactory.this.getTagByName(tagName);
         if (impliedTag != null)
           tag.implies.add(impliedTag);
       }
@@ -162,7 +166,7 @@ public class ProtocolFactoryImpl implements ProtocolFactory
     {
       for(String tagName: tags)
       {
-        TagImpl dependsOnTag = ProtocolFactoryImpl.this.getTagByName(tagName);
+        TagImpl dependsOnTag = AbstractProtocolFactory.this.getTagByName(tagName);
         if (dependsOnTag != null)
           dependsOnTag.implies.add(tag);
       }
@@ -173,37 +177,55 @@ public class ProtocolFactoryImpl implements ProtocolFactory
 
     @Override
     public TagBuilder createTag(String name) {
-      return ProtocolFactoryImpl.this.createTag(name);
+      return AbstractProtocolFactory.this.createTag(name);
     }
 
 
     @Override
     public TagBuilder modifyTag(String name) {
-      return ProtocolFactoryImpl.this.modifyTag(name);
+      return AbstractProtocolFactory.this.modifyTag(name);
     }
 
 
     @Override
     public Protocol createProtocol() {
-      return ProtocolFactoryImpl.this.createProtocol();
+      return AbstractProtocolFactory.this.createProtocol();
     }
 
 
     @Override
     public Tag getTagByName(String name) {
-      return ProtocolFactoryImpl.this.getTagByName(name);
+      return AbstractProtocolFactory.this.getTagByName(name);
     }
 
 
     @Override
     public boolean hasTag(String name) {
-      return ProtocolFactoryImpl.this.hasTag(name);
+      return AbstractProtocolFactory.this.hasTag(name);
+    }
+
+
+    @Override
+    public boolean isRegisteredTag(Tag tag) {
+      return AbstractProtocolFactory.this.isRegisteredTag(tag);
     }
 
 
     @Override
     public Set<Tag> getTags() {
-      return ProtocolFactoryImpl.this.getTags();
+      return AbstractProtocolFactory.this.getTags();
+    }
+
+
+    @Override
+    public Tag getDefaultTag() {
+      return AbstractProtocolFactory.this.getDefaultTag();
+    }
+
+
+    @Override
+    public M processMessage(String message) {
+      return AbstractProtocolFactory.this.processMessage(message);
     }
   }
 
