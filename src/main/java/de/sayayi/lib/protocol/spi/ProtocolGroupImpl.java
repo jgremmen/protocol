@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static de.sayayi.lib.protocol.Level.Shared.ALL;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.HIDDEN;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_IF_NOT_EMPTY;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ONLY;
@@ -24,7 +23,7 @@ public final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessa
   private final AbstractProtocol<M,Protocol.ProtocolMessageBuilder> parent;
 
   private Visibility visibility;
-  private ProtocolMessageEntry<M> groupMessage;
+  private GroupMessage<M> groupMessage;
 
 
   ProtocolGroupImpl(AbstractProtocol<M,Protocol.ProtocolMessageBuilder> parent)
@@ -52,7 +51,7 @@ public final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessa
 
   @Override
   public Visibility getEffectiveVisibility() {
-    return (groupMessage == null) ? visibility.modifyNoHeader() : visibility;
+    return (groupMessage == null) ? visibility.forAbsentHeader() : visibility;
   }
 
 
@@ -171,22 +170,16 @@ public final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessa
   }
 
 
-  private static class GroupMessage<M> extends ProtocolMessageEntry<M>
+  private static class GroupMessage<M> extends AbstractBasicMessage<M>
   {
     GroupMessage(M message) {
-      super(ALL, null, message);
+      super(message);
     }
 
 
     @Override
     public boolean isMatch(Level level, Tag tag) {
       return true;
-    }
-
-
-    @Override
-    public List<ProtocolEntry> getEntries(Level level, Tag tag) {
-      return Collections.<ProtocolEntry>singletonList(this);
     }
 
 
@@ -207,7 +200,7 @@ public final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessa
       extends AbstractParameterBuilder<M,ProtocolGroup.MessageParameterBuilder,ProtocolGroup.ProtocolMessageBuilder>
       implements ProtocolGroup.MessageParameterBuilder
   {
-    ParameterBuilderImpl(ProtocolMessageEntry<M> message) {
+    ParameterBuilderImpl(AbstractBasicMessage<M> message) {
       super(ProtocolGroupImpl.this, message);
     }
 

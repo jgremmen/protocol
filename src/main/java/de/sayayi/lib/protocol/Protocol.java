@@ -47,9 +47,15 @@ public interface Protocol extends ProtocolQuery
   {
     ProtocolMessageBuilder forTag(Tag tag);
 
+
     ProtocolMessageBuilder forTags(Tag ... tags);
 
+
     ProtocolMessageBuilder forTags(String ... tagNames);
+
+
+    ProtocolMessageBuilder withThrowable(Throwable throwable);
+
 
     MessageParameterBuilder message(String message);
   }
@@ -69,18 +75,22 @@ public interface Protocol extends ProtocolQuery
      */
     MessageParameterBuilder with(Map<String,Object> parameterValues);
 
+
     MessageParameterBuilder with(String parameter, boolean value);
+
 
     MessageParameterBuilder with(String parameter, int value);
 
+
     MessageParameterBuilder with(String parameter, long value);
+
 
     MessageParameterBuilder with(String parameter, float value);
 
+
     MessageParameterBuilder with(String parameter, double value);
 
-    MessageParameterBuilder with(String parameter, Object value);
 
-    MessageParameterBuilder withThrowable(Throwable throwable);
+    MessageParameterBuilder with(String parameter, Object value);
   }
 }

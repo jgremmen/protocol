@@ -5,28 +5,23 @@ import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.Tag;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 
-class ProtocolMessageEntry<M> implements ProtocolEntry.Message<M>
+class ProtocolMessageEntry<M> extends AbstractBasicMessage<M> implements ProtocolEntry.Message<M>
 {
   private final Level level;
   private final Set<Tag> tags;
-
-  final M message;
-  final Map<String,Object> parameterValues;
-  Throwable throwable;
+  private final Throwable throwable;
 
 
-  ProtocolMessageEntry(Level level, Set<Tag> tags, M message)
+  ProtocolMessageEntry(Level level, Set<Tag> tags, Throwable throwable, M message)
   {
+    super(message);
+
     this.level = level;
     this.tags = tags;
-    this.message = message;
-    this.parameterValues = new HashMap<String,Object>();
+    this.throwable = throwable;
   }
 
 
@@ -37,14 +32,8 @@ class ProtocolMessageEntry<M> implements ProtocolEntry.Message<M>
 
 
   @Override
-  public M getMessage() {
-    return message;
-  }
-
-
-  @Override
-  public Map<String, Object> getParameterValues() {
-    return Collections.unmodifiableMap(parameterValues);
+  public Set<Tag> getTags() {
+    return Collections.unmodifiableSet(tags);
   }
 
 
@@ -55,26 +44,8 @@ class ProtocolMessageEntry<M> implements ProtocolEntry.Message<M>
 
 
   @Override
-  public boolean isMatch(Level level, Tag tag)
-  {
-    if (level == null)
-      throw new NullPointerException("level must not be null");
-    if (tag == null)
-      throw new NullPointerException("tag must not be null");
-
+  public boolean isMatch(Level level, Tag tag) {
     return this.level.severity() >= level.severity() && this.tags.contains(tag) && tag.isMatch(level);
-  }
-
-
-  @Override
-  public List<ProtocolEntry> getEntries(Level level, Tag tag)
-  {
-    if (level == null)
-      throw new NullPointerException("level must not be null");
-    if (tag == null)
-      throw new NullPointerException("tag must not be null");
-
-    return isMatch(level, tag) ? Collections.<ProtocolEntry>singletonList(this) : Collections.<ProtocolEntry>emptyList();
   }
 
 

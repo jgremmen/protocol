@@ -49,10 +49,18 @@ public interface ProtocolGroup extends Protocol
 
   boolean isHeaderVisible(Level level, Tag tag);
 
+
   ProtocolMessageBuilder debug();
+
+
   ProtocolMessageBuilder info();
+
+
   ProtocolMessageBuilder warn();
+
+
   ProtocolMessageBuilder error();
+
 
   ProtocolMessageBuilder add(Level level);
 
@@ -69,9 +77,15 @@ public interface ProtocolGroup extends Protocol
   {
     ProtocolMessageBuilder forTag(Tag tag);
 
+
     ProtocolMessageBuilder forTags(Tag ... tags);
 
+
     ProtocolMessageBuilder forTags(String ... tagNames);
+
+
+    ProtocolMessageBuilder withThrowable(Throwable throwable);
+
 
     MessageParameterBuilder message(String message);
   }
@@ -81,19 +95,23 @@ public interface ProtocolGroup extends Protocol
   {
     ProtocolGroup.MessageParameterBuilder with(Map<String,Object> parameterValues);
 
+
     ProtocolGroup.MessageParameterBuilder with(String parameter, boolean value);
+
 
     ProtocolGroup.MessageParameterBuilder with(String parameter, int value);
 
+
     ProtocolGroup.MessageParameterBuilder with(String parameter, long value);
+
 
     ProtocolGroup.MessageParameterBuilder with(String parameter, float value);
 
+
     ProtocolGroup.MessageParameterBuilder with(String parameter, double value);
 
-    ProtocolGroup.MessageParameterBuilder with(String parameter, Object value);
 
-    ProtocolGroup.MessageParameterBuilder withThrowable(Throwable throwable);
+    ProtocolGroup.MessageParameterBuilder with(String parameter, Object value);
   }
 
 
@@ -157,7 +175,7 @@ public interface ProtocolGroup extends Protocol
     ;
 
 
-    public Visibility modifyNoHeader()
+    public Visibility forAbsentHeader()
     {
       if (this == SHOW_HEADER_ALWAYS || this == SHOW_HEADER_IF_NOT_EMPTY)
         return FLATTEN;

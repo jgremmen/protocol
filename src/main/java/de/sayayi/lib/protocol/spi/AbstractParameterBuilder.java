@@ -17,10 +17,10 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder, B e
     implements MessageParameterBuilder
 {
   private final AbstractProtocol<M,B> protocol;
-  private final ProtocolMessageEntry<M> message;
+  private final AbstractBasicMessage<M> message;
 
 
-  AbstractParameterBuilder(AbstractProtocol<M,B> protocol, ProtocolMessageEntry<M> message)
+  AbstractParameterBuilder(AbstractProtocol<M,B> protocol, AbstractBasicMessage<M> message)
   {
     this.protocol = protocol;
     this.message = message;
@@ -70,19 +70,13 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder, B e
   @Override
   public P with(String parameter, Object value)
   {
-    if (parameter == null || parameter.isEmpty())
-      throw new IllegalArgumentException("parameter must not be empty");
+    if (message != null)
+    {
+      if (parameter == null || parameter.isEmpty())
+        throw new IllegalArgumentException("parameter must not be empty");
 
-    message.parameterValues.put(parameter, value);
-
-    return (P)this;
-  }
-
-
-  @Override
-  public P withThrowable(Throwable throwable)
-  {
-    message.throwable = throwable;
+      message.parameterValues.put(parameter, value);
+    }
 
     return (P)this;
   }

@@ -13,22 +13,45 @@ import java.util.Set;
  */
 public interface ProtocolFactory<M>
 {
+  /**
+   * Name of the default tag.
+   *
+   * @see #getDefaultTag()
+   */
   String DEFAULT_TAG_NAME = "default";
 
+
+  /**
+   * Create a new protocol instance.
+   *
+   * @return  new protocol instance
+   */
   Protocol createProtocol();
+
 
   TagBuilder createTag(String name);
 
+
   TagBuilder modifyTag(String name);
+
 
   Tag getTagByName(String name);
 
+
   boolean hasTag(String name);
+
 
   boolean isRegisteredTag(Tag tag);
 
+
   Set<Tag> getTags();
 
+
+  /**
+   * Returns the default tag which is used for each message protocolled.
+   *
+   * @return  default tag
+   */
   Tag getDefaultTag();
 
 
@@ -58,10 +81,18 @@ public interface ProtocolFactory<M>
   {
     TagBuilder dependsOn(String ... tags);
 
+
     TagBuilder implies(String ... tags);
+
 
     TagBuilder match(LevelMatch match, Level level);
 
+
+    /**
+     * Returns the tag instance build by this builder.
+     *
+     * @return  tag instance
+     */
     Tag getTag();
   }
 }

@@ -1,6 +1,7 @@
 package de.sayayi.lib.protocol;
 
 import java.util.Map;
+import java.util.Set;
 
 
 public interface ProtocolEntry extends ProtocolQuery
@@ -9,6 +10,7 @@ public interface ProtocolEntry extends ProtocolQuery
   {
     M getMessage();
 
+
     Map<String,Object> getParameterValues();
   }
 
@@ -16,6 +18,10 @@ public interface ProtocolEntry extends ProtocolQuery
   interface Message<M> extends BasicMessage<M>
   {
     Level getLevel();
+
+
+    Set<Tag> getTags();
+
 
     Throwable getThrowable();
   }

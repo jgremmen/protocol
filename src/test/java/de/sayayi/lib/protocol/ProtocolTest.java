@@ -22,7 +22,7 @@ public class ProtocolTest
     Protocol protocol = factory.createProtocol();
 
     protocol.add(DEBUG).message("Just sayin'")
-            .warn().forTags(ui).message("MSG-048").withThrowable(new NullPointerException());
+            .warn().forTags(ui).withThrowable(new NullPointerException()).message("MSG-048");
 
     ProtocolGroup gp = protocol.createGroup().setGroupMessage("Huhu");
 
