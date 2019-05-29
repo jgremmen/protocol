@@ -29,7 +29,7 @@ public class ProtocolFactoryTest
   @Test
   public void testIsRegisteredTag()
   {
-    ProtocolFactory factory = new DefaultProtocolFactory();
+    DefaultProtocolFactory factory = new DefaultProtocolFactory();
     Tag tag = factory.createTag("tag").getTag();
 
     assertTrue(factory.isRegisteredTag(tag));
@@ -64,7 +64,7 @@ public class ProtocolFactoryTest
   @Test
   public void testGetTags()
   {
-    ProtocolFactory factory = new DefaultProtocolFactory();
+    DefaultProtocolFactory factory = new DefaultProtocolFactory();
 
     Tag tag1 = factory.createTag("tag1").getTag();
     Tag tagUI = factory.createTag("UI").getTag();
@@ -101,7 +101,7 @@ public class ProtocolFactoryTest
   @Test
   public void testTagByName()
   {
-    ProtocolFactory factory = new DefaultProtocolFactory();
+    DefaultProtocolFactory factory = new DefaultProtocolFactory();
 
     Tag tag1 = factory.createTag("tag1").getTag();
 
@@ -127,7 +127,7 @@ public class ProtocolFactoryTest
   @Test
   public void testTagMatch()
   {
-    ProtocolFactory factory = new DefaultProtocolFactory();
+    DefaultProtocolFactory factory = new DefaultProtocolFactory();
 
     Tag tagAtLeastInfo = factory.createTag("tag1").match(AT_LEAST, INFO).getTag();
 

@@ -12,7 +12,7 @@ public class ProtocolTest
   @Test
   public void testBasics()
   {
-    ProtocolFactory factory = new DefaultProtocolFactory();
+    DefaultProtocolFactory factory = new DefaultProtocolFactory();
 
     factory.createTag("ui").match(AT_LEAST, INFO)
            .createTag("technical").dependsOn("ui").implies("system");
