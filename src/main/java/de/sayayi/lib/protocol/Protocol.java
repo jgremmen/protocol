@@ -51,6 +51,9 @@ public interface Protocol<M> extends ProtocolQuery<M>
   <R> R format(Level level, Tag tag, ProtocolFormatter<M,R> formatter);
 
 
+  ProtocolIterator<M> iterator(Level level, Tag tag);
+
+
   interface ProtocolMessageBuilder<M>
   {
     ProtocolMessageBuilder<M> forTag(Tag tag);

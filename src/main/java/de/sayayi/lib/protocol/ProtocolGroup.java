@@ -47,6 +47,9 @@ public interface ProtocolGroup<M> extends Protocol<M>
   MessageParameterBuilder<M> setGroupMessage(String message);
 
 
+  ProtocolGroup<M> removeGroupMessage();
+
+
   boolean isHeaderVisible(Level level, Tag tag);
 
 

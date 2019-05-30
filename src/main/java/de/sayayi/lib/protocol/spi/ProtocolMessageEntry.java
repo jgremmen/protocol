@@ -50,6 +50,12 @@ class ProtocolMessageEntry<M> extends AbstractBasicMessage<M> implements Protoco
 
 
   @Override
+  public boolean hasVisibleEntry(Level level, Tag tag) {
+    return isMatch(level, tag);
+  }
+
+
+  @Override
   public String toString()
   {
     StringBuilder s = new StringBuilder("Message[level=").append(level).append(",tags={");

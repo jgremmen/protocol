@@ -93,6 +93,18 @@ public abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> im
 
 
   @Override
+  public boolean hasVisibleEntry(Level level, Tag tag)
+  {
+    if (tag.isMatch(level))
+      for(ProtocolEntry<M> entry: entries)
+        if (entry.hasVisibleEntry(level, tag))
+          return true;
+
+    return false;
+  }
+
+
+  @Override
   public ProtocolGroup<M> createGroup()
   {
     @SuppressWarnings("unchecked")
@@ -109,8 +121,6 @@ public abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> im
   {
     if (formatter instanceof Initializable)
       ((Initializable)formatter).init(level, tag);
-
-    //TODO format
 
     return formatter.getResult();
   }

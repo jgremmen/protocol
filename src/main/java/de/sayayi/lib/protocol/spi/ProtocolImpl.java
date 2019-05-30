@@ -2,6 +2,8 @@ package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
+import de.sayayi.lib.protocol.ProtocolIterator;
+import de.sayayi.lib.protocol.Tag;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -28,6 +30,12 @@ public class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M
       throw new NullPointerException("level must not be null");
 
     return new MessageBuilder(level);
+  }
+
+
+  @Override
+  public ProtocolIterator<M> iterator(Level level, Tag tag) {
+    return new ProtocolStructureIterator.ForProtocol<M>(level, tag, 0,this);
   }
 
 

@@ -8,9 +8,7 @@ public interface ProtocolFormatter<M,R>
 {
   void message(Message<M> message, boolean lastEntry);
 
-  void startGroup(int group, BasicMessage<M> groupMessage, boolean lastEntry);
-
-  void endGroup(int group, boolean lastEntry);
+  void group(int group, BasicMessage<M> groupMessage, boolean lastEntry, boolean hasGroupEntries);
 
   R getResult();
 

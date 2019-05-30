@@ -25,4 +25,7 @@ public interface ProtocolQuery<M>
    * @return  a list of protocol entries, never {@code null}
    */
   List<ProtocolEntry<M>> getEntries(Level level, Tag tag);
+
+
+  boolean hasVisibleEntry(Level level, Tag tag);
 }

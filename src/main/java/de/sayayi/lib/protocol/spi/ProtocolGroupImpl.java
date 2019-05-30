@@ -6,6 +6,7 @@ import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.ProtocolEntry.Group;
 import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.ProtocolGroup.ProtocolMessageBuilder;
+import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.Tag;
 
 import java.util.Collections;
@@ -24,7 +25,7 @@ public final class ProtocolGroupImpl<M>
   private final AbstractProtocol<M,Protocol.ProtocolMessageBuilder<M>> parent;
 
   private Visibility visibility;
-  private GroupMessage<M> groupMessage;
+  private GroupMessage groupMessage;
 
 
   ProtocolGroupImpl(AbstractProtocol<M,Protocol.ProtocolMessageBuilder<M>> parent)
@@ -116,6 +117,29 @@ public final class ProtocolGroupImpl<M>
 
 
   @Override
+  public boolean hasVisibleEntry(Level level, Tag tag)
+  {
+    if (tag.isMatch(level))
+      switch(getEffectiveVisibility())
+      {
+        case HIDDEN:
+          return false;
+
+        case FLATTEN:
+        case FLATTEN_ON_SINGLE_ENTRY:
+        case SHOW_HEADER_IF_NOT_EMPTY:
+          return super.hasVisibleEntry(level, tag);
+
+        case SHOW_HEADER_ALWAYS:
+        case SHOW_HEADER_ONLY:
+          return groupMessage.hasVisibleEntry(level, tag);
+      }
+
+    return false;
+  }
+
+
+  @Override
   public ProtocolGroup.MessageParameterBuilder<M> setGroupMessage(String message)
   {
     if (message == null)
@@ -123,7 +147,16 @@ public final class ProtocolGroupImpl<M>
 
     M processedMessage = factory.processMessage(message);
 
-    return new ParameterBuilderImpl(groupMessage = new GroupMessage<M>(processedMessage));
+    return new ParameterBuilderImpl(groupMessage = new GroupMessage(processedMessage));
+  }
+
+
+  @Override
+  public ProtocolGroup<M> removeGroupMessage()
+  {
+    groupMessage = null;
+
+    return this;
   }
 
 
@@ -156,6 +189,14 @@ public final class ProtocolGroupImpl<M>
   }
 
 
+  @Override
+  public ProtocolIterator<M> iterator(Level level, Tag tag)
+  {
+    return new ProtocolStructureIterator.ForGroup<M>(level, tag, 0,this, false,
+        false);
+  }
+
+
   private class MessageBuilder
       extends AbstractMessageBuilder<M,ProtocolGroup.ProtocolMessageBuilder<M>,ProtocolGroup.MessageParameterBuilder<M>>
       implements ProtocolGroup.ProtocolMessageBuilder<M>
@@ -172,7 +213,7 @@ public final class ProtocolGroupImpl<M>
   }
 
 
-  private static class GroupMessage<M> extends AbstractBasicMessage<M>
+  private class GroupMessage extends AbstractBasicMessage<M>
   {
     GroupMessage(M message) {
       super(message);
@@ -181,7 +222,13 @@ public final class ProtocolGroupImpl<M>
 
     @Override
     public boolean isMatch(Level level, Tag tag) {
-      return true;
+      return isHeaderVisible(level, tag);
+    }
+
+
+    @Override
+    public boolean hasVisibleEntry(Level level, Tag tag) {
+      return isHeaderVisible(level, tag);
     }
 
 
@@ -238,8 +285,20 @@ public final class ProtocolGroupImpl<M>
 
 
     @Override
+    public ProtocolGroup<M> removeGroupMessage() {
+      return ProtocolGroupImpl.this.removeGroupMessage();
+    }
+
+
+    @Override
     public Protocol<M> getRootProtocol() {
       return ProtocolGroupImpl.this.getRootProtocol();
+    }
+
+
+    @Override
+    public ProtocolIterator<M> iterator(Level level, Tag tag) {
+      return ProtocolGroupImpl.this.iterator(level, tag);
     }
   }
 }

@@ -6,6 +6,7 @@ import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.ProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolGroup;
+import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.Tag;
 
 import java.util.List;
@@ -134,5 +135,17 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
   @Override
   public List<ProtocolEntry<M>> getEntries(Level level, Tag tag) {
     return protocol.getEntries(level, tag);
+  }
+
+
+  @Override
+  public boolean hasVisibleEntry(Level level, Tag tag) {
+    return protocol.hasVisibleEntry(level, tag);
+  }
+
+
+  @Override
+  public ProtocolIterator<M> iterator(Level level, Tag tag) {
+    return protocol.iterator(level, tag);
   }
 }
