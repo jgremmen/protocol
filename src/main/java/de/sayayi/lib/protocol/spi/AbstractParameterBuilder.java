@@ -4,6 +4,7 @@ import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol.MessageParameterBuilder;
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.ProtocolEntry;
+import de.sayayi.lib.protocol.ProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.Tag;
 
@@ -13,8 +14,8 @@ import java.util.Map.Entry;
 
 
 @SuppressWarnings("unchecked")
-abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder, B extends ProtocolMessageBuilder>
-    implements MessageParameterBuilder
+abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B extends ProtocolMessageBuilder<M>>
+    implements MessageParameterBuilder<M>
 {
   private final AbstractProtocol<M,B> protocol;
   private final AbstractBasicMessage<M> message;
@@ -113,8 +114,14 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder, B e
 
 
   @Override
-  public ProtocolGroup createGroup() {
+  public ProtocolGroup<M> createGroup() {
     return protocol.createGroup();
+  }
+
+
+  @Override
+  public <R> R format(Level level, Tag tag, ProtocolFormatter<M,R> formatter) {
+    return null;
   }
 
 
@@ -125,7 +132,7 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder, B e
 
 
   @Override
-  public List<ProtocolEntry> getEntries(Level level, Tag tag) {
+  public List<ProtocolEntry<M>> getEntries(Level level, Tag tag) {
     return protocol.getEntries(level, tag);
   }
 }

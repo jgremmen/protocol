@@ -10,8 +10,8 @@ import java.util.Set;
 
 
 @SuppressWarnings("unchecked")
-abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder,P extends MessageParameterBuilder>
-    implements ProtocolMessageBuilder
+abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P extends MessageParameterBuilder<M>>
+    implements ProtocolMessageBuilder<M>
 {
   private final AbstractProtocol<M,B> protocol;
   private final Level level;

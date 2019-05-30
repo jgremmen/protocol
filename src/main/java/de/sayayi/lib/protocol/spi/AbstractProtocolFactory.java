@@ -39,7 +39,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
 
   @Override
-  public Protocol createProtocol() {
+  public Protocol<M> createProtocol() {
     return new ProtocolImpl<M>(this);
   }
 
@@ -55,7 +55,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
 
   @Override
-  public TagBuilder createTag(String name)
+  public TagBuilder<M> createTag(String name)
   {
     if (name == null || name.isEmpty())
       throw new IllegalArgumentException("name must not be empty");
@@ -71,7 +71,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
 
   @Override
-  public TagBuilder modifyTag(String name)
+  public TagBuilder<M> modifyTag(String name)
   {
     if (name == null || name.isEmpty())
       throw new IllegalArgumentException("name must not be empty");
@@ -116,7 +116,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
   }
 
 
-  private class TagBuilderImpl implements TagBuilder
+  private class TagBuilderImpl implements TagBuilder<M>
   {
     private final TagImpl tag;
 
@@ -133,7 +133,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
 
     @Override
-    public TagBuilder match(LevelMatch match, Level level)
+    public TagBuilder<M> match(LevelMatch match, Level level)
     {
       if (match == null)
         throw new NullPointerException("match must not be null");
@@ -148,7 +148,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
 
     @Override
-    public TagBuilder implies(String ... tags)
+    public TagBuilder<M> implies(String ... tags)
     {
       for(String tagName: tags)
       {
@@ -162,7 +162,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
 
     @Override
-    public TagBuilder dependsOn(String ... tags)
+    public TagBuilder<M> dependsOn(String ... tags)
     {
       for(String tagName: tags)
       {
@@ -176,19 +176,19 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
 
     @Override
-    public TagBuilder createTag(String name) {
+    public TagBuilder<M> createTag(String name) {
       return AbstractProtocolFactory.this.createTag(name);
     }
 
 
     @Override
-    public TagBuilder modifyTag(String name) {
+    public TagBuilder<M> modifyTag(String name) {
       return AbstractProtocolFactory.this.modifyTag(name);
     }
 
 
     @Override
-    public Protocol createProtocol() {
+    public Protocol<M> createProtocol() {
       return AbstractProtocolFactory.this.createProtocol();
     }
 

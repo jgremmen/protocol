@@ -4,9 +4,9 @@ import java.util.Map;
 import java.util.Set;
 
 
-public interface ProtocolEntry extends ProtocolQuery
+public interface ProtocolEntry<M> extends ProtocolQuery<M>
 {
-  interface BasicMessage<M> extends ProtocolEntry
+  interface BasicMessage<M> extends ProtocolEntry<M>
   {
     M getMessage();
 
@@ -23,11 +23,16 @@ public interface ProtocolEntry extends ProtocolQuery
     Set<Tag> getTags();
 
 
+    /**
+     * Returns the throwable associated with the message.
+     *
+     * @return  throwable/exception or {@code null}
+     */
     Throwable getThrowable();
   }
 
 
-  interface Group<M> extends ProtocolEntry
+  interface Group<M> extends ProtocolEntry<M>
   {
     BasicMessage<M> getGroupMessage();
   }

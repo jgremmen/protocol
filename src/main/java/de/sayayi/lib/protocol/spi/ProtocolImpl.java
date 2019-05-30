@@ -6,7 +6,7 @@ import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
-public class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder>
+public class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
 {
   private static final AtomicInteger PROTOCOL_ID = new AtomicInteger(0);
 
@@ -22,7 +22,7 @@ public class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder>
 
 
   @Override
-  public ProtocolMessageBuilder add(Level level)
+  public ProtocolMessageBuilder<M> add(Level level)
   {
     if (level == null)
       throw new NullPointerException("level must not be null");
@@ -31,7 +31,8 @@ public class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder>
   }
 
 
-  private class MessageBuilder extends AbstractMessageBuilder<M,ProtocolMessageBuilder,MessageParameterBuilder>
+  private class MessageBuilder
+      extends AbstractMessageBuilder<M,ProtocolMessageBuilder<M>,MessageParameterBuilder<M>>
   {
     MessageBuilder(Level level) {
       super(ProtocolImpl.this, level);
@@ -39,13 +40,14 @@ public class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder>
 
 
     @Override
-    protected MessageParameterBuilder createMessageParameterBuilder(ProtocolMessageEntry<M> message) {
+    protected MessageParameterBuilder<M> createMessageParameterBuilder(ProtocolMessageEntry<M> message) {
       return new ParameterBuilder(message);
     }
   }
 
 
-  private class ParameterBuilder extends AbstractParameterBuilder<M,MessageParameterBuilder,ProtocolMessageBuilder>
+  private class ParameterBuilder
+      extends AbstractParameterBuilder<M,MessageParameterBuilder<M>,ProtocolMessageBuilder<M>>
   {
     ParameterBuilder(ProtocolMessageEntry<M> message) {
       super(ProtocolImpl.this, message);

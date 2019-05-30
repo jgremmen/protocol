@@ -17,16 +17,17 @@ import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_IF_NOT
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ONLY;
 
 
-public final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder>
-    implements ProtocolGroup, Group<M>
+public final class ProtocolGroupImpl<M>
+    extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
+    implements ProtocolGroup<M>, Group<M>
 {
-  private final AbstractProtocol<M,Protocol.ProtocolMessageBuilder> parent;
+  private final AbstractProtocol<M,Protocol.ProtocolMessageBuilder<M>> parent;
 
   private Visibility visibility;
   private GroupMessage<M> groupMessage;
 
 
-  ProtocolGroupImpl(AbstractProtocol<M,Protocol.ProtocolMessageBuilder> parent)
+  ProtocolGroupImpl(AbstractProtocol<M,Protocol.ProtocolMessageBuilder<M>> parent)
   {
     super(parent.factory);
 
@@ -56,7 +57,7 @@ public final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessa
 
 
   @Override
-  public ProtocolGroup setVisibility(Visibility visibility)
+  public ProtocolGroup<M> setVisibility(Visibility visibility)
   {
     if (visibility == null)
       throw new NullPointerException("visibility must not be null");
@@ -105,7 +106,7 @@ public final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessa
 
 
   @Override
-  public List<ProtocolEntry> getEntries(Level level, Tag tag)
+  public List<ProtocolEntry<M>> getEntries(Level level, Tag tag)
   {
     if (visibility == HIDDEN || visibility == SHOW_HEADER_ONLY)
       return Collections.emptyList();
@@ -115,7 +116,7 @@ public final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessa
 
 
   @Override
-  public ProtocolGroup.MessageParameterBuilder setGroupMessage(String message)
+  public ProtocolGroup.MessageParameterBuilder<M> setGroupMessage(String message)
   {
     if (message == null)
       throw new NullPointerException("message must not be null");
@@ -133,7 +134,7 @@ public final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessa
 
 
   @Override
-  public ProtocolGroup.ProtocolMessageBuilder add(Level level)
+  public ProtocolGroup.ProtocolMessageBuilder<M> add(Level level)
   {
     if (level == null)
       throw new NullPointerException("level must not be null");
@@ -142,9 +143,10 @@ public final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessa
   }
 
 
+  @SuppressWarnings("unchecked")
   @Override
-  public Protocol getRootProtocol() {
-    return (parent instanceof ProtocolGroup) ? ((ProtocolGroup)parent).getRootProtocol() : parent;
+  public Protocol<M> getRootProtocol() {
+    return (parent instanceof ProtocolGroup) ? ((ProtocolGroup<M>)parent).getRootProtocol() : parent;
   }
 
 
@@ -155,8 +157,8 @@ public final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessa
 
 
   private class MessageBuilder
-      extends AbstractMessageBuilder<M,ProtocolGroup.ProtocolMessageBuilder,ProtocolGroup.MessageParameterBuilder>
-      implements ProtocolGroup.ProtocolMessageBuilder
+      extends AbstractMessageBuilder<M,ProtocolGroup.ProtocolMessageBuilder<M>,ProtocolGroup.MessageParameterBuilder<M>>
+      implements ProtocolGroup.ProtocolMessageBuilder<M>
   {
     MessageBuilder(Level level) {
       super(ProtocolGroupImpl.this, level);
@@ -164,7 +166,7 @@ public final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessa
 
 
     @Override
-    protected ProtocolGroup.MessageParameterBuilder createMessageParameterBuilder(ProtocolMessageEntry<M> message) {
+    protected ProtocolGroup.MessageParameterBuilder<M> createMessageParameterBuilder(ProtocolMessageEntry<M> message) {
       return new ParameterBuilderImpl(message);
     }
   }
@@ -197,8 +199,8 @@ public final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessa
 
 
   private class ParameterBuilderImpl
-      extends AbstractParameterBuilder<M,ProtocolGroup.MessageParameterBuilder,ProtocolGroup.ProtocolMessageBuilder>
-      implements ProtocolGroup.MessageParameterBuilder
+      extends AbstractParameterBuilder<M,ProtocolGroup.MessageParameterBuilder<M>,ProtocolGroup.ProtocolMessageBuilder<M>>
+      implements ProtocolGroup.MessageParameterBuilder<M>
   {
     ParameterBuilderImpl(AbstractBasicMessage<M> message) {
       super(ProtocolGroupImpl.this, message);
@@ -218,7 +220,7 @@ public final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessa
 
 
     @Override
-    public ProtocolGroup setVisibility(Visibility visibility) {
+    public ProtocolGroup<M> setVisibility(Visibility visibility) {
       return ProtocolGroupImpl.this.setVisibility(visibility);
     }
 
@@ -230,13 +232,13 @@ public final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessa
 
 
     @Override
-    public ProtocolGroup.MessageParameterBuilder setGroupMessage(String message) {
+    public ProtocolGroup.MessageParameterBuilder<M> setGroupMessage(String message) {
       return ProtocolGroupImpl.this.setGroupMessage(message);
     }
 
 
     @Override
-    public Protocol getRootProtocol() {
+    public Protocol<M> getRootProtocol() {
       return ProtocolGroupImpl.this.getRootProtocol();
     }
   }

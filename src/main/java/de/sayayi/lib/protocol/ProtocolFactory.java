@@ -26,7 +26,7 @@ public interface ProtocolFactory<M>
    *
    * @return  new protocol instance
    */
-  Protocol createProtocol();
+  Protocol<M> createProtocol();
 
 
   TagBuilder createTag(String name);
@@ -77,7 +77,7 @@ public interface ProtocolFactory<M>
   M processMessage(String message);
 
 
-  interface TagBuilder extends ProtocolFactory
+  interface TagBuilder<M> extends ProtocolFactory<M>
   {
     TagBuilder dependsOn(String ... tags);
 

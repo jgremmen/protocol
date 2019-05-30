@@ -3,7 +3,7 @@ package de.sayayi.lib.protocol;
 import java.util.List;
 
 
-public interface ProtocolQuery
+public interface ProtocolQuery<M>
 {
   /**
    * Tells whether this protocol object matches the given {@code level} and {@code tag}.
@@ -24,5 +24,5 @@ public interface ProtocolQuery
    *
    * @return  a list of protocol entries, never {@code null}
    */
-  List<ProtocolEntry> getEntries(Level level, Tag tag);
+  List<ProtocolEntry<M>> getEntries(Level level, Tag tag);
 }

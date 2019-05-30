@@ -3,14 +3,14 @@ package de.sayayi.lib.protocol;
 import java.util.Map;
 
 
-public interface Protocol extends ProtocolQuery
+public interface Protocol<M> extends ProtocolQuery<M>
 {
   /**
    * Add a debug level message.
    *
    * @return  message builder instance for the debug message
    */
-  ProtocolMessageBuilder debug();
+  ProtocolMessageBuilder<M> debug();
 
 
   /**
@@ -18,7 +18,7 @@ public interface Protocol extends ProtocolQuery
    *
    * @return  message builder instance for the info message
    */
-  ProtocolMessageBuilder info();
+  ProtocolMessageBuilder<M> info();
 
 
   /**
@@ -26,7 +26,7 @@ public interface Protocol extends ProtocolQuery
    *
    * @return  message builder instance for the warning message
    */
-  ProtocolMessageBuilder warn();
+  ProtocolMessageBuilder<M> warn();
 
 
   /**
@@ -34,34 +34,42 @@ public interface Protocol extends ProtocolQuery
    *
    * @return  message builder instance for the error message
    */
-  ProtocolMessageBuilder error();
+  ProtocolMessageBuilder<M> error();
 
 
-  ProtocolMessageBuilder add(Level level);
+  ProtocolMessageBuilder<M> add(Level level);
 
 
-  ProtocolGroup createGroup();
+  /**
+   * Create a new protocol group.
+   *
+   * @return  new protocol group
+   */
+  ProtocolGroup<M> createGroup();
 
 
-  interface ProtocolMessageBuilder
+  <R> R format(Level level, Tag tag, ProtocolFormatter<M,R> formatter);
+
+
+  interface ProtocolMessageBuilder<M>
   {
-    ProtocolMessageBuilder forTag(Tag tag);
+    ProtocolMessageBuilder<M> forTag(Tag tag);
 
 
-    ProtocolMessageBuilder forTags(Tag ... tags);
+    ProtocolMessageBuilder<M> forTags(Tag ... tags);
 
 
-    ProtocolMessageBuilder forTags(String ... tagNames);
+    ProtocolMessageBuilder<M> forTags(String ... tagNames);
 
 
-    ProtocolMessageBuilder withThrowable(Throwable throwable);
+    ProtocolMessageBuilder<M> withThrowable(Throwable throwable);
 
 
-    MessageParameterBuilder message(String message);
+    MessageParameterBuilder<M> message(String message);
   }
 
 
-  interface MessageParameterBuilder extends Protocol
+  interface MessageParameterBuilder<M> extends Protocol<M>
   {
     /**
      * <p>
@@ -73,24 +81,24 @@ public interface Protocol extends ProtocolQuery
      *
      * @return  paramter builder instance for the current message
      */
-    MessageParameterBuilder with(Map<String,Object> parameterValues);
+    MessageParameterBuilder<M> with(Map<String,Object> parameterValues);
 
 
-    MessageParameterBuilder with(String parameter, boolean value);
+    MessageParameterBuilder<M> with(String parameter, boolean value);
 
 
-    MessageParameterBuilder with(String parameter, int value);
+    MessageParameterBuilder<M> with(String parameter, int value);
 
 
-    MessageParameterBuilder with(String parameter, long value);
+    MessageParameterBuilder<M> with(String parameter, long value);
 
 
-    MessageParameterBuilder with(String parameter, float value);
+    MessageParameterBuilder<M> with(String parameter, float value);
 
 
-    MessageParameterBuilder with(String parameter, double value);
+    MessageParameterBuilder<M> with(String parameter, double value);
 
 
-    MessageParameterBuilder with(String parameter, Object value);
+    MessageParameterBuilder<M> with(String parameter, Object value);
   }
 }

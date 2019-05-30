@@ -5,6 +5,8 @@ import de.sayayi.lib.protocol.Level.Shared;
 import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.ProtocolEntry;
+import de.sayayi.lib.protocol.ProtocolFormatter;
+import de.sayayi.lib.protocol.ProtocolFormatter.Initializable;
 import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.Tag;
 
@@ -14,10 +16,10 @@ import java.util.List;
 import java.util.Set;
 
 
-public abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder> implements Protocol
+public abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implements Protocol<M>
 {
   final AbstractProtocolFactory<M> factory;
-  final List<ProtocolEntry> entries;
+  final List<ProtocolEntry<M>> entries;
 
   private Set<Tag> tags;
   private Level maxLevel;
@@ -26,7 +28,7 @@ public abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder> imple
   AbstractProtocol(AbstractProtocolFactory<M> factory)
   {
     this.factory = factory;
-    entries = new ArrayList<ProtocolEntry>(8);
+    entries = new ArrayList<ProtocolEntry<M>>(8);
 
     tags = new HashSet<Tag>();
     maxLevel = Shared.ALL;
@@ -77,26 +79,39 @@ public abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder> imple
 
 
   @Override
-  public List<ProtocolEntry> getEntries(Level level, Tag tag)
+  public List<ProtocolEntry<M>> getEntries(Level level, Tag tag)
   {
-    List<ProtocolEntry> filteredEntries = new ArrayList<ProtocolEntry>();
+    List<ProtocolEntry<M>> filteredEntries = new ArrayList<ProtocolEntry<M>>();
 
-    for(ProtocolEntry entry: entries)
-      if (entry.isMatch(level, tag))
-        filteredEntries.add(entry);
+    if (tag.isMatch(level))
+      for(ProtocolEntry<M> entry: entries)
+        if (entry.isMatch(level, tag))
+          filteredEntries.add(entry);
 
     return filteredEntries;
   }
 
 
   @Override
-  public ProtocolGroup createGroup()
+  public ProtocolGroup<M> createGroup()
   {
     @SuppressWarnings("unchecked")
-    ProtocolGroupImpl group = new ProtocolGroupImpl<M>((AbstractProtocol<M,ProtocolMessageBuilder>)this);
+    ProtocolGroupImpl<M> group = new ProtocolGroupImpl<M>((AbstractProtocol<M,ProtocolMessageBuilder<M>>)this);
 
     entries.add(group);
 
     return group;
+  }
+
+
+  @Override
+  public <R> R format(Level level, Tag tag, ProtocolFormatter<M,R> formatter)
+  {
+    if (formatter instanceof Initializable)
+      ((Initializable)formatter).init(level, tag);
+
+    //TODO format
+
+    return formatter.getResult();
   }
 }

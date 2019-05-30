@@ -37,7 +37,10 @@ abstract class AbstractBasicMessage<M> implements BasicMessage<M>
 
 
   @Override
-  public List<ProtocolEntry> getEntries(Level level, Tag tag) {
-    return isMatch(level, tag) ? Collections.<ProtocolEntry>singletonList(this) : Collections.<ProtocolEntry>emptyList();
+  public List<ProtocolEntry<M>> getEntries(Level level, Tag tag)
+  {
+    return isMatch(level, tag)
+        ? Collections.<ProtocolEntry<M>>singletonList(this)
+        : Collections.<ProtocolEntry<M>>emptyList();
   }
 }

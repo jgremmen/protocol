@@ -3,7 +3,7 @@ package de.sayayi.lib.protocol;
 import java.util.Map;
 
 
-public interface ProtocolGroup extends Protocol
+public interface ProtocolGroup<M> extends Protocol<M>
 {
   /**
    * Returns the visibility set for this protocol group.
@@ -34,7 +34,7 @@ public interface ProtocolGroup extends Protocol
    * @see #getVisibility()
    * @see #getEffectiveVisibility()
    */
-  ProtocolGroup setVisibility(Visibility visibility);
+  ProtocolGroup<M> setVisibility(Visibility visibility);
 
 
   /**
@@ -44,25 +44,25 @@ public interface ProtocolGroup extends Protocol
    *
    * @return  parameter builder instance
    */
-  MessageParameterBuilder setGroupMessage(String message);
+  MessageParameterBuilder<M> setGroupMessage(String message);
 
 
   boolean isHeaderVisible(Level level, Tag tag);
 
 
-  ProtocolMessageBuilder debug();
+  ProtocolMessageBuilder<M> debug();
 
 
-  ProtocolMessageBuilder info();
+  ProtocolMessageBuilder<M> info();
 
 
-  ProtocolMessageBuilder warn();
+  ProtocolMessageBuilder<M> warn();
 
 
-  ProtocolMessageBuilder error();
+  ProtocolMessageBuilder<M> error();
 
 
-  ProtocolMessageBuilder add(Level level);
+  ProtocolMessageBuilder<M> add(Level level);
 
 
   /**
@@ -70,48 +70,48 @@ public interface ProtocolGroup extends Protocol
    *
    * @return  protocol root instance
    */
-  Protocol getRootProtocol();
+  Protocol<M> getRootProtocol();
 
 
-  interface ProtocolMessageBuilder extends Protocol.ProtocolMessageBuilder
+  interface ProtocolMessageBuilder<M> extends Protocol.ProtocolMessageBuilder<M>
   {
-    ProtocolMessageBuilder forTag(Tag tag);
+    ProtocolMessageBuilder<M> forTag(Tag tag);
 
 
-    ProtocolMessageBuilder forTags(Tag ... tags);
+    ProtocolMessageBuilder<M> forTags(Tag ... tags);
 
 
-    ProtocolMessageBuilder forTags(String ... tagNames);
+    ProtocolMessageBuilder<M> forTags(String ... tagNames);
 
 
-    ProtocolMessageBuilder withThrowable(Throwable throwable);
+    ProtocolMessageBuilder<M> withThrowable(Throwable throwable);
 
 
-    MessageParameterBuilder message(String message);
+    MessageParameterBuilder<M> message(String message);
   }
 
 
-  interface MessageParameterBuilder extends Protocol.MessageParameterBuilder, ProtocolGroup
+  interface MessageParameterBuilder<M> extends Protocol.MessageParameterBuilder<M>, ProtocolGroup<M>
   {
-    ProtocolGroup.MessageParameterBuilder with(Map<String,Object> parameterValues);
+    ProtocolGroup.MessageParameterBuilder<M> with(Map<String,Object> parameterValues);
 
 
-    ProtocolGroup.MessageParameterBuilder with(String parameter, boolean value);
+    ProtocolGroup.MessageParameterBuilder<M> with(String parameter, boolean value);
 
 
-    ProtocolGroup.MessageParameterBuilder with(String parameter, int value);
+    ProtocolGroup.MessageParameterBuilder<M> with(String parameter, int value);
 
 
-    ProtocolGroup.MessageParameterBuilder with(String parameter, long value);
+    ProtocolGroup.MessageParameterBuilder<M> with(String parameter, long value);
 
 
-    ProtocolGroup.MessageParameterBuilder with(String parameter, float value);
+    ProtocolGroup.MessageParameterBuilder<M> with(String parameter, float value);
 
 
-    ProtocolGroup.MessageParameterBuilder with(String parameter, double value);
+    ProtocolGroup.MessageParameterBuilder<M> with(String parameter, double value);
 
 
-    ProtocolGroup.MessageParameterBuilder with(String parameter, Object value);
+    ProtocolGroup.MessageParameterBuilder<M> with(String parameter, Object value);
   }
 
 
