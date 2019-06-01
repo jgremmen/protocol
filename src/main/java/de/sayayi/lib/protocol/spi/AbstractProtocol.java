@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 
-public abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implements Protocol<M>
+abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implements Protocol<M>
 {
   final AbstractProtocolFactory<M> factory;
   final List<ProtocolEntry<M>> entries;
@@ -93,11 +93,11 @@ public abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> im
 
 
   @Override
-  public boolean hasVisibleEntry(Level level, Tag tag)
+  public boolean hasVisibleElement(Level level, Tag tag)
   {
     if (tag.isMatch(level))
       for(ProtocolEntry<M> entry: entries)
-        if (entry.hasVisibleEntry(level, tag))
+        if (entry.hasVisibleElement(level, tag))
           return true;
 
     return false;

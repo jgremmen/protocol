@@ -85,34 +85,34 @@ public class ProtocolGroupTest
     Tag tag = factory.getDefaultTag();
     ProtocolGroup gp = factory.createProtocol().createGroup();
 
-    assertFalse(gp.hasVisibleEntry(Shared.ALL, tag));
+    assertFalse(gp.hasVisibleElement(Shared.ALL, tag));
 
     gp.setGroupMessage("Test").with("param1", "Huhu");
 
-    assertTrue(gp.setVisibility(SHOW_HEADER_ONLY).hasVisibleEntry(ALL, tag));
-    assertTrue(gp.setVisibility(SHOW_HEADER_ALWAYS).hasVisibleEntry(ALL, tag));
-    assertFalse(gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).hasVisibleEntry(ALL, tag));
-    assertFalse(gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).hasVisibleEntry(ALL, tag));
-    assertFalse(gp.setVisibility(HIDDEN).hasVisibleEntry(ALL, tag));
-    assertFalse(gp.setVisibility(FLATTEN).hasVisibleEntry(ALL, tag));
+    assertTrue(gp.setVisibility(SHOW_HEADER_ONLY).hasVisibleElement(ALL, tag));
+    assertTrue(gp.setVisibility(SHOW_HEADER_ALWAYS).hasVisibleElement(ALL, tag));
+    assertFalse(gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).hasVisibleElement(ALL, tag));
+    assertFalse(gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).hasVisibleElement(ALL, tag));
+    assertFalse(gp.setVisibility(HIDDEN).hasVisibleElement(ALL, tag));
+    assertFalse(gp.setVisibility(FLATTEN).hasVisibleElement(ALL, tag));
 
     gp.debug().message("msg #1");
 
-    assertTrue(gp.setVisibility(SHOW_HEADER_ONLY).hasVisibleEntry(ALL, tag));
-    assertTrue(gp.setVisibility(SHOW_HEADER_ALWAYS).hasVisibleEntry(ALL, tag));
-    assertTrue(gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).hasVisibleEntry(ALL, tag));
-    assertTrue(gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).hasVisibleEntry(ALL, tag));
-    assertFalse(gp.setVisibility(HIDDEN).hasVisibleEntry(ALL, tag));
-    assertTrue(gp.setVisibility(FLATTEN).hasVisibleEntry(ALL, tag));
+    assertTrue(gp.setVisibility(SHOW_HEADER_ONLY).hasVisibleElement(ALL, tag));
+    assertTrue(gp.setVisibility(SHOW_HEADER_ALWAYS).hasVisibleElement(ALL, tag));
+    assertTrue(gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).hasVisibleElement(ALL, tag));
+    assertTrue(gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).hasVisibleElement(ALL, tag));
+    assertFalse(gp.setVisibility(HIDDEN).hasVisibleElement(ALL, tag));
+    assertTrue(gp.setVisibility(FLATTEN).hasVisibleElement(ALL, tag));
 
     gp.debug().message("msg #2");
 
-    assertTrue(gp.setVisibility(SHOW_HEADER_ONLY).hasVisibleEntry(ALL, tag));
-    assertTrue(gp.setVisibility(SHOW_HEADER_ALWAYS).hasVisibleEntry(ALL, tag));
-    assertTrue(gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).hasVisibleEntry(ALL, tag));
-    assertTrue(gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).hasVisibleEntry(ALL, tag));
-    assertFalse(gp.setVisibility(HIDDEN).hasVisibleEntry(ALL, tag));
-    assertTrue(gp.setVisibility(FLATTEN).hasVisibleEntry(ALL, tag));
+    assertTrue(gp.setVisibility(SHOW_HEADER_ONLY).hasVisibleElement(ALL, tag));
+    assertTrue(gp.setVisibility(SHOW_HEADER_ALWAYS).hasVisibleElement(ALL, tag));
+    assertTrue(gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).hasVisibleElement(ALL, tag));
+    assertTrue(gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).hasVisibleElement(ALL, tag));
+    assertFalse(gp.setVisibility(HIDDEN).hasVisibleElement(ALL, tag));
+    assertTrue(gp.setVisibility(FLATTEN).hasVisibleElement(ALL, tag));
   }
 
 

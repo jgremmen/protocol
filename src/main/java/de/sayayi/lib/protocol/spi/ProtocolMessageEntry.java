@@ -5,6 +5,7 @@ import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.Tag;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -15,9 +16,10 @@ class ProtocolMessageEntry<M> extends AbstractBasicMessage<M> implements Protoco
   private final Throwable throwable;
 
 
-  ProtocolMessageEntry(Level level, Set<Tag> tags, Throwable throwable, M message)
+  ProtocolMessageEntry(Level level, Set<Tag> tags, Throwable throwable, M message,
+                       Map<String,Object> defaultParameterValues)
   {
-    super(message);
+    super(message, defaultParameterValues);
 
     this.level = level;
     this.tags = tags;
@@ -50,7 +52,7 @@ class ProtocolMessageEntry<M> extends AbstractBasicMessage<M> implements Protoco
 
 
   @Override
-  public boolean hasVisibleEntry(Level level, Tag tag) {
+  public boolean hasVisibleElement(Level level, Tag tag) {
     return isMatch(level, tag);
   }
 

@@ -16,6 +16,16 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry>
 
   interface DepthEntry
   {
+    /**
+     * <p>
+     *   Returns the depth for this entry.
+     * </p>
+     * <p>
+     *
+     * </p>
+     *
+     * @return  entry depth
+     */
     int getDepth();
 
     boolean isFirst();

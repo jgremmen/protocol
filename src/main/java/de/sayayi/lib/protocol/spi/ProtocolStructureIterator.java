@@ -95,7 +95,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
         groupIterator = null;
       }
 
-      if (iterator == null || !iterator.hasNext())
+      if (!iterator.hasNext())
       {
         nextEntry = null;
         return;
@@ -105,13 +105,14 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
       if (protocolEntry instanceof ProtocolGroupImpl)
       {
-        groupIterator = new ProtocolStructureIterator.ForGroup<M>(level, tag, depth, (ProtocolGroupImpl<M>)protocolEntry,
-            nextEntry != null, iterator.hasNext());
+        groupIterator = new ProtocolStructureIterator.ForGroup<M>(level, tag, depth,
+            (ProtocolGroupImpl<M>)protocolEntry, nextEntry != null, iterator.hasNext());
         continue;
       }
 
       nextEntry = new MessageEntryImpl<M>(depth, nextEntry == null, !iterator.hasNext(),
           (ProtocolMessageEntry<M>)protocolEntry);
+      return;
     }
   }
 
@@ -125,6 +126,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
       prepareNextEntry();
     }
   }
+
 
   static class ForGroup<M> extends ProtocolStructureIterator<M>
   {
@@ -154,9 +156,13 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
               !hasEntryBeforeGroup, !hasEntryAfterGroup);
           break;
 
-        case FLATTEN:
-      }
+        case HIDDEN:
+          break;
 
+        default:
+          prepareNextEntry();
+          break;
+      }
     }
   }
 
@@ -251,8 +257,8 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
     @Override
-    public boolean hasVisibleEntry(Level level, Tag tag) {
-      return message.hasVisibleEntry(level, tag);
+    public boolean hasVisibleElement(Level level, Tag tag) {
+      return message.hasVisibleElement(level, tag);
     }
   }
 
@@ -297,7 +303,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
     @Override
-    public boolean hasVisibleEntry(Level level, Tag tag) {
+    public boolean hasVisibleElement(Level level, Tag tag) {
       return true;
     }
   }
@@ -322,7 +328,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
       while(iterator.hasNext())
       {
         nextEntry = iterator.next();
-        if (nextEntry.hasVisibleEntry(level, tag))
+        if (nextEntry.hasVisibleElement(level, tag))
           return;
       }
 

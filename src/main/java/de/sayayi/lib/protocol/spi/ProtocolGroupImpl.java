@@ -13,12 +13,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.HIDDEN;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_IF_NOT_EMPTY;
-import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ONLY;
 
 
-public final class ProtocolGroupImpl<M>
+final class ProtocolGroupImpl<M>
     extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
     implements ProtocolGroup<M>, Group<M>
 {
@@ -107,17 +105,13 @@ public final class ProtocolGroupImpl<M>
 
 
   @Override
-  public List<ProtocolEntry<M>> getEntries(Level level, Tag tag)
-  {
-    if (visibility == HIDDEN || visibility == SHOW_HEADER_ONLY)
-      return Collections.emptyList();
-    else
-      return super.getEntries(level, tag);
+  public List<ProtocolEntry<M>> getEntries(Level level, Tag tag) {
+    return visibility.isShowEntries() ? super.getEntries(level, tag) : Collections.<ProtocolEntry<M>>emptyList();
   }
 
 
   @Override
-  public boolean hasVisibleEntry(Level level, Tag tag)
+  public boolean hasVisibleElement(Level level, Tag tag)
   {
     if (tag.isMatch(level))
       switch(getEffectiveVisibility())
@@ -128,11 +122,11 @@ public final class ProtocolGroupImpl<M>
         case FLATTEN:
         case FLATTEN_ON_SINGLE_ENTRY:
         case SHOW_HEADER_IF_NOT_EMPTY:
-          return super.hasVisibleEntry(level, tag);
+          return super.hasVisibleElement(level, tag);
 
         case SHOW_HEADER_ALWAYS:
         case SHOW_HEADER_ONLY:
-          return groupMessage.hasVisibleEntry(level, tag);
+          return true;
       }
 
     return false;
@@ -216,7 +210,7 @@ public final class ProtocolGroupImpl<M>
   private class GroupMessage extends AbstractBasicMessage<M>
   {
     GroupMessage(M message) {
-      super(message);
+      super(message, factory.defaultParameterValues);
     }
 
 
@@ -227,7 +221,7 @@ public final class ProtocolGroupImpl<M>
 
 
     @Override
-    public boolean hasVisibleEntry(Level level, Tag tag) {
+    public boolean hasVisibleElement(Level level, Tag tag) {
       return isHeaderVisible(level, tag);
     }
 

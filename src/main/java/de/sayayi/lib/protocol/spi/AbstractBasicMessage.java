@@ -17,10 +17,10 @@ abstract class AbstractBasicMessage<M> implements BasicMessage<M>
   final Map<String,Object> parameterValues;
 
 
-  AbstractBasicMessage(M message)
+  AbstractBasicMessage(M message, Map<String,Object> defaultParameterValues)
   {
     this.message = message;
-    this.parameterValues = new HashMap<String,Object>(8);
+    this.parameterValues = new HashMap<String,Object>(defaultParameterValues);
   }
 
 

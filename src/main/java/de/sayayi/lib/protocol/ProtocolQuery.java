@@ -6,7 +6,7 @@ import java.util.List;
 public interface ProtocolQuery<M>
 {
   /**
-   * Tells whether this protocol object matches the given {@code level} and {@code tag}.
+   * Tells if this protocol object matches the given {@code level} and {@code tag}.
    *
    * @param level  requested protocol level, not {@code null}
    * @param tag    tag to query, not {@code null}
@@ -27,5 +27,5 @@ public interface ProtocolQuery<M>
   List<ProtocolEntry<M>> getEntries(Level level, Tag tag);
 
 
-  boolean hasVisibleEntry(Level level, Tag tag);
+  boolean hasVisibleElement(Level level, Tag tag);
 }

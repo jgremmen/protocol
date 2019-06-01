@@ -139,8 +139,8 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
-  public boolean hasVisibleEntry(Level level, Tag tag) {
-    return protocol.hasVisibleEntry(level, tag);
+  public boolean hasVisibleElement(Level level, Tag tag) {
+    return protocol.hasVisibleElement(level, tag);
   }
 
 

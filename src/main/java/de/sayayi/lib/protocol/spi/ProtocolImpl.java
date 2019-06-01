@@ -8,7 +8,7 @@ import de.sayayi.lib.protocol.Tag;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
-public class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
+class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
 {
   private static final AtomicInteger PROTOCOL_ID = new AtomicInteger(0);
 

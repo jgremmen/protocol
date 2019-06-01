@@ -2,6 +2,7 @@ package de.sayayi.lib.protocol;
 
 import de.sayayi.lib.protocol.Tag.LevelMatch;
 
+import java.util.Map;
 import java.util.Set;
 
 
@@ -53,6 +54,9 @@ public interface ProtocolFactory<M>
    * @return  default tag
    */
   Tag getDefaultTag();
+
+
+  Map<String,Object> getDefaultParameterValues();
 
 
   /**

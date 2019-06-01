@@ -1,5 +1,6 @@
 package de.sayayi.lib.protocol;
 
+import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -165,5 +166,20 @@ public class ProtocolFactoryTest
     assertTrue(tagUntilWarn.isMatch(WARN));
     assertFalse(tagUntilWarn.isMatch(ERROR));
     assertTrue(tagUntilWarn.isMatch(ALL));
+  }
+
+
+  @Test
+  public void testProcessMessage()
+  {
+    DefaultProtocolFactory factory = new DefaultProtocolFactory() {
+      @Override public String processMessage(String message) { return message + "(ok)"; }
+    };
+
+    Protocol<String> protocol = factory.createProtocol().debug().message("msg");
+    ProtocolIterator<String> iterator = protocol.iterator(ALL, factory.getDefaultTag());
+
+    //noinspection unchecked
+    assertEquals("msg(ok)", ((MessageEntry<String>)iterator.next()).getMessage());
   }
 }

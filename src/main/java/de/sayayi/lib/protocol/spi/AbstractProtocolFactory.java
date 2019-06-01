@@ -6,6 +6,8 @@ import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.Tag;
 import de.sayayi.lib.protocol.Tag.LevelMatch;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -25,11 +27,16 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
   private final int id;
   private final Tag defaultTag;
 
+  final Map<String,Object> defaultParameterValues;
+
 
   protected AbstractProtocolFactory()
   {
     id = FACTORY_ID.incrementAndGet();
     defaultTag = createTag(DEFAULT_TAG_NAME).getTag();
+
+    defaultParameterValues = new HashMap<String,Object>();
+    defaultParameterValues.put("factoryid", id);
   }
 
 
@@ -107,6 +114,12 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
   @Override
   public Set<Tag> getTags() {
     return new TreeSet<Tag>(registeredTags.values());
+  }
+
+
+  @Override
+  public Map<String, Object> getDefaultParameterValues() {
+    return Collections.unmodifiableMap(defaultParameterValues);
   }
 
 
@@ -220,6 +233,12 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
     @Override
     public Tag getDefaultTag() {
       return AbstractProtocolFactory.this.getDefaultTag();
+    }
+
+
+    @Override
+    public Map<String, Object> getDefaultParameterValues() {
+      return AbstractProtocolFactory.this.getDefaultParameterValues();
     }
 
 
