@@ -139,6 +139,14 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   }
 
 
+  @Override
+  public String toString()
+  {
+    return (this instanceof ForGroup ? "GroupIterator" : "ProtocolIterator") +
+        "[level=" + level + ",tag=" + tag + ",depth=" + depth + ']';
+  }
+
+
   static class ForProtocol<M> extends ProtocolStructureIterator<M>
   {
     ForProtocol(Level level, Tag tag, int depth, ProtocolImpl<M> protocol)
@@ -158,15 +166,13 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
   static class ForGroup<M> extends ProtocolStructureIterator<M>
   {
-    final boolean hasEntryBeforeGroup;
+    boolean forceFirst;
 
 
     ForGroup(Level level, Tag tag, int depth, ProtocolGroupImpl<M> protocol, boolean hasEntryBeforeGroup,
              boolean hasEntryAfterGroup)
     {
       super(level, tag, depth, protocol);
-
-      this.hasEntryBeforeGroup = hasEntryBeforeGroup;
 
       Visibility visibility = protocol.getEffectiveVisibility();
 
@@ -180,7 +186,8 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
         case SHOW_HEADER_ALWAYS:
           // header + messages, increase depth
           nextEntry = new GroupEntryImpl<M>(hasEntryAfterGroup, protocol.getGroupMessage(), this.depth++,
-              true, false, true);
+              !hasEntryBeforeGroup, !hasEntryAfterGroup, true);
+          forceFirst = true;
           break;
 
         case SHOW_HEADER_ONLY:
@@ -193,15 +200,17 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
           break;
 
         default:
-          prepareNextEntry();
+          prepareNextEntry(hasEntryBeforeGroup);
           break;
       }
     }
 
 
     @Override
-    void prepareNextEntry() {
-      prepareNextEntry(hasEntryBeforeGroup);
+    void prepareNextEntry()
+    {
+      prepareNextEntry(lastReturnedEntry != null && !forceFirst);
+      forceFirst = false;
     }
   }
 

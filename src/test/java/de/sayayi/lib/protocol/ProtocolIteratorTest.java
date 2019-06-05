@@ -21,6 +21,78 @@ import static org.junit.Assert.assertTrue;
 public class ProtocolIteratorTest
 {
   @Test
+  public void testDepth()
+  {
+    DefaultProtocolFactory factory = new DefaultProtocolFactory();
+    Tag tag = factory.getDefaultTag();
+    Protocol<String> protocol = factory.createProtocol();
+
+    ProtocolGroup<String> grp1, grp2;
+
+    protocol.debug().message("d0,msg1");
+
+    grp1 = protocol.createGroup().setGroupMessage("d0,grp1");
+    grp1.debug().message("d1,msg1");
+
+    grp2 = grp1.createGroup().setGroupMessage("d1,grp1");
+    grp2.debug().message("d2,msg1")
+        .debug().message("d2,msg2");
+
+    grp1.debug().message("d1,msg2");
+
+    ProtocolIterator<String> iterator = protocol.iterator(ALL, tag);
+    GroupEntry<String> grpEntry;
+    MessageEntry<String> msgEntry;
+
+    msgEntry = (MessageEntry<String>)iterator.next();
+    assertTrue(msgEntry.isFirst());
+    assertFalse(msgEntry.isLast());
+    assertEquals(0, msgEntry.getDepth());
+    assertEquals("d0,msg1", msgEntry.getMessage());
+
+    grpEntry = (GroupEntry<String>)iterator.next();
+    assertFalse(grpEntry.isFirst());
+    assertTrue(grpEntry.isLast());
+    assertFalse(grpEntry.hasEntryAfterGroup());
+    assertTrue(grpEntry.hasEntryInGroup());
+    assertEquals(0, grpEntry.getDepth());
+    assertEquals("d0,grp1", grpEntry.getGroupMessage().getMessage());
+
+    msgEntry = (MessageEntry<String>)iterator.next();
+    assertTrue(msgEntry.isFirst());
+    assertFalse(msgEntry.isLast());
+    assertEquals(1, msgEntry.getDepth());
+    assertEquals("d1,msg1", msgEntry.getMessage());
+
+    grpEntry = (GroupEntry<String>)iterator.next();
+    assertFalse(grpEntry.isFirst());
+    assertFalse(grpEntry.isLast());
+    assertTrue(grpEntry.hasEntryAfterGroup());
+    assertTrue(grpEntry.hasEntryInGroup());
+    assertEquals(1, grpEntry.getDepth());
+    assertEquals("d1,grp1", grpEntry.getGroupMessage().getMessage());
+
+    msgEntry = (MessageEntry<String>)iterator.next();
+    assertTrue(msgEntry.isFirst());
+    assertFalse(msgEntry.isLast());
+    assertEquals(2, msgEntry.getDepth());
+    assertEquals("d2,msg1", msgEntry.getMessage());
+
+    msgEntry = (MessageEntry<String>)iterator.next();
+    assertFalse(msgEntry.isFirst());
+    assertTrue(msgEntry.isLast());
+    assertEquals(2, msgEntry.getDepth());
+    assertEquals("d2,msg2", msgEntry.getMessage());
+
+    msgEntry = (MessageEntry<String>)iterator.next();
+    assertFalse(msgEntry.isFirst());
+    assertTrue(msgEntry.isLast());
+    assertEquals(1, msgEntry.getDepth());
+    assertEquals("d1,msg2", msgEntry.getMessage());
+  }
+
+
+  @Test
   public void testGroupGroup()
   {
     DefaultProtocolFactory factory = new DefaultProtocolFactory();
@@ -40,6 +112,7 @@ public class ProtocolIteratorTest
     assertTrue(grpEntry.isFirst());
     assertFalse(grpEntry.isLast());
     assertTrue(grpEntry.hasEntryAfterGroup());
+    assertTrue(grpEntry.hasEntryInGroup());
     assertEquals(0, grpEntry.getDepth());
     assertEquals("grp #1, header", grpEntry.getGroupMessage().getMessage());
 
