@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2019 Jeroen Gremmen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,16 +24,46 @@ import java.util.Set;
  */
 public interface ProtocolEntry<M> extends ProtocolQuery<M>
 {
-  interface BasicMessage<M> extends ProtocolEntry<M>
+  /**
+   * The simplest representation of a formattable protocol message.
+   *
+   * @param <M>  Internal message object type.
+   */
+  interface FormattableMessage<M> extends ProtocolEntry<M>
   {
+    /**
+     * Returns the internal representation of the message.
+     *
+     * @return  message, never {@code null}
+     */
     M getMessage();
 
 
+    /**
+     * <p>
+     *   Returns a map with parameter names and values to be used for formatting the message.
+     * </p>
+     * <p>
+     *   <ul>
+     *     <li>a parameter name (map key) must have a length of at least 1</li>
+     *     <li>additional parameters are allowed to those which are required to format the message</li>
+     *     <li>message formatters cannot rely on the order of the parameters</li>
+     *     <li>
+     *       if a parameter required by the message is missing, the behaviour depends on the message formatter
+     *       implementation; it may choose a default or throw an exception
+     *     </li>
+     *   </ul>
+     * </p>
+     *
+     * @return  parameter values, never {@code null}
+     *
+     * @see #getMessage()
+     */
     Map<String,Object> getParameterValues();
   }
 
 
-  interface Message<M> extends BasicMessage<M>
+  interface Message<M> extends FormattableMessage<M>
   {
     Level getLevel();
 
@@ -52,6 +82,11 @@ public interface ProtocolEntry<M> extends ProtocolQuery<M>
 
   interface Group<M> extends ProtocolEntry<M>
   {
-    BasicMessage<M> getGroupMessage();
+    /**
+     * Returns the group message.
+     *
+     * @return  group message or {@code null}
+     */
+    FormattableMessage<M> getGroupMessage();
   }
 }

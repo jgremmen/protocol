@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2019 Jeroen Gremmen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,7 @@ package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.ProtocolEntry;
-import de.sayayi.lib.protocol.ProtocolEntry.BasicMessage;
+import de.sayayi.lib.protocol.ProtocolEntry.FormattableMessage;
 import de.sayayi.lib.protocol.Tag;
 
 import java.util.Collections;
@@ -29,13 +29,13 @@ import java.util.Map;
 /**
  * @author Jeroen Gremmen
  */
-abstract class AbstractBasicMessage<M> implements BasicMessage<M>
+abstract class AbstractFormattableMessage<M> implements FormattableMessage<M>
 {
   final M message;
   final Map<String,Object> parameterValues;
 
 
-  AbstractBasicMessage(M message, Map<String,Object> defaultParameterValues)
+  AbstractFormattableMessage(M message, Map<String,Object> defaultParameterValues)
   {
     this.message = message;
     this.parameterValues = new HashMap<String,Object>(defaultParameterValues);

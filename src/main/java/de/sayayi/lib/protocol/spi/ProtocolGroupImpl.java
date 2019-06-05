@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2019 Jeroen Gremmen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -173,7 +173,7 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public BasicMessage<M> getGroupMessage() {
+  public FormattableMessage<M> getGroupMessage() {
     return groupMessage;
   }
 
@@ -225,7 +225,7 @@ final class ProtocolGroupImpl<M>
   }
 
 
-  private class GroupMessage extends AbstractBasicMessage<M>
+  private class GroupMessage extends AbstractFormattableMessage<M>
   {
     GroupMessage(M message) {
       super(message, factory.defaultParameterValues);
@@ -261,7 +261,7 @@ final class ProtocolGroupImpl<M>
       extends AbstractParameterBuilder<M,ProtocolGroup.MessageParameterBuilder<M>,ProtocolGroup.ProtocolMessageBuilder<M>>
       implements ProtocolGroup.MessageParameterBuilder<M>
   {
-    ParameterBuilderImpl(AbstractBasicMessage<M> message) {
+    ParameterBuilderImpl(AbstractFormattableMessage<M> message) {
       super(ProtocolGroupImpl.this, message);
     }
 

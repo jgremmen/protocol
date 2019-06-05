@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2019 Jeroen Gremmen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -66,12 +66,14 @@ public interface Protocol<M> extends ProtocolQuery<M>
   ProtocolGroup<M> createGroup();
 
 
+  @SuppressWarnings("unused")
   <R> R format(Level level, Tag tag, ProtocolFormatter<M,R> formatter);
 
 
   ProtocolIterator<M> iterator(Level level, Tag tag);
 
 
+  @SuppressWarnings({ "UnusedReturnValue", "unused" })
   interface ProtocolMessageBuilder<M>
   {
     ProtocolMessageBuilder<M> forTag(Tag tag);

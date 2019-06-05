@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2019 Jeroen Gremmen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,7 +27,7 @@ import java.util.Set;
 /**
  * @author Jeroen Gremmen
  */
-class ProtocolMessageEntry<M> extends AbstractBasicMessage<M> implements ProtocolEntry.Message<M>
+class ProtocolMessageEntry<M> extends AbstractFormattableMessage<M> implements ProtocolEntry.Message<M>
 {
   private final Level level;
   private final Set<Tag> tags;

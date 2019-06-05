@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2019 Jeroen Gremmen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +21,7 @@ import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.ProtocolFormatter;
-import de.sayayi.lib.protocol.ProtocolFormatter.Initializable;
+import de.sayayi.lib.protocol.ProtocolFormatter.InitializableProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.Tag;
 
@@ -137,8 +137,8 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   @Override
   public <R> R format(Level level, Tag tag, ProtocolFormatter<M,R> formatter)
   {
-    if (formatter instanceof Initializable)
-      ((Initializable)formatter).init(level, tag);
+    if (formatter instanceof ProtocolFormatter.InitializableProtocolFormatter)
+      ((InitializableProtocolFormatter)formatter).init(level, tag);
 
     return formatter.getResult();
   }

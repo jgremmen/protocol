@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2019 Jeroen Gremmen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -46,8 +46,8 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
   int depth;
   Iterator<ProtocolEntry<M>> iterator;
-  DepthEntry lastReturnedEntry;
-  DepthEntry nextEntry;
+  DepthEntry<M> lastReturnedEntry;
+  DepthEntry<M> nextEntry;
 
 
   ProtocolStructureIterator(Level level, Tag tag, int depth, AbstractProtocol<M,?> protocol)
@@ -80,7 +80,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
   @Override
-  public DepthEntry next()
+  public DepthEntry<M> next()
   {
     if (!hasNext())
       throw new NoSuchElementException();
@@ -180,13 +180,13 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
         case SHOW_HEADER_ALWAYS:
           // header + messages, increase depth
           nextEntry = new GroupEntryImpl<M>(hasEntryAfterGroup, protocol.getGroupMessage(), this.depth++,
-              true, false);
+              true, false, true);
           break;
 
         case SHOW_HEADER_ONLY:
           // header only, no messages; remain at same depth
           nextEntry = new GroupEntryImpl<M>(hasEntryAfterGroup, protocol.getGroupMessage(), depth,
-              !hasEntryBeforeGroup, !hasEntryAfterGroup);
+              !hasEntryBeforeGroup, !hasEntryAfterGroup, false);
           break;
 
         case HIDDEN:
@@ -206,7 +206,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   }
 
 
-  static abstract class DepthEntryImpl implements DepthEntry
+  static abstract class DepthEntryImpl<M> implements DepthEntry<M>
   {
     final int depth;
     final boolean first;
@@ -240,7 +240,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   }
 
 
-  private static class MessageEntryImpl<M> extends DepthEntryImpl implements MessageEntry<M>
+  private static class MessageEntryImpl<M> extends DepthEntryImpl<M> implements MessageEntry<M>
   {
     final ProtocolMessageEntry<M> message;
 
@@ -302,18 +302,21 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   }
 
 
-  private static class GroupEntryImpl<M> extends DepthEntryImpl implements GroupEntry<M>
+  private static class GroupEntryImpl<M> extends DepthEntryImpl<M> implements GroupEntry<M>
   {
     private final boolean entryAfterGroup;
-    private final BasicMessage<M> groupMessage;
+    private final FormattableMessage<M> groupMessage;
+    private final boolean entryInGroup;
 
 
-    GroupEntryImpl(boolean entryAfterGroup, BasicMessage<M> groupMessage, int depth, boolean first, boolean last)
+    GroupEntryImpl(boolean entryAfterGroup, FormattableMessage<M> groupMessage, int depth, boolean first, boolean last,
+                   boolean entryInGroup)
     {
       super(depth, first, last);
 
       this.entryAfterGroup = entryAfterGroup;
       this.groupMessage = groupMessage;
+      this.entryInGroup = entryInGroup;
     }
 
 
@@ -324,8 +327,14 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
     @Override
-    public BasicMessage<M> getGroupMessage() {
+    public FormattableMessage<M> getGroupMessage() {
       return groupMessage;
+    }
+
+
+    @Override
+    public boolean hasEntryInGroup() {
+      return entryInGroup;
     }
 
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2019 Jeroen Gremmen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,39 +25,99 @@ import java.util.Iterator;
 /**
  * @author Jeroen Gremmen
  */
-public interface ProtocolIterator<M> extends Iterator<DepthEntry>
+public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
 {
+  /**
+   * Returns the level used for iteration.
+   *
+   * @return  iteration level, never {@code null}
+   */
   Level getLevel();
 
+
+  /**
+   * Returns the tag used for iteration.
+   *
+   * @return  iteration tag, never {@code null}
+   */
   Tag getTag();
 
 
-  interface DepthEntry
+  @SuppressWarnings("unused")
+  interface DepthEntry<M>
   {
     /**
      * <p>
      *   Returns the depth for this entry.
      * </p>
      * <p>
+     *  The first entry (message or group entry) returned by a protocol iterator starts at depth 0. For each group with
+     *  group message, the messages belonging to that group have an incremented depth:
      *
+     *  <ul>
+     *    <li>Message 1 (depth = 0)</li>
+     *    <li>
+     *      Group message (depth = 0)
+     *      <ul>
+     *        <li>Message 2 (depth = 1)</li>
+     *        <li>Message 3 (depth = 1)</li>
+     *      </ul>
+     *    </li>
+     *    <li>Message 4 (depth = 0)</li>
+     *  </ul>
      * </p>
      *
      * @return  entry depth
      */
     int getDepth();
 
+
+    /**
+     * Tells if this is the first entry with respect to its depth.
+     *
+     * @return  {@code true} if this is the first entry, {@code false} otherwise.
+     *
+     * @see #getDepth()
+     * @see #isLast()
+     */
     boolean isFirst();
 
+
+    /**
+     * Tells if this is the last entry with respect to its depth.
+     *
+     * @return  {@code true} if this is the last entry, {@code false} otherwise.
+     *
+     * @see #getDepth()
+     * @see #isFirst()
+     */
     boolean isLast();
   }
 
 
-  interface MessageEntry<M> extends DepthEntry, Message<M> {
+  interface MessageEntry<M> extends DepthEntry<M>, Message<M> {
   }
 
 
-  interface GroupEntry<M> extends DepthEntry, Group<M>
+  interface GroupEntry<M> extends DepthEntry<M>, Group<M>
   {
+    /**
+     * Tells if the group itself contains an entry.
+     *
+     * @return  {@code true} if the group contains at least one matching entry, {@code false} otherwise.
+     */
+    boolean hasEntryInGroup();
+
+
     boolean hasEntryAfterGroup();
+
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return  group message, never {@code null}
+     */
+    @Override
+    FormattableMessage<M> getGroupMessage();
   }
 }

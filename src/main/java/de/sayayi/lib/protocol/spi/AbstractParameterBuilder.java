@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2019 Jeroen Gremmen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,10 +37,10 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
     implements MessageParameterBuilder<M>
 {
   private final AbstractProtocol<M,B> protocol;
-  private final AbstractBasicMessage<M> message;
+  private final AbstractFormattableMessage<M> message;
 
 
-  AbstractParameterBuilder(AbstractProtocol<M,B> protocol, AbstractBasicMessage<M> message)
+  AbstractParameterBuilder(AbstractProtocol<M,B> protocol, AbstractFormattableMessage<M> message)
   {
     this.protocol = protocol;
     this.message = message;

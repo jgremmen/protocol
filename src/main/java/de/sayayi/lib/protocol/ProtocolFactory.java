@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2019 Jeroen Gremmen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -98,6 +98,7 @@ public interface ProtocolFactory<M>
   M processMessage(String message);
 
 
+  @SuppressWarnings("UnusedReturnValue")
   interface TagBuilder<M> extends ProtocolFactory<M>
   {
     TagBuilder dependsOn(String ... tags);
