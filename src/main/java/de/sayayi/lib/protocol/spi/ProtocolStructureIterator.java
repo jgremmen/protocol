@@ -24,10 +24,11 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   private final Level level;
   private final Tag tag;
 
-  private int depth;
   private ForGroup<M> groupIterator;
 
+  int depth;
   Iterator<ProtocolEntry<M>> iterator;
+  DepthEntry lastReturnedEntry;
   DepthEntry nextEntry;
 
 
@@ -66,11 +67,11 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     if (!hasNext())
       throw new NoSuchElementException();
 
-    DepthEntry entry = nextEntry;
+    lastReturnedEntry = nextEntry;
 
     prepareNextEntry();
 
-    return entry;
+    return lastReturnedEntry;
   }
 
 
@@ -80,7 +81,10 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   }
 
 
-  void prepareNextEntry()
+  abstract void prepareNextEntry();
+
+
+  void prepareNextEntry(boolean hasEntryBefore)
   {
     for(;;)
     {
@@ -106,11 +110,11 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
       if (protocolEntry instanceof ProtocolGroupImpl)
       {
         groupIterator = new ProtocolStructureIterator.ForGroup<M>(level, tag, depth,
-            (ProtocolGroupImpl<M>)protocolEntry, nextEntry != null, iterator.hasNext());
+            (ProtocolGroupImpl<M>)protocolEntry, hasEntryBefore, iterator.hasNext());
         continue;
       }
 
-      nextEntry = new MessageEntryImpl<M>(depth, nextEntry == null, !iterator.hasNext(),
+      nextEntry = new MessageEntryImpl<M>(depth, !hasEntryBefore, !iterator.hasNext(),
           (ProtocolMessageEntry<M>)protocolEntry);
       return;
     }
@@ -123,17 +127,28 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     {
       super(level, tag, depth, protocol);
 
-      prepareNextEntry();
+      prepareNextEntry(false);
+    }
+
+
+    @Override
+    void prepareNextEntry() {
+      prepareNextEntry(lastReturnedEntry != null);
     }
   }
 
 
   static class ForGroup<M> extends ProtocolStructureIterator<M>
   {
+    final boolean hasEntryBeforeGroup;
+
+
     ForGroup(Level level, Tag tag, int depth, ProtocolGroupImpl<M> protocol, boolean hasEntryBeforeGroup,
              boolean hasEntryAfterGroup)
     {
       super(level, tag, depth, protocol);
+
+      this.hasEntryBeforeGroup = hasEntryBeforeGroup;
 
       Visibility visibility = protocol.getEffectiveVisibility();
 
@@ -146,7 +161,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
       {
         case SHOW_HEADER_ALWAYS:
           // header + messages, increase depth
-          nextEntry = new GroupEntryImpl<M>(hasEntryAfterGroup, protocol.getGroupMessage(), ++depth,
+          nextEntry = new GroupEntryImpl<M>(hasEntryAfterGroup, protocol.getGroupMessage(), this.depth++,
               true, false);
           break;
 
@@ -163,6 +178,12 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
           prepareNextEntry();
           break;
       }
+    }
+
+
+    @Override
+    void prepareNextEntry() {
+      prepareNextEntry(hasEntryBeforeGroup);
     }
   }
 

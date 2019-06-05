@@ -118,7 +118,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
 
   @Override
-  public Map<String, Object> getDefaultParameterValues() {
+  public Map<String,Object> getDefaultParameterValues() {
     return Collections.unmodifiableMap(defaultParameterValues);
   }
 
@@ -237,7 +237,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
 
     @Override
-    public Map<String, Object> getDefaultParameterValues() {
+    public Map<String,Object> getDefaultParameterValues() {
       return AbstractProtocolFactory.this.getDefaultParameterValues();
     }
 

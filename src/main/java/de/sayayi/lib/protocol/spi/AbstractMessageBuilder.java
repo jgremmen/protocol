@@ -97,13 +97,13 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
         if (impliedTag.isMatch(level))
           resolvedTags.add(impliedTag);
 
-    AbstractProtocolFactory<M> factory = protocol.factory;
-    ProtocolMessageEntry<M> msg = new ProtocolMessageEntry<M>(level, resolvedTags, throwable,
-        factory.processMessage(message), factory.defaultParameterValues);
-
     // if this message has no tags, don't add it to the protocol.
     if (!resolvedTags.isEmpty())
     {
+      AbstractProtocolFactory<M> factory = protocol.factory;
+      ProtocolMessageEntry<M> msg = new ProtocolMessageEntry<M>(level, resolvedTags, throwable,
+          factory.processMessage(message), factory.defaultParameterValues);
+
       protocol.entries.add(msg);
       protocol.updateTagAndLevel(resolvedTags, level);
 
