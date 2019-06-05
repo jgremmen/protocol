@@ -7,6 +7,9 @@ import static de.sayayi.lib.protocol.Level.Shared.INFO;
 import static de.sayayi.lib.protocol.Tag.LevelMatch.AT_LEAST;
 
 
+/**
+ * @author Jeroen Gremmen
+ */
 public class ProtocolTest
 {
   @Test
