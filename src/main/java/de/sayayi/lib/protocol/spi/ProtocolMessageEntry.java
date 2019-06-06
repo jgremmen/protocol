@@ -18,6 +18,7 @@ package de.sayayi.lib.protocol.spi;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.Tag;
+import lombok.Getter;
 
 import java.util.Collections;
 import java.util.Map;
@@ -29,9 +30,9 @@ import java.util.Set;
  */
 class ProtocolMessageEntry<M> extends AbstractFormattableMessage<M> implements ProtocolEntry.Message<M>
 {
-  private final Level level;
+  @Getter private final Level level;
   private final Set<Tag> tags;
-  private final Throwable throwable;
+  @Getter private final Throwable throwable;
 
 
   ProtocolMessageEntry(Level level, Set<Tag> tags, Throwable throwable, M message,
@@ -46,20 +47,8 @@ class ProtocolMessageEntry<M> extends AbstractFormattableMessage<M> implements P
 
 
   @Override
-  public Level getLevel() {
-    return level;
-  }
-
-
-  @Override
   public Set<Tag> getTags() {
     return Collections.unmodifiableSet(tags);
-  }
-
-
-  @Override
-  public Throwable getThrowable() {
-    return throwable;
   }
 
 

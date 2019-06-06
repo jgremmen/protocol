@@ -16,10 +16,13 @@
 package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.Level;
+import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.Protocol.MessageParameterBuilder;
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.ProtocolEntry;
+import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolFormatter;
+import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.Tag;
@@ -103,6 +106,18 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
+  public ProtocolFactory<M> getFactory() {
+    return protocol.getFactory();
+  }
+
+
+  @Override
+  public Protocol<M> getGroupParent() {
+    return protocol.getGroupParent();
+  }
+
+
+  @Override
   public B debug() {
     return protocol.debug();
   }
@@ -140,7 +155,13 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
   @Override
   public <R> R format(Level level, Tag tag, ProtocolFormatter<M,R> formatter) {
-    return null;
+    return protocol.format(level, tag, formatter);
+  }
+
+
+  @Override
+  public <R> R format(ConfiguredProtocolFormatter<M, R> formatter) {
+    return protocol.format(formatter);
   }
 
 

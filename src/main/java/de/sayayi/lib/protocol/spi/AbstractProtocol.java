@@ -21,12 +21,18 @@ import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.ProtocolFormatter;
+import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolFormatter.InitializableProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolGroup;
+import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
+import de.sayayi.lib.protocol.ProtocolIterator.GroupEntry;
+import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.Tag;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -36,7 +42,7 @@ import java.util.Set;
  */
 abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implements Protocol<M>
 {
-  final AbstractProtocolFactory<M> factory;
+  @Getter final AbstractProtocolFactory<M> factory;
   final List<ProtocolEntry<M>> entries;
 
   private Set<Tag> tags;
@@ -137,9 +143,38 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   @Override
   public <R> R format(Level level, Tag tag, ProtocolFormatter<M,R> formatter)
   {
-    if (formatter instanceof ProtocolFormatter.InitializableProtocolFormatter)
-      ((InitializableProtocolFormatter)formatter).init(level, tag);
+    // initialize formatter
+    if (formatter instanceof InitializableProtocolFormatter)
+      ((InitializableProtocolFormatter)formatter).init(level, tag, countGroupDepth());
+
+    for(Iterator<DepthEntry<M>> iterator = iterator(level, tag); iterator.hasNext();)
+    {
+      DepthEntry<M> entry = iterator.next();
+
+      if (entry instanceof MessageEntry)
+        formatter.message((MessageEntry<M>)entry);
+      else if (entry instanceof GroupEntry)
+        formatter.group((GroupEntry<M>)entry);
+    }
 
     return formatter.getResult();
+  }
+
+
+  @Override
+  public <R> R format(ConfiguredProtocolFormatter<M,R> formatter) {
+    return format(formatter.getLevel(), formatter.getTag(), formatter);
+  }
+
+
+  int countGroupDepth()
+  {
+    int depth = 0;
+
+    for(ProtocolEntry<M> entry: entries)
+      if (entry instanceof ProtocolGroupImpl)
+        depth = Math.max(depth, 1 + ((ProtocolGroupImpl)entry).countGroupDepth());
+
+    return depth;
   }
 }

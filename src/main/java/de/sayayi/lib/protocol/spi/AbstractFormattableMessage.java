@@ -19,6 +19,7 @@ import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.ProtocolEntry.FormattableMessage;
 import de.sayayi.lib.protocol.Tag;
+import lombok.Getter;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,7 +32,7 @@ import java.util.Map;
  */
 abstract class AbstractFormattableMessage<M> implements FormattableMessage<M>
 {
-  final M message;
+  @Getter final M message;
   final Map<String,Object> parameterValues;
 
 
@@ -39,12 +40,6 @@ abstract class AbstractFormattableMessage<M> implements FormattableMessage<M>
   {
     this.message = message;
     this.parameterValues = new HashMap<String,Object>(defaultParameterValues);
-  }
-
-
-  @Override
-  public M getMessage() {
-    return message;
   }
 
 

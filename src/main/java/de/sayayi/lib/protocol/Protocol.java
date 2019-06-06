@@ -15,6 +15,8 @@
  */
 package de.sayayi.lib.protocol;
 
+import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
+
 import java.util.Map;
 
 
@@ -23,6 +25,17 @@ import java.util.Map;
  */
 public interface Protocol<M> extends ProtocolQuery<M>
 {
+  /**
+   * Returns the protocol factory which was used to create this protocol instance.
+   *
+   * @return  protocol factory
+   */
+  ProtocolFactory<M> getFactory();
+
+
+  Protocol<M> getGroupParent();
+
+
   /**
    * Add a debug level message.
    *
@@ -68,6 +81,9 @@ public interface Protocol<M> extends ProtocolQuery<M>
 
   @SuppressWarnings("unused")
   <R> R format(Level level, Tag tag, ProtocolFormatter<M,R> formatter);
+
+
+  <R> R format(ConfiguredProtocolFormatter<M,R> formatter);
 
 
   ProtocolIterator<M> iterator(Level level, Tag tag);

@@ -40,20 +40,16 @@ public interface ProtocolEntry<M> extends ProtocolQuery<M>
 
 
     /**
-     * <p>
-     *   Returns a map with parameter names and values to be used for formatting the message.
-     * </p>
-     * <p>
-     *   <ul>
-     *     <li>a parameter name (map key) must have a length of at least 1</li>
-     *     <li>additional parameters are allowed to those which are required to format the message</li>
-     *     <li>message formatters cannot rely on the order of the parameters</li>
-     *     <li>
-     *       if a parameter required by the message is missing, the behaviour depends on the message formatter
-     *       implementation; it may choose a default or throw an exception
-     *     </li>
-     *   </ul>
-     * </p>
+     * Returns a map with parameter names and values to be used for formatting the message.
+     * <ul>
+     *   <li>a parameter name (map key) must have a length of at least 1</li>
+     *   <li>additional parameters are allowed to those which are required to format the message</li>
+     *   <li>message formatters cannot rely on the order of the parameters</li>
+     *   <li>
+     *     if a parameter required by the message is missing, the behaviour depends on the message formatter
+     *     implementation; it may choose a default or throw an exception
+     *   </li>
+     * </ul>
      *
      * @return  parameter values, never {@code null}
      *

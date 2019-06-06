@@ -23,6 +23,7 @@ import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.ProtocolGroup.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.Tag;
+import lombok.Getter;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,8 +41,8 @@ final class ProtocolGroupImpl<M>
 {
   private final AbstractProtocol<M,Protocol.ProtocolMessageBuilder<M>> parent;
 
-  private Visibility visibility;
-  private GroupMessage groupMessage;
+  @Getter private Visibility visibility;
+  @Getter private GroupMessage groupMessage;
 
 
   ProtocolGroupImpl(AbstractProtocol<M,Protocol.ProtocolMessageBuilder<M>> parent)
@@ -62,8 +63,8 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public Visibility getVisibility() {
-    return visibility;
+  public Protocol<M> getGroupParent() {
+    return parent;
   }
 
 
@@ -169,12 +170,6 @@ final class ProtocolGroupImpl<M>
     groupMessage = null;
 
     return this;
-  }
-
-
-  @Override
-  public FormattableMessage<M> getGroupMessage() {
-    return groupMessage;
   }
 
 

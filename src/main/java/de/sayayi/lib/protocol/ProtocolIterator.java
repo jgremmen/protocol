@@ -53,19 +53,18 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
      * <p>
      *  The first entry (message or group entry) returned by a protocol iterator starts at depth 0. For each group with
      *  group message, the messages belonging to that group have an incremented depth:
-     *
-     *  <ul>
-     *    <li>Message 1 (depth = 0)</li>
-     *    <li>
-     *      Group message (depth = 0)
-     *      <ul>
-     *        <li>Message 2 (depth = 1)</li>
-     *        <li>Message 3 (depth = 1)</li>
-     *      </ul>
-     *    </li>
-     *    <li>Message 4 (depth = 0)</li>
-     *  </ul>
      * </p>
+     * <ul>
+     *   <li>Message 1 (depth = 0)</li>
+     *   <li>
+     *     Group message (depth = 0)
+     *     <ul>
+     *       <li>Message 2 (depth = 1)</li>
+     *       <li>Message 3 (depth = 1)</li>
+     *     </ul>
+     *   </li>
+     *   <li>Message 4 (depth = 0)</li>
+     * </ul>
      *
      * @return  entry depth
      */

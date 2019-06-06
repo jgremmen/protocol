@@ -15,27 +15,72 @@
  */
 package de.sayayi.lib.protocol;
 
-import de.sayayi.lib.protocol.ProtocolEntry.FormattableMessage;
-import de.sayayi.lib.protocol.ProtocolEntry.Message;
+import de.sayayi.lib.protocol.ProtocolIterator.GroupEntry;
+import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 
 
 /**
+ * @param <M>  internal message type
+ * @param <R>  formatting result type
+ *
  * @author Jeroen Gremmen
  */
 public interface ProtocolFormatter<M,R>
 {
-  void message(Message<M> message, boolean lastEntry);
+  void message(MessageEntry<M> message);
 
 
-  @SuppressWarnings("unused")
-  void group(int group, FormattableMessage<M> groupMessage, boolean lastEntry, boolean hasGroupEntries);
+  void group(GroupEntry<M> group);
 
 
+  /**
+   * Returns the formatted result.
+   *
+   * @return  formatted result
+   */
   R getResult();
 
 
+  /**
+   * <p>
+   *   A formatter of this type is automatically initialized by {@link Protocol#format(Level, Tag, ProtocolFormatter)}.
+   * </p>
+   * <p>
+   *   Implementing classes must make sure, that the formatter is reusable after invoking
+   *   {@link #init(Level, Tag, int)}. Thread safety however is not a requirement.
+   * </p>
+   *
+   * @param <M>  internal message type
+   * @param <R>  formatting result type
+   */
   interface InitializableProtocolFormatter<M,R> extends ProtocolFormatter<M,R>
   {
-    void init(Level level, Tag tag);
+    /**
+     * This method is invoked before any other formatting methods are invoked and must initialize the formatter in
+     * such way that it can be reused.
+     *
+     * @param level  matching protocol level
+     * @param tag  matching protocol tag
+     * @param estimatedGroupDepth  the estimated depth of nested protocol groups ({@code 0} means the protocol contains
+     *                             no groups). The real depth depends on {@code level}, {@code tag} and group visibility
+     *                             settings but is never greater than the estimated depth.
+     *
+     * @see Protocol#format(Level, Tag, ProtocolFormatter)
+     */
+    void init(Level level, Tag tag, int estimatedGroupDepth);
+  }
+
+
+  /**
+   *
+   * @param <M>  internal message type
+   * @param <R>  formatting result type
+   */
+  interface ConfiguredProtocolFormatter<M,R> extends ProtocolFormatter<M,R>
+  {
+    Level getLevel();
+
+
+    Tag getTag();
   }
 }

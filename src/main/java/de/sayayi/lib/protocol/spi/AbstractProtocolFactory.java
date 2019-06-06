@@ -20,6 +20,7 @@ import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.Tag;
 import de.sayayi.lib.protocol.Tag.LevelMatch;
+import lombok.Getter;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -43,7 +44,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
   private final Map<String,TagImpl> registeredTags = new TreeMap<String,TagImpl>();
   private final int id;
-  private final Tag defaultTag;
+  @Getter private final Tag defaultTag;
 
   final Map<String,Object> defaultParameterValues;
 
@@ -55,11 +56,6 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
     defaultParameterValues = new HashMap<String,Object>();
     defaultParameterValues.put("factoryid", id);
-  }
-
-
-  public Tag getDefaultTag() {
-    return defaultTag;
   }
 
 
@@ -149,7 +145,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
   private class TagBuilderImpl implements TagBuilder<M>
   {
-    private final TagImpl tag;
+    @Getter private final TagImpl tag;
 
 
     TagBuilderImpl(TagImpl tag) {
@@ -158,20 +154,14 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
 
     @Override
-    public Tag getTag() {
-      return tag;
-    }
-
-
-    @Override
-    public TagBuilder<M> match(LevelMatch match, Level level)
+    public TagBuilder<M> match(LevelMatch levelMatch, Level level)
     {
-      if (match == null)
-        throw new NullPointerException("match must not be null");
+      if (levelMatch == null)
+        throw new NullPointerException("levelMatch must not be null");
       if (level == null)
         throw new NullPointerException("level must not be null");
 
-      tag.match = match;
+      tag.levelMatch = levelMatch;
       tag.level = level;
 
       return this;
@@ -269,11 +259,12 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
   static class TagImpl implements Tag, Comparable<TagImpl>
   {
-    private final int id;
-    private final String name;
+    @Getter private final int id;
+    @Getter private final String name;
 
-    private LevelMatch match = LevelMatch.AT_LEAST;
-    private Level level = ALL;
+    @Getter private LevelMatch levelMatch = LevelMatch.AT_LEAST;
+    @Getter private Level level = ALL;
+
     private Set<TagImpl> implies = new HashSet<TagImpl>(8);
 
 
@@ -285,30 +276,12 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
 
     @Override
-    public String getName() {
-      return name;
-    }
-
-
-    @Override
-    public LevelMatch getLevelMatch() {
-      return match;
-    }
-
-
-    @Override
-    public Level getLevel() {
-      return level;
-    }
-
-
-    @Override
     public boolean isMatch(Level level)
     {
       if (level == null)
         throw new NullPointerException("level must not be null");
 
-      switch(match)
+      switch(levelMatch)
       {
         case AT_LEAST:
           return level.severity() >= this.level.severity();
@@ -385,7 +358,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
       s.append(',').append(level);
 
-      switch(match)
+      switch(levelMatch)
       {
         case AT_LEAST:
           s.append("(>=)");

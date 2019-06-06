@@ -20,6 +20,7 @@ import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.ProtocolGroup.Visibility;
 import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.Tag;
+import lombok.Getter;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -39,8 +40,8 @@ import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ONLY;
  */
 abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 {
-  private final Level level;
-  private final Tag tag;
+  @Getter private final Level level;
+  @Getter private final Tag tag;
 
   private ForGroup<M> groupIterator;
 
@@ -58,18 +59,6 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
     groupIterator = null;
     iterator = new VisibleProtocolEntryAdapter(protocol.getEntries(level, tag).iterator());
-  }
-
-
-  @Override
-  public Level getLevel() {
-    return level;
-  }
-
-
-  @Override
-  public Tag getTag() {
-    return tag;
   }
 
 
@@ -217,9 +206,9 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
   static abstract class DepthEntryImpl<M> implements DepthEntry<M>
   {
-    final int depth;
-    final boolean first;
-    final boolean last;
+    @Getter final int depth;
+    @Getter final boolean first;
+    @Getter final boolean last;
 
 
     DepthEntryImpl(int depth, boolean first, boolean last)
@@ -227,24 +216,6 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
       this.depth = depth;
       this.first = first;
       this.last = last;
-    }
-
-
-    @Override
-    public int getDepth() {
-      return depth;
-    }
-
-
-    @Override
-    public boolean isFirst() {
-      return first;
-    }
-
-
-    @Override
-    public boolean isLast() {
-      return last;
     }
   }
 
@@ -307,6 +278,12 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     @Override
     public boolean hasVisibleElement(Level level, Tag tag) {
       return message.hasVisibleElement(level, tag);
+    }
+
+
+    @Override
+    public String toString() {
+      return message.toString();
     }
   }
 

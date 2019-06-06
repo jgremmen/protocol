@@ -77,19 +77,16 @@ public interface ProtocolFactory<M>
 
 
   /**
+   * Transform the given message into its internal representation.
    * <p>
-   *   Transform the given message into its internal representation.
-   * </p>
-   * <p>
-   *   The simplest implementation would be to return the message as is. However this method provides a way to
-   *   integrate more complex message retrieval and/or formatting strategies:
+   * The simplest implementation would be to return the message as is. However this method provides a way to
+   * integrate more complex message retrieval and/or formatting strategies:
    *
-   *   <ul>
-   *     <li>The {@code message} could be a resource key which is used to lookup the actual message text</li>
-   *     <li>Syntax analysis can be performed on the message</li>
-   *     <li>The {@code message} could be a Spring Expression and the returned object would be a compiled expression</li>
-   *   </ul>
-   * </p>
+   * <ul>
+   *   <li>The {@code message} could be a resource key which is used to lookup the actual message text</li>
+   *   <li>Syntax analysis can be performed on the message</li>
+   *   <li>The {@code message} could be a Spring Expression and the returned object would be a compiled expression</li>
+   * </ul>
    *
    * @param message  message
    *
