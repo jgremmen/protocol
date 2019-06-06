@@ -22,6 +22,7 @@ import de.sayayi.lib.protocol.ProtocolFormatter.InitializableProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.Tag;
+import org.jetbrains.annotations.NotNull;
 
 
 /**
@@ -49,7 +50,7 @@ public class TreeProtocolFormatter<M> implements InitializableProtocolFormatter<
 
 
   @Override
-  public void init(Level level, Tag tag, int estimatedGroupDepth)
+  public void init(@NotNull Level level, @NotNull Tag tag, int estimatedGroupDepth)
   {
     result.delete(0, result.length());
     (prefixes = new String[estimatedGroupDepth + 1])[0] = "";
@@ -69,7 +70,7 @@ public class TreeProtocolFormatter<M> implements InitializableProtocolFormatter<
 
 
   @Override
-  public void message(MessageEntry<M> message)
+  public void message(@NotNull MessageEntry<M> message)
   {
     int depth = message.getDepth();
 
@@ -88,7 +89,7 @@ public class TreeProtocolFormatter<M> implements InitializableProtocolFormatter<
 
 
   @Override
-  public void group(GroupEntry<M> group)
+  public void group(@NotNull GroupEntry<M> group)
   {
     int depth = group.getDepth();
     String prefix = prefixes[depth];
@@ -108,7 +109,7 @@ public class TreeProtocolFormatter<M> implements InitializableProtocolFormatter<
 
 
   @Override
-  public String getResult() {
+  public @NotNull String getResult() {
     return result.toString();
   }
 }

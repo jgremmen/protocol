@@ -20,6 +20,7 @@ import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.ProtocolEntry.FormattableMessage;
 import de.sayayi.lib.protocol.Tag;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,7 +37,7 @@ abstract class AbstractFormattableMessage<M> implements FormattableMessage<M>
   final Map<String,Object> parameterValues;
 
 
-  AbstractFormattableMessage(M message, Map<String,Object> defaultParameterValues)
+  AbstractFormattableMessage(@NotNull M message, @NotNull Map<String,Object> defaultParameterValues)
   {
     this.message = message;
     this.parameterValues = new HashMap<String,Object>(defaultParameterValues);
@@ -44,13 +45,13 @@ abstract class AbstractFormattableMessage<M> implements FormattableMessage<M>
 
 
   @Override
-  public Map<String,Object> getParameterValues() {
+  public @NotNull Map<String,Object> getParameterValues() {
     return Collections.unmodifiableMap(parameterValues);
   }
 
 
   @Override
-  public List<ProtocolEntry<M>> getEntries(Level level, Tag tag)
+  public @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag tag)
   {
     return isMatch(level, tag)
         ? Collections.<ProtocolEntry<M>>singletonList(this)

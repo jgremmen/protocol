@@ -29,12 +29,11 @@ import de.sayayi.lib.protocol.ProtocolIterator.GroupEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.Tag;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 
 /**
@@ -45,65 +44,62 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   @Getter final AbstractProtocolFactory<M> factory;
   final List<ProtocolEntry<M>> entries;
 
-  private Set<Tag> tags;
-  private Level maxLevel;
 
-
-  AbstractProtocol(AbstractProtocolFactory<M> factory)
+  AbstractProtocol(@NotNull AbstractProtocolFactory<M> factory)
   {
     this.factory = factory;
     entries = new ArrayList<ProtocolEntry<M>>(8);
-
-    tags = new HashSet<Tag>();
-    maxLevel = Shared.ALL;
-  }
-
-
-  protected void updateTagAndLevel(Set<Tag> tags, Level level)
-  {
-    if (tags != null)
-      this.tags.addAll(tags);
-
-    if (level != null && level.severity() > maxLevel.severity())
-      maxLevel = level;
   }
 
 
   @Override
-  public B debug() {
+  public @NotNull B debug() {
     return add(Shared.DEBUG);
   }
 
 
   @Override
-  public B info() {
+  public @NotNull B info() {
     return add(Shared.INFO);
   }
 
 
   @Override
-  public B warn() {
+  public @NotNull B warn() {
     return add(Shared.WARN);
   }
 
 
   @Override
-  public B error() {
+  public @NotNull B error() {
     return add(Shared.ERROR);
   }
 
 
-  public abstract B add(Level level);
+  @SuppressWarnings("unchecked")
+  @Override
+  public @NotNull B error(Throwable throwable) {
+    return (B)add(Shared.ERROR).withThrowable(throwable);
+  }
+
+
+  public abstract @NotNull B add(@NotNull Level level);
 
 
   @Override
-  public boolean isMatch(Level level, Tag tag) {
-    return maxLevel.severity() >= level.severity() && tag.isMatch(level) && tags.contains(tag);
+  public boolean isMatch(@NotNull Level level, @NotNull Tag tag)
+  {
+    if (tag.isMatch(level))
+      for(ProtocolEntry<M> entry: entries)
+        if (entry.isMatch(level, tag))
+          return true;
+
+    return false;
   }
 
 
   @Override
-  public List<ProtocolEntry<M>> getEntries(Level level, Tag tag)
+  public @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag tag)
   {
     List<ProtocolEntry<M>> filteredEntries = new ArrayList<ProtocolEntry<M>>();
 
@@ -117,7 +113,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
 
   @Override
-  public boolean hasVisibleElement(Level level, Tag tag)
+  public boolean hasVisibleElement(@NotNull Level level, @NotNull Tag tag)
   {
     if (tag.isMatch(level))
       for(ProtocolEntry<M> entry: entries)
@@ -129,7 +125,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
 
   @Override
-  public ProtocolGroup<M> createGroup()
+  public @NotNull ProtocolGroup<M> createGroup()
   {
     @SuppressWarnings("unchecked")
     ProtocolGroupImpl<M> group = new ProtocolGroupImpl<M>((AbstractProtocol<M,ProtocolMessageBuilder<M>>)this);
@@ -141,7 +137,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
 
   @Override
-  public <R> R format(Level level, Tag tag, ProtocolFormatter<M,R> formatter)
+  public <R> R format(@NotNull Level level, @NotNull Tag tag, @NotNull ProtocolFormatter<M,R> formatter)
   {
     // initialize formatter
     if (formatter instanceof InitializableProtocolFormatter)
@@ -162,7 +158,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
 
   @Override
-  public <R> R format(ConfiguredProtocolFormatter<M,R> formatter) {
+  public <R> R format(@NotNull ConfiguredProtocolFormatter<M,R> formatter) {
     return format(formatter.getLevel(), formatter.getTag(), formatter);
   }
 

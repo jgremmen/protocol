@@ -15,6 +15,9 @@
  */
 package de.sayayi.lib.protocol;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Set;
 
 
@@ -28,13 +31,16 @@ public interface Tag
    *
    * @return  tag name
    */
-  String getName();
+  @Contract(pure = true)
+  @NotNull String getName();
 
 
-  LevelMatch getLevelMatch();
+  @Contract(pure = true)
+  @NotNull LevelMatch getLevelMatch();
 
 
-  Level getLevel();
+  @Contract(pure = true)
+  @NotNull Level getLevel();
 
 
   /**
@@ -47,7 +53,8 @@ public interface Tag
    * @see #getLevelMatch()
    * @see #getLevel()
    */
-  boolean isMatch(Level level);
+  @Contract(pure = true)
+  boolean isMatch(@NotNull Level level);
 
 
   /**
@@ -55,7 +62,8 @@ public interface Tag
    *
    * @return  set of implied tags
    */
-  Set<Tag> getImpliedTags();
+  @Contract(pure = true)
+  @NotNull Set<Tag> getImpliedTags();
 
 
   enum LevelMatch {

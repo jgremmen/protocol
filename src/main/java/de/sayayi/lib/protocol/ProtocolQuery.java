@@ -15,6 +15,9 @@
  */
 package de.sayayi.lib.protocol;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 
@@ -31,7 +34,8 @@ public interface ProtocolQuery<M>
    *
    * @return  {@code true} if the protocol object matches, {@code false} otherwise
    */
-  boolean isMatch(Level level, Tag tag);
+  @Contract(pure = true)
+  boolean isMatch(@NotNull Level level, @NotNull Tag tag);
 
 
   /**
@@ -42,8 +46,10 @@ public interface ProtocolQuery<M>
    *
    * @return  a list of protocol entries, never {@code null}
    */
-  List<ProtocolEntry<M>> getEntries(Level level, Tag tag);
+  @Contract(pure = true)
+  @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag tag);
 
 
-  boolean hasVisibleElement(Level level, Tag tag);
+  @Contract(pure = true)
+  boolean hasVisibleElement(@NotNull Level level, @NotNull Tag tag);
 }

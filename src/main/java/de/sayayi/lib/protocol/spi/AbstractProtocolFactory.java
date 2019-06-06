@@ -21,6 +21,7 @@ import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.Tag;
 import de.sayayi.lib.protocol.Tag.LevelMatch;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -60,14 +61,15 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
 
   @Override
-  public Protocol<M> createProtocol() {
+  public @NotNull Protocol<M> createProtocol() {
     return new ProtocolImpl<M>(this);
   }
 
 
   @SuppressWarnings("SuspiciousMethodCalls")
-  public boolean isRegisteredTag(Tag tag)
+  public boolean isRegisteredTag(@NotNull Tag tag)
   {
+    //noinspection ConstantConditions
     if (tag == null)
       throw new NullPointerException("tag must not be null");
 
@@ -76,8 +78,9 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
 
   @Override
-  public TagBuilder<M> createTag(String name)
+  public @NotNull TagBuilder<M> createTag(@NotNull String name)
   {
+    //noinspection ConstantConditions
     if (name == null || name.isEmpty())
       throw new IllegalArgumentException("name must not be empty");
 
@@ -92,8 +95,9 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
 
   @Override
-  public TagBuilder<M> modifyTag(String name)
+  public @NotNull TagBuilder<M> modifyTag(@NotNull String name)
   {
+    //noinspection ConstantConditions
     if (name == null || name.isEmpty())
       throw new IllegalArgumentException("name must not be empty");
 
@@ -106,8 +110,14 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
 
   @Override
-  public TagImpl getTagByName(String name)
+  public Tag getTagByName(@NotNull String name) {
+    return getTagByName0(name);
+  }
+
+
+  private TagImpl getTagByName0(@NotNull String name)
   {
+    //noinspection ConstantConditions
     if (name == null || name.isEmpty())
       throw new IllegalArgumentException("name must not be empty");
 
@@ -116,8 +126,9 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
 
   @Override
-  public boolean hasTag(String name)
+  public boolean hasTag(@NotNull String name)
   {
+    //noinspection ConstantConditions
     if (name == null || name.isEmpty())
       throw new IllegalArgumentException("name must not be empty");
 
@@ -126,19 +137,19 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
 
   @Override
-  public Set<Tag> getTags() {
+  public @NotNull Set<Tag> getTags() {
     return new TreeSet<Tag>(registeredTags.values());
   }
 
 
   @Override
-  public Map<String,Object> getDefaultParameterValues() {
+  public @NotNull Map<String,Object> getDefaultParameterValues() {
     return Collections.unmodifiableMap(defaultParameterValues);
   }
 
 
   @Override
-  public String toString() {
+  public @NotNull String toString() {
     return "ProtocolFactory[id=" + id + ",tags=" + registeredTags.keySet() + ']';
   }
 
@@ -148,13 +159,14 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
     @Getter private final TagImpl tag;
 
 
-    TagBuilderImpl(TagImpl tag) {
+    TagBuilderImpl(@NotNull TagImpl tag) {
       this.tag = tag;
     }
 
 
+    @SuppressWarnings("ConstantConditions")
     @Override
-    public TagBuilder<M> match(LevelMatch levelMatch, Level level)
+    public @NotNull TagBuilder<M> match(@NotNull LevelMatch levelMatch, @NotNull Level level)
     {
       if (levelMatch == null)
         throw new NullPointerException("levelMatch must not be null");
@@ -169,11 +181,11 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
 
     @Override
-    public TagBuilder<M> implies(String ... tags)
+    public @NotNull TagBuilder<M> implies(@NotNull String ... tags)
     {
       for(String tagName: tags)
       {
-        TagImpl impliedTag = AbstractProtocolFactory.this.getTagByName(tagName);
+        TagImpl impliedTag = AbstractProtocolFactory.this.getTagByName0(tagName);
         if (impliedTag != null)
           tag.implies.add(impliedTag);
       }
@@ -183,11 +195,11 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
 
     @Override
-    public TagBuilder<M> dependsOn(String ... tags)
+    public @NotNull TagBuilder<M> dependsOn(@NotNull String ... tags)
     {
       for(String tagName: tags)
       {
-        TagImpl dependsOnTag = AbstractProtocolFactory.this.getTagByName(tagName);
+        TagImpl dependsOnTag = AbstractProtocolFactory.this.getTagByName0(tagName);
         if (dependsOnTag != null)
           dependsOnTag.implies.add(tag);
       }
@@ -197,61 +209,61 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
 
     @Override
-    public TagBuilder<M> createTag(String name) {
+    public @NotNull TagBuilder<M> createTag(@NotNull String name) {
       return AbstractProtocolFactory.this.createTag(name);
     }
 
 
     @Override
-    public TagBuilder<M> modifyTag(String name) {
+    public @NotNull TagBuilder<M> modifyTag(@NotNull String name) {
       return AbstractProtocolFactory.this.modifyTag(name);
     }
 
 
     @Override
-    public Protocol<M> createProtocol() {
+    public @NotNull Protocol<M> createProtocol() {
       return AbstractProtocolFactory.this.createProtocol();
     }
 
 
     @Override
-    public Tag getTagByName(String name) {
+    public Tag getTagByName(@NotNull String name) {
       return AbstractProtocolFactory.this.getTagByName(name);
     }
 
 
     @Override
-    public boolean hasTag(String name) {
+    public boolean hasTag(@NotNull String name) {
       return AbstractProtocolFactory.this.hasTag(name);
     }
 
 
     @Override
-    public boolean isRegisteredTag(Tag tag) {
+    public boolean isRegisteredTag(@NotNull Tag tag) {
       return AbstractProtocolFactory.this.isRegisteredTag(tag);
     }
 
 
     @Override
-    public Set<Tag> getTags() {
+    public @NotNull Set<Tag> getTags() {
       return AbstractProtocolFactory.this.getTags();
     }
 
 
     @Override
-    public Tag getDefaultTag() {
+    public @NotNull Tag getDefaultTag() {
       return AbstractProtocolFactory.this.getDefaultTag();
     }
 
 
     @Override
-    public Map<String,Object> getDefaultParameterValues() {
+    public @NotNull Map<String,Object> getDefaultParameterValues() {
       return AbstractProtocolFactory.this.getDefaultParameterValues();
     }
 
 
     @Override
-    public M processMessage(String message) {
+    public M processMessage(@NotNull String message) {
       return AbstractProtocolFactory.this.processMessage(message);
     }
   }
@@ -268,7 +280,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
     private Set<TagImpl> implies = new HashSet<TagImpl>(8);
 
 
-    TagImpl(String name)
+    TagImpl(@NotNull String name)
     {
       this.name = name;
       id = TAG_ID.incrementAndGet();
@@ -276,8 +288,9 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
 
     @Override
-    public boolean isMatch(Level level)
+    public boolean isMatch(@NotNull Level level)
     {
+      //noinspection ConstantConditions
       if (level == null)
         throw new NullPointerException("level must not be null");
 
@@ -301,7 +314,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
 
     @Override
-    public Set<Tag> getImpliedTags()
+    public @NotNull Set<Tag> getImpliedTags()
     {
       HashSet<Tag> tags = new HashSet<Tag>();
 

@@ -15,6 +15,9 @@
  */
 package de.sayayi.lib.protocol;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Map;
 import java.util.Set;
 
@@ -36,7 +39,8 @@ public interface ProtocolEntry<M> extends ProtocolQuery<M>
      *
      * @return  message, never {@code null}
      */
-    M getMessage();
+    @Contract(pure = true)
+    @NotNull M getMessage();
 
 
     /**
@@ -55,16 +59,19 @@ public interface ProtocolEntry<M> extends ProtocolQuery<M>
      *
      * @see #getMessage()
      */
-    Map<String,Object> getParameterValues();
+    @Contract(pure = true)
+    @NotNull Map<String,Object> getParameterValues();
   }
 
 
   interface Message<M> extends FormattableMessage<M>
   {
-    Level getLevel();
+    @Contract(pure = true)
+    @NotNull Level getLevel();
 
 
-    Set<Tag> getTags();
+    @Contract(pure = true)
+    @NotNull Set<Tag> getTags();
 
 
     /**
@@ -72,6 +79,7 @@ public interface ProtocolEntry<M> extends ProtocolQuery<M>
      *
      * @return  throwable/exception or {@code null}
      */
+    @Contract(pure = true)
     Throwable getThrowable();
   }
 
@@ -83,6 +91,7 @@ public interface ProtocolEntry<M> extends ProtocolQuery<M>
      *
      * @return  group message or {@code null}
      */
+    @Contract(pure = true)
     FormattableMessage<M> getGroupMessage();
   }
 }

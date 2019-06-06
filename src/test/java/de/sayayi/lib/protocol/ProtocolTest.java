@@ -25,11 +25,11 @@ public class ProtocolTest
     Protocol protocol = factory.createProtocol();
 
     protocol.add(DEBUG).message("Just sayin'")
-            .warn().forTags(ui).withThrowable(new NullPointerException()).message("MSG-048");
+            .error(new NullPointerException()).forTags(ui).message("MSG-048");
 
     ProtocolGroup gp = protocol.createGroup().setGroupMessage("Huhu");
 
     gp.error().message("MSG-104").with("test", true)
-        .setGroupMessage("GRP-771").with("idx", 45);
+      .setGroupMessage("GRP-771").with("idx", 45);
   }
 }

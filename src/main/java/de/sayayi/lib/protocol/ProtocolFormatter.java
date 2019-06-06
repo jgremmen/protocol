@@ -17,6 +17,8 @@ package de.sayayi.lib.protocol;
 
 import de.sayayi.lib.protocol.ProtocolIterator.GroupEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 
 /**
@@ -27,10 +29,10 @@ import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
  */
 public interface ProtocolFormatter<M,R>
 {
-  void message(MessageEntry<M> message);
+  void message(@NotNull MessageEntry<M> message);
 
 
-  void group(GroupEntry<M> group);
+  void group(@NotNull GroupEntry<M> group);
 
 
   /**
@@ -38,6 +40,7 @@ public interface ProtocolFormatter<M,R>
    *
    * @return  formatted result
    */
+  @Contract(pure = true)
   R getResult();
 
 
@@ -67,7 +70,7 @@ public interface ProtocolFormatter<M,R>
      *
      * @see Protocol#format(Level, Tag, ProtocolFormatter)
      */
-    void init(Level level, Tag tag, int estimatedGroupDepth);
+    void init(@NotNull Level level, @NotNull Tag tag, int estimatedGroupDepth);
   }
 
 
@@ -78,9 +81,11 @@ public interface ProtocolFormatter<M,R>
    */
   interface ConfiguredProtocolFormatter<M,R> extends ProtocolFormatter<M,R>
   {
-    Level getLevel();
+    @Contract(pure = true)
+    @NotNull Level getLevel();
 
 
-    Tag getTag();
+    @Contract(pure = true)
+    @NotNull Tag getTag();
   }
 }

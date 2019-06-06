@@ -24,10 +24,10 @@ import de.sayayi.lib.protocol.ProtocolGroup.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.Tag;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_IF_NOT_EMPTY;
 
@@ -45,20 +45,12 @@ final class ProtocolGroupImpl<M>
   @Getter private GroupMessage groupMessage;
 
 
-  ProtocolGroupImpl(AbstractProtocol<M,Protocol.ProtocolMessageBuilder<M>> parent)
+  ProtocolGroupImpl(@NotNull AbstractProtocol<M,Protocol.ProtocolMessageBuilder<M>> parent)
   {
     super(parent.factory);
 
     this.parent = parent;
     visibility = SHOW_HEADER_IF_NOT_EMPTY;
-  }
-
-
-  @Override
-  protected void updateTagAndLevel(Set<Tag> tags, Level level)
-  {
-    parent.updateTagAndLevel(tags, level);
-    super.updateTagAndLevel(tags, level);
   }
 
 
@@ -69,14 +61,15 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public Visibility getEffectiveVisibility() {
+  public @NotNull Visibility getEffectiveVisibility() {
     return (groupMessage == null) ? visibility.forAbsentHeader() : visibility;
   }
 
 
   @Override
-  public ProtocolGroup<M> setVisibility(Visibility visibility)
+  public @NotNull ProtocolGroup<M> setVisibility(@NotNull Visibility visibility)
   {
+    //noinspection ConstantConditions
     if (visibility == null)
       throw new NullPointerException("visibility must not be null");
 
@@ -87,7 +80,7 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public boolean isHeaderVisible(Level level, Tag tag)
+  public boolean isHeaderVisible(@NotNull Level level, @NotNull Tag tag)
   {
     if (groupMessage != null)
       switch(visibility)
@@ -124,13 +117,13 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public List<ProtocolEntry<M>> getEntries(Level level, Tag tag) {
+  public @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag tag) {
     return visibility.isShowEntries() ? super.getEntries(level, tag) : Collections.<ProtocolEntry<M>>emptyList();
   }
 
 
   @Override
-  public boolean hasVisibleElement(Level level, Tag tag)
+  public boolean hasVisibleElement(@NotNull Level level, @NotNull Tag tag)
   {
     if (tag.isMatch(level))
       switch(getEffectiveVisibility())
@@ -153,8 +146,9 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public ProtocolGroup.MessageParameterBuilder<M> setGroupMessage(String message)
+  public @NotNull ProtocolGroup.MessageParameterBuilder<M> setGroupMessage(@NotNull String message)
   {
+    //noinspection ConstantConditions
     if (message == null)
       throw new NullPointerException("message must not be null");
 
@@ -165,7 +159,7 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public ProtocolGroup<M> removeGroupMessage()
+  public @NotNull ProtocolGroup<M> removeGroupMessage()
   {
     groupMessage = null;
 
@@ -174,8 +168,9 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public ProtocolGroup.ProtocolMessageBuilder<M> add(Level level)
+  public @NotNull ProtocolGroup.ProtocolMessageBuilder<M> add(@NotNull Level level)
   {
+    //noinspection ConstantConditions
     if (level == null)
       throw new NullPointerException("level must not be null");
 
@@ -185,19 +180,19 @@ final class ProtocolGroupImpl<M>
 
   @SuppressWarnings("unchecked")
   @Override
-  public Protocol<M> getRootProtocol() {
+  public @NotNull Protocol<M> getRootProtocol() {
     return (parent instanceof ProtocolGroup) ? ((ProtocolGroup<M>)parent).getRootProtocol() : parent;
   }
 
 
   @Override
-  public boolean isMatch(Level level, Tag tag) {
+  public boolean isMatch(@NotNull Level level, @NotNull Tag tag) {
     return getEffectiveVisibility().isShowEntries() && super.isMatch(level, tag);
   }
 
 
   @Override
-  public ProtocolIterator<M> iterator(Level level, Tag tag)
+  public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag tag)
   {
     return new ProtocolStructureIterator.ForGroup<M>(level, tag, 0,this, false,
         false);
@@ -208,13 +203,13 @@ final class ProtocolGroupImpl<M>
       extends AbstractMessageBuilder<M,ProtocolGroup.ProtocolMessageBuilder<M>,ProtocolGroup.MessageParameterBuilder<M>>
       implements ProtocolGroup.ProtocolMessageBuilder<M>
   {
-    MessageBuilder(Level level) {
+    MessageBuilder(@NotNull Level level) {
       super(ProtocolGroupImpl.this, level);
     }
 
 
     @Override
-    protected ProtocolGroup.MessageParameterBuilder<M> createMessageParameterBuilder(ProtocolMessageEntry<M> message) {
+    protected @NotNull ProtocolGroup.MessageParameterBuilder<M> createMessageParameterBuilder(ProtocolMessageEntry<M> message) {
       return new ParameterBuilderImpl(message);
     }
   }
@@ -222,19 +217,19 @@ final class ProtocolGroupImpl<M>
 
   private class GroupMessage extends AbstractFormattableMessage<M>
   {
-    GroupMessage(M message) {
+    GroupMessage(@NotNull M message) {
       super(message, factory.defaultParameterValues);
     }
 
 
     @Override
-    public boolean isMatch(Level level, Tag tag) {
+    public boolean isMatch(@NotNull Level level, @NotNull Tag tag) {
       return isHeaderVisible(level, tag);
     }
 
 
     @Override
-    public boolean hasVisibleElement(Level level, Tag tag) {
+    public boolean hasVisibleElement(@NotNull Level level, @NotNull Tag tag) {
       return isHeaderVisible(level, tag);
     }
 
@@ -262,49 +257,49 @@ final class ProtocolGroupImpl<M>
 
 
     @Override
-    public Visibility getVisibility() {
+    public @NotNull Visibility getVisibility() {
       return ProtocolGroupImpl.this.getVisibility();
     }
 
 
     @Override
-    public Visibility getEffectiveVisibility() {
+    public @NotNull Visibility getEffectiveVisibility() {
       return ProtocolGroupImpl.this.getEffectiveVisibility();
     }
 
 
     @Override
-    public ProtocolGroup<M> setVisibility(Visibility visibility) {
+    public @NotNull ProtocolGroup<M> setVisibility(@NotNull Visibility visibility) {
       return ProtocolGroupImpl.this.setVisibility(visibility);
     }
 
 
     @Override
-    public boolean isHeaderVisible(Level level, Tag tag) {
+    public boolean isHeaderVisible(@NotNull Level level, @NotNull Tag tag) {
       return ProtocolGroupImpl.this.isHeaderVisible(level, tag);
     }
 
 
     @Override
-    public ProtocolGroup.MessageParameterBuilder<M> setGroupMessage(String message) {
+    public @NotNull ProtocolGroup.MessageParameterBuilder<M> setGroupMessage(@NotNull String message) {
       return ProtocolGroupImpl.this.setGroupMessage(message);
     }
 
 
     @Override
-    public ProtocolGroup<M> removeGroupMessage() {
+    public @NotNull ProtocolGroup<M> removeGroupMessage() {
       return ProtocolGroupImpl.this.removeGroupMessage();
     }
 
 
     @Override
-    public Protocol<M> getRootProtocol() {
+    public @NotNull Protocol<M> getRootProtocol() {
       return ProtocolGroupImpl.this.getRootProtocol();
     }
 
 
     @Override
-    public ProtocolIterator<M> iterator(Level level, Tag tag) {
+    public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag tag) {
       return ProtocolGroupImpl.this.iterator(level, tag);
     }
   }

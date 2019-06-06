@@ -16,6 +16,7 @@
 package de.sayayi.lib.protocol;
 
 import de.sayayi.lib.protocol.spi.AbstractProtocolFactory;
+import org.jetbrains.annotations.NotNull;
 
 
 /**
@@ -24,7 +25,7 @@ import de.sayayi.lib.protocol.spi.AbstractProtocolFactory;
 public class DefaultProtocolFactory extends AbstractProtocolFactory<String>
 {
   @Override
-  public String processMessage(String message) {
+  public String processMessage(@NotNull String message) {
     return message;
   }
 }

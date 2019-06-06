@@ -19,6 +19,7 @@ import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol.MessageParameterBuilder;
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.Tag;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -38,7 +39,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   private Throwable throwable;
 
 
-  AbstractMessageBuilder(AbstractProtocol<M,B> protocol, Level level)
+  AbstractMessageBuilder(@NotNull AbstractProtocol<M,B> protocol, @NotNull Level level)
   {
     this.protocol = protocol;
     this.level = level;
@@ -48,12 +49,13 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   }
 
 
-  protected abstract P createMessageParameterBuilder(ProtocolMessageEntry<M> message);
+  protected abstract @NotNull P createMessageParameterBuilder(ProtocolMessageEntry<M> message);
 
 
   @Override
-  public B forTag(Tag tag)
+  public @NotNull B forTag(@NotNull Tag tag)
   {
+    //noinspection ConstantConditions
     if (tag == null)
       throw new NullPointerException("tag must not be null");
 
@@ -67,7 +69,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
 
 
   @Override
-  public B forTags(Tag ... tags)
+  public @NotNull B forTags(@NotNull Tag ... tags)
   {
     for(Tag tag: tags)
       forTag(tag);
@@ -77,7 +79,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
 
 
   @Override
-  public B forTags(String ... tagNames)
+  public @NotNull B forTags(@NotNull String ... tagNames)
   {
     for(String tagName: tagNames)
     {
@@ -93,7 +95,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
 
 
   @Override
-  public B withThrowable(Throwable throwable)
+  public @NotNull B withThrowable(Throwable throwable)
   {
     this.throwable = throwable;
 
@@ -102,8 +104,9 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
 
 
   @Override
-  public P message(String message)
+  public @NotNull P message(@NotNull String message)
   {
+    //noinspection ConstantConditions
     if (message == null)
       throw new NullPointerException("message must not be null");
 
@@ -123,7 +126,6 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
           factory.processMessage(message), factory.defaultParameterValues);
 
       protocol.entries.add(msg);
-      protocol.updateTagAndLevel(resolvedTags, level);
 
       return createMessageParameterBuilder(msg);
     }

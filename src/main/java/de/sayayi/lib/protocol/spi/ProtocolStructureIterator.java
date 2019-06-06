@@ -21,6 +21,7 @@ import de.sayayi.lib.protocol.ProtocolGroup.Visibility;
 import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.Tag;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -51,7 +52,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   DepthEntry<M> nextEntry;
 
 
-  ProtocolStructureIterator(Level level, Tag tag, int depth, AbstractProtocol<M,?> protocol)
+  ProtocolStructureIterator(@NotNull Level level, @NotNull Tag tag, int depth, @NotNull AbstractProtocol<M,?> protocol)
   {
     this.level = level;
     this.tag = tag;
@@ -69,7 +70,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
   @Override
-  public DepthEntry<M> next()
+  public @NotNull DepthEntry<M> next()
   {
     if (!hasNext())
       throw new NoSuchElementException();
@@ -138,7 +139,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
   static class ForProtocol<M> extends ProtocolStructureIterator<M>
   {
-    ForProtocol(Level level, Tag tag, int depth, ProtocolImpl<M> protocol)
+    ForProtocol(@NotNull Level level, @NotNull Tag tag, int depth, @NotNull ProtocolImpl<M> protocol)
     {
       super(level, tag, depth, protocol);
 
@@ -158,8 +159,8 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     boolean forceFirst;
 
 
-    ForGroup(Level level, Tag tag, int depth, ProtocolGroupImpl<M> protocol, boolean hasEntryBeforeGroup,
-             boolean hasEntryAfterGroup)
+    ForGroup(@NotNull Level level, @NotNull Tag tag, int depth, @NotNull ProtocolGroupImpl<M> protocol,
+             boolean hasEntryBeforeGroup, boolean hasEntryAfterGroup)
     {
       super(level, tag, depth, protocol);
 
@@ -225,7 +226,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     final ProtocolMessageEntry<M> message;
 
 
-    MessageEntryImpl(int depth, boolean first, boolean last, ProtocolMessageEntry<M> message)
+    MessageEntryImpl(int depth, boolean first, boolean last, @NotNull ProtocolMessageEntry<M> message)
     {
       super(depth, first, last);
 
@@ -234,13 +235,13 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
     @Override
-    public Level getLevel() {
+    public @NotNull Level getLevel() {
       return message.getLevel();
     }
 
 
     @Override
-    public Set<Tag> getTags() {
+    public @NotNull Set<Tag> getTags() {
       return message.getTags();
     }
 
@@ -252,31 +253,31 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
     @Override
-    public M getMessage() {
+    public @NotNull M getMessage() {
       return message.getMessage();
     }
 
 
     @Override
-    public Map<String, Object> getParameterValues() {
+    public @NotNull Map<String,Object> getParameterValues() {
       return message.getParameterValues();
     }
 
 
     @Override
-    public boolean isMatch(Level level, Tag tag) {
+    public boolean isMatch(@NotNull Level level, @NotNull Tag tag) {
       return message.isMatch(level, tag);
     }
 
 
     @Override
-    public List<ProtocolEntry<M>> getEntries(Level level, Tag tag) {
+    public @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag tag) {
       return message.getEntries(level, tag);
     }
 
 
     @Override
-    public boolean hasVisibleElement(Level level, Tag tag) {
+    public boolean hasVisibleElement(@NotNull Level level, @NotNull Tag tag) {
       return message.hasVisibleElement(level, tag);
     }
 
@@ -312,6 +313,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     }
 
 
+    @NotNull
     @Override
     public FormattableMessage<M> getGroupMessage() {
       return groupMessage;
@@ -325,19 +327,20 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
     @Override
-    public boolean isMatch(Level level, Tag tag) {
+    public boolean isMatch(@NotNull Level level, @NotNull Tag tag) {
       return true;
     }
 
 
+    @NotNull
     @Override
-    public List<ProtocolEntry<M>> getEntries(Level level, Tag tag) {
+    public List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag tag) {
       return Collections.<ProtocolEntry<M>>singletonList(groupMessage);
     }
 
 
     @Override
-    public boolean hasVisibleElement(Level level, Tag tag) {
+    public boolean hasVisibleElement(@NotNull Level level, @NotNull Tag tag) {
       return true;
     }
   }

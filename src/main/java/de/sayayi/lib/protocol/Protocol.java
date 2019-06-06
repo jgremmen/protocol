@@ -16,6 +16,8 @@
 package de.sayayi.lib.protocol;
 
 import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -30,9 +32,11 @@ public interface Protocol<M> extends ProtocolQuery<M>
    *
    * @return  protocol factory
    */
-  ProtocolFactory<M> getFactory();
+  @Contract(pure = true)
+  @NotNull ProtocolFactory<M> getFactory();
 
 
+  @Contract(pure = true)
   Protocol<M> getGroupParent();
 
 
@@ -41,7 +45,8 @@ public interface Protocol<M> extends ProtocolQuery<M>
    *
    * @return  message builder instance for the debug message
    */
-  ProtocolMessageBuilder<M> debug();
+  @Contract(pure = true)
+  @NotNull ProtocolMessageBuilder<M> debug();
 
 
   /**
@@ -49,7 +54,8 @@ public interface Protocol<M> extends ProtocolQuery<M>
    *
    * @return  message builder instance for the info message
    */
-  ProtocolMessageBuilder<M> info();
+  @Contract(pure = true)
+  @NotNull ProtocolMessageBuilder<M> info();
 
 
   /**
@@ -57,7 +63,8 @@ public interface Protocol<M> extends ProtocolQuery<M>
    *
    * @return  message builder instance for the warning message
    */
-  ProtocolMessageBuilder<M> warn();
+  @Contract(pure = true)
+  @NotNull ProtocolMessageBuilder<M> warn();
 
 
   /**
@@ -65,10 +72,23 @@ public interface Protocol<M> extends ProtocolQuery<M>
    *
    * @return  message builder instance for the error message
    */
-  ProtocolMessageBuilder<M> error();
+  @Contract(pure = true)
+  @NotNull ProtocolMessageBuilder<M> error();
 
 
-  ProtocolMessageBuilder<M> add(Level level);
+  /**
+   * Add an error level message with throwable.
+   *
+   * @param throwable  throwable associated with message
+   *
+   * @return  message builder instance for the error message
+   */
+  @Contract(pure = true)
+  @NotNull ProtocolMessageBuilder<M> error(Throwable throwable);
+
+
+  @Contract(pure = true)
+  @NotNull ProtocolMessageBuilder<M> add(@NotNull Level level);
 
 
   /**
@@ -76,35 +96,38 @@ public interface Protocol<M> extends ProtocolQuery<M>
    *
    * @return  new protocol group
    */
-  ProtocolGroup<M> createGroup();
+  @NotNull ProtocolGroup<M> createGroup();
 
 
   @SuppressWarnings("unused")
-  <R> R format(Level level, Tag tag, ProtocolFormatter<M,R> formatter);
+  @Contract(pure = true)
+  <R> R format(@NotNull Level level, @NotNull Tag tag, @NotNull ProtocolFormatter<M,R> formatter);
 
 
-  <R> R format(ConfiguredProtocolFormatter<M,R> formatter);
+  @Contract(pure = true)
+  <R> R format(@NotNull ConfiguredProtocolFormatter<M,R> formatter);
 
 
-  ProtocolIterator<M> iterator(Level level, Tag tag);
+  @Contract(pure = true)
+  @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag tag);
 
 
   @SuppressWarnings({ "UnusedReturnValue", "unused" })
   interface ProtocolMessageBuilder<M>
   {
-    ProtocolMessageBuilder<M> forTag(Tag tag);
+    @NotNull ProtocolMessageBuilder<M> forTag(@NotNull Tag tag);
 
 
-    ProtocolMessageBuilder<M> forTags(Tag ... tags);
+    @NotNull ProtocolMessageBuilder<M> forTags(@NotNull Tag ... tags);
 
 
-    ProtocolMessageBuilder<M> forTags(String ... tagNames);
+    @NotNull ProtocolMessageBuilder<M> forTags(@NotNull String ... tagNames);
 
 
-    ProtocolMessageBuilder<M> withThrowable(Throwable throwable);
+    @NotNull ProtocolMessageBuilder<M> withThrowable(Throwable throwable);
 
 
-    MessageParameterBuilder<M> message(String message);
+    @NotNull MessageParameterBuilder<M> message(@NotNull String message);
   }
 
 
@@ -120,24 +143,24 @@ public interface Protocol<M> extends ProtocolQuery<M>
      *
      * @return  paramter builder instance for the current message
      */
-    MessageParameterBuilder<M> with(Map<String,Object> parameterValues);
+    @NotNull MessageParameterBuilder<M> with(@NotNull Map<String,Object> parameterValues);
 
 
-    MessageParameterBuilder<M> with(String parameter, boolean value);
+    @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, boolean value);
 
 
-    MessageParameterBuilder<M> with(String parameter, int value);
+    @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, int value);
 
 
-    MessageParameterBuilder<M> with(String parameter, long value);
+    @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, long value);
 
 
-    MessageParameterBuilder<M> with(String parameter, float value);
+    @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, float value);
 
 
-    MessageParameterBuilder<M> with(String parameter, double value);
+    @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, double value);
 
 
-    MessageParameterBuilder<M> with(String parameter, Object value);
+    @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, Object value);
   }
 }

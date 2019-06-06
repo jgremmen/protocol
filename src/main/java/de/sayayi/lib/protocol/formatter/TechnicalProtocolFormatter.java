@@ -21,6 +21,7 @@ import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
 import de.sayayi.lib.protocol.Tag;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 import static de.sayayi.lib.protocol.Level.Shared.ALL;
 
@@ -28,6 +29,7 @@ import static de.sayayi.lib.protocol.Level.Shared.ALL;
 /**
  * @author Jeroen Gremmen
  */
+@SuppressWarnings("unused")
 public class TechnicalProtocolFormatter<M> extends TreeProtocolFormatter<M>
     implements ConfiguredProtocolFormatter<M,String>
 {
@@ -35,18 +37,18 @@ public class TechnicalProtocolFormatter<M> extends TreeProtocolFormatter<M>
 
 
   @SuppressWarnings("WeakerAccess")
-  public TechnicalProtocolFormatter(ProtocolFactory<M> factory) {
+  public TechnicalProtocolFormatter(@NotNull ProtocolFactory<M> factory) {
     tag = factory.getDefaultTag();
   }
 
 
   @Override
-  public Level getLevel() {
+  public @NotNull Level getLevel() {
     return ALL;
   }
 
 
-  public static <M> String format(Protocol<M> protocol) {
+  public static @NotNull <M> String format(@NotNull Protocol<M> protocol) {
     return protocol.format(new TechnicalProtocolFormatter<M>(protocol.getFactory()));
   }
 }

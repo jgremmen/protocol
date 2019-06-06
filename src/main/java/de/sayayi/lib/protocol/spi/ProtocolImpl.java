@@ -20,6 +20,7 @@ import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.Tag;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -34,7 +35,7 @@ class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
   private final int id;
 
 
-  ProtocolImpl(AbstractProtocolFactory<M> factory)
+  ProtocolImpl(@NotNull AbstractProtocolFactory<M> factory)
   {
     super(factory);
 
@@ -49,8 +50,9 @@ class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
 
 
   @Override
-  public ProtocolMessageBuilder<M> add(Level level)
+  public @NotNull ProtocolMessageBuilder<M> add(@NotNull Level level)
   {
+    //noinspection ConstantConditions
     if (level == null)
       throw new NullPointerException("level must not be null");
 
@@ -59,7 +61,7 @@ class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
 
 
   @Override
-  public ProtocolIterator<M> iterator(Level level, Tag tag) {
+  public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag tag) {
     return new ProtocolStructureIterator.ForProtocol<M>(level, tag, 0,this);
   }
 
@@ -67,11 +69,12 @@ class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
   private class MessageBuilder
       extends AbstractMessageBuilder<M,ProtocolMessageBuilder<M>,MessageParameterBuilder<M>>
   {
-    MessageBuilder(Level level) {
+    MessageBuilder(@NotNull Level level) {
       super(ProtocolImpl.this, level);
     }
 
 
+    @NotNull
     @Override
     protected MessageParameterBuilder<M> createMessageParameterBuilder(ProtocolMessageEntry<M> message) {
       return new ParameterBuilder(message);

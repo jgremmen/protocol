@@ -1,6 +1,7 @@
 package de.sayayi.lib.protocol;
 
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -25,6 +26,7 @@ import static org.junit.Assert.fail;
 /**
  * @author Jeroen Gremmen
  */
+@SuppressWarnings({ "ConstantConditions" })
 public class ProtocolFactoryTest
 {
   @Test
@@ -36,11 +38,11 @@ public class ProtocolFactoryTest
     assertTrue(factory.isRegisteredTag(tag));
 
     Tag tagSame = new Tag() {
-      @Override public String getName() { return "tag"; }
-      @Override public LevelMatch getLevelMatch() { return AT_LEAST; }
-      @Override public Level getLevel() { return ALL; }
-      @Override public boolean isMatch(Level level) { return true; }
-      @Override public Set<Tag> getImpliedTags() { return Collections.<Tag>singleton(this); }
+      @NotNull @Override public String getName() { return "tag"; }
+      @NotNull @Override public LevelMatch getLevelMatch() { return AT_LEAST; }
+      @NotNull @Override public Level getLevel() { return ALL; }
+      @Override public boolean isMatch(@NotNull Level level) { return true; }
+      @NotNull @Override public Set<Tag> getImpliedTags() { return Collections.<Tag>singleton(this); }
     };
 
     assertFalse(factory.isRegisteredTag(tagSame));
@@ -173,13 +175,12 @@ public class ProtocolFactoryTest
   public void testProcessMessage()
   {
     DefaultProtocolFactory factory = new DefaultProtocolFactory() {
-      @Override public String processMessage(String message) { return message + "(ok)"; }
+      @Override public String processMessage(@NotNull String message) { return message + "(ok)"; }
     };
 
     Protocol<String> protocol = factory.createProtocol().debug().message("msg");
     ProtocolIterator<String> iterator = protocol.iterator(ALL, factory.getDefaultTag());
 
-    //noinspection unchecked
     assertEquals("msg(ok)", ((MessageEntry<String>)iterator.next()).getMessage());
   }
 }

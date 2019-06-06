@@ -26,6 +26,7 @@ import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.Tag;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -51,7 +52,7 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
-  public P with(Map<String, Object> parameterValues)
+  public @NotNull P with(@NotNull Map<String, Object> parameterValues)
   {
     for(Entry<String,Object> entry: parameterValues.entrySet())
       with(entry.getKey(), entry.getValue());
@@ -61,40 +62,41 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
-  public P with(String parameter, boolean value) {
+  public @NotNull P with(@NotNull String parameter, boolean value) {
     return with(parameter, Boolean.valueOf(value));
   }
 
 
   @Override
-  public P with(String parameter, int value) {
+  public @NotNull P with(@NotNull String parameter, int value) {
     return with(parameter, Integer.valueOf(value));
   }
 
 
   @Override
-  public P with(String parameter, long value) {
+  public @NotNull P with(@NotNull String parameter, long value) {
     return with(parameter, Long.valueOf(value));
   }
 
 
   @Override
-  public P with(String parameter, float value) {
+  public @NotNull P with(@NotNull String parameter, float value) {
     return with(parameter, Float.valueOf(value));
   }
 
 
   @Override
-  public P with(String parameter, double value) {
+  public @NotNull P with(@NotNull String parameter, double value) {
     return with(parameter, Double.valueOf(value));
   }
 
 
   @Override
-  public P with(String parameter, Object value)
+  public @NotNull P with(@NotNull String parameter, Object value)
   {
     if (message != null)
     {
+      //noinspection ConstantConditions
       if (parameter == null || parameter.isEmpty())
         throw new IllegalArgumentException("parameter must not be empty");
 
@@ -106,7 +108,7 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
-  public ProtocolFactory<M> getFactory() {
+  public @NotNull ProtocolFactory<M> getFactory() {
     return protocol.getFactory();
   }
 
@@ -118,73 +120,79 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
-  public B debug() {
+  public @NotNull B debug() {
     return protocol.debug();
   }
 
 
   @Override
-  public B info() {
+  public @NotNull B info() {
     return protocol.info();
   }
 
 
   @Override
-  public B warn() {
+  public @NotNull B warn() {
     return protocol.warn();
   }
 
 
   @Override
-  public B error() {
+  public @NotNull B error() {
     return protocol.error();
   }
 
 
   @Override
-  public B add(Level level) {
+  public @NotNull B error(Throwable throwable) {
+    return protocol.error(throwable);
+  }
+
+
+  @Override
+  public @NotNull B add(@NotNull Level level) {
     return protocol.add(level);
   }
 
 
   @Override
-  public ProtocolGroup<M> createGroup() {
+  public @NotNull ProtocolGroup<M> createGroup() {
     return protocol.createGroup();
   }
 
 
   @Override
-  public <R> R format(Level level, Tag tag, ProtocolFormatter<M,R> formatter) {
+  public <R> R format(@NotNull Level level, @NotNull Tag tag, @NotNull ProtocolFormatter<M,R> formatter) {
     return protocol.format(level, tag, formatter);
   }
 
 
   @Override
-  public <R> R format(ConfiguredProtocolFormatter<M, R> formatter) {
+  public <R> R format(@NotNull ConfiguredProtocolFormatter<M, R> formatter) {
     return protocol.format(formatter);
   }
 
 
   @Override
-  public boolean isMatch(Level level, Tag tag) {
+  public boolean isMatch(@NotNull Level level, @NotNull Tag tag) {
     return protocol.isMatch(level, tag);
   }
 
 
   @Override
-  public List<ProtocolEntry<M>> getEntries(Level level, Tag tag) {
+  public @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag tag) {
     return protocol.getEntries(level, tag);
   }
 
 
   @Override
-  public boolean hasVisibleElement(Level level, Tag tag) {
+  public boolean hasVisibleElement(@NotNull Level level, @NotNull Tag tag) {
     return protocol.hasVisibleElement(level, tag);
   }
 
 
   @Override
-  public ProtocolIterator<M> iterator(Level level, Tag tag) {
+  public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag tag) {
     return protocol.iterator(level, tag);
   }
 }

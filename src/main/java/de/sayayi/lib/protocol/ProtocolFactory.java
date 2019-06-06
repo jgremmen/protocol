@@ -16,6 +16,8 @@
 package de.sayayi.lib.protocol;
 
 import de.sayayi.lib.protocol.Tag.LevelMatch;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.Set;
@@ -44,25 +46,30 @@ public interface ProtocolFactory<M>
    *
    * @return  new protocol instance
    */
-  Protocol<M> createProtocol();
+  @NotNull Protocol<M> createProtocol();
 
 
-  TagBuilder createTag(String name);
+  @NotNull TagBuilder createTag(@NotNull String name);
 
 
-  TagBuilder modifyTag(String name);
+  @Contract(pure = true)
+  @NotNull TagBuilder modifyTag(@NotNull String name);
 
 
-  Tag getTagByName(String name);
+  @Contract(pure = true)
+  Tag getTagByName(@NotNull String name);
 
 
-  boolean hasTag(String name);
+  @Contract(pure = true)
+  boolean hasTag(@NotNull String name);
 
 
-  boolean isRegisteredTag(Tag tag);
+  @Contract(pure = true)
+  boolean isRegisteredTag(@NotNull Tag tag);
 
 
-  Set<Tag> getTags();
+  @Contract(pure = true)
+  @NotNull Set<Tag> getTags();
 
 
   /**
@@ -70,10 +77,12 @@ public interface ProtocolFactory<M>
    *
    * @return  default tag
    */
-  Tag getDefaultTag();
+  @Contract(pure = true)
+  @NotNull Tag getDefaultTag();
 
 
-  Map<String,Object> getDefaultParameterValues();
+  @Contract(pure = true)
+  @NotNull Map<String,Object> getDefaultParameterValues();
 
 
   /**
@@ -88,23 +97,24 @@ public interface ProtocolFactory<M>
    *   <li>The {@code message} could be a Spring Expression and the returned object would be a compiled expression</li>
    * </ul>
    *
-   * @param message  message
+   * @param message  message, not {@code null}
    *
    * @return  internal representation for {@code message}
    */
-  M processMessage(String message);
+  @Contract(pure = true)
+  M processMessage(@NotNull String message);
 
 
   @SuppressWarnings("UnusedReturnValue")
   interface TagBuilder<M> extends ProtocolFactory<M>
   {
-    TagBuilder dependsOn(String ... tags);
+    @NotNull TagBuilder dependsOn(@NotNull String ... tags);
 
 
-    TagBuilder implies(String ... tags);
+    @NotNull TagBuilder implies(@NotNull String ... tags);
 
 
-    TagBuilder match(LevelMatch match, Level level);
+    @NotNull TagBuilder match(@NotNull LevelMatch match, @NotNull Level level);
 
 
     /**
@@ -112,6 +122,7 @@ public interface ProtocolFactory<M>
      *
      * @return  tag instance
      */
-    Tag getTag();
+    @Contract(pure = true)
+    @NotNull Tag getTag();
   }
 }

@@ -18,6 +18,8 @@ package de.sayayi.lib.protocol;
 import de.sayayi.lib.protocol.ProtocolEntry.Group;
 import de.sayayi.lib.protocol.ProtocolEntry.Message;
 import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 
@@ -32,7 +34,8 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
    *
    * @return  iteration level, never {@code null}
    */
-  Level getLevel();
+  @Contract(pure = true)
+  @NotNull Level getLevel();
 
 
   /**
@@ -40,7 +43,8 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
    *
    * @return  iteration tag, never {@code null}
    */
-  Tag getTag();
+  @Contract(pure = true)
+  @NotNull Tag getTag();
 
 
   @SuppressWarnings("unused")
@@ -68,6 +72,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
      *
      * @return  entry depth
      */
+    @Contract(pure = true)
     int getDepth();
 
 
@@ -79,6 +84,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
      * @see #getDepth()
      * @see #isLast()
      */
+    @Contract(pure = true)
     boolean isFirst();
 
 
@@ -90,6 +96,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
      * @see #getDepth()
      * @see #isFirst()
      */
+    @Contract(pure = true)
     boolean isLast();
   }
 
@@ -105,9 +112,11 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
      *
      * @return  {@code true} if the group contains at least one matching entry, {@code false} otherwise.
      */
+    @Contract(pure = true)
     boolean hasEntryInGroup();
 
 
+    @Contract(pure = true)
     boolean hasEntryAfterGroup();
 
 
@@ -116,7 +125,8 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
      *
      * @return  group message, never {@code null}
      */
+    @Contract(pure = true)
     @Override
-    FormattableMessage<M> getGroupMessage();
+    @NotNull FormattableMessage<M> getGroupMessage();
   }
 }

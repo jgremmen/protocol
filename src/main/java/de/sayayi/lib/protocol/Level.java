@@ -16,6 +16,9 @@
 package de.sayayi.lib.protocol;
 
 
+import org.jetbrains.annotations.Contract;
+
+
 /**
  * @author Jeroen Gremmen
  */
@@ -33,6 +36,7 @@ public interface Level
    *
    * @see Shared
    */
+  @Contract(pure = true)
   int severity();
 
 

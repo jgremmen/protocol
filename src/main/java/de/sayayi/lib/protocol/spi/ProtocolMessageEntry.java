@@ -19,6 +19,7 @@ import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.Tag;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.Map;
@@ -35,8 +36,8 @@ class ProtocolMessageEntry<M> extends AbstractFormattableMessage<M> implements P
   @Getter private final Throwable throwable;
 
 
-  ProtocolMessageEntry(Level level, Set<Tag> tags, Throwable throwable, M message,
-                       Map<String,Object> defaultParameterValues)
+  ProtocolMessageEntry(@NotNull Level level, @NotNull Set<Tag> tags, Throwable throwable, @NotNull M message,
+                       @NotNull Map<String,Object> defaultParameterValues)
   {
     super(message, defaultParameterValues);
 
@@ -47,19 +48,19 @@ class ProtocolMessageEntry<M> extends AbstractFormattableMessage<M> implements P
 
 
   @Override
-  public Set<Tag> getTags() {
+  public @NotNull Set<Tag> getTags() {
     return Collections.unmodifiableSet(tags);
   }
 
 
   @Override
-  public boolean isMatch(Level level, Tag tag) {
-    return this.level.severity() >= level.severity() && this.tags.contains(tag) && tag.isMatch(level);
+  public boolean isMatch(@NotNull Level level, @NotNull Tag tag) {
+    return this.level.severity() >= level.severity() && tags.contains(tag) && tag.isMatch(level);
   }
 
 
   @Override
-  public boolean hasVisibleElement(Level level, Tag tag) {
+  public boolean hasVisibleElement(@NotNull Level level, @NotNull Tag tag) {
     return isMatch(level, tag);
   }
 

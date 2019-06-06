@@ -15,6 +15,9 @@
  */
 package de.sayayi.lib.protocol;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Map;
 
 
@@ -30,7 +33,8 @@ public interface ProtocolGroup<M> extends Protocol<M>
    *
    * @see #getEffectiveVisibility()
    */
-  Visibility getVisibility();
+  @Contract(pure = true)
+  @NotNull Visibility getVisibility();
 
 
   /**
@@ -39,7 +43,8 @@ public interface ProtocolGroup<M> extends Protocol<M>
    *
    * @return  effective visibility, never {@code null}
    */
-  Visibility getEffectiveVisibility();
+  @Contract(pure = true)
+  @NotNull Visibility getEffectiveVisibility();
 
 
   /**
@@ -52,7 +57,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
    * @see #getVisibility()
    * @see #getEffectiveVisibility()
    */
-  ProtocolGroup<M> setVisibility(Visibility visibility);
+  @NotNull ProtocolGroup<M> setVisibility(@NotNull Visibility visibility);
 
 
   /**
@@ -62,28 +67,34 @@ public interface ProtocolGroup<M> extends Protocol<M>
    *
    * @return  parameter builder instance
    */
-  MessageParameterBuilder<M> setGroupMessage(String message);
+  @NotNull MessageParameterBuilder<M> setGroupMessage(@NotNull String message);
 
 
-  ProtocolGroup<M> removeGroupMessage();
+  @NotNull ProtocolGroup<M> removeGroupMessage();
 
 
-  boolean isHeaderVisible(Level level, Tag tag);
+  @Contract(pure = true)
+  boolean isHeaderVisible(@NotNull Level level, @NotNull Tag tag);
 
 
-  ProtocolMessageBuilder<M> debug();
+  @Contract(pure = true)
+  @NotNull ProtocolMessageBuilder<M> debug();
 
 
-  ProtocolMessageBuilder<M> info();
+  @Contract(pure = true)
+  @NotNull ProtocolMessageBuilder<M> info();
 
 
-  ProtocolMessageBuilder<M> warn();
+  @Contract(pure = true)
+  @NotNull ProtocolMessageBuilder<M> warn();
 
 
-  ProtocolMessageBuilder<M> error();
+  @Contract(pure = true)
+  @NotNull ProtocolMessageBuilder<M> error();
 
 
-  ProtocolMessageBuilder<M> add(Level level);
+  @Contract(pure = true)
+  @NotNull ProtocolMessageBuilder<M> add(@NotNull Level level);
 
 
   /**
@@ -91,48 +102,49 @@ public interface ProtocolGroup<M> extends Protocol<M>
    *
    * @return  protocol root instance
    */
-  Protocol<M> getRootProtocol();
+  @Contract(pure = true)
+  @NotNull Protocol<M> getRootProtocol();
 
 
   interface ProtocolMessageBuilder<M> extends Protocol.ProtocolMessageBuilder<M>
   {
-    ProtocolMessageBuilder<M> forTag(Tag tag);
+    @NotNull ProtocolMessageBuilder<M> forTag(@NotNull Tag tag);
 
 
-    ProtocolMessageBuilder<M> forTags(Tag ... tags);
+    @NotNull ProtocolMessageBuilder<M> forTags(@NotNull Tag ... tags);
 
 
-    ProtocolMessageBuilder<M> forTags(String ... tagNames);
+    @NotNull ProtocolMessageBuilder<M> forTags(@NotNull String ... tagNames);
 
 
-    ProtocolMessageBuilder<M> withThrowable(Throwable throwable);
+    @NotNull ProtocolMessageBuilder<M> withThrowable(Throwable throwable);
 
 
-    MessageParameterBuilder<M> message(String message);
+    @NotNull MessageParameterBuilder<M> message(@NotNull String message);
   }
 
 
   interface MessageParameterBuilder<M> extends Protocol.MessageParameterBuilder<M>, ProtocolGroup<M>
   {
-    ProtocolGroup.MessageParameterBuilder<M> with(Map<String,Object> parameterValues);
+    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull Map<String,Object> parameterValues);
 
 
-    ProtocolGroup.MessageParameterBuilder<M> with(String parameter, boolean value);
+    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, boolean value);
 
 
-    ProtocolGroup.MessageParameterBuilder<M> with(String parameter, int value);
+    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, int value);
 
 
-    ProtocolGroup.MessageParameterBuilder<M> with(String parameter, long value);
+    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, long value);
 
 
-    ProtocolGroup.MessageParameterBuilder<M> with(String parameter, float value);
+    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, float value);
 
 
-    ProtocolGroup.MessageParameterBuilder<M> with(String parameter, double value);
+    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, double value);
 
 
-    ProtocolGroup.MessageParameterBuilder<M> with(String parameter, Object value);
+    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, Object value);
   }
 
 
@@ -196,7 +208,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
     ;
 
 
-    public Visibility forAbsentHeader()
+    public @NotNull Visibility forAbsentHeader()
     {
       if (this == SHOW_HEADER_ALWAYS || this == SHOW_HEADER_IF_NOT_EMPTY)
         return FLATTEN;
