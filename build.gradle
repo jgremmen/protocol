@@ -19,5 +19,41 @@ repositories {
 
 
 dependencies {
+  annotationProcessor "org.projectlombok:lombok:1.18.8"
+
+  api 'org.projectlombok:lombok:1.18.8'
+
   testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+
+jar {
+  reproducibleFileOrder true
+}
+
+
+javadoc {
+  failOnError false
+}
+
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+  classifier = 'javadoc'
+  from javadoc.destinationDir
+
+  reproducibleFileOrder true
+}
+
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+  classifier = 'sources'
+  from sourceSets.main.allSource
+
+  reproducibleFileOrder true
+}
+
+
+artifacts {
+  archives javadocJar
+  archives sourcesJar
 }
