@@ -22,7 +22,21 @@ import java.util.Set;
 
 
 /**
+ * <p>
+ *   Tags are protocol factory specific labels to be used with protocolling messages.
+ * </p>
+ * <p>
+ *   Tags can have dependencies to other tags which means that if a message is protocolled
+ *   with a particular tag, all tags implied by that tag are also assigned to that message.
+ * </p>
+ * <p>
+ *   The validity of a tag can be related to a protocol level. This allows for certain
+ *   tags to match only when a particular protocol level is selected.
+ * </p>
+ *
  * @author Jeroen Gremmen
+ *
+ * @see ProtocolFactory#createTag(String)
  */
 public interface Tag
 {
@@ -36,11 +50,18 @@ public interface Tag
 
 
   @Contract(pure = true)
-  @NotNull LevelMatch getLevelMatch();
+  @NotNull Tag.MatchCondition getMatchCondition();
 
 
+  /**
+   * Tells the tag level to be used in level matching.
+   *
+   * @return  tag level, never {@code null}
+   *
+   * @see #getMatchCondition()
+   */
   @Contract(pure = true)
-  @NotNull Level getLevel();
+  @NotNull Level getMatchLevel();
 
 
   /**
@@ -50,8 +71,8 @@ public interface Tag
    *
    * @return  {@code true} if this tag matches the given {@code level}
    *
-   * @see #getLevelMatch()
-   * @see #getLevel()
+   * @see #getMatchCondition()
+   * @see #getMatchLevel()
    */
   @Contract(pure = true)
   boolean isMatch(@NotNull Level level);
@@ -66,7 +87,18 @@ public interface Tag
   @NotNull Set<Tag> getImpliedTags();
 
 
-  enum LevelMatch {
-    EQUAL, NOT_EQUAL, AT_LEAST, UNTIL
+  enum MatchCondition
+  {
+    /** The selected level must be equal to the tag level in order to match. */
+    EQUAL,
+
+    /** The selected level must not be equal to the tag level in order to match. */
+    NOT_EQUAL,
+
+    /** The selected level must be at least (including) the tag level in order to match. */
+    AT_LEAST,
+
+    /** The selected level must be at most (including) the tag level in order to match. */
+    UNTIL
   }
 }

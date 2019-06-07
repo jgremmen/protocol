@@ -12,10 +12,10 @@ import static de.sayayi.lib.protocol.Level.Shared.DEBUG;
 import static de.sayayi.lib.protocol.Level.Shared.ERROR;
 import static de.sayayi.lib.protocol.Level.Shared.INFO;
 import static de.sayayi.lib.protocol.Level.Shared.WARN;
-import static de.sayayi.lib.protocol.Tag.LevelMatch.AT_LEAST;
-import static de.sayayi.lib.protocol.Tag.LevelMatch.EQUAL;
-import static de.sayayi.lib.protocol.Tag.LevelMatch.NOT_EQUAL;
-import static de.sayayi.lib.protocol.Tag.LevelMatch.UNTIL;
+import static de.sayayi.lib.protocol.Tag.MatchCondition.AT_LEAST;
+import static de.sayayi.lib.protocol.Tag.MatchCondition.EQUAL;
+import static de.sayayi.lib.protocol.Tag.MatchCondition.NOT_EQUAL;
+import static de.sayayi.lib.protocol.Tag.MatchCondition.UNTIL;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -39,8 +39,8 @@ public class ProtocolFactoryTest
 
     Tag tagSame = new Tag() {
       @NotNull @Override public String getName() { return "tag"; }
-      @NotNull @Override public LevelMatch getLevelMatch() { return AT_LEAST; }
-      @NotNull @Override public Level getLevel() { return ALL; }
+      @NotNull @Override public Tag.MatchCondition getMatchCondition() { return AT_LEAST; }
+      @NotNull @Override public Level getMatchLevel() { return ALL; }
       @Override public boolean isMatch(@NotNull Level level) { return true; }
       @NotNull @Override public Set<Tag> getImpliedTags() { return Collections.<Tag>singleton(this); }
     };
@@ -57,6 +57,7 @@ public class ProtocolFactoryTest
     assertFalse(factory2.isRegisteredTag(tagSame));
 
     try {
+      //noinspection ResultOfMethodCallIgnored
       factory.isRegisteredTag(null);
       fail();
     } catch(NullPointerException ignore) {
@@ -88,12 +89,14 @@ public class ProtocolFactoryTest
     assertTrue(factory.hasTag("summary"));
 
     try {
+      //noinspection ResultOfMethodCallIgnored
       factory.hasTag(null);
       fail();
     } catch(Exception ignore) {
     }
 
     try {
+      //noinspection ResultOfMethodCallIgnored
       factory.hasTag("");
       fail();
     } catch(Exception ignore) {
@@ -114,12 +117,14 @@ public class ProtocolFactoryTest
     assertNull(factory.getTagByName("xyz"));
 
     try {
+      //noinspection ResultOfMethodCallIgnored
       factory.getTagByName(null);
       fail();
     } catch(Exception ignore) {
     }
 
     try {
+      //noinspection ResultOfMethodCallIgnored
       factory.getTagByName("");
       fail();
     } catch(Exception ignore) {
@@ -134,8 +139,8 @@ public class ProtocolFactoryTest
 
     Tag tagAtLeastInfo = factory.createTag("tag1").match(AT_LEAST, INFO).getTag();
 
-    assertEquals(INFO, tagAtLeastInfo.getLevel());
-    assertEquals(AT_LEAST, tagAtLeastInfo.getLevelMatch());
+    assertEquals(INFO, tagAtLeastInfo.getMatchLevel());
+    assertEquals(AT_LEAST, tagAtLeastInfo.getMatchCondition());
 
     assertTrue(tagAtLeastInfo.isMatch(INFO));
     assertTrue(tagAtLeastInfo.isMatch(ERROR));
@@ -143,8 +148,8 @@ public class ProtocolFactoryTest
 
     Tag tagEqualDebug = factory.createTag("tag2").match(EQUAL, DEBUG).getTag();
 
-    assertEquals(DEBUG, tagEqualDebug.getLevel());
-    assertEquals(EQUAL, tagEqualDebug.getLevelMatch());
+    assertEquals(DEBUG, tagEqualDebug.getMatchLevel());
+    assertEquals(EQUAL, tagEqualDebug.getMatchCondition());
 
     assertTrue(tagEqualDebug.isMatch(DEBUG));
     assertFalse(tagEqualDebug.isMatch(ERROR));
@@ -152,8 +157,8 @@ public class ProtocolFactoryTest
 
     Tag tagNotEqualError = factory.createTag("tag3").match(NOT_EQUAL, ERROR).getTag();
 
-    assertEquals(ERROR, tagNotEqualError.getLevel());
-    assertEquals(NOT_EQUAL, tagNotEqualError.getLevelMatch());
+    assertEquals(ERROR, tagNotEqualError.getMatchLevel());
+    assertEquals(NOT_EQUAL, tagNotEqualError.getMatchCondition());
 
     assertTrue(tagNotEqualError.isMatch(DEBUG));
     assertFalse(tagNotEqualError.isMatch(ERROR));
@@ -161,8 +166,8 @@ public class ProtocolFactoryTest
 
     Tag tagUntilWarn = factory.createTag("tag4").match(UNTIL, WARN).getTag();
 
-    assertEquals(WARN, tagUntilWarn.getLevel());
-    assertEquals(UNTIL, tagUntilWarn.getLevelMatch());
+    assertEquals(WARN, tagUntilWarn.getMatchLevel());
+    assertEquals(UNTIL, tagUntilWarn.getMatchCondition());
 
     assertTrue(tagUntilWarn.isMatch(DEBUG));
     assertTrue(tagUntilWarn.isMatch(WARN));

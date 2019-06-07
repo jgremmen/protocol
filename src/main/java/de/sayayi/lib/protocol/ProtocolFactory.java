@@ -15,7 +15,6 @@
  */
 package de.sayayi.lib.protocol;
 
-import de.sayayi.lib.protocol.Tag.LevelMatch;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,7 +43,7 @@ public interface ProtocolFactory<M>
   /**
    * Create a new protocol instance.
    *
-   * @return  new protocol instance
+   * @return  new protocol instance, never {@code null}.
    */
   @NotNull Protocol<M> createProtocol();
 
@@ -114,7 +113,7 @@ public interface ProtocolFactory<M>
     @NotNull TagBuilder implies(@NotNull String ... tags);
 
 
-    @NotNull TagBuilder match(@NotNull LevelMatch match, @NotNull Level level);
+    @NotNull TagBuilder match(@NotNull Tag.MatchCondition matchCondition, @NotNull Level matchLevel);
 
 
     /**

@@ -19,7 +19,6 @@ import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.Tag;
-import de.sayayi.lib.protocol.Tag.LevelMatch;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -166,15 +165,15 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
     @SuppressWarnings("ConstantConditions")
     @Override
-    public @NotNull TagBuilder<M> match(@NotNull LevelMatch levelMatch, @NotNull Level level)
+    public @NotNull TagBuilder<M> match(@NotNull Tag.MatchCondition matchCondition, @NotNull Level matchLevel)
     {
-      if (levelMatch == null)
-        throw new NullPointerException("levelMatch must not be null");
-      if (level == null)
-        throw new NullPointerException("level must not be null");
+      if (matchCondition == null)
+        throw new NullPointerException("matchCondition must not be null");
+      if (matchLevel == null)
+        throw new NullPointerException("matchLevel must not be null");
 
-      tag.levelMatch = levelMatch;
-      tag.level = level;
+      tag.matchCondition = matchCondition;
+      tag.matchLevel = matchLevel;
 
       return this;
     }
@@ -274,8 +273,8 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
     @Getter private final int id;
     @Getter private final String name;
 
-    @Getter private LevelMatch levelMatch = LevelMatch.AT_LEAST;
-    @Getter private Level level = ALL;
+    @Getter private MatchCondition matchCondition = MatchCondition.AT_LEAST;
+    @Getter private Level matchLevel = ALL;
 
     private Set<TagImpl> implies = new HashSet<TagImpl>(8);
 
@@ -294,19 +293,19 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
       if (level == null)
         throw new NullPointerException("level must not be null");
 
-      switch(levelMatch)
+      switch(matchCondition)
       {
         case AT_LEAST:
-          return level.severity() >= this.level.severity();
+          return level.severity() >= matchLevel.severity();
 
         case EQUAL:
-          return level.severity() == this.level.severity();
+          return level.severity() == matchLevel.severity();
 
         case NOT_EQUAL:
-          return level.severity() != this.level.severity();
+          return level.severity() != matchLevel.severity();
 
         case UNTIL:
-          return level.severity() <= this.level.severity();
+          return level.severity() <= matchLevel.severity();
       }
 
       return false;
@@ -369,9 +368,9 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
         s.append('}');
       }
 
-      s.append(',').append(level);
+      s.append(',').append(matchLevel);
 
-      switch(levelMatch)
+      switch(matchCondition)
       {
         case AT_LEAST:
           s.append("(>=)");

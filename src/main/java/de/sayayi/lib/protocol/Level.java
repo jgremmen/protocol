@@ -15,7 +15,6 @@
  */
 package de.sayayi.lib.protocol;
 
-
 import org.jetbrains.annotations.Contract;
 
 

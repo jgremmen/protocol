@@ -55,8 +55,8 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
      *   Returns the depth for this entry.
      * </p>
      * <p>
-     *  The first entry (message or group entry) returned by a protocol iterator starts at depth 0. For each group with
-     *  group message, the messages belonging to that group have an incremented depth:
+     *   The first entry (message or group entry) returned by a protocol iterator starts at depth 0. For each group with
+     *   group message, the messages belonging to that group have an incremented depth:
      * </p>
      * <ul>
      *   <li>Message 1 (depth = 0)</li>

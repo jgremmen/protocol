@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import static de.sayayi.lib.protocol.Level.Shared.DEBUG;
 import static de.sayayi.lib.protocol.Level.Shared.INFO;
-import static de.sayayi.lib.protocol.Tag.LevelMatch.AT_LEAST;
+import static de.sayayi.lib.protocol.Tag.MatchCondition.AT_LEAST;
 
 
 /**
