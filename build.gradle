@@ -9,8 +9,9 @@ group 'de.sayayi.lib'
 version '0.1.0'
 
 
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
+apply from: file('gradle/javadoc.gradle')
+apply from: file('gradle/publishing.gradle')
+apply from: file('gradle/versions.gradle')
 
 
 repositories {
@@ -19,52 +20,12 @@ repositories {
 
 
 dependencies {
-  annotationProcessor "org.projectlombok:lombok:1.18.8"
+  annotationProcessor "org.projectlombok:lombok:"
 
-  api 'org.projectlombok:lombok:1.18.8'
+  api 'org.projectlombok:lombok:'
 
-  compileOnly 'org.jetbrains:annotations:15.0'
+  compileOnly 'org.jetbrains:annotations:'
 
-  testCompile 'junit:junit:4.12'
-  testCompile 'org.jetbrains:annotations:15.0'
-}
-
-
-jar {
-  reproducibleFileOrder true
-}
-
-
-javadoc {
-  title "Java Protocol Library ${version}"
-
-  options.encoding 'UTF-8'
-
-  options.group("Protocol Core API", ["de.sayayi.lib.protocol"])
-  options.group("Protocol Formatters", ["de.sayayi.lib.protocol.formatter"])
-  options.group("Protocol SPI", ["de.sayayi.lib.protocol.spi"])
-
-  failOnError false
-}
-
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-  classifier = 'javadoc'
-  from javadoc.destinationDir
-
-  reproducibleFileOrder true
-}
-
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-  classifier = 'sources'
-  from sourceSets.main.allSource
-
-  reproducibleFileOrder true
-}
-
-
-artifacts {
-  archives javadocJar
-  archives sourcesJar
+  testCompile 'junit:junit:'
+  testCompile 'org.jetbrains:annotations:'
 }
