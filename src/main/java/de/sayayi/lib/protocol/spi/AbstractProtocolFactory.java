@@ -83,6 +83,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
     if (name == null || name.isEmpty())
       throw new IllegalArgumentException("name must not be empty");
 
+    //noinspection PatternValidation
     if (hasTag(name))
       throw new IllegalArgumentException("tag with name " + name + " already exists");
 
@@ -207,12 +208,14 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
     }
 
 
+    @SuppressWarnings("PatternValidation")
     @Override
     public @NotNull TagBuilder<M> createTag(@NotNull String name) {
       return AbstractProtocolFactory.this.createTag(name);
     }
 
 
+    @SuppressWarnings("PatternValidation")
     @Override
     public @NotNull TagBuilder<M> modifyTag(@NotNull String name) {
       return AbstractProtocolFactory.this.modifyTag(name);
@@ -225,12 +228,14 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
     }
 
 
+    @SuppressWarnings("PatternValidation")
     @Override
     public Tag getTagByName(@NotNull String name) {
       return AbstractProtocolFactory.this.getTagByName(name);
     }
 
 
+    @SuppressWarnings("PatternValidation")
     @Override
     public boolean hasTag(@NotNull String name) {
       return AbstractProtocolFactory.this.hasTag(name);

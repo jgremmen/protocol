@@ -181,6 +181,9 @@ public interface Protocol<M> extends ProtocolQuery<M>
      *   Associate the provided {@code parameterValues} with this message. New parameters are added, existing
      *   parameters are overridden.
      * </p>
+     * <p>
+     *   Any restrictions on parameter name and value are handled by {@link #with(String, Object)}.
+     * </p>
      *
      * @param parameterValues  map with parameter values. the parameter name must not be {@code null} or empty.
      *
@@ -189,21 +192,93 @@ public interface Protocol<M> extends ProtocolQuery<M>
     @NotNull MessageParameterBuilder<M> with(@NotNull Map<String,Object> parameterValues);
 
 
-    @NotNull MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alpha}\\p{Graph}*") String parameter, boolean value);
+    /**
+     * <p>
+     *   Associate the provided {@code parameter} and boolean {@code value} with this message. If a parameter with
+     *   the same name already has a value, it will be overridden.
+     * </p>
+     *
+     * @param parameter  parameter name, not {@code null} or empty. although there are no restrictions, it is
+     *                   recommended that the parameter name matches regular expression {@code \p{Alnum}\p{Graph}*}.
+     * @param value      parameter value
+     *
+     * @return  paramter builder instance for the current message
+     */
+    @NotNull MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*") String parameter, boolean value);
 
 
-    @NotNull MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alpha}\\p{Graph}*") String parameter, int value);
+    /**
+     * <p>
+     *   Associate the provided {@code parameter} and int {@code value} with this message. If a parameter with
+     *   the same name already has a value, it will be overridden.
+     * </p>
+     *
+     * @param parameter  parameter name, not {@code null} or empty. although there are no restrictions, it is
+     *                   recommended that the parameter name matches regular expression {@code \p{Alnum}\p{Graph}*}.
+     * @param value      parameter value
+     *
+     * @return  paramter builder instance for the current message
+     */
+    @NotNull MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*") String parameter, int value);
 
 
-    @NotNull MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alpha}\\p{Graph}*") String parameter, long value);
+    /**
+     * <p>
+     *   Associate the provided {@code parameter} and long {@code value} with this message. If a parameter with
+     *   the same name already has a value, it will be overridden.
+     * </p>
+     *
+     * @param parameter  parameter name, not {@code null} or empty. although there are no restrictions, it is
+     *                   recommended that the parameter name matches regular expression {@code \p{Alnum}\p{Graph}*}.
+     * @param value      parameter value
+     *
+     * @return  paramter builder instance for the current message
+     */
+    @NotNull MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*") String parameter, long value);
 
 
-    @NotNull MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alpha}\\p{Graph}*") String parameter, float value);
+    /**
+     * <p>
+     *   Associate the provided {@code parameter} and float {@code value} with this message. If a parameter with
+     *   the same name already has a value, it will be overridden.
+     * </p>
+     *
+     * @param parameter  parameter name, not {@code null} or empty. although there are no restrictions, it is
+     *                   recommended that the parameter name matches regular expression {@code \p{Alnum}\p{Graph}*}.
+     * @param value      parameter value
+     *
+     * @return  paramter builder instance for the current message
+     */
+    @NotNull MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*") String parameter, float value);
 
 
-    @NotNull MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alpha}\\p{Graph}*") String parameter, double value);
+    /**
+     * <p>
+     *   Associate the provided {@code parameter} and double {@code value} with this message. If a parameter with
+     *   the same name already has a value, it will be overridden.
+     * </p>
+     *
+     * @param parameter  parameter name, not {@code null} or empty. although there are no restrictions, it is
+     *                   recommended that the parameter name matches regular expression {@code \p{Alnum}\p{Graph}*}.
+     * @param value      parameter value
+     *
+     * @return  paramter builder instance for the current message
+     */
+    @NotNull MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*") String parameter, double value);
 
 
-    @NotNull MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alpha}\\p{Graph}*") String parameter, Object value);
+    /**
+     * <p>
+     *   Associate the provided {@code parameter} and {@code value} with this message. If a parameter with the same
+     *   name already has a value, it will be overridden.
+     * </p>
+     *
+     * @param parameter  parameter name, not {@code null} or empty. although there are no restrictions, it is
+     *                   recommended that the parameter name matches regular expression {@code \p{Alnum}\p{Graph}*}.
+     * @param value      parameter value
+     *
+     * @return  paramter builder instance for the current message
+     */
+    @NotNull MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*") String parameter, Object value);
   }
 }

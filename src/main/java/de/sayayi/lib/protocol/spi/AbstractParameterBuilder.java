@@ -36,7 +36,7 @@ import java.util.Map.Entry;
 /**
  * @author Jeroen Gremmen
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({ "unchecked", "PatternValidation" })
 abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B extends ProtocolMessageBuilder<M>>
     implements MessageParameterBuilder<M>
 {

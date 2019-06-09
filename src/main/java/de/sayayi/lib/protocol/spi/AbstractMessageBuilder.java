@@ -83,6 +83,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   {
     for(String tagName: tagNames)
     {
+      //noinspection PatternValidation
       Tag tag = protocol.factory.getTagByName(tagName);
       if (tag == null)
         throw new IllegalArgumentException("tag with name " + tagName + " is not registered for this protocol");
