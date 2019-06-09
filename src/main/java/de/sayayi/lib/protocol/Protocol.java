@@ -41,52 +41,94 @@ public interface Protocol<M> extends ProtocolQuery<M>
 
 
   /**
-   * Add a debug level message.
+   * <p>
+   *   Add a debug level message.
+   * </p>
+   * <p>
+   *   This method is functionally identical to {@code add(Level.Shared.DEBUG)}
+   * </p>
    *
-   * @return  message builder instance for the debug message
+   * @return  message builder instance for the debug message, never {@code null}
+   *
+   * @see Level.Shared#DEBUG DEBUG
    */
   @Contract(pure = true)
   @NotNull ProtocolMessageBuilder<M> debug();
 
 
   /**
-   * Add an info level message.
+   * <p>
+   *   Add an info level message.
+   * </p>
+   * <p>
+   *   This method is functionally identical to {@code add(Level.Shared.INFO)}
+   * </p>
    *
-   * @return  message builder instance for the info message
+   * @return  message builder instance for the info message, never {@code null}
+   *
+   * @see Level.Shared#INFO INFO
    */
   @Contract(pure = true)
   @NotNull ProtocolMessageBuilder<M> info();
 
 
   /**
-   * Add a warning level message.
+   * <p>
+   *   Add a warning level message.
+   * </p>
+   * <p>
+   *   This method is functionally identical to {@code add(Level.Shared.WARN)}
+   * </p>
    *
-   * @return  message builder instance for the warning message
+   * @return  message builder instance for the warning message, never {@code null}
+   *
+   * @see Level.Shared#WARN WARN
    */
   @Contract(pure = true)
   @NotNull ProtocolMessageBuilder<M> warn();
 
 
   /**
-   * Add an error level message.
+   * <p>
+   *   Add an error level message.
+   * </p>
+   * <p>
+   *   This method is functionally identical to {@code add(Level.Shared.ERROR)}
+   * </p>
    *
-   * @return  message builder instance for the error message
+   * @return  message builder instance for the error message, never {@code null}
+   *
+   * @see Level.Shared#ERROR ERROR
    */
   @Contract(pure = true)
   @NotNull ProtocolMessageBuilder<M> error();
 
 
   /**
-   * Add an error level message with throwable.
+   * <p>
+   *   Add an error level message with throwable.
+   * </p>
+   * <p>
+   *   This method is functionally identical to {@code add(Level.Shared.ERROR).withThrowable(throwable)}
+   * </p>
    *
    * @param throwable  throwable associated with message
    *
-   * @return  message builder instance for the error message
+   * @return  message builder instance for the error message, never {@code null}
+   *
+   * @see Level.Shared#ERROR ERROR
    */
   @Contract(pure = true)
   @NotNull ProtocolMessageBuilder<M> error(Throwable throwable);
 
 
+  /**
+   * Add a new message with the given protocol {@code level}.
+   *
+   * @param level  protocol level, never {@code null}
+   *
+   * @return  new message builder instance, never {@code null}
+   */
   @Contract(pure = true)
   @NotNull ProtocolMessageBuilder<M> add(@NotNull Level level);
 
