@@ -96,7 +96,7 @@ public class ProtocolFactoryTest
     }
 
     try {
-      //noinspection ResultOfMethodCallIgnored
+      //noinspection ResultOfMethodCallIgnored,PatternValidation
       factory.hasTag("");
       fail();
     } catch(Exception ignore) {
@@ -124,7 +124,7 @@ public class ProtocolFactoryTest
     }
 
     try {
-      //noinspection ResultOfMethodCallIgnored
+      //noinspection ResultOfMethodCallIgnored,PatternValidation
       factory.getTagByName("");
       fail();
     } catch(Exception ignore) {

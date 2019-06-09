@@ -15,6 +15,7 @@
  */
 package de.sayayi.lib.protocol;
 
+import org.intellij.lang.annotations.Pattern;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -129,22 +130,22 @@ public interface ProtocolGroup<M> extends Protocol<M>
     @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull Map<String,Object> parameterValues);
 
 
-    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, boolean value);
+    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alpha}\\p{Graph}*") String parameter, boolean value);
 
 
-    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, int value);
+    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alpha}\\p{Graph}*") String parameter, int value);
 
 
-    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, long value);
+    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alpha}\\p{Graph}*") String parameter, long value);
 
 
-    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, float value);
+    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alpha}\\p{Graph}*") String parameter, float value);
 
 
-    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, double value);
+    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alpha}\\p{Graph}*") String parameter, double value);
 
 
-    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, Object value);
+    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alpha}\\p{Graph}*") String parameter, Object value);
   }
 
 

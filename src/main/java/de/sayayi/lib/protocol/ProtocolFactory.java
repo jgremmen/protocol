@@ -15,6 +15,7 @@
  */
 package de.sayayi.lib.protocol;
 
+import org.intellij.lang.annotations.Pattern;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,19 +49,19 @@ public interface ProtocolFactory<M>
   @NotNull Protocol<M> createProtocol();
 
 
-  @NotNull TagBuilder createTag(@NotNull String name);
+  @NotNull TagBuilder createTag(@NotNull @Pattern("\\p{Alpha}\\p{Graph}*") String name);
 
 
   @Contract(pure = true)
-  @NotNull TagBuilder modifyTag(@NotNull String name);
+  @NotNull TagBuilder modifyTag(@NotNull @Pattern("\\p{Alpha}\\p{Graph}*") String name);
 
 
   @Contract(pure = true)
-  Tag getTagByName(@NotNull String name);
+  Tag getTagByName(@NotNull @Pattern("\\p{Alpha}\\p{Graph}*") String name);
 
 
   @Contract(pure = true)
-  boolean hasTag(@NotNull String name);
+  boolean hasTag(@NotNull @Pattern("\\p{Alpha}\\p{Graph}*") String name);
 
 
   @Contract(pure = true)
