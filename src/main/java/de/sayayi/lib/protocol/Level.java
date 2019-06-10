@@ -23,8 +23,8 @@ import org.jetbrains.annotations.Contract;
  *   Describes the level at which messages are protocolled.
  * </p>
  * <p>
- *   Similar to various logging libraries, the {@linkplain Shared Shared} enumeration provides regularly used protocol levels
- *   like {@code DEBUG} and {@code ERROR}. In addition to that (or even as a replacement) you can define your own
+ *   Similar to various logging libraries, the {@linkplain Shared Shared} enumeration provides regularly used protocol
+ *   levels like {@code DEBUG} and {@code ERROR}. In addition to that (or even as a replacement) you can define your own
  *   set of protocol levels and use them to {@linkplain Protocol#add(Level) protocol} messages.
  * </p>
  *

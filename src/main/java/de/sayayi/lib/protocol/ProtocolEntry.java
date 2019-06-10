@@ -59,7 +59,7 @@ public interface ProtocolEntry<M> extends ProtocolQuery<M>
      *
      * @see #getMessage()
      */
-    @Contract(pure = true)
+    @Contract(pure = true, value = "-> new")
     @NotNull Map<String,Object> getParameterValues();
   }
 
@@ -70,7 +70,7 @@ public interface ProtocolEntry<M> extends ProtocolQuery<M>
     @NotNull Level getLevel();
 
 
-    @Contract(pure = true)
+    @Contract(pure = true, value = "-> new")
     @NotNull Set<Tag> getTags();
 
 

@@ -46,7 +46,7 @@ public interface ProtocolQuery<M>
    *
    * @return  a list of protocol entries, never {@code null}
    */
-  @Contract(pure = true)
+  @Contract(pure = true, value = "_, _ -> new")
   @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag tag);
 
 

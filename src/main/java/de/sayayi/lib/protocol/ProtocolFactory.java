@@ -46,13 +46,15 @@ public interface ProtocolFactory<M>
    *
    * @return  new protocol instance, never {@code null}.
    */
+  @Contract("-> new")
   @NotNull Protocol<M> createProtocol();
 
 
+  @Contract("_ -> new")
   @NotNull TagBuilder createTag(@NotNull @Pattern("\\p{Alpha}\\p{Graph}*") String name);
 
 
-  @Contract(pure = true)
+  @Contract(pure = true, value = "_ -> new")
   @NotNull TagBuilder modifyTag(@NotNull @Pattern("\\p{Alpha}\\p{Graph}*") String name);
 
 
@@ -68,7 +70,7 @@ public interface ProtocolFactory<M>
   boolean isRegisteredTag(@NotNull Tag tag);
 
 
-  @Contract(pure = true)
+  @Contract(pure = true, value = "-> new")
   @NotNull Set<Tag> getTags();
 
 
@@ -108,12 +110,15 @@ public interface ProtocolFactory<M>
   @SuppressWarnings("UnusedReturnValue")
   interface TagBuilder<M> extends ProtocolFactory<M>
   {
+    @Contract("_ -> this")
     @NotNull TagBuilder dependsOn(@NotNull String ... tags);
 
 
+    @Contract("_ -> this")
     @NotNull TagBuilder implies(@NotNull String ... tags);
 
 
+    @Contract("_, _ -> this")
     @NotNull TagBuilder match(@NotNull Tag.MatchCondition matchCondition, @NotNull Level matchLevel);
 
 

@@ -83,7 +83,7 @@ public interface Tag
    *
    * @return  set of implied tags
    */
-  @Contract(pure = true)
+  @Contract(pure = true, value = "-> new")
   @NotNull Set<Tag> getImpliedTags();
 
 

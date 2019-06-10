@@ -58,6 +58,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
    * @see #getVisibility()
    * @see #getEffectiveVisibility()
    */
+  @Contract("_ -> this")
   @NotNull ProtocolGroup<M> setVisibility(@NotNull Visibility visibility);
 
 
@@ -68,9 +69,11 @@ public interface ProtocolGroup<M> extends Protocol<M>
    *
    * @return  parameter builder instance
    */
+  @Contract("_ -> new")
   @NotNull MessageParameterBuilder<M> setGroupMessage(@NotNull String message);
 
 
+  @Contract("-> this")
   @NotNull ProtocolGroup<M> removeGroupMessage();
 
 
@@ -78,23 +81,23 @@ public interface ProtocolGroup<M> extends Protocol<M>
   boolean isHeaderVisible(@NotNull Level level, @NotNull Tag tag);
 
 
-  @Contract(pure = true)
+  @Contract(pure = true, value = "-> new")
   @NotNull ProtocolMessageBuilder<M> debug();
 
 
-  @Contract(pure = true)
+  @Contract(pure = true, value = "-> new")
   @NotNull ProtocolMessageBuilder<M> info();
 
 
-  @Contract(pure = true)
+  @Contract(pure = true, value = "-> new")
   @NotNull ProtocolMessageBuilder<M> warn();
 
 
-  @Contract(pure = true)
+  @Contract(pure = true, value = "-> new")
   @NotNull ProtocolMessageBuilder<M> error();
 
 
-  @Contract(pure = true)
+  @Contract(pure = true, value = "_ -> new")
   @NotNull ProtocolMessageBuilder<M> add(@NotNull Level level);
 
 
@@ -109,47 +112,59 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
   interface ProtocolMessageBuilder<M> extends Protocol.ProtocolMessageBuilder<M>
   {
+    @Contract("_ -> this")
     @NotNull ProtocolMessageBuilder<M> forTag(@NotNull Tag tag);
 
 
+    @Contract("_ -> this")
     @NotNull ProtocolMessageBuilder<M> forTags(@NotNull Tag ... tags);
 
 
+    @Contract("_ -> this")
     @NotNull ProtocolMessageBuilder<M> forTags(@NotNull String ... tagNames);
 
 
+    @Contract("_ -> this")
     @NotNull ProtocolMessageBuilder<M> withThrowable(Throwable throwable);
 
 
+    @Contract("_ -> new")
     @NotNull MessageParameterBuilder<M> message(@NotNull String message);
   }
 
 
   interface MessageParameterBuilder<M> extends Protocol.MessageParameterBuilder<M>, ProtocolGroup<M>
   {
+    @Contract("_ -> this")
     @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull Map<String,Object> parameterValues);
 
 
+    @Contract("_, _ -> this")
     @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*")
                                                                String parameter, boolean value);
 
 
+    @Contract("_, _ -> this")
     @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*")
                                                                String parameter, int value);
 
 
+    @Contract("_, _ -> this")
     @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*")
                                                                String parameter, long value);
 
 
+    @Contract("_, _ -> this")
     @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*")
                                                                String parameter, float value);
 
 
+    @Contract("_, _ -> this")
     @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*")
                                                                String parameter, double value);
 
 
+    @Contract("_, _ -> this")
     @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*")
                                                                String parameter, Object value);
   }

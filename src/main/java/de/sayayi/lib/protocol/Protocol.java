@@ -37,6 +37,11 @@ public interface Protocol<M> extends ProtocolQuery<M>
   @NotNull ProtocolFactory<M> getFactory();
 
 
+  /**
+   * Returns the parent protocol.
+   *
+   * @return  parent protocol or {@code null} if this is the root protocol.
+   */
   @Contract(pure = true)
   Protocol<M> getGroupParent();
 
@@ -53,7 +58,7 @@ public interface Protocol<M> extends ProtocolQuery<M>
    *
    * @see Level.Shared#DEBUG DEBUG
    */
-  @Contract(pure = true)
+  @Contract(pure = true, value = "-> new")
   @NotNull ProtocolMessageBuilder<M> debug();
 
 
@@ -69,7 +74,7 @@ public interface Protocol<M> extends ProtocolQuery<M>
    *
    * @see Level.Shared#INFO INFO
    */
-  @Contract(pure = true)
+  @Contract(pure = true, value = "-> new")
   @NotNull ProtocolMessageBuilder<M> info();
 
 
@@ -85,7 +90,7 @@ public interface Protocol<M> extends ProtocolQuery<M>
    *
    * @see Level.Shared#WARN WARN
    */
-  @Contract(pure = true)
+  @Contract(pure = true, value = "-> new")
   @NotNull ProtocolMessageBuilder<M> warn();
 
 
@@ -101,7 +106,7 @@ public interface Protocol<M> extends ProtocolQuery<M>
    *
    * @see Level.Shared#ERROR ERROR
    */
-  @Contract(pure = true)
+  @Contract(pure = true, value = "-> new")
   @NotNull ProtocolMessageBuilder<M> error();
 
 
@@ -119,7 +124,7 @@ public interface Protocol<M> extends ProtocolQuery<M>
    *
    * @see Level.Shared#ERROR ERROR
    */
-  @Contract(pure = true)
+  @Contract(pure = true, value = "_ -> new")
   @NotNull ProtocolMessageBuilder<M> error(Throwable throwable);
 
 
@@ -130,7 +135,7 @@ public interface Protocol<M> extends ProtocolQuery<M>
    *
    * @return  new message builder instance, never {@code null}
    */
-  @Contract(pure = true)
+  @Contract(pure = true, value = "_ -> new")
   @NotNull ProtocolMessageBuilder<M> add(@NotNull Level level);
 
 
@@ -139,6 +144,7 @@ public interface Protocol<M> extends ProtocolQuery<M>
    *
    * @return  new protocol group
    */
+  @Contract("-> new")
   @NotNull ProtocolGroup<M> createGroup();
 
 
@@ -151,25 +157,30 @@ public interface Protocol<M> extends ProtocolQuery<M>
   <R> R format(@NotNull ConfiguredProtocolFormatter<M,R> formatter);
 
 
-  @Contract(pure = true)
+  @Contract(pure = true, value = "_, _ -> new")
   @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag tag);
 
 
   @SuppressWarnings({ "UnusedReturnValue", "unused" })
   interface ProtocolMessageBuilder<M>
   {
+    @Contract("_ -> this")
     @NotNull ProtocolMessageBuilder<M> forTag(@NotNull Tag tag);
 
 
+    @Contract("_ -> this")
     @NotNull ProtocolMessageBuilder<M> forTags(@NotNull Tag ... tags);
 
 
+    @Contract("_ -> this")
     @NotNull ProtocolMessageBuilder<M> forTags(@NotNull String ... tagNames);
 
 
+    @Contract("_ -> this")
     @NotNull ProtocolMessageBuilder<M> withThrowable(Throwable throwable);
 
 
+    @Contract("_ -> new")
     @NotNull MessageParameterBuilder<M> message(@NotNull String message);
   }
 
@@ -189,6 +200,7 @@ public interface Protocol<M> extends ProtocolQuery<M>
      *
      * @return  paramter builder instance for the current message
      */
+    @Contract("_ -> this")
     @NotNull MessageParameterBuilder<M> with(@NotNull Map<String,Object> parameterValues);
 
 
@@ -204,6 +216,7 @@ public interface Protocol<M> extends ProtocolQuery<M>
      *
      * @return  paramter builder instance for the current message
      */
+    @Contract("_, _ -> this")
     @NotNull MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*") String parameter, boolean value);
 
 
@@ -219,6 +232,7 @@ public interface Protocol<M> extends ProtocolQuery<M>
      *
      * @return  paramter builder instance for the current message
      */
+    @Contract("_, _ -> this")
     @NotNull MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*") String parameter, int value);
 
 
@@ -234,6 +248,7 @@ public interface Protocol<M> extends ProtocolQuery<M>
      *
      * @return  paramter builder instance for the current message
      */
+    @Contract("_, _ -> this")
     @NotNull MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*") String parameter, long value);
 
 
@@ -249,6 +264,7 @@ public interface Protocol<M> extends ProtocolQuery<M>
      *
      * @return  paramter builder instance for the current message
      */
+    @Contract("_, _ -> this")
     @NotNull MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*") String parameter, float value);
 
 
@@ -264,6 +280,7 @@ public interface Protocol<M> extends ProtocolQuery<M>
      *
      * @return  paramter builder instance for the current message
      */
+    @Contract("_, _ -> this")
     @NotNull MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*") String parameter, double value);
 
 
@@ -279,6 +296,7 @@ public interface Protocol<M> extends ProtocolQuery<M>
      *
      * @return  paramter builder instance for the current message
      */
+    @Contract("_, _ -> this")
     @NotNull MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*") String parameter, Object value);
   }
 }
