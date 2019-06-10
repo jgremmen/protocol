@@ -28,7 +28,7 @@ import java.util.Map;
 public interface ProtocolGroup<M> extends Protocol<M>
 {
   /**
-   * Returns the visibility set for this protocol group.
+   * Returns the visibility for this protocol group.
    *
    * @return  visibility, never {@code null}
    *
@@ -51,9 +51,9 @@ public interface ProtocolGroup<M> extends Protocol<M>
   /**
    * Sets the visibility for this protocol group.
    *
-   * @param visibility  visibility, never |@code null}
+   * @param visibility  visibility, never {@code null}
    *
-   * @return  protocol group instance
+   * @return  this protocol group instance
    *
    * @see #getVisibility()
    * @see #getEffectiveVisibility()
@@ -63,7 +63,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
   /**
-   * Sets a group message and initiates a parameter builder which allows configuring paramater values for the message.
+   * Sets a group message and initiates a parameter builder which allows configuring parameter values for the message.
    *
    * @param message  message text
    *

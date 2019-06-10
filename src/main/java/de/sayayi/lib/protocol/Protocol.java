@@ -48,7 +48,7 @@ public interface Protocol<M> extends ProtocolQuery<M>
 
   /**
    * <p>
-   *   Add a debug level message.
+   *   Prepare a new debug level message.
    * </p>
    * <p>
    *   This method is functionally identical to {@code add(Level.Shared.DEBUG)}
@@ -64,7 +64,7 @@ public interface Protocol<M> extends ProtocolQuery<M>
 
   /**
    * <p>
-   *   Add an info level message.
+   *   Prepare a new info level message.
    * </p>
    * <p>
    *   This method is functionally identical to {@code add(Level.Shared.INFO)}
@@ -80,7 +80,7 @@ public interface Protocol<M> extends ProtocolQuery<M>
 
   /**
    * <p>
-   *   Add a warning level message.
+   *   Prepare a new warning level message.
    * </p>
    * <p>
    *   This method is functionally identical to {@code add(Level.Shared.WARN)}
@@ -96,7 +96,7 @@ public interface Protocol<M> extends ProtocolQuery<M>
 
   /**
    * <p>
-   *   Add an error level message.
+   *   Prepare a new error level message.
    * </p>
    * <p>
    *   This method is functionally identical to {@code add(Level.Shared.ERROR)}
@@ -112,7 +112,7 @@ public interface Protocol<M> extends ProtocolQuery<M>
 
   /**
    * <p>
-   *   Add an error level message with throwable.
+   *   Prepare a new error level message with throwable.
    * </p>
    * <p>
    *   This method is functionally identical to {@code add(Level.Shared.ERROR).withThrowable(throwable)}
@@ -129,7 +129,9 @@ public interface Protocol<M> extends ProtocolQuery<M>
 
 
   /**
-   * Add a new message with the given protocol {@code level}.
+   * <p>
+   *   Prepare a new message with the given protocol {@code level}.
+   * </p>
    *
    * @param level  protocol level, never {@code null}
    *
@@ -161,25 +163,99 @@ public interface Protocol<M> extends ProtocolQuery<M>
   @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag tag);
 
 
+  /**
+   * <p>
+   *   Builder pattern for creating a protocol message.
+   * </p>
+   * <p>
+   *   The builder collects tag and throwable information to be associated with the message. The message itself is
+   *   added to the protocol when the {@link #message(String)} method is invoked.
+   * </p>
+   *
+   * @param <M>  internal message object type
+   */
   @SuppressWarnings({ "UnusedReturnValue", "unused" })
   interface ProtocolMessageBuilder<M>
   {
+    /**
+     * <p>
+     *   Adds a tag to the protocol message.
+     * </p>
+     *
+     * @param tag  tag to associate with the new message, never {@code null}
+     *
+     * @return  this instance
+     *
+     * @throws IllegalArgumentException  if {@code tag} is not registered by the same protocol factory
+     *
+     * @see ProtocolFactory#isRegisteredTag(Tag)
+     */
     @Contract("_ -> this")
     @NotNull ProtocolMessageBuilder<M> forTag(@NotNull Tag tag);
 
 
+    /**
+     * <p>
+     *   Adds multiple tags to the protocol message.
+     * </p>
+     *
+     * @param tags  tags to associate with the new message, never {@code null}
+     *
+     * @return  this instance
+     *
+     * @throws IllegalArgumentException  if at least one tag is not registered by the same protocol factory
+     *
+     * @see ProtocolFactory#isRegisteredTag(Tag)
+     */
     @Contract("_ -> this")
     @NotNull ProtocolMessageBuilder<M> forTags(@NotNull Tag ... tags);
 
 
+    /**
+     * <p>
+     *   Adds multiple tags to the protocol message.
+     * </p>
+     *
+     * @param tagNames  names of the tags to associate with the new message, never {@code null}
+     *
+     * @return  this instance
+     *
+     * @throws IllegalArgumentException  if at least one tagName is not registered by the protocol factory
+     *
+     * @see ProtocolFactory#isRegisteredTag(Tag)
+     */
     @Contract("_ -> this")
     @NotNull ProtocolMessageBuilder<M> forTags(@NotNull String ... tagNames);
 
 
+    /**
+     * <p>
+     *   Sets a throwable for the new protocol message.
+     * </p>
+     *
+     * @param throwable  throwable to associate with the new message
+     *
+     * @return  this instance
+     *
+     * @see Protocol#error(Throwable)
+     */
     @Contract("_ -> this")
     @NotNull ProtocolMessageBuilder<M> withThrowable(Throwable throwable);
 
 
+    /**
+     * <p>
+     *   Creates a new protocol message based on the builder settings and adds the message to the protocol.
+     * </p>
+     * <p>
+     *   The {@code message} parameter is converted into an internal representation of type {@code M} using
+     *   factory method {@link ProtocolFactory#processMessage(String)}.
+     * </p>
+     *
+     * @param message  message text, resource key or any other message identifier, never {@code null}
+     *
+     * @return  parameter builder instance for the newly created message
+     */
     @Contract("_ -> new")
     @NotNull MessageParameterBuilder<M> message(@NotNull String message);
   }
