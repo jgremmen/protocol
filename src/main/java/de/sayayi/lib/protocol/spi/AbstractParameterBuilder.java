@@ -44,7 +44,7 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
   private final AbstractFormattableMessage<M> message;
 
 
-  AbstractParameterBuilder(AbstractProtocol<M,B> protocol, AbstractFormattableMessage<M> message)
+  AbstractParameterBuilder(AbstractProtocol<M,B> protocol, @NotNull AbstractFormattableMessage<M> message)
   {
     this.protocol = protocol;
     this.message = message;
@@ -94,14 +94,11 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
   @Override
   public @NotNull P with(@NotNull String parameter, Object value)
   {
-    if (message != null)
-    {
-      //noinspection ConstantConditions
-      if (parameter == null || parameter.isEmpty())
-        throw new IllegalArgumentException("parameter must not be empty");
+    //noinspection ConstantConditions
+    if (parameter == null || parameter.isEmpty())
+      throw new IllegalArgumentException("parameter must not be empty");
 
-      message.parameterValues.put(parameter, value);
-    }
+    message.parameterValues.put(parameter, value);
 
     return (P)this;
   }
@@ -168,7 +165,7 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
-  public <R> R format(@NotNull ConfiguredProtocolFormatter<M, R> formatter) {
+  public <R> R format(@NotNull ConfiguredProtocolFormatter<M,R> formatter) {
     return protocol.format(formatter);
   }
 

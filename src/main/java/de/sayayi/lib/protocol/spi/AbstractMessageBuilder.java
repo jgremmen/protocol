@@ -49,7 +49,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   }
 
 
-  protected abstract @NotNull P createMessageParameterBuilder(ProtocolMessageEntry<M> message);
+  protected abstract @NotNull P createMessageParameterBuilder(@NotNull ProtocolMessageEntry<M> message);
 
 
   @Override
@@ -119,18 +119,12 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
         if (impliedTag.isMatch(level))
           resolvedTags.add(impliedTag);
 
-    // if this message has no tags, don't add it to the protocol.
-    if (!resolvedTags.isEmpty())
-    {
-      AbstractProtocolFactory<M> factory = protocol.factory;
-      ProtocolMessageEntry<M> msg = new ProtocolMessageEntry<M>(level, resolvedTags, throwable,
-          factory.processMessage(message), factory.defaultParameterValues);
+    AbstractProtocolFactory<M> factory = protocol.factory;
+    ProtocolMessageEntry<M> msg = new ProtocolMessageEntry<M>(level, resolvedTags, throwable,
+        factory.processMessage(message), factory.defaultParameterValues);
 
-      protocol.entries.add(msg);
+    protocol.entries.add(msg);
 
-      return createMessageParameterBuilder(msg);
-    }
-
-    return createMessageParameterBuilder(null);
+    return createMessageParameterBuilder(msg);
   }
 }

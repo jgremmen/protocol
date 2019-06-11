@@ -209,7 +209,7 @@ final class ProtocolGroupImpl<M>
 
 
     @Override
-    protected @NotNull ProtocolGroup.MessageParameterBuilder<M> createMessageParameterBuilder(ProtocolMessageEntry<M> message) {
+    protected @NotNull ProtocolGroup.MessageParameterBuilder<M> createMessageParameterBuilder(@NotNull ProtocolMessageEntry<M> message) {
       return new ParameterBuilderImpl(message);
     }
   }
