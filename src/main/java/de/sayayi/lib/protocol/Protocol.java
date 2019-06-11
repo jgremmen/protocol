@@ -40,7 +40,7 @@ public interface Protocol<M> extends ProtocolQuery<M>
   /**
    * Returns the parent protocol.
    *
-   * @return  parent protocol or {@code null} if this is the root protocol.
+   * @return  parent protocol or {@code null} if this is the root protocol
    */
   @Contract(pure = true)
   Protocol<M> getGroupParent();

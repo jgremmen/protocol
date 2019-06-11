@@ -48,7 +48,6 @@ public interface ProtocolEntry<M> extends ProtocolQuery<M>
      * <ul>
      *   <li>a parameter name (map key) must have a length of at least 1</li>
      *   <li>additional parameters are allowed to those which are required to format the message</li>
-     *   <li>message formatters cannot rely on the order of the parameters</li>
      *   <li>
      *     if a parameter required by the message is missing, the behaviour depends on the message formatter
      *     implementation; it may choose a default or throw an exception
