@@ -35,8 +35,7 @@ import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_IF_NOT
 /**
  * @author Jeroen Gremmen
  */
-final class ProtocolGroupImpl<M>
-    extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
+final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
     implements ProtocolGroup<M>, Group<M>
 {
   private static final Level NO_VISIBLE_ENTRIES = new Level() {
@@ -126,8 +125,7 @@ final class ProtocolGroupImpl<M>
       else
         continue;
 
-      if (protocolEntryLevel.severity() > headerLevel.severity())
-        headerLevel = protocolEntryLevel;
+      headerLevel = LevelHelper.max(headerLevel, protocolEntryLevel);
     }
 
     return headerLevel;

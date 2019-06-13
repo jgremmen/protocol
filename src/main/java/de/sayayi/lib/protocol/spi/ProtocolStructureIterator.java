@@ -34,6 +34,7 @@ import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.FLATTEN;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ALWAYS;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_IF_NOT_EMPTY;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ONLY;
+import static de.sayayi.lib.protocol.spi.LevelHelper.max;
 
 
 /**
@@ -181,7 +182,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
       {
         case SHOW_HEADER_ALWAYS:
           // header + messages, increase depth
-          nextEntry = new GroupEntryImpl<M>(protocol.getGroupHeader(), protocol.getHeaderLevel(level, tag),
+          nextEntry = new GroupEntryImpl<M>(protocol.getGroupHeader(), max(level, protocol.getHeaderLevel(level, tag)),
               protocol.getVisibleEntryCount(level, tag), this.depth++, !hasEntryBeforeGroup, !hasEntryAfterGroup);
           forceFirst = true;
           break;
@@ -190,7 +191,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
           // header only, no messages; remain at same depth
           iterator = null;
           nextEntry = new GroupMessageEntryImpl<M>(depth, !hasEntryBeforeGroup, !hasEntryAfterGroup,
-              protocol.getHeaderLevel(level, tag), protocol.getGroupHeader());
+              max(level, protocol.getHeaderLevel(level, tag)), protocol.getGroupHeader());
           break;
 
         case HIDDEN:
