@@ -21,9 +21,9 @@ import de.sayayi.lib.protocol.Level;
 /**
  * @author Jeroen Gremmen
  */
-public abstract class LevelHelper
+abstract class LevelHelper
 {
-  public static Level max(Level l1, Level l2) {
+  static Level max(Level l1, Level l2) {
     return (l1.severity() >= l2.severity()) ? l1 : l2;
   }
 }

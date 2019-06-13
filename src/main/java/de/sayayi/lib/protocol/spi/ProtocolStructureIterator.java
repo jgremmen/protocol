@@ -183,7 +183,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
         case SHOW_HEADER_ALWAYS:
           // header + messages, increase depth
           nextEntry = new GroupEntryImpl<M>(protocol.getGroupHeader(), max(level, protocol.getHeaderLevel(level, tag)),
-              protocol.getVisibleEntryCount(level, tag), this.depth++, !hasEntryBeforeGroup, !hasEntryAfterGroup);
+              protocol.getVisibleGroupEntryCount(level, tag), this.depth++, !hasEntryBeforeGroup, !hasEntryAfterGroup);
           forceFirst = true;
           break;
 

@@ -3,6 +3,7 @@ package de.sayayi.lib.protocol;
 import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
+import de.sayayi.lib.protocol.formatter.TechnicalProtocolFormatter;
 import org.junit.Test;
 
 import static de.sayayi.lib.protocol.Level.Shared.ALL;
@@ -40,6 +41,8 @@ public class ProtocolIteratorTest
 
     grp1.debug().message("d1,msg2");
 
+    String tree = protocol.format(new TechnicalProtocolFormatter<String>(factory));
+
     ProtocolIterator<String> iterator = protocol.iterator(ALL, tag);
     GroupEntry<String> grpEntry;
     MessageEntry<String> msgEntry;
@@ -55,6 +58,7 @@ public class ProtocolIteratorTest
     assertTrue(grpEntry.isLast());
     assertEquals(0, grpEntry.getDepth());
     assertEquals("d0,grp1", grpEntry.getGroupHeader().getMessage());
+    assertEquals(3, grpEntry.getMessageCount());
 
     msgEntry = (MessageEntry<String>)iterator.next();
     assertTrue(msgEntry.isFirst());
@@ -67,6 +71,7 @@ public class ProtocolIteratorTest
     assertFalse(grpEntry.isLast());
     assertEquals(1, grpEntry.getDepth());
     assertEquals("d1,grp1", grpEntry.getGroupHeader().getMessage());
+    assertEquals(2, grpEntry.getMessageCount());
 
     msgEntry = (MessageEntry<String>)iterator.next();
     assertTrue(msgEntry.isFirst());

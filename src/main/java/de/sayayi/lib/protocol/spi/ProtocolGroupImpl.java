@@ -160,6 +160,27 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
   }
 
 
+  int getVisibleGroupEntryCount(@NotNull Level level, @NotNull Tag tag)
+  {
+    if (tag.isMatch(level))
+    {
+      int n = super.getVisibleEntryCount(level, tag);
+
+      switch(getEffectiveVisibility())
+      {
+        case SHOW_HEADER_ALWAYS:
+        case SHOW_HEADER_IF_NOT_EMPTY:
+          return n;
+
+        case FLATTEN_ON_SINGLE_ENTRY:
+          return (n > 1) ? n : 0;
+      }
+    }
+
+    return 0;
+  }
+
+
   @Override
   public @NotNull ProtocolGroup.MessageParameterBuilder<M> setGroupMessage(@NotNull String message)
   {

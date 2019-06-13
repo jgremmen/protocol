@@ -106,17 +106,44 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
   }
 
 
-  interface GroupMessageEntry<M> extends MessageEntry<M> {
+  interface GroupMessageEntry<M> extends MessageEntry<M>
+  {
+    /**
+     * {@inheritDoc}
+     *
+     * @return  always {@code null}
+     */
+    @Override
+    Throwable getThrowable();
   }
 
 
   interface GroupEntry<M> extends VisibleDepthEntry<M>, Protocol.Group<M>
   {
+    /**
+     * {@inheritDoc}
+     *
+     * @return  group header message, never {@code null}
+     */
+    @Contract(pure = true)
     @Override
-    Protocol.Message<M> getGroupHeader();
+    @NotNull Protocol.Message<M> getGroupHeader();
 
 
-    @SuppressWarnings("unused")
+    /**
+     * <p>
+     *   Returns the number of visible messages in this group.
+     * </p>
+     * <p>
+     *   Only messages with the same depth are counted. So if this group has a depth of {@code 2}, this method
+     *   returns the number of messages with depth {@code 3}.
+     * </p>
+     *
+     * @return  number of messages in the group
+     *
+     * @see #getDepth()
+     */
+    @Contract(pure = true)
     int getMessageCount();
   }
 }
