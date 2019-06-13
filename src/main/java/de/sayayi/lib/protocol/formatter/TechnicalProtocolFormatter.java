@@ -17,6 +17,7 @@ package de.sayayi.lib.protocol.formatter;
 
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol;
+import de.sayayi.lib.protocol.Protocol.GenericMessage;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
 import de.sayayi.lib.protocol.Tag;
@@ -37,8 +38,16 @@ public class TechnicalProtocolFormatter<M> extends TreeProtocolFormatter<M>
 
 
   @SuppressWarnings("WeakerAccess")
-  public TechnicalProtocolFormatter(@NotNull ProtocolFactory<M> factory) {
+  public TechnicalProtocolFormatter(@NotNull ProtocolFactory<M> factory)
+  {
     tag = factory.getDefaultTag();
+
+    setMessageFormatter(new MessageFormatter<M>() {
+      @Override
+      public String format(GenericMessage<M> message) {
+        return message.toString();
+      }
+    });
   }
 
 

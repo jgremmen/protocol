@@ -98,8 +98,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   }
 
 
-  @Override
-  public @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag tag)
+  @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag tag)
   {
     List<ProtocolEntry<M>> filteredEntries = new ArrayList<ProtocolEntry<M>>();
 
@@ -113,14 +112,15 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
 
   @Override
-  public boolean hasVisibleElement(@NotNull Level level, @NotNull Tag tag)
+  public int getVisibleEntryCount(@NotNull Level level, @NotNull Tag tag)
   {
+    int count = 0;
+
     if (tag.isMatch(level))
       for(ProtocolEntry<M> entry: entries)
-        if (entry.hasVisibleElement(level, tag))
-          return true;
+        count += entry.getVisibleEntryCount(level, tag);
 
-    return false;
+    return count;
   }
 
 

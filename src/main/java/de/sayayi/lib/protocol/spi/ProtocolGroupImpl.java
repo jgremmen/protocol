@@ -42,7 +42,7 @@ final class ProtocolGroupImpl<M>
   private final AbstractProtocol<M,Protocol.ProtocolMessageBuilder<M>> parent;
 
   @Getter private Visibility visibility;
-  @Getter private GroupMessage groupMessage;
+  @Getter private GroupMessage groupHeader;
 
 
   ProtocolGroupImpl(@NotNull AbstractProtocol<M,Protocol.ProtocolMessageBuilder<M>> parent)
@@ -62,7 +62,7 @@ final class ProtocolGroupImpl<M>
 
   @Override
   public @NotNull Visibility getEffectiveVisibility() {
-    return (groupMessage == null) ? visibility.forAbsentHeader() : visibility;
+    return (groupHeader == null) ? visibility.forAbsentHeader() : visibility;
   }
 
 
@@ -82,7 +82,7 @@ final class ProtocolGroupImpl<M>
   @Override
   public boolean isHeaderVisible(@NotNull Level level, @NotNull Tag tag)
   {
-    if (groupMessage != null)
+    if (groupHeader != null)
       switch(visibility)
       {
         case FLATTEN:
@@ -96,20 +96,8 @@ final class ProtocolGroupImpl<M>
         case SHOW_HEADER_IF_NOT_EMPTY:
           return isMatch(level, tag);
 
-        case FLATTEN_ON_SINGLE_ENTRY: {
-          boolean found = false;
-
-          for(ProtocolEntry entry: entries)
-            if (entry.isMatch(level, tag))
-            {
-              if (!found)
-                found = true;
-              else
-                return true;
-            }
-
-          return false;
-        }
+        case FLATTEN_ON_SINGLE_ENTRY:
+          return super.getVisibleEntryCount(level, tag) > 1;
       }
 
     return false;
@@ -118,30 +106,29 @@ final class ProtocolGroupImpl<M>
 
   @Override
   public @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag tag) {
-    return visibility.isShowEntries() ? super.getEntries(level, tag) : Collections.<ProtocolEntry<M>>emptyList();
+    return getEffectiveVisibility().isShowEntries() ? super.getEntries(level, tag) : Collections.<ProtocolEntry<M>>emptyList();
   }
 
 
   @Override
-  public boolean hasVisibleElement(@NotNull Level level, @NotNull Tag tag)
+  public int getVisibleEntryCount(@NotNull Level level, @NotNull Tag tag)
   {
     if (tag.isMatch(level))
       switch(getEffectiveVisibility())
       {
-        case HIDDEN:
-          return false;
-
-        case FLATTEN:
-        case FLATTEN_ON_SINGLE_ENTRY:
-        case SHOW_HEADER_IF_NOT_EMPTY:
-          return super.hasVisibleElement(level, tag);
-
         case SHOW_HEADER_ALWAYS:
         case SHOW_HEADER_ONLY:
-          return true;
+          return 1;
+
+        case FLATTEN_ON_SINGLE_ENTRY:
+        case SHOW_HEADER_IF_NOT_EMPTY:
+          return super.getVisibleEntryCount(level, tag) > 0 ? 1 : 0;
+
+        case FLATTEN:
+          return super.getVisibleEntryCount(level, tag);
       }
 
-    return false;
+    return 0;
   }
 
 
@@ -154,14 +141,14 @@ final class ProtocolGroupImpl<M>
 
     M processedMessage = factory.processMessage(message);
 
-    return new ParameterBuilderImpl(groupMessage = new GroupMessage(processedMessage));
+    return new ParameterBuilderImpl(groupHeader = new GroupMessage(processedMessage));
   }
 
 
   @Override
   public @NotNull ProtocolGroup<M> removeGroupMessage()
   {
-    groupMessage = null;
+    groupHeader = null;
 
     return this;
   }
@@ -215,22 +202,10 @@ final class ProtocolGroupImpl<M>
   }
 
 
-  private class GroupMessage extends AbstractFormattableMessage<M>
+  private class GroupMessage extends AbstractGenericMessage<M>
   {
     GroupMessage(@NotNull M message) {
       super(message, factory.defaultParameterValues);
-    }
-
-
-    @Override
-    public boolean isMatch(@NotNull Level level, @NotNull Tag tag) {
-      return isHeaderVisible(level, tag);
-    }
-
-
-    @Override
-    public boolean hasVisibleElement(@NotNull Level level, @NotNull Tag tag) {
-      return isHeaderVisible(level, tag);
     }
 
 
@@ -251,7 +226,7 @@ final class ProtocolGroupImpl<M>
       extends AbstractParameterBuilder<M,ProtocolGroup.MessageParameterBuilder<M>,ProtocolGroup.ProtocolMessageBuilder<M>>
       implements ProtocolGroup.MessageParameterBuilder<M>
   {
-    ParameterBuilderImpl(AbstractFormattableMessage<M> message) {
+    ParameterBuilderImpl(AbstractGenericMessage<M> message) {
       super(ProtocolGroupImpl.this, message);
     }
 

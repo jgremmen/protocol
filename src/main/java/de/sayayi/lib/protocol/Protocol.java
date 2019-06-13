@@ -375,4 +375,68 @@ public interface Protocol<M> extends ProtocolQuery<M>
     @Contract("_, _ -> this")
     @NotNull MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*") String parameter, Object value);
   }
+
+
+  /**
+   * The simplest representation of a message.
+   *
+   * @param <M>  Internal message object type.
+   */
+  interface GenericMessage<M>
+  {
+    /**
+     * Returns the internal representation of the message.
+     *
+     * @return  message, never {@code null}
+     */
+    @Contract(pure = true)
+    @NotNull M getMessage();
+
+
+    /**
+     * Returns a map with parameter names and values to be used for formatting the message.
+     * <ul>
+     *   <li>a parameter name (map key) must have a length of at least 1</li>
+     *   <li>additional parameters are allowed to those which are required to format the message</li>
+     *   <li>
+     *     if a parameter required by the message is missing, the behaviour depends on the message formatter
+     *     implementation; it may choose a default or throw an exception
+     *   </li>
+     * </ul>
+     *
+     * @return  parameter values, never {@code null}
+     *
+     * @see #getMessage()
+     */
+    @Contract(pure = true, value = "-> new")
+    @NotNull Map<String,Object> getParameterValues();
+  }
+
+
+  interface Message<M> extends GenericMessage<M>
+  {
+    @Contract(pure = true)
+    @NotNull Level getLevel();
+
+
+    /**
+     * Returns the throwable associated with the message.
+     *
+     * @return  throwable/exception or {@code null}
+     */
+    @Contract(pure = true)
+    Throwable getThrowable();
+  }
+
+
+  interface Group<M>
+  {
+    /**
+     * Returns the group header message.
+     *
+     * @return  group header message or {@code null}
+     */
+    @Contract(pure = true)
+    GenericMessage<M> getGroupHeader();
+  }
 }

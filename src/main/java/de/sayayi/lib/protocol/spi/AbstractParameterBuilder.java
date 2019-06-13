@@ -19,7 +19,6 @@ import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.Protocol.MessageParameterBuilder;
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
-import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
@@ -28,7 +27,6 @@ import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.Tag;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -41,10 +39,10 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
     implements MessageParameterBuilder<M>
 {
   private final AbstractProtocol<M,B> protocol;
-  private final AbstractFormattableMessage<M> message;
+  private final AbstractGenericMessage<M> message;
 
 
-  AbstractParameterBuilder(AbstractProtocol<M,B> protocol, @NotNull AbstractFormattableMessage<M> message)
+  AbstractParameterBuilder(AbstractProtocol<M,B> protocol, @NotNull AbstractGenericMessage<M> message)
   {
     this.protocol = protocol;
     this.message = message;
@@ -177,14 +175,8 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
-  public @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag tag) {
-    return protocol.getEntries(level, tag);
-  }
-
-
-  @Override
-  public boolean hasVisibleElement(@NotNull Level level, @NotNull Tag tag) {
-    return protocol.hasVisibleElement(level, tag);
+  public int getVisibleEntryCount(@NotNull Level level, @NotNull Tag tag) {
+    return protocol.getVisibleEntryCount(level, tag);
   }
 
 

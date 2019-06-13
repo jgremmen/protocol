@@ -18,7 +18,7 @@ package de.sayayi.lib.protocol;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 
 
@@ -27,70 +27,24 @@ import java.util.Set;
  */
 public interface ProtocolEntry<M> extends ProtocolQuery<M>
 {
-  /**
-   * The simplest representation of a formattable protocol message.
-   *
-   * @param <M>  Internal message object type.
-   */
-  interface FormattableMessage<M> extends ProtocolEntry<M>
+  interface Message<M> extends ProtocolEntry<M>, Protocol.Message<M>
   {
-    /**
-     * Returns the internal representation of the message.
-     *
-     * @return  message, never {@code null}
-     */
-    @Contract(pure = true)
-    @NotNull M getMessage();
-
-
-    /**
-     * Returns a map with parameter names and values to be used for formatting the message.
-     * <ul>
-     *   <li>a parameter name (map key) must have a length of at least 1</li>
-     *   <li>additional parameters are allowed to those which are required to format the message</li>
-     *   <li>
-     *     if a parameter required by the message is missing, the behaviour depends on the message formatter
-     *     implementation; it may choose a default or throw an exception
-     *   </li>
-     * </ul>
-     *
-     * @return  parameter values, never {@code null}
-     *
-     * @see #getMessage()
-     */
-    @Contract(pure = true, value = "-> new")
-    @NotNull Map<String,Object> getParameterValues();
-  }
-
-
-  interface Message<M> extends FormattableMessage<M>
-  {
-    @Contract(pure = true)
-    @NotNull Level getLevel();
-
-
     @Contract(pure = true, value = "-> new")
     @NotNull Set<Tag> getTags();
-
-
-    /**
-     * Returns the throwable associated with the message.
-     *
-     * @return  throwable/exception or {@code null}
-     */
-    @Contract(pure = true)
-    Throwable getThrowable();
   }
 
 
-  interface Group<M> extends ProtocolEntry<M>
+  interface Group<M> extends ProtocolEntry<M>, Protocol.Group<M>
   {
     /**
-     * Returns the group message.
+     * Returns a list of protocol entries provided by this protocol object for the given {@code level} and {@code tag}.
      *
-     * @return  group message or {@code null}
+     * @param level  requested protocol level, not {@code null}
+     * @param tag    tag to query, not {@code null}
+     *
+     * @return  a list of protocol entries, never {@code null}
      */
-    @Contract(pure = true)
-    FormattableMessage<M> getGroupMessage();
+    @Contract(pure = true, value = "_, _ -> new")
+    @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag tag);
   }
 }

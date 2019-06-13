@@ -18,8 +18,6 @@ package de.sayayi.lib.protocol;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
 
 /**
  * @author Jeroen Gremmen
@@ -38,18 +36,6 @@ public interface ProtocolQuery<M>
   boolean isMatch(@NotNull Level level, @NotNull Tag tag);
 
 
-  /**
-   * Returns a list of protocol entries provided by this protocol object for the given {@code level} and {@code tag}.
-   *
-   * @param level  requested protocol level, not {@code null}
-   * @param tag    tag to query, not {@code null}
-   *
-   * @return  a list of protocol entries, never {@code null}
-   */
-  @Contract(pure = true, value = "_, _ -> new")
-  @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag tag);
-
-
   @Contract(pure = true)
-  boolean hasVisibleElement(@NotNull Level level, @NotNull Tag tag);
+  int getVisibleEntryCount(@NotNull Level level, @NotNull Tag tag);
 }

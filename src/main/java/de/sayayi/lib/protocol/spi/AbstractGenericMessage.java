@@ -15,29 +15,25 @@
  */
 package de.sayayi.lib.protocol.spi;
 
-import de.sayayi.lib.protocol.Level;
-import de.sayayi.lib.protocol.ProtocolEntry;
-import de.sayayi.lib.protocol.ProtocolEntry.FormattableMessage;
-import de.sayayi.lib.protocol.Tag;
+import de.sayayi.lib.protocol.Protocol.GenericMessage;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
 /**
  * @author Jeroen Gremmen
  */
-abstract class AbstractFormattableMessage<M> implements FormattableMessage<M>
+abstract class AbstractGenericMessage<M> implements GenericMessage<M>
 {
   @Getter final M message;
   final Map<String,Object> parameterValues;
 
 
-  AbstractFormattableMessage(@NotNull M message, @NotNull Map<String,Object> defaultParameterValues)
+  AbstractGenericMessage(@NotNull M message, @NotNull Map<String,Object> defaultParameterValues)
   {
     this.message = message;
     this.parameterValues = new HashMap<String,Object>(defaultParameterValues);
@@ -47,14 +43,5 @@ abstract class AbstractFormattableMessage<M> implements FormattableMessage<M>
   @Override
   public @NotNull Map<String,Object> getParameterValues() {
     return Collections.unmodifiableMap(parameterValues);
-  }
-
-
-  @Override
-  public @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag tag)
-  {
-    return isMatch(level, tag)
-        ? Collections.<ProtocolEntry<M>>singletonList(this)
-        : Collections.<ProtocolEntry<M>>emptyList();
   }
 }

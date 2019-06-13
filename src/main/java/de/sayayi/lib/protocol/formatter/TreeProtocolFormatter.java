@@ -16,19 +16,20 @@
 package de.sayayi.lib.protocol.formatter;
 
 import de.sayayi.lib.protocol.Level;
-import de.sayayi.lib.protocol.ProtocolEntry.FormattableMessage;
-import de.sayayi.lib.protocol.ProtocolEntry.Message;
+import de.sayayi.lib.protocol.Protocol.GenericMessage;
 import de.sayayi.lib.protocol.ProtocolFormatter.InitializableProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.Tag;
+import lombok.AccessLevel;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 
 /**
  * @author Jeroen Gremmen
  */
-public class TreeProtocolFormatter<M> implements InitializableProtocolFormatter<M,String>
+public abstract class TreeProtocolFormatter<M> implements InitializableProtocolFormatter<M,String>
 {
   private static final String GRAPH_ROOT_NODE_PREFIX = "\u25a0\u2500\u2500";
   private static final String GRAPH_MIDDLE_NODE_PREFIX = "\u251c\u2500\u2500";
@@ -42,9 +43,12 @@ public class TreeProtocolFormatter<M> implements InitializableProtocolFormatter<
   private final StringBuilder result;
   private String[] prefixes;
 
+  @Setter(AccessLevel.PROTECTED)
+  private MessageFormatter<M> messageFormatter;
+
 
   @SuppressWarnings("WeakerAccess")
-  public TreeProtocolFormatter() {
+  protected TreeProtocolFormatter() {
     result = new StringBuilder();
   }
 
@@ -54,18 +58,6 @@ public class TreeProtocolFormatter<M> implements InitializableProtocolFormatter<
   {
     result.delete(0, result.length());
     (prefixes = new String[estimatedGroupDepth + 1])[0] = "";
-  }
-
-
-  @SuppressWarnings("WeakerAccess")
-  protected String formatMessage(Message<M> message) {
-    return message.toString();
-  }
-
-
-  @SuppressWarnings("WeakerAccess")
-  protected String formatGroupMessage(FormattableMessage<M> groupMessage) {
-    return groupMessage.toString();
   }
 
 
@@ -84,7 +76,7 @@ public class TreeProtocolFormatter<M> implements InitializableProtocolFormatter<
             .append(prefix).append(message.isLast() ? GRAPH_LAST_NODE_PREFIX : GRAPH_MIDDLE_NODE_PREFIX);
     }
 
-    result.append(formatMessage(message)).append('\n');
+    result.append(messageFormatter.format(message)).append('\n');
   }
 
 
@@ -102,7 +94,7 @@ public class TreeProtocolFormatter<M> implements InitializableProtocolFormatter<
             .append(prefix).append(group.isLast() ? GRAPH_LAST_NODE_PREFIX : GRAPH_MIDDLE_NODE_PREFIX);
     }
 
-    result.append(formatGroupMessage(group.getGroupMessage())).append('\n');
+    result.append(messageFormatter.format(group.getGroupHeader())).append('\n');
 
     prefixes[depth + 1] = prefix + (group.isLast() ? GRAPH_LEVEL_SEPARATOR_EMPTY : GRAPH_LEVEL_SEPARATOR_BAR);
   }
@@ -111,5 +103,11 @@ public class TreeProtocolFormatter<M> implements InitializableProtocolFormatter<
   @Override
   public @NotNull String getResult() {
     return result.toString();
+  }
+
+
+  interface MessageFormatter<M>
+  {
+    String format(GenericMessage<M> message);
   }
 }

@@ -29,7 +29,7 @@ import java.util.Set;
 /**
  * @author Jeroen Gremmen
  */
-class ProtocolMessageEntry<M> extends AbstractFormattableMessage<M> implements ProtocolEntry.Message<M>
+class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements ProtocolEntry.Message<M>
 {
   @Getter private final Level level;
   private final Set<Tag> tags;
@@ -60,8 +60,8 @@ class ProtocolMessageEntry<M> extends AbstractFormattableMessage<M> implements P
 
 
   @Override
-  public boolean hasVisibleElement(@NotNull Level level, @NotNull Tag tag) {
-    return isMatch(level, tag);
+  public int getVisibleEntryCount(@NotNull Level level, @NotNull Tag tag) {
+    return isMatch(level, tag) ? 1 : 0;
   }
 
 

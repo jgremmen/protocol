@@ -15,8 +15,6 @@
  */
 package de.sayayi.lib.protocol;
 
-import de.sayayi.lib.protocol.ProtocolEntry.Group;
-import de.sayayi.lib.protocol.ProtocolEntry.Message;
 import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -74,8 +72,11 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
      */
     @Contract(pure = true)
     int getDepth();
+  }
 
 
+  interface VisibleDepthEntry<M> extends DepthEntry<M>
+  {
     /**
      * Tells if this is the first entry with respect to its depth.
      *
@@ -101,32 +102,16 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
   }
 
 
-  interface MessageEntry<M> extends DepthEntry<M>, Message<M> {
+  interface MessageEntry<M> extends VisibleDepthEntry<M>, Protocol.Message<M> {
   }
 
 
-  interface GroupEntry<M> extends DepthEntry<M>, Group<M>
+  interface GroupMessageEntry<M> extends MessageEntry<M> {
+  }
+
+
+  interface GroupEntry<M> extends VisibleDepthEntry<M>, Protocol.Group<M>
   {
-    /**
-     * Tells if the group itself contains an entry.
-     *
-     * @return  {@code true} if the group contains at least one matching entry, {@code false} otherwise.
-     */
-    @Contract(pure = true)
-    boolean hasEntryInGroup();
-
-
-    @Contract(pure = true)
-    boolean hasEntryAfterGroup();
-
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return  group message, never {@code null}
-     */
-    @Contract(pure = true)
-    @Override
-    @NotNull FormattableMessage<M> getGroupMessage();
+    int getMessageCount();
   }
 }

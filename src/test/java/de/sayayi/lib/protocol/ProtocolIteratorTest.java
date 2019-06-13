@@ -53,10 +53,8 @@ public class ProtocolIteratorTest
     grpEntry = (GroupEntry<String>)iterator.next();
     assertFalse(grpEntry.isFirst());
     assertTrue(grpEntry.isLast());
-    assertFalse(grpEntry.hasEntryAfterGroup());
-    assertTrue(grpEntry.hasEntryInGroup());
     assertEquals(0, grpEntry.getDepth());
-    assertEquals("d0,grp1", grpEntry.getGroupMessage().getMessage());
+    assertEquals("d0,grp1", grpEntry.getGroupHeader().getMessage());
 
     msgEntry = (MessageEntry<String>)iterator.next();
     assertTrue(msgEntry.isFirst());
@@ -67,10 +65,8 @@ public class ProtocolIteratorTest
     grpEntry = (GroupEntry<String>)iterator.next();
     assertFalse(grpEntry.isFirst());
     assertFalse(grpEntry.isLast());
-    assertTrue(grpEntry.hasEntryAfterGroup());
-    assertTrue(grpEntry.hasEntryInGroup());
     assertEquals(1, grpEntry.getDepth());
-    assertEquals("d1,grp1", grpEntry.getGroupMessage().getMessage());
+    assertEquals("d1,grp1", grpEntry.getGroupHeader().getMessage());
 
     msgEntry = (MessageEntry<String>)iterator.next();
     assertTrue(msgEntry.isFirst());
@@ -112,10 +108,8 @@ public class ProtocolIteratorTest
     grpEntry = (GroupEntry<String>)iterator.next();
     assertTrue(grpEntry.isFirst());
     assertFalse(grpEntry.isLast());
-    assertTrue(grpEntry.hasEntryAfterGroup());
-    assertTrue(grpEntry.hasEntryInGroup());
     assertEquals(0, grpEntry.getDepth());
-    assertEquals("grp #1, header", grpEntry.getGroupMessage().getMessage());
+    assertEquals("grp #1, header", grpEntry.getGroupHeader().getMessage());
 
     msgEntry = (MessageEntry<String>)iterator.next();
     assertTrue(msgEntry.isFirst());

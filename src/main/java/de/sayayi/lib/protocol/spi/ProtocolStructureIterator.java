@@ -16,6 +16,8 @@
 package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.Level;
+import de.sayayi.lib.protocol.Protocol;
+import de.sayayi.lib.protocol.Protocol.GenericMessage;
 import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.ProtocolGroup.Visibility;
 import de.sayayi.lib.protocol.ProtocolIterator;
@@ -25,10 +27,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Set;
 
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.FLATTEN;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ALWAYS;
@@ -175,15 +175,16 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
       {
         case SHOW_HEADER_ALWAYS:
           // header + messages, increase depth
-          nextEntry = new GroupEntryImpl<M>(hasEntryAfterGroup, protocol.getGroupMessage(), this.depth++,
-              !hasEntryBeforeGroup, !hasEntryAfterGroup, true);
+          nextEntry = new GroupEntryImpl<M>(protocol.getGroupHeader(), protocol.getVisibleEntryCount(level, tag),
+              this.depth++, !hasEntryBeforeGroup, !hasEntryAfterGroup);
           forceFirst = true;
           break;
 
         case SHOW_HEADER_ONLY:
           // header only, no messages; remain at same depth
-          nextEntry = new GroupEntryImpl<M>(hasEntryAfterGroup, protocol.getGroupMessage(), depth,
-              !hasEntryBeforeGroup, !hasEntryAfterGroup, false);
+          iterator = Collections.<ProtocolEntry<M>>emptyList().iterator();
+          nextEntry = new GroupMessageEntryImpl<M>(depth, !hasEntryBeforeGroup, !hasEntryAfterGroup, level,
+              protocol.getGroupHeader());
           break;
 
         case HIDDEN:
@@ -208,25 +209,36 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   static abstract class DepthEntryImpl<M> implements DepthEntry<M>
   {
     @Getter final int depth;
+
+
+    DepthEntryImpl(int depth) {
+      this.depth = depth;
+    }
+  }
+
+
+  static abstract class VisibleDepthEntryImpl<M> extends DepthEntryImpl<M> implements VisibleDepthEntry<M>
+  {
     @Getter final boolean first;
     @Getter final boolean last;
 
 
-    DepthEntryImpl(int depth, boolean first, boolean last)
+    VisibleDepthEntryImpl(int depth, boolean first, boolean last)
     {
-      this.depth = depth;
+      super(depth);
+
       this.first = first;
       this.last = last;
     }
   }
 
 
-  private static class MessageEntryImpl<M> extends DepthEntryImpl<M> implements MessageEntry<M>
+  private static class MessageEntryImpl<M> extends VisibleDepthEntryImpl<M> implements MessageEntry<M>
   {
-    final ProtocolMessageEntry<M> message;
+    final Protocol.Message<M> message;
 
 
-    MessageEntryImpl(int depth, boolean first, boolean last, @NotNull ProtocolMessageEntry<M> message)
+    MessageEntryImpl(int depth, boolean first, boolean last, @NotNull Protocol.Message<M> message)
     {
       super(depth, first, last);
 
@@ -237,12 +249,6 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     @Override
     public @NotNull Level getLevel() {
       return message.getLevel();
-    }
-
-
-    @Override
-    public @NotNull Set<Tag> getTags() {
-      return message.getTags();
     }
 
 
@@ -265,83 +271,76 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
     @Override
-    public boolean isMatch(@NotNull Level level, @NotNull Tag tag) {
-      return message.isMatch(level, tag);
-    }
-
-
-    @Override
-    public @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag tag) {
-      return message.getEntries(level, tag);
-    }
-
-
-    @Override
-    public boolean hasVisibleElement(@NotNull Level level, @NotNull Tag tag) {
-      return message.hasVisibleElement(level, tag);
-    }
-
-
-    @Override
     public String toString() {
       return message.toString();
     }
   }
 
 
-  private static class GroupEntryImpl<M> extends DepthEntryImpl<M> implements GroupEntry<M>
+  private static class GroupMessageEntryImpl<M> extends VisibleDepthEntryImpl<M> implements GroupMessageEntry<M>
   {
-    private final boolean entryAfterGroup;
-    private final FormattableMessage<M> groupMessage;
-    private final boolean entryInGroup;
+    final Level level;
+    final GenericMessage<M> groupHeader;
 
 
-    GroupEntryImpl(boolean entryAfterGroup, FormattableMessage<M> groupMessage, int depth, boolean first, boolean last,
-                   boolean entryInGroup)
+    GroupMessageEntryImpl(int depth, boolean first, boolean last, Level level, GenericMessage<M> groupHeader)
     {
       super(depth, first, last);
 
-      this.entryAfterGroup = entryAfterGroup;
+      this.level = level;
+      this.groupHeader = groupHeader;
+    }
+
+
+    @Override
+    public @NotNull M getMessage() {
+      return groupHeader.getMessage();
+    }
+
+
+    @Override
+    public @NotNull Map<String, Object> getParameterValues() {
+      return groupHeader.getParameterValues();
+    }
+
+
+    @Override
+    public @NotNull Level getLevel() {
+      return level;
+    }
+
+
+    @Override
+    public Throwable getThrowable() {
+      return null;
+    }
+
+
+    @Override
+    public String toString() {
+      return groupHeader.toString();
+    }
+  }
+
+
+  private static class GroupEntryImpl<M> extends VisibleDepthEntryImpl<M> implements GroupEntry<M>
+  {
+    private final GenericMessage<M> groupMessage;
+    @Getter private final int messageCount;
+
+
+    GroupEntryImpl(GenericMessage<M> groupMessage, int messageCount, int depth, boolean first, boolean last)
+    {
+      super(depth, first, last);
+
       this.groupMessage = groupMessage;
-      this.entryInGroup = entryInGroup;
+      this.messageCount = messageCount;
     }
 
 
     @Override
-    public boolean hasEntryAfterGroup() {
-      return entryAfterGroup;
-    }
-
-
-    @NotNull
-    @Override
-    public FormattableMessage<M> getGroupMessage() {
+    public @NotNull GenericMessage<M> getGroupHeader() {
       return groupMessage;
-    }
-
-
-    @Override
-    public boolean hasEntryInGroup() {
-      return entryInGroup;
-    }
-
-
-    @Override
-    public boolean isMatch(@NotNull Level level, @NotNull Tag tag) {
-      return true;
-    }
-
-
-    @NotNull
-    @Override
-    public List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag tag) {
-      return Collections.<ProtocolEntry<M>>singletonList(groupMessage);
-    }
-
-
-    @Override
-    public boolean hasVisibleElement(@NotNull Level level, @NotNull Tag tag) {
-      return true;
     }
   }
 
@@ -365,7 +364,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
       while(iterator.hasNext())
       {
         nextEntry = iterator.next();
-        if (nextEntry.hasVisibleElement(level, tag))
+        if (nextEntry.getVisibleEntryCount(level, tag) > 0)
           return;
       }
 
