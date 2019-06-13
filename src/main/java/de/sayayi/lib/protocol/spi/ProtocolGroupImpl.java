@@ -39,6 +39,12 @@ final class ProtocolGroupImpl<M>
     extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
     implements ProtocolGroup<M>, Group<M>
 {
+  private static final Level NO_VISIBLE_ENTRIES = new Level() {
+    @Override public int severity() { return Integer.MIN_VALUE; }
+    @Override public String toString() { return "NO_VISIBLE_ENTRIES"; }
+  };
+
+
   private final AbstractProtocol<M,Protocol.ProtocolMessageBuilder<M>> parent;
 
   @Getter private Visibility visibility;
@@ -101,6 +107,30 @@ final class ProtocolGroupImpl<M>
       }
 
     return false;
+  }
+
+
+  @Override
+  public Level getHeaderLevel(@NotNull Level level, @NotNull Tag tag)
+  {
+    Level headerLevel = NO_VISIBLE_ENTRIES;
+
+    for(ProtocolEntry<M> entry: getEntries(level, tag))
+    {
+      Level protocolEntryLevel;
+
+      if (entry instanceof ProtocolEntry.Message)
+        protocolEntryLevel = ((ProtocolEntry.Message<M>)entry).getLevel();
+      else if (entry instanceof ProtocolEntry.Group)
+        protocolEntryLevel = ((ProtocolEntry.Group<M>)entry).getHeaderLevel(level, tag);
+      else
+        continue;
+
+      if (protocolEntryLevel.severity() > headerLevel.severity())
+        headerLevel = protocolEntryLevel;
+    }
+
+    return headerLevel;
   }
 
 

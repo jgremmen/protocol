@@ -18,6 +18,7 @@ package de.sayayi.lib.protocol.spi;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.Protocol.GenericMessage;
+import de.sayayi.lib.protocol.Protocol.Message;
 import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.ProtocolGroup.Visibility;
 import de.sayayi.lib.protocol.ProtocolIterator;
@@ -25,7 +26,6 @@ import de.sayayi.lib.protocol.Tag;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -107,6 +107,12 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
         groupIterator = null;
       }
 
+      if (iterator == null)
+      {
+        nextEntry = null;
+        return;
+      }
+
       if (!iterator.hasNext())
       {
         nextEntry = null;
@@ -175,16 +181,16 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
       {
         case SHOW_HEADER_ALWAYS:
           // header + messages, increase depth
-          nextEntry = new GroupEntryImpl<M>(protocol.getGroupHeader(), protocol.getVisibleEntryCount(level, tag),
-              this.depth++, !hasEntryBeforeGroup, !hasEntryAfterGroup);
+          nextEntry = new GroupEntryImpl<M>(protocol.getGroupHeader(), protocol.getHeaderLevel(level, tag),
+              protocol.getVisibleEntryCount(level, tag), this.depth++, !hasEntryBeforeGroup, !hasEntryAfterGroup);
           forceFirst = true;
           break;
 
         case SHOW_HEADER_ONLY:
           // header only, no messages; remain at same depth
-          iterator = Collections.<ProtocolEntry<M>>emptyList().iterator();
-          nextEntry = new GroupMessageEntryImpl<M>(depth, !hasEntryBeforeGroup, !hasEntryAfterGroup, level,
-              protocol.getGroupHeader());
+          iterator = null;
+          nextEntry = new GroupMessageEntryImpl<M>(depth, !hasEntryBeforeGroup, !hasEntryAfterGroup,
+              protocol.getHeaderLevel(level, tag), protocol.getGroupHeader());
           break;
 
         case HIDDEN:
@@ -325,22 +331,30 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
   private static class GroupEntryImpl<M> extends VisibleDepthEntryImpl<M> implements GroupEntry<M>
   {
+    private final Level level;
     private final GenericMessage<M> groupMessage;
     @Getter private final int messageCount;
 
 
-    GroupEntryImpl(GenericMessage<M> groupMessage, int messageCount, int depth, boolean first, boolean last)
+    GroupEntryImpl(GenericMessage<M> groupMessage, Level level, int messageCount, int depth, boolean first, boolean last)
     {
       super(depth, first, last);
 
+      this.level = level;
       this.groupMessage = groupMessage;
       this.messageCount = messageCount;
     }
 
 
     @Override
-    public @NotNull GenericMessage<M> getGroupHeader() {
-      return groupMessage;
+    public @NotNull Protocol.Message<M> getGroupHeader()
+    {
+      return new Message<M>() {
+        @Override public @NotNull Level getLevel() { return level; }
+        @Override public @NotNull M getMessage() { return groupMessage.getMessage(); }
+        @Override public @NotNull Map<String,Object> getParameterValues() { return groupMessage.getParameterValues(); }
+        @Override public Throwable getThrowable() { return null; }
+      };
     }
   }
 

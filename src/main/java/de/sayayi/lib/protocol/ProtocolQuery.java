@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Jeroen Gremmen
  */
-public interface ProtocolQuery<M>
+public interface ProtocolQuery
 {
   /**
    * Tells if this protocol object matches the given {@code level} and {@code tag}.

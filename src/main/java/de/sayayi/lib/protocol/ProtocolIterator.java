@@ -112,6 +112,11 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
 
   interface GroupEntry<M> extends VisibleDepthEntry<M>, Protocol.Group<M>
   {
+    @Override
+    Protocol.Message<M> getGroupHeader();
+
+
+    @SuppressWarnings("unused")
     int getMessageCount();
   }
 }

@@ -25,10 +25,12 @@ import java.util.Set;
 /**
  * @author Jeroen Gremmen
  */
-public interface ProtocolEntry<M> extends ProtocolQuery<M>
+@SuppressWarnings("unused")
+public interface ProtocolEntry<M> extends ProtocolQuery
 {
   interface Message<M> extends ProtocolEntry<M>, Protocol.Message<M>
   {
+    @SuppressWarnings("unused")
     @Contract(pure = true, value = "-> new")
     @NotNull Set<Tag> getTags();
   }
@@ -46,5 +48,13 @@ public interface ProtocolEntry<M> extends ProtocolQuery<M>
      */
     @Contract(pure = true, value = "_, _ -> new")
     @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag tag);
+
+
+    @Contract(pure = true)
+    boolean isHeaderVisible(@NotNull Level level, @NotNull Tag tag);
+
+
+    @Contract(pure = true)
+    Level getHeaderLevel(@NotNull Level level, @NotNull Tag tag);
   }
 }

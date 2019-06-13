@@ -26,7 +26,7 @@ import java.util.Map;
 /**
  * @author Jeroen Gremmen
  */
-public interface Protocol<M> extends ProtocolQuery<M>
+public interface Protocol<M> extends ProtocolQuery
 {
   /**
    * Returns the protocol factory which was used to create this protocol instance.
