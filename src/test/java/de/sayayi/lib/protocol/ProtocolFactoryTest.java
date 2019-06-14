@@ -186,6 +186,8 @@ public class ProtocolFactoryTest
     Protocol<String> protocol = factory.createProtocol().debug().message("msg");
     ProtocolIterator<String> iterator = protocol.iterator(ALL, factory.getDefaultTag());
 
+    iterator.next();  // protocol start
+
     assertEquals("msg(ok)", ((MessageEntry<String>)iterator.next()).getMessage());
   }
 }

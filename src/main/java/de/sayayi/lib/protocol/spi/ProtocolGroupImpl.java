@@ -231,7 +231,7 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
   public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag tag)
   {
     return new ProtocolStructureIterator.ForGroup<M>(level, tag, 0,this, false,
-        false);
+        false, true);
   }
 
 

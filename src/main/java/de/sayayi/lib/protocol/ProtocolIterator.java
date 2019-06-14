@@ -102,6 +102,14 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
   }
 
 
+  interface ProtocolStart<M> extends DepthEntry<M> {
+  }
+
+
+  interface ProtocolEnd<M> extends DepthEntry<M> {
+  }
+
+
   interface MessageEntry<M> extends VisibleDepthEntry<M>, Protocol.Message<M> {
   }
 

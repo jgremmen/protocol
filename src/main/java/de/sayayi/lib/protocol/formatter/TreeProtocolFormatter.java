@@ -62,6 +62,16 @@ public abstract class TreeProtocolFormatter<M> implements InitializableProtocolF
 
 
   @Override
+  public void protocolStart() {
+  }
+
+
+  @Override
+  public void protocolEnd() {
+  }
+
+
+  @Override
   public void message(@NotNull MessageEntry<M> message)
   {
     int depth = message.getDepth();
@@ -81,7 +91,7 @@ public abstract class TreeProtocolFormatter<M> implements InitializableProtocolF
 
 
   @Override
-  public void group(@NotNull GroupEntry<M> group)
+  public void groupStart(@NotNull GroupEntry<M> group)
   {
     int depth = group.getDepth();
     String prefix = prefixes[depth];
@@ -97,6 +107,11 @@ public abstract class TreeProtocolFormatter<M> implements InitializableProtocolF
     result.append(messageFormatter.format(group.getGroupHeader())).append('\n');
 
     prefixes[depth + 1] = prefix + (group.isLast() ? GRAPH_LEVEL_SEPARATOR_EMPTY : GRAPH_LEVEL_SEPARATOR_BAR);
+  }
+
+
+  @Override
+  public void groupEnd() {
   }
 
 

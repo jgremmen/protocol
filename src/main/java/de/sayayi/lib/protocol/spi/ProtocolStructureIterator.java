@@ -26,6 +26,7 @@ import de.sayayi.lib.protocol.Tag;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -46,21 +47,27 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   @Getter private final Tag tag;
 
   private ForGroup<M> groupIterator;
+  private final EnumSet<StructureMarker> structureMarker;
+  private final boolean rootProtocol;
+
 
   int depth;
   Iterator<ProtocolEntry<M>> iterator;
-  DepthEntry<M> lastReturnedEntry;
+  VisibleDepthEntry<M> lastVisibleEntry;
   DepthEntry<M> nextEntry;
 
 
-  ProtocolStructureIterator(@NotNull Level level, @NotNull Tag tag, int depth, @NotNull AbstractProtocol<M,?> protocol)
+  ProtocolStructureIterator(@NotNull Level level, @NotNull Tag tag, int depth, @NotNull AbstractProtocol<M,?> protocol,
+                            boolean rootProtocol)
   {
     this.level = level;
     this.tag = tag;
     this.depth = depth;
+    this.rootProtocol = rootProtocol;
 
     groupIterator = null;
     iterator = new VisibleProtocolEntryAdapter(protocol.getEntries(level, tag).iterator());
+    structureMarker = EnumSet.noneOf(StructureMarker.class);
   }
 
 
@@ -76,11 +83,14 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     if (!hasNext())
       throw new NoSuchElementException();
 
-    lastReturnedEntry = nextEntry;
+    DepthEntry<M> returnValue = nextEntry;
+
+    if (nextEntry instanceof VisibleDepthEntry)
+      lastVisibleEntry = (VisibleDepthEntry<M>)nextEntry;
 
     prepareNextEntry();
 
-    return lastReturnedEntry;
+    return returnValue;
   }
 
 
@@ -114,8 +124,28 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
         return;
       }
 
+      if (!structureMarker.contains(StructureMarker.START))
+      {
+        if (rootProtocol)
+        {
+          structureMarker.add(StructureMarker.START);
+          nextEntry = new ProtocolStartImpl<M>();
+          return;
+        }
+      }
+
       if (!iterator.hasNext())
       {
+        if (!structureMarker.contains(StructureMarker.END))
+        {
+          if (rootProtocol)
+          {
+            structureMarker.add(StructureMarker.END);
+            nextEntry = new ProtocolEndImpl<M>();
+            return;
+          }
+        }
+
         nextEntry = null;
         return;
       }
@@ -125,7 +155,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
       if (protocolEntry instanceof ProtocolGroupImpl)
       {
         groupIterator = new ProtocolStructureIterator.ForGroup<M>(level, tag, depth,
-            (ProtocolGroupImpl<M>)protocolEntry, hasEntryBefore, iterator.hasNext());
+            (ProtocolGroupImpl<M>)protocolEntry, hasEntryBefore, iterator.hasNext(), false);
         continue;
       }
 
@@ -148,7 +178,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   {
     ForProtocol(@NotNull Level level, @NotNull Tag tag, int depth, @NotNull ProtocolImpl<M> protocol)
     {
-      super(level, tag, depth, protocol);
+      super(level, tag, depth, protocol, true);
 
       prepareNextEntry(false);
     }
@@ -156,7 +186,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
     @Override
     void prepareNextEntry() {
-      prepareNextEntry(lastReturnedEntry != null);
+      prepareNextEntry(lastVisibleEntry != null);
     }
   }
 
@@ -167,9 +197,9 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
     ForGroup(@NotNull Level level, @NotNull Tag tag, int depth, @NotNull ProtocolGroupImpl<M> protocol,
-             boolean hasEntryBeforeGroup, boolean hasEntryAfterGroup)
+             boolean hasEntryBeforeGroup, boolean hasEntryAfterGroup, boolean rootProtocol)
     {
-      super(level, tag, depth, protocol);
+      super(level, tag, depth, protocol, rootProtocol);
 
       Visibility visibility = protocol.getEffectiveVisibility();
 
@@ -207,7 +237,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     @Override
     void prepareNextEntry()
     {
-      prepareNextEntry(lastReturnedEntry != null && !forceFirst);
+      prepareNextEntry(lastVisibleEntry != null && !forceFirst);
       forceFirst = false;
     }
   }
@@ -411,5 +441,40 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     public void remove() {
       throw new UnsupportedOperationException();
     }
+  }
+
+
+  private static class ProtocolStartImpl<M> implements ProtocolStart<M>
+  {
+    @Override
+    public int getDepth() {
+      return 0;
+    }
+
+
+    @Override
+    public String toString() {
+      return "ProtocolStart";
+    }
+  }
+
+
+  private static class ProtocolEndImpl<M> implements ProtocolEnd<M>
+  {
+    @Override
+    public int getDepth() {
+      return 0;
+    }
+
+
+    @Override
+    public String toString() {
+      return "ProtocolEnd";
+    }
+  }
+
+
+  private enum StructureMarker {
+    START, END
   }
 }

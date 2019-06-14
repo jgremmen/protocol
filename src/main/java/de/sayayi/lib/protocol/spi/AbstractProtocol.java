@@ -150,7 +150,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
       if (entry instanceof MessageEntry)
         formatter.message((MessageEntry<M>)entry);
       else if (entry instanceof GroupEntry)
-        formatter.group((GroupEntry<M>)entry);
+        formatter.groupStart((GroupEntry<M>)entry);
     }
 
     return formatter.getResult();

@@ -47,6 +47,8 @@ public class ProtocolIteratorTest
     GroupEntry<String> grpEntry;
     MessageEntry<String> msgEntry;
 
+    assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolStart);
+
     msgEntry = (MessageEntry<String>)iterator.next();
     assertTrue(msgEntry.isFirst());
     assertFalse(msgEntry.isLast());
@@ -90,6 +92,8 @@ public class ProtocolIteratorTest
     assertTrue(msgEntry.isLast());
     assertEquals(1, msgEntry.getDepth());
     assertEquals("d1,msg2", msgEntry.getMessage());
+
+    assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolEnd);
   }
 
 
@@ -110,6 +114,8 @@ public class ProtocolIteratorTest
     GroupEntry<String> grpEntry;
     MessageEntry<String> msgEntry;
 
+    assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolStart);
+
     grpEntry = (GroupEntry<String>)iterator.next();
     assertTrue(grpEntry.isFirst());
     assertFalse(grpEntry.isLast());
@@ -127,6 +133,8 @@ public class ProtocolIteratorTest
     assertTrue(msgEntry.isLast());
     assertEquals(0, msgEntry.getDepth());
     assertEquals("grp #2, msg #1", msgEntry.getMessage());
+
+    assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolEnd);
   }
 
 
@@ -138,9 +146,12 @@ public class ProtocolIteratorTest
     Protocol<String> protocol = factory.createProtocol().debug().message("msg");
     ProtocolIterator<String> iterator = protocol.iterator(ERROR, tag);
 
+    assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolStart);
+
     assertEquals(tag, iterator.getTag());
     assertEquals(ERROR, iterator.getLevel());
-    assertFalse(iterator.hasNext());
+
+    assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolEnd);
   }
 
 
@@ -159,6 +170,8 @@ public class ProtocolIteratorTest
     DepthEntry entry;
     MessageEntry<String> message;
 
+    assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolStart);
+
     // msg 1
     assertTrue(iterator.hasNext());
     entry = iterator.next();
@@ -170,7 +183,7 @@ public class ProtocolIteratorTest
     assertEquals("msg #1", message.getMessage());
     assertEquals(DEBUG, message.getLevel());
 
-    assertFalse(iterator.hasNext());
+    assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolEnd);
   }
 
 
@@ -193,6 +206,8 @@ public class ProtocolIteratorTest
 
     DepthEntry entry;
     MessageEntry<String> message;
+
+    assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolStart);
 
     // msg 1
     assertTrue(iterator.hasNext());
@@ -227,6 +242,6 @@ public class ProtocolIteratorTest
     assertEquals("msg #3", message.getMessage());
     assertEquals(ERROR, message.getLevel());
 
-    assertFalse(iterator.hasNext());
+    assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolEnd);
   }
 }

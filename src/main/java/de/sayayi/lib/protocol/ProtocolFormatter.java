@@ -29,10 +29,19 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface ProtocolFormatter<M,R>
 {
+  void protocolStart();
+
+
+  void protocolEnd();
+
+
   void message(@NotNull MessageEntry<M> message);
 
 
-  void group(@NotNull GroupEntry<M> group);
+  void groupStart(@NotNull GroupEntry<M> group);
+
+
+  void groupEnd();
 
 
   /**
