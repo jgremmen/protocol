@@ -3,6 +3,7 @@ plugins {
   id 'java-library'
   id 'maven-publish'
   id 'nebula.optional-base' version '5.0.3'
+  id 'jacoco'
 }
 
 
@@ -13,6 +14,7 @@ version '0.1.0'
 
 apply from: file('gradle/versions.gradle')
 apply from: file('gradle/javadoc.gradle')
+apply from: file('gradle/quality.gradle')
 
 
 repositories {
