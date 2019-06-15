@@ -147,7 +147,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
      *   returns the number of messages with depth {@code 3}.
      * </p>
      *
-     * @return  number of messages in the group
+     * @return  number of messages in the group (at least 1)
      *
      * @see #getDepth()
      */
