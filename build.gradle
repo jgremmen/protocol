@@ -22,12 +22,12 @@ repositories {
 dependencies {
   annotationProcessor "org.projectlombok:lombok:"
 
-  api 'org.projectlombok:lombok:'
-
   implementation 'org.unbescape:unbescape:'
 
+  compileOnly 'org.projectlombok:lombok:'
   compileOnly 'org.jetbrains:annotations:'
 
   testCompile 'junit:junit:'
-  testCompile 'org.jetbrains:annotations:'
+  
+  testCompileOnly 'org.jetbrains:annotations:'
 }
