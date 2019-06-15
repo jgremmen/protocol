@@ -4,6 +4,7 @@ plugins {
   id 'maven-publish'
   id 'nebula.optional-base' version '5.0.3'
   id 'jacoco'
+  id 'signing'
 }
 
 
@@ -15,6 +16,7 @@ version '0.1.0'
 apply from: file('gradle/versions.gradle')
 apply from: file('gradle/javadoc.gradle')
 apply from: file('gradle/quality.gradle')
+apply from: file('gradle/publishing.gradle')
 
 
 repositories {
@@ -25,7 +27,7 @@ repositories {
 dependencies {
   annotationProcessor "org.projectlombok:lombok:"
 
-  implementation 'org.unbescape:unbescape:1.1.6.RELEASE', optional
+  implementation 'org.unbescape:unbescape:', optional
 
   compileOnly 'org.projectlombok:lombok:'
   compileOnly 'org.jetbrains:annotations:'
@@ -34,6 +36,3 @@ dependencies {
 
   testCompileOnly 'org.jetbrains:annotations:'
 }
-
-
-apply from: file('gradle/publishing.gradle')

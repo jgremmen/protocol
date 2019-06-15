@@ -47,30 +47,56 @@ publishing {
       artifact javadocJar
       artifact sourcesJar
 
+      versionMapping {
+        usage('java-runtime') {
+          fromResolutionResult();
+        }
+      }
+
       pom {
         name = 'Java Protocol Library'
+        description = 'Collect protocol information which can be extracted based on severity level and target audience'
+        url = 'https://github.com/jgremmen/protocol'
+        inceptionYear = '2019'
 
         licenses {
           license {
-            name = 'The Apache License, Version 2.0'
-            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            name = 'Apache License, Version 2.0'
+            url = 'http://www.apache.org/licenses/LICENSE-2.0'
+            distribution = 'repo'
           }
         }
 
         developers {
           developer {
-            id = 'jeroen.gremmen'
+            id = 'jgremmen'
             name = 'Jeroen Gremmen'
             email = 'jeroen.gremmen@sayayi.de'
           }
         }
 
         scm {
-          connection = 'scm:git:https://github.com/jgremmen/protocol.git'
-          developerConnection = 'scm:git:https://github.com/jgremmen/protocol.git'
+          connection = 'scm:git:git://github.com/jgremmen/protocol.git'
+          developerConnection = 'scm:git:git://github.com/jgremmen/protocol.git'
           url = 'https://github.com/jgremmen/protocol'
         }
       }
     }
   }
+
+  repositories {
+    maven {
+      url = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+      credentials {
+        username = project.property('mavenCentral.username')
+        password = project.property('mavenCentral.password')
+      }
+//      url = "$buildDir/repo"
+    }
+  }
+}
+
+
+signing {
+  sign publishing.publications.maven
 }
