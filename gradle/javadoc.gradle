@@ -31,11 +31,4 @@ javadoc {
   }
 
   failOnError false
-
-  doLast {
-    copy { 
-      from files('LICENSE')
-      into destinationDir
-    }
-  }
 }

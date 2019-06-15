@@ -1,6 +1,8 @@
 plugins {
   id 'idea'
   id 'java-library'
+  id 'maven-publish'
+  id 'nebula.optional-base' version '5.0.3'
 }
 
 
@@ -9,9 +11,8 @@ group 'de.sayayi.lib'
 version '0.1.0'
 
 
-apply from: file('gradle/javadoc.gradle')
-apply from: file('gradle/publishing.gradle')
 apply from: file('gradle/versions.gradle')
+apply from: file('gradle/javadoc.gradle')
 
 
 repositories {
@@ -22,12 +23,15 @@ repositories {
 dependencies {
   annotationProcessor "org.projectlombok:lombok:"
 
-  implementation 'org.unbescape:unbescape:'
+  implementation 'org.unbescape:unbescape:1.1.6.RELEASE', optional
 
   compileOnly 'org.projectlombok:lombok:'
   compileOnly 'org.jetbrains:annotations:'
 
   testCompile 'junit:junit:'
-  
+
   testCompileOnly 'org.jetbrains:annotations:'
 }
+
+
+apply from: file('gradle/publishing.gradle')
