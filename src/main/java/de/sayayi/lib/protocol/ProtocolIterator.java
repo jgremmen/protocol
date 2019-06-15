@@ -110,7 +110,9 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
   }
 
 
-  interface MessageEntry<M> extends VisibleDepthEntry<M>, Protocol.Message<M> {
+  interface MessageEntry<M> extends VisibleDepthEntry<M>, Protocol.Message<M>
+  {
+    boolean isGroupMessage();
   }
 
 
@@ -153,5 +155,9 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
      */
     @Contract(pure = true)
     int getMessageCount();
+  }
+
+
+  interface GroupEndEntry<M> extends DepthEntry<M> {
   }
 }

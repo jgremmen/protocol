@@ -124,26 +124,20 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
         return;
       }
 
-      if (!structureMarker.contains(StructureMarker.START))
+      if (rootProtocol && !structureMarker.contains(StructureMarker.START))
       {
-        if (rootProtocol)
-        {
-          structureMarker.add(StructureMarker.START);
-          nextEntry = new ProtocolStartImpl<M>();
-          return;
-        }
+        structureMarker.add(StructureMarker.START);
+        nextEntry = new ProtocolStartImpl<M>();
+        return;
       }
 
       if (!iterator.hasNext())
       {
         if (!structureMarker.contains(StructureMarker.END))
         {
-          if (rootProtocol)
-          {
-            structureMarker.add(StructureMarker.END);
-            nextEntry = new ProtocolEndImpl<M>();
-            return;
-          }
+          structureMarker.add(StructureMarker.END);
+          nextEntry = rootProtocol ? new ProtocolEndImpl<M>() : new GroupEndEntryImpl<M>(depth);
+          return;
         }
 
         nextEntry = null;
@@ -213,7 +207,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
         case SHOW_HEADER_ALWAYS:
           // header + messages, increase depth
           nextEntry = new GroupEntryImpl<M>(protocol.getGroupHeader(), max(level, protocol.getHeaderLevel(level, tag)),
-              protocol.getVisibleGroupEntryCount(level, tag), this.depth++, !hasEntryBeforeGroup, !hasEntryAfterGroup);
+              protocol.getVisibleGroupEntryCount(level, tag), ++this.depth, !hasEntryBeforeGroup, !hasEntryAfterGroup);
           forceFirst = true;
           break;
 
@@ -308,6 +302,12 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
     @Override
+    public boolean isGroupMessage() {
+      return false;
+    }
+
+
+    @Override
     public String toString() {
       return message.toString();
     }
@@ -350,6 +350,12 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     @Override
     public Throwable getThrowable() {
       return null;
+    }
+
+
+    @Override
+    public boolean isGroupMessage() {
+      return true;
     }
 
 
@@ -470,6 +476,20 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     @Override
     public String toString() {
       return "ProtocolEnd";
+    }
+  }
+
+
+  private static class GroupEndEntryImpl<M> extends DepthEntryImpl<M> implements GroupEndEntry<M>
+  {
+    GroupEndEntryImpl(int depth) {
+      super(depth);
+    }
+
+
+    @Override
+    public String toString() {
+      return "GroupEnd";
     }
   }
 

@@ -15,6 +15,7 @@
  */
 package de.sayayi.lib.protocol;
 
+import de.sayayi.lib.protocol.ProtocolIterator.GroupEndEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import org.jetbrains.annotations.Contract;
@@ -41,7 +42,7 @@ public interface ProtocolFormatter<M,R>
   void groupStart(@NotNull GroupEntry<M> group);
 
 
-  void groupEnd();
+  void groupEnd(GroupEndEntry<M> groupEnd);
 
 
   /**

@@ -18,6 +18,7 @@ package de.sayayi.lib.protocol.formatter;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol.GenericMessage;
 import de.sayayi.lib.protocol.ProtocolFormatter.InitializableProtocolFormatter;
+import de.sayayi.lib.protocol.ProtocolIterator.GroupEndEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.Tag;
@@ -94,9 +95,9 @@ public abstract class TreeProtocolFormatter<M> implements InitializableProtocolF
   public void groupStart(@NotNull GroupEntry<M> group)
   {
     int depth = group.getDepth();
-    String prefix = prefixes[depth];
+    String prefix = prefixes[depth - 1];
 
-    if (depth == 0 && group.isFirst())
+    if (depth == 1 && group.isFirst())
       result.append(GRAPH_ROOT_NODE_PREFIX);
     else
     {
@@ -106,12 +107,12 @@ public abstract class TreeProtocolFormatter<M> implements InitializableProtocolF
 
     result.append(messageFormatter.format(group.getGroupHeader())).append('\n');
 
-    prefixes[depth + 1] = prefix + (group.isLast() ? GRAPH_LEVEL_SEPARATOR_EMPTY : GRAPH_LEVEL_SEPARATOR_BAR);
+    prefixes[depth] = prefix + (group.isLast() ? GRAPH_LEVEL_SEPARATOR_EMPTY : GRAPH_LEVEL_SEPARATOR_BAR);
   }
 
 
   @Override
-  public void groupEnd() {
+  public void groupEnd(GroupEndEntry<M> groupEnd) {
   }
 
 

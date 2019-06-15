@@ -3,7 +3,6 @@ package de.sayayi.lib.protocol;
 import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
-import de.sayayi.lib.protocol.formatter.TechnicalProtocolFormatter;
 import org.junit.Test;
 
 import static de.sayayi.lib.protocol.Level.Shared.ALL;
@@ -41,7 +40,7 @@ public class ProtocolIteratorTest
 
     grp1.debug().message("d1,msg2");
 
-    String tree = protocol.format(new TechnicalProtocolFormatter<String>(factory));
+    //String tree = protocol.format(new TechnicalProtocolFormatter<String>(factory));
 
     ProtocolIterator<String> iterator = protocol.iterator(ALL, tag);
     GroupEntry<String> grpEntry;
@@ -58,7 +57,7 @@ public class ProtocolIteratorTest
     grpEntry = (GroupEntry<String>)iterator.next();
     assertFalse(grpEntry.isFirst());
     assertTrue(grpEntry.isLast());
-    assertEquals(0, grpEntry.getDepth());
+    assertEquals(1, grpEntry.getDepth());
     assertEquals("d0,grp1", grpEntry.getGroupHeader().getMessage());
     assertEquals(3, grpEntry.getMessageCount());
 
@@ -71,7 +70,7 @@ public class ProtocolIteratorTest
     grpEntry = (GroupEntry<String>)iterator.next();
     assertFalse(grpEntry.isFirst());
     assertFalse(grpEntry.isLast());
-    assertEquals(1, grpEntry.getDepth());
+    assertEquals(2, grpEntry.getDepth());
     assertEquals("d1,grp1", grpEntry.getGroupHeader().getMessage());
     assertEquals(2, grpEntry.getMessageCount());
 
@@ -87,12 +86,15 @@ public class ProtocolIteratorTest
     assertEquals(2, msgEntry.getDepth());
     assertEquals("d2,msg2", msgEntry.getMessage());
 
+    assertTrue(iterator.next() instanceof ProtocolIterator.GroupEndEntry);
+
     msgEntry = (MessageEntry<String>)iterator.next();
     assertFalse(msgEntry.isFirst());
     assertTrue(msgEntry.isLast());
     assertEquals(1, msgEntry.getDepth());
     assertEquals("d1,msg2", msgEntry.getMessage());
 
+    assertTrue(iterator.next() instanceof ProtocolIterator.GroupEndEntry);
     assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolEnd);
   }
 
@@ -119,7 +121,7 @@ public class ProtocolIteratorTest
     grpEntry = (GroupEntry<String>)iterator.next();
     assertTrue(grpEntry.isFirst());
     assertFalse(grpEntry.isLast());
-    assertEquals(0, grpEntry.getDepth());
+    assertEquals(1, grpEntry.getDepth());
     assertEquals("grp #1, header", grpEntry.getGroupHeader().getMessage());
 
     msgEntry = (MessageEntry<String>)iterator.next();
@@ -128,12 +130,15 @@ public class ProtocolIteratorTest
     assertEquals(1, msgEntry.getDepth());
     assertEquals("grp #1, msg #1", msgEntry.getMessage());
 
+    assertTrue(iterator.next() instanceof ProtocolIterator.GroupEndEntry);
+
     msgEntry = (MessageEntry<String>)iterator.next();
     assertFalse(msgEntry.isFirst());
     assertTrue(msgEntry.isLast());
     assertEquals(0, msgEntry.getDepth());
     assertEquals("grp #2, msg #1", msgEntry.getMessage());
 
+    assertTrue(iterator.next() instanceof ProtocolIterator.GroupEndEntry);
     assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolEnd);
   }
 

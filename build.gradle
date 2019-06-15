@@ -24,6 +24,8 @@ dependencies {
 
   api 'org.projectlombok:lombok:'
 
+  implementation 'org.unbescape:unbescape:'
+
   compileOnly 'org.jetbrains:annotations:'
 
   testCompile 'junit:junit:'

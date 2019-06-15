@@ -25,8 +25,11 @@ import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolFormatter.InitializableProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
+import de.sayayi.lib.protocol.ProtocolIterator.GroupEndEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
+import de.sayayi.lib.protocol.ProtocolIterator.ProtocolEnd;
+import de.sayayi.lib.protocol.ProtocolIterator.ProtocolStart;
 import de.sayayi.lib.protocol.Tag;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
@@ -147,10 +150,16 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
     {
       DepthEntry<M> entry = iterator.next();
 
-      if (entry instanceof MessageEntry)
+      if (entry instanceof ProtocolStart)
+        formatter.protocolStart();
+      else if (entry instanceof ProtocolEnd)
+        formatter.protocolEnd();
+      else if (entry instanceof MessageEntry)
         formatter.message((MessageEntry<M>)entry);
       else if (entry instanceof GroupEntry)
         formatter.groupStart((GroupEntry<M>)entry);
+      else if (entry instanceof GroupEndEntry)
+        formatter.groupEnd((GroupEndEntry<M>)entry);
     }
 
     return formatter.getResult();
