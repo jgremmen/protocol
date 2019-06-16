@@ -392,7 +392,8 @@ public interface Protocol<M> extends ProtocolQuery
 
 
   /**
-   * The simplest representation of a message.
+   * The simplest representation of a message, providing the internal representation of the message and parameter
+   * values to be used for formatting the message.
    *
    * @param <M>  Internal message object type
    */
@@ -434,6 +435,11 @@ public interface Protocol<M> extends ProtocolQuery
    */
   interface Message<M> extends GenericMessage<M>
   {
+    /**
+     * Returns the level for this message.
+     *
+     * @return  message level, never {@code null}
+     */
     @Contract(pure = true)
     @NotNull Level getLevel();
 

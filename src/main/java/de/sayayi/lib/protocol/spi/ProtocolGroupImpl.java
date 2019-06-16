@@ -110,7 +110,7 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
 
 
   @Override
-  public Level getHeaderLevel(@NotNull Level level, @NotNull Tag tag)
+  public @NotNull Level getHeaderLevel(@NotNull Level level, @NotNull Tag tag)
   {
     Level headerLevel = NO_VISIBLE_ENTRIES;
 

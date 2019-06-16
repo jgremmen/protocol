@@ -50,11 +50,37 @@ public interface ProtocolEntry<M> extends ProtocolQuery
     @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag tag);
 
 
+    /**
+     * Tells if, for the given {@code level} and {@code tag}, the group header message is visible.
+     *
+     * @param level  protocol level, not {@code null}
+     * @param tag  tag, not {@code null}
+     *
+     * @return  {@code true} if the group header message is visible, {@code false} otherwise
+     */
     @Contract(pure = true)
     boolean isHeaderVisible(@NotNull Level level, @NotNull Tag tag);
 
 
+    /**
+     * <p>
+     *   Returns the level of the group header message for the given {@code level} and {@code tag}.
+     * </p>
+     * <p>
+     *   The group header message level is defined as the highest (= most severe) level of all containing messages
+     *   and sub-groups which are visible for the given {@code level} and {@code tag}.
+     * </p>
+     * <p>
+     *   If the group does not contain any messages, the returned value will be a level with the lowest possible
+     *   severity.
+     * </p>
+     *
+     * @param level  protocol level, not {@code null}
+     * @param tag  tag, not {@code null}
+     *
+     * @return  header message level, never {@code null}
+     */
     @Contract(pure = true)
-    Level getHeaderLevel(@NotNull Level level, @NotNull Tag tag);
+    @NotNull Level getHeaderLevel(@NotNull Level level, @NotNull Tag tag);
   }
 }
