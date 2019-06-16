@@ -86,12 +86,12 @@ publishing {
 
   repositories {
     maven {
+      // maven central
       url = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
       credentials {
         username = project.findProperty('mavenCentral.username')
         password = project.findProperty('mavenCentral.password')
       }
-//      url = "$buildDir/repo"
     }
   }
 }
