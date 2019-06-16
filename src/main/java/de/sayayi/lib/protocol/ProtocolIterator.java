@@ -177,11 +177,8 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
    *   Marks the beginning of a protocol group.
    * </p>
    * <p>
-   *   This entry is generated only if the protocol group has:
-   *   <ul>
-   *     <li>a visible group header message</li>
-   *     <li>at least 1 containing visible entry</li>
-   *   </ul>
+   *   This entry is generated only if the protocol group has a visible group header message and at least
+   *   1 containing visible entry.
    * </p>
    *
    * @param <M>  Internal message object type
