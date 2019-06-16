@@ -24,6 +24,9 @@ import java.util.Map;
 
 
 /**
+ *
+ * @param <M>  Internal message object type
+ *
  * @author Jeroen Gremmen
  */
 public interface Protocol<M> extends ProtocolQuery
@@ -155,6 +158,17 @@ public interface Protocol<M> extends ProtocolQuery
   <R> R format(@NotNull Level level, @NotNull Tag tag, @NotNull ProtocolFormatter<M,R> formatter);
 
 
+  /**
+   * Format the protocol using the given formatter.
+   *
+   * @param formatter  formatter, not {@code null}
+   *
+   * @param <R>  formatting result type
+   *
+   * @return  formatted protocol, or {@code null}
+   *
+   * @see #format(Level, Tag, ProtocolFormatter)
+   */
   @Contract(pure = true)
   <R> R format(@NotNull ConfiguredProtocolFormatter<M,R> formatter);
 
@@ -380,7 +394,7 @@ public interface Protocol<M> extends ProtocolQuery
   /**
    * The simplest representation of a message.
    *
-   * @param <M>  Internal message object type.
+   * @param <M>  Internal message object type
    */
   interface GenericMessage<M>
   {
@@ -413,6 +427,11 @@ public interface Protocol<M> extends ProtocolQuery
   }
 
 
+  /**
+   * A protocol message with level and optional throwable.
+   *
+   * @param <M>  Internal message object type
+   */
   interface Message<M> extends GenericMessage<M>
   {
     @Contract(pure = true)
@@ -429,6 +448,11 @@ public interface Protocol<M> extends ProtocolQuery
   }
 
 
+  /**
+   * A protocol group with optional group header message.
+   *
+   * @param <M>  Internal message object type
+   */
   interface Group<M>
   {
     /**
