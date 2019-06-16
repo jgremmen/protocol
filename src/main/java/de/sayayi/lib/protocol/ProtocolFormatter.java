@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
- * @param <M>  internal message type
+ * @param <M>  internal message object type
  * @param <R>  formatting result type
  *
  * @author Jeroen Gremmen
@@ -84,6 +84,8 @@ public interface ProtocolFormatter<M,R>
 
 
   /**
+   * {@inheritDoc}
+   *
    * <p>
    *   A formatter of this type is automatically initialized by {@link Protocol#format(Level, Tag, ProtocolFormatter)}.
    * </p>
@@ -91,9 +93,6 @@ public interface ProtocolFormatter<M,R>
    *   Implementing classes must make sure, that the formatter is reusable after invoking
    *   {@link #init(Level, Tag, int)}. Thread safety however is not a requirement.
    * </p>
-   *
-   * @param <M>  internal message type
-   * @param <R>  formatting result type
    */
   interface InitializableProtocolFormatter<M,R> extends ProtocolFormatter<M,R>
   {
@@ -114,9 +113,7 @@ public interface ProtocolFormatter<M,R>
 
 
   /**
-   *
-   * @param <M>  internal message type
-   * @param <R>  formatting result type
+   * {@inheritDoc}
    */
   interface ConfiguredProtocolFormatter<M,R> extends ProtocolFormatter<M,R>
   {

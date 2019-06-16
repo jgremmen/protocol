@@ -23,11 +23,17 @@ import java.util.Set;
 
 
 /**
+ * @param <M>  internal message object type
+ *
  * @author Jeroen Gremmen
  */
 @SuppressWarnings("unused")
 public interface ProtocolEntry<M> extends ProtocolQuery
 {
+  /**
+   *
+   * @param <M>  internal message object type
+   */
   interface Message<M> extends ProtocolEntry<M>, Protocol.Message<M>
   {
     @SuppressWarnings("unused")
@@ -36,6 +42,10 @@ public interface ProtocolEntry<M> extends ProtocolQuery
   }
 
 
+  /**
+   *
+   * @param <M>  internal message object type
+   */
   interface Group<M> extends ProtocolEntry<M>, Protocol.Group<M>
   {
     /**

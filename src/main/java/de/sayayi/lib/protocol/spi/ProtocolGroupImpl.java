@@ -245,7 +245,8 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
 
 
     @Override
-    protected @NotNull ProtocolGroup.MessageParameterBuilder<M> createMessageParameterBuilder(@NotNull ProtocolMessageEntry<M> message) {
+    protected @NotNull ProtocolGroup.MessageParameterBuilder<M> createMessageParameterBuilder(
+        @NotNull ProtocolMessageEntry<M> message) {
       return new ParameterBuilderImpl(message);
     }
   }

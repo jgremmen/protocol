@@ -24,8 +24,11 @@ import java.util.Map;
 
 
 /**
+ * <p>
+ *   Protocol instances are not thread safe.
+ * </p>
  *
- * @param <M>  Internal message object type
+ * @param <M>  internal message object type
  *
  * @author Jeroen Gremmen
  */
@@ -275,6 +278,10 @@ public interface Protocol<M> extends ProtocolQuery
   }
 
 
+  /**
+   *
+   * @param <M>  internal message object type
+   */
   interface MessageParameterBuilder<M> extends Protocol<M>
   {
     /**
@@ -395,7 +402,7 @@ public interface Protocol<M> extends ProtocolQuery
    * The simplest representation of a message, providing the internal representation of the message and parameter
    * values to be used for formatting the message.
    *
-   * @param <M>  Internal message object type
+   * @param <M>  internal message object type
    */
   interface GenericMessage<M>
   {
@@ -431,7 +438,7 @@ public interface Protocol<M> extends ProtocolQuery
   /**
    * A protocol message with level and optional throwable.
    *
-   * @param <M>  Internal message object type
+   * @param <M>  internal message object type
    */
   interface Message<M> extends GenericMessage<M>
   {
@@ -457,7 +464,7 @@ public interface Protocol<M> extends ProtocolQuery
   /**
    * A protocol group with optional group header message.
    *
-   * @param <M>  Internal message object type
+   * @param <M>  internal message object type
    */
   interface Group<M>
   {

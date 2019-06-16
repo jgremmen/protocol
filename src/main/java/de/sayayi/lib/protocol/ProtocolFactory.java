@@ -107,6 +107,10 @@ public interface ProtocolFactory<M>
   M processMessage(@NotNull String message);
 
 
+  /**
+   *
+   * @param <M>  internal message object type
+   */
   @SuppressWarnings("UnusedReturnValue")
   interface TagBuilder<M> extends ProtocolFactory<M>
   {

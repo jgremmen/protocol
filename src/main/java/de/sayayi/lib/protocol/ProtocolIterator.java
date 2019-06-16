@@ -76,6 +76,10 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
   }
 
 
+  /**
+   *
+   * @param <M>  internal message object type
+   */
   interface VisibleDepthEntry<M> extends DepthEntry<M>
   {
     /**
@@ -106,7 +110,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
   /**
    * This entry marks the start of a protocol iteration. It is generated unconditionally.
    *
-   * @param <M>  Internal message object type
+   * @param <M>  internal message object type
    */
   interface ProtocolStart<M> extends DepthEntry<M> {
   }
@@ -115,7 +119,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
   /**
    * This entry marks the end of a protocol iteration. It is generated unconditionally.
    *
-   * @param <M>  Internal message object type
+   * @param <M>  internal message object type
    */
   interface ProtocolEnd<M> extends DepthEntry<M> {
   }
@@ -124,7 +128,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
   /**
    * Message entry.
    *
-   * @param <M>  Internal message object type
+   * @param <M>  internal message object type
    */
   interface MessageEntry<M> extends VisibleDepthEntry<M>, Protocol.Message<M>
   {
@@ -144,7 +148,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
    * Group message entry. This entry is generated for groups which have no visible entries themselves but have a
    * visible group header message.
    *
-   * @param <M>  Internal message object type
+   * @param <M>  internal message object type
    *
    * @see ProtocolGroup#setVisibility(Visibility)
    * @see GroupEntry
@@ -181,7 +185,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
    *   1 containing visible entry.
    * </p>
    *
-   * @param <M>  Internal message object type
+   * @param <M>  internal message object type
    *
    * @see GroupMessageEntry
    */
@@ -211,6 +215,10 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
   }
 
 
+  /**
+   *
+   * @param <M>  internal message object type
+   */
   interface GroupEndEntry<M> extends DepthEntry<M> {
   }
 }

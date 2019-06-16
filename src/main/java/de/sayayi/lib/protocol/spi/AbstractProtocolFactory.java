@@ -35,6 +35,8 @@ import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
 
 
 /**
+ * {@inheritDoc}
+ *
  * @author Jeroen Gremmen
  */
 public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>

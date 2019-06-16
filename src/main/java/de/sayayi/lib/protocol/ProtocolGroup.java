@@ -23,6 +23,14 @@ import java.util.Map;
 
 
 /**
+ * <p>
+ *   ProtocolGroup instances are not thread safe. It is however possible to use separate protocol groups for each
+ *   thread, created by the same parent protocol as long as the parent is not used for formatting/querying operations
+ *   during the time other threads are protocolling on their group.
+ * </p>
+ *
+ * @param <M>  internal message object type
+ *
  * @author Jeroen Gremmen
  */
 public interface ProtocolGroup<M> extends Protocol<M>
@@ -125,6 +133,9 @@ public interface ProtocolGroup<M> extends Protocol<M>
   @NotNull Protocol<M> getRootProtocol();
 
 
+  /**
+   * {@inheritDoc}
+   */
   interface ProtocolMessageBuilder<M> extends Protocol.ProtocolMessageBuilder<M>
   {
     @Override
@@ -153,6 +164,9 @@ public interface ProtocolGroup<M> extends Protocol<M>
   }
 
 
+  /**
+   * {@inheritDoc}
+   */
   interface MessageParameterBuilder<M> extends Protocol.MessageParameterBuilder<M>, ProtocolGroup<M>
   {
     @Override
