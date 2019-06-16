@@ -20,9 +20,13 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
+ * <p>
+ *   Generic protocol factory for text messages where the messages are stored internally as {@code String} objects.
+ * </p>
+ *
  * @author Jeroen Gremmen
  */
-public class DefaultProtocolFactory extends AbstractProtocolFactory<String>
+public class GenericProtocolFactory extends AbstractProtocolFactory<String>
 {
   @Override
   public String processMessage(@NotNull String message) {

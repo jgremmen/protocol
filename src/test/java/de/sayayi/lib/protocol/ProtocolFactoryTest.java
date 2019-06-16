@@ -47,7 +47,7 @@ public class ProtocolFactoryTest
   @Test
   public void testIsRegisteredTag()
   {
-    DefaultProtocolFactory factory = new DefaultProtocolFactory();
+    GenericProtocolFactory factory = new GenericProtocolFactory();
     Tag tag = factory.createTag("tag").getTag();
 
     assertTrue(factory.isRegisteredTag(tag));
@@ -62,7 +62,7 @@ public class ProtocolFactoryTest
 
     assertFalse(factory.isRegisteredTag(tagSame));
 
-    ProtocolFactory factory2 = new DefaultProtocolFactory();
+    ProtocolFactory factory2 = new GenericProtocolFactory();
     Tag tag2 = factory2.createTag("tag").getTag();
 
     assertTrue(factory2.isRegisteredTag(tag2));
@@ -83,7 +83,7 @@ public class ProtocolFactoryTest
   @Test
   public void testGetTags()
   {
-    DefaultProtocolFactory factory = new DefaultProtocolFactory();
+    GenericProtocolFactory factory = new GenericProtocolFactory();
 
     Tag tag1 = factory.createTag("tag1").getTag();
     Tag tagUI = factory.createTag("UI").getTag();
@@ -122,7 +122,7 @@ public class ProtocolFactoryTest
   @Test
   public void testTagByName()
   {
-    DefaultProtocolFactory factory = new DefaultProtocolFactory();
+    GenericProtocolFactory factory = new GenericProtocolFactory();
 
     Tag tag1 = factory.createTag("tag1").getTag();
 
@@ -150,7 +150,7 @@ public class ProtocolFactoryTest
   @Test
   public void testTagMatch()
   {
-    DefaultProtocolFactory factory = new DefaultProtocolFactory();
+    GenericProtocolFactory factory = new GenericProtocolFactory();
 
     Tag tagAtLeastInfo = factory.createTag("tag1").match(AT_LEAST, INFO).getTag();
 
@@ -194,7 +194,7 @@ public class ProtocolFactoryTest
   @Test
   public void testProcessMessage()
   {
-    DefaultProtocolFactory factory = new DefaultProtocolFactory() {
+    GenericProtocolFactory factory = new GenericProtocolFactory() {
       @Override public String processMessage(@NotNull String message) { return message + "(ok)"; }
     };
 

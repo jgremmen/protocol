@@ -38,7 +38,7 @@ public class ProtocolIteratorTest
   @Test
   public void testDepth()
   {
-    DefaultProtocolFactory factory = new DefaultProtocolFactory();
+    GenericProtocolFactory factory = new GenericProtocolFactory();
     Tag tag = factory.getDefaultTag();
     Protocol<String> protocol = factory.createProtocol();
 
@@ -117,7 +117,7 @@ public class ProtocolIteratorTest
   @Test
   public void testGroupGroup()
   {
-    DefaultProtocolFactory factory = new DefaultProtocolFactory();
+    GenericProtocolFactory factory = new GenericProtocolFactory();
     Tag tag = factory.getDefaultTag();
     Protocol<String> protocol = factory.createProtocol();
 
@@ -161,7 +161,7 @@ public class ProtocolIteratorTest
   @Test
   public void testNoMessages()
   {
-    DefaultProtocolFactory factory = new DefaultProtocolFactory();
+    GenericProtocolFactory factory = new GenericProtocolFactory();
     Tag tag = factory.getDefaultTag();
     Protocol<String> protocol = factory.createProtocol().debug().message("msg");
     ProtocolIterator<String> iterator = protocol.iterator(ERROR, tag);
@@ -179,7 +179,7 @@ public class ProtocolIteratorTest
   @Test
   public void testSingleMessage()
   {
-    DefaultProtocolFactory factory = new DefaultProtocolFactory();
+    GenericProtocolFactory factory = new GenericProtocolFactory();
     Tag tag = factory.getDefaultTag();
     Protocol<String> protocol = factory.createProtocol().debug().message("msg #1");
     ProtocolIterator<String> iterator = protocol.iterator(ALL, tag);
@@ -211,7 +211,7 @@ public class ProtocolIteratorTest
   @Test
   public void testMessagesOnly()
   {
-    DefaultProtocolFactory factory = new DefaultProtocolFactory();
+    GenericProtocolFactory factory = new GenericProtocolFactory();
     Tag tag = factory.getDefaultTag();
     Protocol<String> protocol = factory.createProtocol();
 

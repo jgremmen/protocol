@@ -40,7 +40,7 @@ public class ProtocolGroupTest
   @Test
   public void testIsHeaderVisible()
   {
-    DefaultProtocolFactory factory = new DefaultProtocolFactory();
+    GenericProtocolFactory factory = new GenericProtocolFactory();
     Tag tag = factory.getDefaultTag();
     ProtocolGroup gp = factory.createProtocol().createGroup();
 
@@ -99,7 +99,7 @@ public class ProtocolGroupTest
   @Test
   public void testHasVisualEntry()
   {
-    DefaultProtocolFactory factory = new DefaultProtocolFactory();
+    GenericProtocolFactory factory = new GenericProtocolFactory();
     Tag tag = factory.getDefaultTag();
     ProtocolGroup gp = factory.createProtocol().createGroup();
 
@@ -137,7 +137,7 @@ public class ProtocolGroupTest
   @Test
   public void testEffectiveVisibility()
   {
-    DefaultProtocolFactory factory = new DefaultProtocolFactory();
+    GenericProtocolFactory factory = new GenericProtocolFactory();
     ProtocolGroup gp = factory.createProtocol().createGroup();
 
     // no group header
