@@ -47,6 +47,16 @@ public abstract class HtmlProtocolFormatter<M> implements InitializableProtocolF
   protected abstract String formatMessage(Protocol.Message<M> message);
 
 
+  @SuppressWarnings("WeakerAccess")
+  protected String levelToHtmlClass(Level level)
+  {
+    if (level instanceof Enum)
+      return ((Enum)level).name();
+
+    return level.toString();
+  }
+
+
   @Override
   public void protocolStart()
   {
@@ -69,7 +79,7 @@ public abstract class HtmlProtocolFormatter<M> implements InitializableProtocolF
     String msg = formatMessage(message);
 
     indent(message.getDepth());
-    html.append("<li class=\"level-").append(message.getLevel())
+    html.append("<li class=\"level-").append(levelToHtmlClass(message.getLevel()))
         .append("\"><span class=\"").append(message.isGroupMessage() ? "group-message " : "").append("message\">")
         .append(HtmlEscape.escapeHtml5(msg)).append("</span></li>\n");
   }
@@ -83,7 +93,7 @@ public abstract class HtmlProtocolFormatter<M> implements InitializableProtocolF
     String msg = formatMessage(group.getGroupHeader());
 
     indent(depth - 1);
-    html.append("<li class=\"level-").append(message.getLevel())
+    html.append("<li class=\"level-").append(levelToHtmlClass(message.getLevel()))
         .append("\"><span class=\"group\">").append(HtmlEscape.escapeHtml5(msg)).append("</span></li>\n");
 
     indent(depth - 1);
