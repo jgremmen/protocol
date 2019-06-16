@@ -31,7 +31,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static de.sayayi.lib.protocol.Level.Shared.ALL;
+import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
 
 
 /**
@@ -279,7 +279,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
     @Getter private final String name;
 
     @Getter private MatchCondition matchCondition = MatchCondition.AT_LEAST;
-    @Getter private Level matchLevel = ALL;
+    @Getter private Level matchLevel = LOWEST;
 
     private Set<TagImpl> implies = new HashSet<TagImpl>(8);
 

@@ -24,7 +24,7 @@ import de.sayayi.lib.protocol.Tag;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-import static de.sayayi.lib.protocol.Level.Shared.ALL;
+import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
 
 
 /**
@@ -53,7 +53,7 @@ public class TechnicalProtocolFormatter<M> extends TreeProtocolFormatter<M>
 
   @Override
   public @NotNull Level getLevel() {
-    return ALL;
+    return LOWEST;
   }
 
 

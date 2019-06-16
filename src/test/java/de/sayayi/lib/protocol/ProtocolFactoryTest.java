@@ -22,10 +22,10 @@ import org.junit.Test;
 import java.util.Collections;
 import java.util.Set;
 
-import static de.sayayi.lib.protocol.Level.Shared.ALL;
 import static de.sayayi.lib.protocol.Level.Shared.DEBUG;
 import static de.sayayi.lib.protocol.Level.Shared.ERROR;
 import static de.sayayi.lib.protocol.Level.Shared.INFO;
+import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
 import static de.sayayi.lib.protocol.Level.Shared.WARN;
 import static de.sayayi.lib.protocol.Tag.MatchCondition.AT_LEAST;
 import static de.sayayi.lib.protocol.Tag.MatchCondition.EQUAL;
@@ -55,7 +55,7 @@ public class ProtocolFactoryTest
     Tag tagSame = new Tag() {
       @NotNull @Override public String getName() { return "tag"; }
       @NotNull @Override public Tag.MatchCondition getMatchCondition() { return AT_LEAST; }
-      @NotNull @Override public Level getMatchLevel() { return ALL; }
+      @NotNull @Override public Level getMatchLevel() { return LOWEST; }
       @Override public boolean isMatch(@NotNull Level level) { return true; }
       @NotNull @Override public Set<Tag> getImpliedTags() { return Collections.<Tag>singleton(this); }
     };
@@ -168,7 +168,7 @@ public class ProtocolFactoryTest
 
     assertTrue(tagEqualDebug.isMatch(DEBUG));
     assertFalse(tagEqualDebug.isMatch(ERROR));
-    assertFalse(tagEqualDebug.isMatch(ALL));
+    assertFalse(tagEqualDebug.isMatch(LOWEST));
 
     Tag tagNotEqualError = factory.createTag("tag3").match(NOT_EQUAL, ERROR).getTag();
 
@@ -177,7 +177,7 @@ public class ProtocolFactoryTest
 
     assertTrue(tagNotEqualError.isMatch(DEBUG));
     assertFalse(tagNotEqualError.isMatch(ERROR));
-    assertTrue(tagNotEqualError.isMatch(ALL));
+    assertTrue(tagNotEqualError.isMatch(LOWEST));
 
     Tag tagUntilWarn = factory.createTag("tag4").match(UNTIL, WARN).getTag();
 
@@ -187,7 +187,7 @@ public class ProtocolFactoryTest
     assertTrue(tagUntilWarn.isMatch(DEBUG));
     assertTrue(tagUntilWarn.isMatch(WARN));
     assertFalse(tagUntilWarn.isMatch(ERROR));
-    assertTrue(tagUntilWarn.isMatch(ALL));
+    assertTrue(tagUntilWarn.isMatch(LOWEST));
   }
 
 
@@ -199,7 +199,7 @@ public class ProtocolFactoryTest
     };
 
     Protocol<String> protocol = factory.createProtocol().debug().message("msg");
-    ProtocolIterator<String> iterator = protocol.iterator(ALL, factory.getDefaultTag());
+    ProtocolIterator<String> iterator = protocol.iterator(LOWEST, factory.getDefaultTag());
 
     iterator.next();  // protocol start
 
