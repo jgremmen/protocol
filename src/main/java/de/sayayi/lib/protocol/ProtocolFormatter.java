@@ -15,6 +15,7 @@
  */
 package de.sayayi.lib.protocol;
 
+import de.sayayi.lib.protocol.ProtocolGroup.Visibility;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupEndEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
@@ -30,12 +31,40 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface ProtocolFormatter<M,R>
 {
+  /**
+   * <p>
+   *   This method is invoked when the formatting process starts.
+   * </p>
+   *
+   * @see #protocolEnd()
+   */
   void protocolStart();
 
 
+  /**
+   * <p>
+   *   This method is invoked when the formatting process ends but before the result is obtained.
+   * </p>
+   *
+   * @see #protocolStart()
+   * @see #getResult()
+   */
   void protocolEnd();
 
 
+  /**
+   * <p>
+   *   Format the given message.
+   * </p>
+   * <p>
+   *   This method is used for both regular messages as well as group header messages for groups with no containing
+   *   messages. A distinction can be made by checking {@link MessageEntry#isGroupMessage()}.
+   * </p>
+   *
+   * @param message, never {@code null}
+   *
+   * @see ProtocolGroup#setVisibility(Visibility)
+   */
   void message(@NotNull MessageEntry<M> message);
 
 
@@ -91,10 +120,20 @@ public interface ProtocolFormatter<M,R>
    */
   interface ConfiguredProtocolFormatter<M,R> extends ProtocolFormatter<M,R>
   {
+    /**
+     * Returns the protocol level to be used for formatting.
+     *
+     * @return  protocol level, never {@code null}
+     */
     @Contract(pure = true)
     @NotNull Level getLevel();
 
 
+    /**
+     * Returns the tag to be used for formatting.
+     *
+     * @return  tag, never {@code null}
+     */
     @Contract(pure = true)
     @NotNull Tag getTag();
   }

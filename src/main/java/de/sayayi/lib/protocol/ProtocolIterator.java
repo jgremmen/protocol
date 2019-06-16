@@ -15,6 +15,7 @@
  */
 package de.sayayi.lib.protocol;
 
+import de.sayayi.lib.protocol.ProtocolGroup.Visibility;
 import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -102,20 +103,52 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
   }
 
 
+  /**
+   * This entry marks the start of a protocol iteration. It is generated unconditionally.
+   *
+   * @param <M>  Internal message object type
+   */
   interface ProtocolStart<M> extends DepthEntry<M> {
   }
 
 
+  /**
+   * This entry marks the end of a protocol iteration. It is generated unconditionally.
+   *
+   * @param <M>  Internal message object type
+   */
   interface ProtocolEnd<M> extends DepthEntry<M> {
   }
 
 
+  /**
+   * Message entry.
+   *
+   * @param <M>  Internal message object type
+   */
   interface MessageEntry<M> extends VisibleDepthEntry<M>, Protocol.Message<M>
   {
+    /**
+     * Tells if this message is a group header message.
+     *
+     * @return  {@code true} if this is a group header message, {@code false} otherwise
+     *
+     * @see GroupMessageEntry
+     */
+    @Contract(pure = true)
     boolean isGroupMessage();
   }
 
 
+  /**
+   * Group message entry. This entry is generated for groups which have no visible entries themselves but have a
+   * visible group header message.
+   *
+   * @param <M>  Internal message object type
+   *
+   * @see ProtocolGroup#setVisibility(Visibility)
+   * @see GroupEntry
+   */
   interface GroupMessageEntry<M> extends MessageEntry<M>
   {
     /**
@@ -124,10 +157,37 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
      * @return  always {@code null}
      */
     @Override
+    @Contract("-> null")
     Throwable getThrowable();
+
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return  always {@code true}
+     */
+    @Override
+    @Contract(pure = true)
+    boolean isGroupMessage();
   }
 
 
+  /**
+   * <p>
+   *   Marks the beginning of a protocol group.
+   * </p>
+   * <p>
+   *   This entry is generated only if the protocol group has:
+   *   <ul>
+   *     <li>a visible group header message</li>
+   *     <li>at least 1 containing visible entry</li>
+   *   </ul>
+   * </p>
+   *
+   * @param <M>  Internal message object type
+   *
+   * @see GroupMessageEntry
+   */
   interface GroupEntry<M> extends VisibleDepthEntry<M>, Protocol.Group<M>
   {
     /**
@@ -135,18 +195,14 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
      *
      * @return  group header message, never {@code null}
      */
-    @Contract(pure = true)
     @Override
+    @Contract(pure = true)
     @NotNull Protocol.Message<M> getGroupHeader();
 
 
     /**
      * <p>
-     *   Returns the number of visible messages in this group.
-     * </p>
-     * <p>
-     *   Only messages with the same depth are counted. So if this group has a depth of {@code 2}, this method
-     *   returns the number of messages with depth {@code 3}.
+     *   Returns the number of visible messages in this group. Only messages with the same depth are counted.
      * </p>
      *
      * @return  number of messages in the group (at least 1)
