@@ -110,7 +110,7 @@ public abstract class HtmlProtocolFormatter<M> implements InitializableProtocolF
 
 
   @Override
-  public String getResult() {
+  public @NotNull String getResult() {
     return html.toString();
   }
 

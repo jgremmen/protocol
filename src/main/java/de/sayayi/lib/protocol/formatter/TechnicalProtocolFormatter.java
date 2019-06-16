@@ -37,6 +37,7 @@ public class TechnicalProtocolFormatter<M> extends TreeProtocolFormatter<M>
   @Getter private final Tag tag;
 
 
+  @SuppressWarnings("WeakerAccess")
   public TechnicalProtocolFormatter(@NotNull ProtocolFactory<M> factory)
   {
     tag = factory.getDefaultTag();
