@@ -279,6 +279,9 @@ public interface Protocol<M> extends ProtocolQuery
 
 
   /**
+   * <p>
+   *   Builder pattern for setting message parameter values.
+   * </p>
    *
    * @param <M>  internal message object type
    */
@@ -399,7 +402,7 @@ public interface Protocol<M> extends ProtocolQuery
 
 
   /**
-   * The simplest representation of a message, providing the internal representation of the message and parameter
+   * The most generic representation of a message, providing the internal representation of the message and parameter
    * values to be used for formatting the message.
    *
    * @param <M>  internal message object type
@@ -436,11 +439,11 @@ public interface Protocol<M> extends ProtocolQuery
 
 
   /**
-   * A protocol message with level and optional throwable.
+   * A protocol message with level.
    *
    * @param <M>  internal message object type
    */
-  interface Message<M> extends GenericMessage<M>
+  interface MessageWithLevel<M> extends GenericMessage<M>
   {
     /**
      * Returns the level for this message.
@@ -449,8 +452,16 @@ public interface Protocol<M> extends ProtocolQuery
      */
     @Contract(pure = true)
     @NotNull Level getLevel();
+  }
 
 
+  /**
+   * A protocol message with level and optional throwable.
+   *
+   * @param <M>  internal message object type
+   */
+  interface Message<M> extends MessageWithLevel<M>
+  {
     /**
      * Returns the throwable associated with the message.
      *

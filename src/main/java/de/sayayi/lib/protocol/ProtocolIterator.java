@@ -15,6 +15,7 @@
  */
 package de.sayayi.lib.protocol;
 
+import de.sayayi.lib.protocol.Protocol.MessageWithLevel;
 import de.sayayi.lib.protocol.ProtocolGroup.Visibility;
 import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
 import org.jetbrains.annotations.Contract;
@@ -198,7 +199,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
      */
     @Override
     @Contract(pure = true)
-    @NotNull Protocol.Message<M> getGroupHeader();
+    @NotNull MessageWithLevel<M> getGroupHeader();
 
 
     /**

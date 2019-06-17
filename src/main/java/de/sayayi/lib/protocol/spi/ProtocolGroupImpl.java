@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_IF_NOT_EMPTY;
 
@@ -43,8 +44,11 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
     @Override public String toString() { return "NO_VISIBLE_ENTRIES"; }
   };
 
+  private static final AtomicInteger PROTOCOL_GROUP_ID = new AtomicInteger(0);
+
 
   private final AbstractProtocol<M,Protocol.ProtocolMessageBuilder<M>> parent;
+  private final int id;
 
   @Getter private Visibility visibility;
   @Getter private GroupMessage groupHeader;
@@ -53,6 +57,8 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
   ProtocolGroupImpl(@NotNull AbstractProtocol<M,Protocol.ProtocolMessageBuilder<M>> parent)
   {
     super(parent.factory);
+
+    id = PROTOCOL_GROUP_ID.incrementAndGet();
 
     this.parent = parent;
     visibility = SHOW_HEADER_IF_NOT_EMPTY;
@@ -232,6 +238,18 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
   {
     return new ProtocolStructureIterator.ForGroup<M>(level, tag, 0,this, false,
         false, true);
+  }
+
+
+  @Override
+  public int hashCode() {
+    return id;
+  }
+
+
+  @Override
+  public String toString() {
+    return "ProtocolGroup[id=" + id + ']';
   }
 
 

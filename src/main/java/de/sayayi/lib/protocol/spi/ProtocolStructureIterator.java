@@ -18,7 +18,7 @@ package de.sayayi.lib.protocol.spi;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.Protocol.GenericMessage;
-import de.sayayi.lib.protocol.Protocol.Message;
+import de.sayayi.lib.protocol.Protocol.MessageWithLevel;
 import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.ProtocolGroup.Visibility;
 import de.sayayi.lib.protocol.ProtocolIterator;
@@ -384,13 +384,12 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
     @Override
-    public @NotNull Protocol.Message<M> getGroupHeader()
+    public @NotNull Protocol.MessageWithLevel<M> getGroupHeader()
     {
-      return new Message<M>() {
+      return new MessageWithLevel<M>() {
         @Override public @NotNull Level getLevel() { return level; }
         @Override public @NotNull M getMessage() { return groupMessage.getMessage(); }
         @Override public @NotNull Map<String,Object> getParameterValues() { return groupMessage.getParameterValues(); }
-        @Override public Throwable getThrowable() { return null; }
       };
     }
   }

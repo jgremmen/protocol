@@ -16,8 +16,7 @@
 package de.sayayi.lib.protocol.formatter;
 
 import de.sayayi.lib.protocol.Level;
-import de.sayayi.lib.protocol.Protocol;
-import de.sayayi.lib.protocol.Protocol.Message;
+import de.sayayi.lib.protocol.Protocol.MessageWithLevel;
 import de.sayayi.lib.protocol.ProtocolFormatter.InitializableProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupEndEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupEntry;
@@ -44,7 +43,7 @@ public abstract class HtmlProtocolFormatter<M> implements InitializableProtocolF
 
 
   @SuppressWarnings("WeakerAccess")
-  protected abstract String formatMessage(Protocol.Message<M> message);
+  protected abstract String formatMessage(MessageWithLevel<M> message);
 
 
   @SuppressWarnings("WeakerAccess")
@@ -89,7 +88,7 @@ public abstract class HtmlProtocolFormatter<M> implements InitializableProtocolF
   public void groupStart(@NotNull GroupEntry<M> group)
   {
     int depth = group.getDepth();
-    Message<M> message = group.getGroupHeader();
+    MessageWithLevel<M> message = group.getGroupHeader();
     String msg = formatMessage(group.getGroupHeader());
 
     indent(depth - 1);
