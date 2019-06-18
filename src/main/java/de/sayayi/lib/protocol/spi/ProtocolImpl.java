@@ -74,9 +74,8 @@ class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
     }
 
 
-    @NotNull
     @Override
-    protected MessageParameterBuilder<M> createMessageParameterBuilder(@NotNull ProtocolMessageEntry<M> message) {
+    protected @NotNull MessageParameterBuilder<M> createMessageParameterBuilder(@NotNull ProtocolMessageEntry<M> message) {
       return new ParameterBuilder(message);
     }
   }

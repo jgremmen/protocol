@@ -24,6 +24,22 @@ import java.util.Map;
 
 
 /**
+ * <pre>
+ *   public void validate(Protocol protocol) {
+ *     try {
+ *       ...
+ *
+ *       if (!check1())
+ *         protocol.info().forTag("ui").message("validation 1 failed");
+ *
+ *       ...
+ *     } catch(Exception ex) {
+ *       String ticket = createTicket();
+ *       protocol.warn().forTags("ui", "support").message("Ticket {0} created. Please contact support").with("0", ticket)
+ *               .error(ex).forTag("support").message("Unexpected validation error occurred");
+ *     }
+ *   }
+ * </pre>
  * <p>
  *   Protocol instances are not thread safe.
  * </p>
@@ -213,6 +229,23 @@ public interface Protocol<M> extends ProtocolQuery
 
     /**
      * <p>
+     *   Adds a tag to the protocol message.
+     * </p>
+     *
+     * @param tag  tag to associate with the new message, never {@code null}
+     *
+     * @return  this instance
+     *
+     * @throws IllegalArgumentException  if {@code tag} is not registered by the same protocol factory
+     *
+     * @see ProtocolFactory#getTagByName(String)
+     */
+    @Contract("_ -> this")
+    @NotNull ProtocolMessageBuilder<M> forTag(@NotNull String tag);
+
+
+    /**
+     * <p>
      *   Adds multiple tags to the protocol message.
      * </p>
      *
@@ -239,7 +272,7 @@ public interface Protocol<M> extends ProtocolQuery
      *
      * @throws IllegalArgumentException  if at least one tagName is not registered by the protocol factory
      *
-     * @see ProtocolFactory#isRegisteredTag(Tag)
+     * @see ProtocolFactory#getTagByName(String)
      */
     @Contract("_ -> this")
     @NotNull ProtocolMessageBuilder<M> forTags(@NotNull String ... tagNames);

@@ -49,7 +49,8 @@ public interface Level
 
 
   /**
-   * Level constants
+   * Level constants for the {@linkplain Protocol#debug() debug()}, {@linkplain Protocol#info() info()},
+   * {@linkplain Protocol#warn() warn()} and {@linkplain Protocol#error() error()} protocol methods.
    */
   enum Shared implements Level
   {
