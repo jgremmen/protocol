@@ -234,6 +234,12 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
 
 
   @Override
+  public boolean isMatch(@NotNull Level level) {
+    return getEffectiveVisibility().isShowEntries() && super.isMatch(level);
+  }
+
+
+  @Override
   public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag tag)
   {
     return new ProtocolStructureIterator.ForGroup<M>(level, tag, 0,this, false,

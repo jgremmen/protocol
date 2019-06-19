@@ -36,6 +36,25 @@ public interface ProtocolQuery
   boolean isMatch(@NotNull Level level, @NotNull Tag tag);
 
 
+  /**
+   * Tells if this protocol object matches the given {@code level}.
+   *
+   * @param level  requested protocol level, not {@code null}
+   *
+   * @return  {@code true} if the protocol object matches, {@code false} otherwise
+   */
+  @Contract(pure = true)
+  boolean isMatch(@NotNull Level level);
+
+
+  /**
+   * Returns the number of visible entries for the given {@code level} and {@code tag}.
+   *
+   * @param level  requested protocol level, not {@code null}
+   * @param tag    tag to query, not {@code null}
+   *
+   * @return  number of visible entries
+   */
   @Contract(pure = true)
   int getVisibleEntryCount(@NotNull Level level, @NotNull Tag tag);
 }

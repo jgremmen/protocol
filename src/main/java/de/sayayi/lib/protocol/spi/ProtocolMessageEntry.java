@@ -55,7 +55,13 @@ class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements Proto
 
   @Override
   public boolean isMatch(@NotNull Level level, @NotNull Tag tag) {
-    return this.level.severity() >= level.severity() && tags.contains(tag) && tag.isMatch(level);
+    return isMatch(level) && tags.contains(tag) && tag.isMatch(level);
+  }
+
+
+  @Override
+  public boolean isMatch(@NotNull Level level) {
+    return this.level.severity() >= level.severity();
   }
 
 

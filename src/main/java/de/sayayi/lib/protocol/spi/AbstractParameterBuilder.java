@@ -175,6 +175,12 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
+  public boolean isMatch(@NotNull Level level) {
+    return protocol.isMatch(level);
+  }
+
+
+  @Override
   public int getVisibleEntryCount(@NotNull Level level, @NotNull Tag tag) {
     return protocol.getVisibleEntryCount(level, tag);
   }

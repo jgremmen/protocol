@@ -101,6 +101,17 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   }
 
 
+  @Override
+  public boolean isMatch(@NotNull Level level)
+  {
+    for(ProtocolEntry<M> entry: entries)
+      if (entry.isMatch(level))
+        return true;
+
+    return false;
+  }
+
+
   @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag tag)
   {
     List<ProtocolEntry<M>> filteredEntries = new ArrayList<ProtocolEntry<M>>();
