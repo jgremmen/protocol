@@ -31,7 +31,7 @@ configurations.all {
       case 'org.jetbrains':
         switch(requested.name)
         {
-          case 'annotations': return useVersion('15.0')
+          case 'annotations': return useVersion('13.0')
         }
         break
     }
