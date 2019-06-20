@@ -206,7 +206,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
       {
         case SHOW_HEADER_ALWAYS:
           // header + messages, increase depth
-          nextEntry = new GroupEntryImpl<M>(protocol.getGroupHeader(), max(level, protocol.getHeaderLevel(level, tag)),
+          nextEntry = new GroupStartEntryImpl<M>(protocol.getGroupHeader(), max(level, protocol.getHeaderLevel(level, tag)),
               protocol.getVisibleGroupEntryCount(level, tag), ++this.depth, !hasEntryBeforeGroup, !hasEntryAfterGroup);
           forceFirst = true;
           break;
@@ -366,14 +366,14 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   }
 
 
-  private static class GroupEntryImpl<M> extends VisibleDepthEntryImpl<M> implements GroupEntry<M>
+  private static class GroupStartEntryImpl<M> extends VisibleDepthEntryImpl<M> implements GroupStartEntry<M>
   {
     private final Level level;
     private final GenericMessage<M> groupMessage;
     @Getter private final int messageCount;
 
 
-    GroupEntryImpl(GenericMessage<M> groupMessage, Level level, int messageCount, int depth, boolean first, boolean last)
+    GroupStartEntryImpl(GenericMessage<M> groupMessage, Level level, int messageCount, int depth, boolean first, boolean last)
     {
       super(depth, first, last);
 

@@ -17,7 +17,7 @@ package de.sayayi.lib.protocol;
 
 import de.sayayi.lib.protocol.ProtocolGroup.Visibility;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupEndEntry;
-import de.sayayi.lib.protocol.ProtocolIterator.GroupEntry;
+import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -68,7 +68,7 @@ public interface ProtocolFormatter<M,R>
   void message(@NotNull MessageEntry<M> message);
 
 
-  void groupStart(@NotNull GroupEntry<M> group);
+  void groupStart(@NotNull GroupStartEntry<M> group);
 
 
   void groupEnd(GroupEndEntry<M> groupEnd);

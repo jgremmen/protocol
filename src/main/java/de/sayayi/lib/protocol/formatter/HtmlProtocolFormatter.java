@@ -19,7 +19,7 @@ import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol.MessageWithLevel;
 import de.sayayi.lib.protocol.ProtocolFormatter.InitializableProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupEndEntry;
-import de.sayayi.lib.protocol.ProtocolIterator.GroupEntry;
+import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.Tag;
 import org.jetbrains.annotations.NotNull;
@@ -85,7 +85,7 @@ public abstract class HtmlProtocolFormatter<M> implements InitializableProtocolF
 
 
   @Override
-  public void groupStart(@NotNull GroupEntry<M> group)
+  public void groupStart(@NotNull GroupStartEntry<M> group)
   {
     int depth = group.getDepth();
     MessageWithLevel<M> message = group.getGroupHeader();

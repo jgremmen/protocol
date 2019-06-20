@@ -16,7 +16,7 @@
 package de.sayayi.lib.protocol;
 
 import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
-import de.sayayi.lib.protocol.ProtocolIterator.GroupEntry;
+import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import org.junit.Test;
 
@@ -58,7 +58,7 @@ public class ProtocolIteratorTest
     //String tree = protocol.format(new TechnicalProtocolFormatter<String>(factory));
 
     ProtocolIterator<String> iterator = protocol.iterator(LOWEST, tag);
-    GroupEntry<String> grpEntry;
+    GroupStartEntry<String> grpEntry;
     MessageEntry<String> msgEntry;
 
     assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolStart);
@@ -69,7 +69,7 @@ public class ProtocolIteratorTest
     assertEquals(0, msgEntry.getDepth());
     assertEquals("d0,msg1", msgEntry.getMessage());
 
-    grpEntry = (GroupEntry<String>)iterator.next();
+    grpEntry = (GroupStartEntry<String>)iterator.next();
     assertFalse(grpEntry.isFirst());
     assertTrue(grpEntry.isLast());
     assertEquals(1, grpEntry.getDepth());
@@ -82,7 +82,7 @@ public class ProtocolIteratorTest
     assertEquals(1, msgEntry.getDepth());
     assertEquals("d1,msg1", msgEntry.getMessage());
 
-    grpEntry = (GroupEntry<String>)iterator.next();
+    grpEntry = (GroupStartEntry<String>)iterator.next();
     assertFalse(grpEntry.isFirst());
     assertFalse(grpEntry.isLast());
     assertEquals(2, grpEntry.getDepth());
@@ -128,12 +128,12 @@ public class ProtocolIteratorTest
                           .debug().message("grp #2, msg #1");
 
     ProtocolIterator<String> iterator = protocol.iterator(LOWEST, tag);
-    GroupEntry<String> grpEntry;
+    GroupStartEntry<String> grpEntry;
     MessageEntry<String> msgEntry;
 
     assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolStart);
 
-    grpEntry = (GroupEntry<String>)iterator.next();
+    grpEntry = (GroupStartEntry<String>)iterator.next();
     assertTrue(grpEntry.isFirst());
     assertFalse(grpEntry.isLast());
     assertEquals(1, grpEntry.getDepth());

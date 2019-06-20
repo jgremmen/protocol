@@ -47,6 +47,16 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
   @NotNull Tag getTag();
 
 
+  /**
+   * <p>
+   *   This class is the basis for every entry produced by the protocol iterator. It provides the group depth
+   *   (starting with {@code 0}) for each entry. Every {@link GroupStartEntry} increases the depth and every
+   *   {@link GroupEndEntry} decreases the depth. This information can be used by
+   *   {@linkplain ProtocolFormatter ProtocolFormatters} to format the protocol in a structural form (eg. a tree).
+   * </p>
+   *
+   * @param <M>  internal message object type
+   */
   @SuppressWarnings("unused")
   interface DepthEntry<M>
   {
@@ -61,7 +71,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
      * <ul>
      *   <li>Message 1 (depth = 0)</li>
      *   <li>
-     *     Group message (depth = 0)
+     *     Group message (depth = 1)
      *     <ul>
      *       <li>Message 2 (depth = 1)</li>
      *       <li>Message 3 (depth = 1)</li>
@@ -152,7 +162,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
    * @param <M>  internal message object type
    *
    * @see ProtocolGroup#setVisibility(Visibility)
-   * @see GroupEntry
+   * @see GroupStartEntry
    */
   interface GroupMessageEntry<M> extends MessageEntry<M>
   {
@@ -190,7 +200,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
    *
    * @see GroupMessageEntry
    */
-  interface GroupEntry<M> extends VisibleDepthEntry<M>, Protocol.Group<M>
+  interface GroupStartEntry<M> extends VisibleDepthEntry<M>, Protocol.Group<M>
   {
     /**
      * {@inheritDoc}

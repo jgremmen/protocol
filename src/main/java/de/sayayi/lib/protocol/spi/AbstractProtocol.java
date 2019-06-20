@@ -24,9 +24,10 @@ import de.sayayi.lib.protocol.ProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolFormatter.InitializableProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolGroup;
+import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupEndEntry;
-import de.sayayi.lib.protocol.ProtocolIterator.GroupEntry;
+import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.ProtocolEnd;
 import de.sayayi.lib.protocol.ProtocolIterator.ProtocolStart;
@@ -167,8 +168,8 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
         formatter.protocolEnd();
       else if (entry instanceof MessageEntry)
         formatter.message((MessageEntry<M>)entry);
-      else if (entry instanceof GroupEntry)
-        formatter.groupStart((GroupEntry<M>)entry);
+      else if (entry instanceof ProtocolIterator.GroupStartEntry)
+        formatter.groupStart((GroupStartEntry<M>)entry);
       else if (entry instanceof GroupEndEntry)
         formatter.groupEnd((GroupEndEntry<M>)entry);
     }
