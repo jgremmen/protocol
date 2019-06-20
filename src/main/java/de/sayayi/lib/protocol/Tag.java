@@ -23,7 +23,7 @@ import java.util.Set;
 
 /**
  * <p>
- *   Tags are protocol factory specific labels to be used with protocolling messages.
+ *   Tags are protocol factory specific labels to be used with protocol messages.
  * </p>
  * <p>
  *   Tags can have dependencies to other tags which means that if a message is protocolled
