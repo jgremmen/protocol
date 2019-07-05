@@ -197,6 +197,21 @@ public interface Protocol<M> extends ProtocolQuery
 
 
   /**
+   * Tells if any entry in this protocol matches the given {@code level} and {@code tag}.
+   *
+   * @param level  requested protocol level, not {@code null}
+   * @param tag    tag to query, not {@code null}
+   *
+   * @return  {@code true} if at least 1 entry in the protocol matches, {@code false} otherwise
+   *
+   * @see #isMatch(Level, Tag)
+   * @see ProtocolFactory#getTagByName(String)
+   */
+  @Contract(pure = true)
+  boolean isMatch(@NotNull Level level, @NotNull String tag);
+
+
+  /**
    * <p>
    *   Builder pattern for creating a protocol message.
    * </p>

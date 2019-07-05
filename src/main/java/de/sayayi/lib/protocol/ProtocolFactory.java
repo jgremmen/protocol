@@ -95,8 +95,8 @@ public interface ProtocolFactory<M>
    *
    * <ul>
    *   <li>The {@code message} could be a resource key which is used to lookup the actual message text</li>
-   *   <li>Syntax analysis can be performed on the message</li>
    *   <li>The {@code message} could be a Spring Expression and the returned object would be a compiled expression</li>
+   *   <li>Syntax analysis can be performed on the message</li>
    * </ul>
    *
    * @param message  message, not {@code null}
