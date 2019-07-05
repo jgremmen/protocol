@@ -103,6 +103,14 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
 
   @Override
+  public boolean isMatch(@NotNull Level level, @NotNull String tag)
+  {
+    //noinspection PatternValidation
+    return isMatch(level, factory.getTagByName(tag));
+  }
+
+
+  @Override
   public boolean isMatch(@NotNull Level level)
   {
     for(ProtocolEntry<M> entry: entries)
