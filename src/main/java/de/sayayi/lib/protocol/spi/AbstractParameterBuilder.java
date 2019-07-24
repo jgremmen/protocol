@@ -39,7 +39,7 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
     implements MessageParameterBuilder<M>
 {
   private final AbstractProtocol<M,B> protocol;
-  private final AbstractGenericMessage<M> message;
+  final AbstractGenericMessage<M> message;
 
 
   AbstractParameterBuilder(AbstractProtocol<M,B> protocol, @NotNull AbstractGenericMessage<M> message)

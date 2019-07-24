@@ -446,6 +446,11 @@ public interface Protocol<M> extends ProtocolQuery
      */
     @Contract("_, _ -> this")
     @NotNull MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*") String parameter, Object value);
+
+
+    @SuppressWarnings("unused")
+    @Contract("-> this")
+    @NotNull MessageParameterBuilder<M> withTicket();
   }
 
 

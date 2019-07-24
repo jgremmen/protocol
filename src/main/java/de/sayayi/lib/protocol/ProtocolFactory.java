@@ -15,6 +15,8 @@
  */
 package de.sayayi.lib.protocol;
 
+import de.sayayi.lib.protocol.Protocol.GenericMessage;
+import de.sayayi.lib.protocol.Protocol.MessageWithLevel;
 import org.intellij.lang.annotations.Pattern;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -39,6 +41,9 @@ public interface ProtocolFactory<M>
    * @see #getDefaultTag()
    */
   String DEFAULT_TAG_NAME = "default";
+
+
+  String TICKET_PARAMETER_NAME = "ticket";
 
 
   /**
@@ -105,6 +110,25 @@ public interface ProtocolFactory<M>
    */
   @Contract(pure = true)
   M processMessage(@NotNull String message);
+
+
+  /**
+   * <p>
+   *   Create a unique ticket number.
+   * </p>
+   * <p>
+   *   The provided {@code message} can be examined in order to generate a more fine grained ticket number.
+   *   Please note however, that required message parameters may not be available yet.
+   * </p>
+   *
+   * @param message  message to be used for ticket generation, not {@code null}
+   *
+   * @return  a new unique ticket number, never {@code null}
+   *
+   * @see GenericMessage#getParameterValues()
+   */
+  @Contract(pure = true, value = "_ -> new")
+  @NotNull String createTicketFor(@NotNull MessageWithLevel<M> message);
 
 
   /**
