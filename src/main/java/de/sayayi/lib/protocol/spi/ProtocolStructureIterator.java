@@ -53,7 +53,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
   int depth;
   Iterator<ProtocolEntry<M>> iterator;
-  VisibleDepthEntry<M> lastVisibleEntry;
+  RankingDepthEntry<M> lastVisibleEntry;
   DepthEntry<M> nextEntry;
 
 
@@ -85,8 +85,8 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
     DepthEntry<M> returnValue = nextEntry;
 
-    if (nextEntry instanceof VisibleDepthEntry)
-      lastVisibleEntry = (VisibleDepthEntry<M>)nextEntry;
+    if (nextEntry instanceof ProtocolIterator.RankingDepthEntry)
+      lastVisibleEntry = (RankingDepthEntry<M>)nextEntry;
 
     prepareNextEntry();
 
@@ -248,13 +248,13 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   }
 
 
-  static abstract class VisibleDepthEntryImpl<M> extends DepthEntryImpl<M> implements VisibleDepthEntry<M>
+  static abstract class RankingDepthEntryImpl<M> extends DepthEntryImpl<M> implements RankingDepthEntry<M>
   {
     @Getter final boolean first;
     @Getter final boolean last;
 
 
-    VisibleDepthEntryImpl(int depth, boolean first, boolean last)
+    RankingDepthEntryImpl(int depth, boolean first, boolean last)
     {
       super(depth);
 
@@ -264,7 +264,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   }
 
 
-  private static class MessageEntryImpl<M> extends VisibleDepthEntryImpl<M> implements MessageEntry<M>
+  private static class MessageEntryImpl<M> extends RankingDepthEntryImpl<M> implements MessageEntry<M>
   {
     final Protocol.Message<M> message;
 
@@ -314,7 +314,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   }
 
 
-  private static class GroupMessageEntryImpl<M> extends VisibleDepthEntryImpl<M> implements GroupMessageEntry<M>
+  private static class GroupMessageEntryImpl<M> extends RankingDepthEntryImpl<M> implements GroupMessageEntry<M>
   {
     final Level level;
     final GenericMessage<M> groupHeader;
@@ -366,7 +366,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   }
 
 
-  private static class GroupStartEntryImpl<M> extends VisibleDepthEntryImpl<M> implements GroupStartEntry<M>
+  private static class GroupStartEntryImpl<M> extends RankingDepthEntryImpl<M> implements GroupStartEntry<M>
   {
     private final Level level;
     private final GenericMessage<M> groupMessage;

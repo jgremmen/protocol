@@ -91,7 +91,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
    *
    * @param <M>  internal message object type
    */
-  interface VisibleDepthEntry<M> extends DepthEntry<M>
+  interface RankingDepthEntry<M> extends DepthEntry<M>
   {
     /**
      * Tells if this is the first entry with respect to its depth.
@@ -141,7 +141,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
    *
    * @param <M>  internal message object type
    */
-  interface MessageEntry<M> extends VisibleDepthEntry<M>, Protocol.Message<M>
+  interface MessageEntry<M> extends RankingDepthEntry<M>, Protocol.Message<M>
   {
     /**
      * Tells if this message is a group header message.
@@ -200,7 +200,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
    *
    * @see GroupMessageEntry
    */
-  interface GroupStartEntry<M> extends VisibleDepthEntry<M>, Protocol.Group<M>
+  interface GroupStartEntry<M> extends RankingDepthEntry<M>, Protocol.Group<M>
   {
     /**
      * {@inheritDoc}
