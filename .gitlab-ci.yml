@@ -17,7 +17,7 @@ cache:
 
 build:
   stage: build
-  script: ./gradlew clean build
+  script: ./gradlew clean build sonarqube -Dsonar.login="$SONAR_LOGIN" -Dsonar.projectKey="gitlab:protocol:$CI_COMMIT_REF_SLUG" --info
   artifacts:
     paths:
       - ./build/libs/*
