@@ -58,7 +58,9 @@ public abstract class TreeProtocolFormatter<M> implements InitializableProtocolF
   public void init(@NotNull Level level, @NotNull Tag tag, int estimatedGroupDepth)
   {
     result.delete(0, result.length());
-    (prefixes = new String[estimatedGroupDepth + 1])[0] = "";
+
+    prefixes = new String[estimatedGroupDepth + 1];
+    prefixes[0] = "";
   }
 
 

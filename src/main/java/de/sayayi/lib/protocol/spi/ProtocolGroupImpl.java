@@ -30,7 +30,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static de.sayayi.lib.protocol.ProtocolFactory.TICKET_PARAMETER_NAME;
+import static de.sayayi.lib.protocol.ProtocolFactory.Constants.TICKET_PARAMETER_NAME;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_IF_NOT_EMPTY;
 
 
@@ -78,10 +78,10 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
   }
 
 
+  @SuppressWarnings({ "squid:S2583", "ConstantConditions" })
   @Override
   public @NotNull ProtocolGroup<M> setVisibility(@NotNull Visibility visibility)
   {
-    //noinspection ConstantConditions
     if (visibility == null)
       throw new NullPointerException("visibility must not be null");
 
@@ -161,6 +161,9 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
 
         case FLATTEN:
           return super.getVisibleEntryCount(level, tag);
+
+        default:
+          break;
       }
 
     return 0;
@@ -181,6 +184,9 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
 
         case FLATTEN_ON_SINGLE_ENTRY:
           return (n > 1) ? n : 0;
+
+        default:
+          break;
       }
     }
 
@@ -188,6 +194,7 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
   }
 
 
+  @SuppressWarnings("squid:S2583")
   @Override
   public @NotNull ProtocolGroup.MessageParameterBuilder<M> setGroupMessage(@NotNull String message)
   {
@@ -196,8 +203,9 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
       throw new NullPointerException("message must not be null");
 
     M processedMessage = factory.processMessage(message);
+    groupHeader = new GroupMessage(processedMessage);
 
-    return new ParameterBuilderImpl(groupHeader = new GroupMessage(processedMessage));
+    return new ParameterBuilderImpl(groupHeader);
   }
 
 
@@ -210,6 +218,7 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
   }
 
 
+  @SuppressWarnings("squid:S2583")
   @Override
   public @NotNull ProtocolGroup.ProtocolMessageBuilder<M> add(@NotNull Level level)
   {
@@ -251,6 +260,12 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
   @Override
   public int hashCode() {
     return id;
+  }
+
+
+  @Override
+  public boolean equals(Object o) {
+    return this == o || (o instanceof ProtocolGroupImpl && id == ((ProtocolGroupImpl)o).id);
   }
 
 

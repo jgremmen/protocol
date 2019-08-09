@@ -57,7 +57,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
    *
    * @param <M>  internal message object type
    */
-  @SuppressWarnings("unused")
+  @SuppressWarnings({"unused", "squid:S2326"})
   interface DepthEntry<M>
   {
     /**

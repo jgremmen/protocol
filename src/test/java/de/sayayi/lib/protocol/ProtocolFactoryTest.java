@@ -28,7 +28,7 @@ import static de.sayayi.lib.protocol.Level.Shared.ERROR;
 import static de.sayayi.lib.protocol.Level.Shared.INFO;
 import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
 import static de.sayayi.lib.protocol.Level.Shared.WARN;
-import static de.sayayi.lib.protocol.ProtocolFactory.TICKET_PARAMETER_NAME;
+import static de.sayayi.lib.protocol.ProtocolFactory.Constants.TICKET_PARAMETER_NAME;
 import static de.sayayi.lib.protocol.Tag.MatchCondition.AT_LEAST;
 import static de.sayayi.lib.protocol.Tag.MatchCondition.EQUAL;
 import static de.sayayi.lib.protocol.Tag.MatchCondition.NOT_EQUAL;
@@ -100,7 +100,7 @@ public class ProtocolFactoryTest
     assertTrue(tags.contains(tagUI));
     assertTrue(tags.contains(tagSummary));
 
-    assertTrue(factory.hasTag(ProtocolFactory.DEFAULT_TAG_NAME));
+    assertTrue(factory.hasTag(ProtocolFactory.Constants.DEFAULT_TAG_NAME));
     assertTrue(factory.hasTag("tag1"));
     assertTrue(factory.hasTag("UI"));
     assertTrue(factory.hasTag("summary"));
@@ -130,7 +130,7 @@ public class ProtocolFactoryTest
 
     assertEquals("tag1", tag1.getName());
     assertEquals(tag1, factory.getTagByName("tag1"));
-    assertEquals(factory.getDefaultTag(), factory.getTagByName(ProtocolFactory.DEFAULT_TAG_NAME));
+    assertEquals(factory.getDefaultTag(), factory.getTagByName(ProtocolFactory.Constants.DEFAULT_TAG_NAME));
     assertNull(factory.getTagByName("xyz"));
 
     try {

@@ -87,6 +87,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   }
 
 
+  @SuppressWarnings("squid:S3038")
   public abstract @NotNull B add(@NotNull Level level);
 
 

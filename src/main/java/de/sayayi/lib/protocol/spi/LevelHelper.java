@@ -23,6 +23,10 @@ import de.sayayi.lib.protocol.Level;
  */
 abstract class LevelHelper
 {
+  private LevelHelper() {
+  }
+
+
   static Level max(Level l1, Level l2) {
     return (l1.severity() >= l2.severity()) ? l1 : l2;
   }

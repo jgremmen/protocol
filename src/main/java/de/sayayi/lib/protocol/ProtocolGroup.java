@@ -136,6 +136,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
   /**
    * {@inheritDoc}
    */
+  @SuppressWarnings("squid:S2176")
   interface ProtocolMessageBuilder<M> extends Protocol.ProtocolMessageBuilder<M>
   {
     @Override
@@ -167,6 +168,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
   /**
    * {@inheritDoc}
    */
+  @SuppressWarnings("squid:S2176")
   interface MessageParameterBuilder<M> extends Protocol.MessageParameterBuilder<M>, ProtocolGroup<M>
   {
     @Override

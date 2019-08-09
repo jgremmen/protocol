@@ -103,6 +103,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   abstract void prepareNextEntry();
 
 
+  @SuppressWarnings("squid:S3776")
   void prepareNextEntry(boolean hasEntryBefore)
   {
     for(;;)
@@ -237,7 +238,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   }
 
 
-  static abstract class DepthEntryImpl<M> implements DepthEntry<M>
+  abstract static class DepthEntryImpl<M> implements DepthEntry<M>
   {
     @Getter final int depth;
 
@@ -248,7 +249,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   }
 
 
-  static abstract class RankingDepthEntryImpl<M> extends DepthEntryImpl<M> implements RankingDepthEntry<M>
+  abstract static class RankingDepthEntryImpl<M> extends DepthEntryImpl<M> implements RankingDepthEntry<M>
   {
     @Getter final boolean first;
     @Getter final boolean last;

@@ -27,13 +27,14 @@ import java.util.Set;
  *
  * @author Jeroen Gremmen
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "squid:S2326"})
 public interface ProtocolEntry<M> extends ProtocolQuery
 {
   /**
    *
    * @param <M>  internal message object type
    */
+  @SuppressWarnings("squid:S2176")
   interface Message<M> extends ProtocolEntry<M>, Protocol.Message<M>
   {
     @SuppressWarnings("unused")
@@ -46,6 +47,7 @@ public interface ProtocolEntry<M> extends ProtocolQuery
    *
    * @param <M>  internal message object type
    */
+  @SuppressWarnings("squid:S2176")
   interface Group<M> extends ProtocolEntry<M>, Protocol.Group<M>
   {
     /**

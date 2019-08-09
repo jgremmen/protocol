@@ -52,6 +52,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   protected abstract @NotNull P createMessageParameterBuilder(@NotNull ProtocolMessageEntry<M> message);
 
 
+  @SuppressWarnings("squid:S2583")
   @Override
   public @NotNull B forTag(@NotNull Tag tag)
   {
@@ -109,6 +110,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   }
 
 
+  @SuppressWarnings("squid:S2583")
   @Override
   public @NotNull P message(@NotNull String message)
   {

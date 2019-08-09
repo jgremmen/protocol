@@ -33,17 +33,21 @@ import java.util.Set;
  *
  * @author Jeroen Gremmen
  */
+@SuppressWarnings("squid:S1214")
 public interface ProtocolFactory<M>
 {
-  /**
-   * Name of the default tag.
-   *
-   * @see #getDefaultTag()
-   */
-  String DEFAULT_TAG_NAME = "default";
+  interface Constants
+  {
+    /**
+     * Name of the default tag.
+     *
+     * @see #getDefaultTag()
+     */
+    String DEFAULT_TAG_NAME = "default";
 
 
-  String TICKET_PARAMETER_NAME = "ticket";
+    String TICKET_PARAMETER_NAME = "ticket";
+  }
 
 
   /**

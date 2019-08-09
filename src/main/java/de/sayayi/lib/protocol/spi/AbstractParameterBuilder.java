@@ -89,6 +89,7 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
   }
 
 
+  @SuppressWarnings("squid:S2589")
   @Override
   public @NotNull P with(@NotNull String parameter, Object value)
   {

@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static de.sayayi.lib.protocol.ProtocolFactory.TICKET_PARAMETER_NAME;
+import static de.sayayi.lib.protocol.ProtocolFactory.Constants.TICKET_PARAMETER_NAME;
 
 
 /**
@@ -51,6 +51,7 @@ class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
   }
 
 
+  @SuppressWarnings("squid:S2583")
   @Override
   public @NotNull ProtocolMessageBuilder<M> add(@NotNull Level level)
   {
@@ -103,6 +104,12 @@ class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
   @Override
   public int hashCode() {
     return id;
+  }
+
+
+  @Override
+  public boolean equals(Object o) {
+    return this == o || (o instanceof ProtocolImpl && id == ((ProtocolImpl)o).id);
   }
 
 
