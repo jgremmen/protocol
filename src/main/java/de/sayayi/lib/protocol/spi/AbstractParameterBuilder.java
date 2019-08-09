@@ -170,20 +170,20 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
-  public boolean isMatch(@NotNull Level level, @NotNull Tag tag) {
-    return protocol.isMatch(level, tag);
+  public boolean matches(@NotNull Level level, @NotNull Tag tag) {
+    return protocol.matches(level, tag);
   }
 
 
   @Override
-  public boolean isMatch(@NotNull Level level, @NotNull String tag) {
-    return protocol.isMatch(level, tag);
+  public boolean matches(@NotNull Level level, @NotNull String tag) {
+    return protocol.matches(level, tag);
   }
 
 
   @Override
-  public boolean isMatch(@NotNull Level level) {
-    return protocol.isMatch(level);
+  public boolean matches(@NotNull Level level) {
+    return protocol.matches(level);
   }
 
 

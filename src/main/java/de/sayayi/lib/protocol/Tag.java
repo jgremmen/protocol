@@ -75,7 +75,7 @@ public interface Tag
    * @see #getMatchLevel()
    */
   @Contract(pure = true)
-  boolean isMatch(@NotNull Level level);
+  boolean matches(@NotNull Level level);
 
 
   /**

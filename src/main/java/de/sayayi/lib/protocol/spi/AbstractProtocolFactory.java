@@ -306,7 +306,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
     @SuppressWarnings("squid:S2583")
     @Override
-    public boolean isMatch(@NotNull Level level)
+    public boolean matches(@NotNull Level level)
     {
       //noinspection ConstantConditions
       if (level == null)

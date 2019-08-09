@@ -204,11 +204,11 @@ public interface Protocol<M> extends ProtocolQuery
    *
    * @return  {@code true} if at least 1 entry in the protocol matches, {@code false} otherwise
    *
-   * @see #isMatch(Level, Tag)
+   * @see #matches(Level, Tag)
    * @see ProtocolFactory#getTagByName(String)
    */
   @Contract(pure = true)
-  boolean isMatch(@NotNull Level level, @NotNull String tag);
+  boolean matches(@NotNull Level level, @NotNull String tag);
 
 
   /**

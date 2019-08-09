@@ -33,7 +33,7 @@ public interface ProtocolQuery
    * @return  {@code true} if the protocol object matches, {@code false} otherwise
    */
   @Contract(pure = true)
-  boolean isMatch(@NotNull Level level, @NotNull Tag tag);
+  boolean matches(@NotNull Level level, @NotNull Tag tag);
 
 
   /**
@@ -44,7 +44,7 @@ public interface ProtocolQuery
    * @return  {@code true} if the protocol object matches, {@code false} otherwise
    */
   @Contract(pure = true)
-  boolean isMatch(@NotNull Level level);
+  boolean matches(@NotNull Level level);
 
 
   /**

@@ -58,7 +58,7 @@ public class ProtocolFactoryTest
       @NotNull @Override public String getName() { return "tag"; }
       @NotNull @Override public Tag.MatchCondition getMatchCondition() { return AT_LEAST; }
       @NotNull @Override public Level getMatchLevel() { return LOWEST; }
-      @Override public boolean isMatch(@NotNull Level level) { return true; }
+      @Override public boolean matches(@NotNull Level level) { return true; }
       @NotNull @Override public Set<Tag> getImpliedTags() { return Collections.<Tag>singleton(this); }
     };
 
@@ -159,37 +159,37 @@ public class ProtocolFactoryTest
     assertEquals(INFO, tagAtLeastInfo.getMatchLevel());
     assertEquals(AT_LEAST, tagAtLeastInfo.getMatchCondition());
 
-    assertTrue(tagAtLeastInfo.isMatch(INFO));
-    assertTrue(tagAtLeastInfo.isMatch(ERROR));
-    assertFalse(tagAtLeastInfo.isMatch(DEBUG));
+    assertTrue(tagAtLeastInfo.matches(INFO));
+    assertTrue(tagAtLeastInfo.matches(ERROR));
+    assertFalse(tagAtLeastInfo.matches(DEBUG));
 
     Tag tagEqualDebug = factory.createTag("tag2").match(EQUAL, DEBUG).getTag();
 
     assertEquals(DEBUG, tagEqualDebug.getMatchLevel());
     assertEquals(EQUAL, tagEqualDebug.getMatchCondition());
 
-    assertTrue(tagEqualDebug.isMatch(DEBUG));
-    assertFalse(tagEqualDebug.isMatch(ERROR));
-    assertFalse(tagEqualDebug.isMatch(LOWEST));
+    assertTrue(tagEqualDebug.matches(DEBUG));
+    assertFalse(tagEqualDebug.matches(ERROR));
+    assertFalse(tagEqualDebug.matches(LOWEST));
 
     Tag tagNotEqualError = factory.createTag("tag3").match(NOT_EQUAL, ERROR).getTag();
 
     assertEquals(ERROR, tagNotEqualError.getMatchLevel());
     assertEquals(NOT_EQUAL, tagNotEqualError.getMatchCondition());
 
-    assertTrue(tagNotEqualError.isMatch(DEBUG));
-    assertFalse(tagNotEqualError.isMatch(ERROR));
-    assertTrue(tagNotEqualError.isMatch(LOWEST));
+    assertTrue(tagNotEqualError.matches(DEBUG));
+    assertFalse(tagNotEqualError.matches(ERROR));
+    assertTrue(tagNotEqualError.matches(LOWEST));
 
     Tag tagUntilWarn = factory.createTag("tag4").match(UNTIL, WARN).getTag();
 
     assertEquals(WARN, tagUntilWarn.getMatchLevel());
     assertEquals(UNTIL, tagUntilWarn.getMatchCondition());
 
-    assertTrue(tagUntilWarn.isMatch(DEBUG));
-    assertTrue(tagUntilWarn.isMatch(WARN));
-    assertFalse(tagUntilWarn.isMatch(ERROR));
-    assertTrue(tagUntilWarn.isMatch(LOWEST));
+    assertTrue(tagUntilWarn.matches(DEBUG));
+    assertTrue(tagUntilWarn.matches(WARN));
+    assertFalse(tagUntilWarn.matches(ERROR));
+    assertTrue(tagUntilWarn.matches(LOWEST));
   }
 
 

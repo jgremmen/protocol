@@ -106,7 +106,7 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
           return true;
 
         case SHOW_HEADER_IF_NOT_EMPTY:
-          return isMatch(level, tag);
+          return matches(level, tag);
 
         case FLATTEN_ON_SINGLE_ENTRY:
           return super.getVisibleEntryCount(level, tag) > 1;
@@ -148,7 +148,7 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
   @Override
   public int getVisibleEntryCount(@NotNull Level level, @NotNull Tag tag)
   {
-    if (tag.isMatch(level))
+    if (tag.matches(level))
       switch(getEffectiveVisibility())
       {
         case SHOW_HEADER_ALWAYS:
@@ -172,7 +172,7 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
 
   int getVisibleGroupEntryCount(@NotNull Level level, @NotNull Tag tag)
   {
-    if (tag.isMatch(level))
+    if (tag.matches(level))
     {
       int n = super.getVisibleEntryCount(level, tag);
 
@@ -238,14 +238,14 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
 
 
   @Override
-  public boolean isMatch(@NotNull Level level, @NotNull Tag tag) {
-    return getEffectiveVisibility().isShowEntries() && super.isMatch(level, tag);
+  public boolean matches(@NotNull Level level, @NotNull Tag tag) {
+    return getEffectiveVisibility().isShowEntries() && super.matches(level, tag);
   }
 
 
   @Override
-  public boolean isMatch(@NotNull Level level) {
-    return getEffectiveVisibility().isShowEntries() && super.isMatch(level);
+  public boolean matches(@NotNull Level level) {
+    return getEffectiveVisibility().isShowEntries() && super.matches(level);
   }
 
 

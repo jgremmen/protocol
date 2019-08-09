@@ -92,11 +92,11 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
 
   @Override
-  public boolean isMatch(@NotNull Level level, @NotNull Tag tag)
+  public boolean matches(@NotNull Level level, @NotNull Tag tag)
   {
-    if (tag.isMatch(level))
+    if (tag.matches(level))
       for(ProtocolEntry<M> entry: entries)
-        if (entry.isMatch(level, tag))
+        if (entry.matches(level, tag))
           return true;
 
     return false;
@@ -104,18 +104,18 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
 
   @Override
-  public boolean isMatch(@NotNull Level level, @NotNull String tag)
+  public boolean matches(@NotNull Level level, @NotNull String tag)
   {
     //noinspection PatternValidation
-    return isMatch(level, factory.getTagByName(tag));
+    return matches(level, factory.getTagByName(tag));
   }
 
 
   @Override
-  public boolean isMatch(@NotNull Level level)
+  public boolean matches(@NotNull Level level)
   {
     for(ProtocolEntry<M> entry: entries)
-      if (entry.isMatch(level))
+      if (entry.matches(level))
         return true;
 
     return false;
@@ -126,9 +126,9 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   {
     List<ProtocolEntry<M>> filteredEntries = new ArrayList<ProtocolEntry<M>>();
 
-    if (tag.isMatch(level))
+    if (tag.matches(level))
       for(ProtocolEntry<M> entry: entries)
-        if (entry.isMatch(level, tag))
+        if (entry.matches(level, tag))
           filteredEntries.add(entry);
 
     return filteredEntries;
@@ -140,7 +140,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   {
     int count = 0;
 
-    if (tag.isMatch(level))
+    if (tag.matches(level))
       for(ProtocolEntry<M> entry: entries)
         count += entry.getVisibleEntryCount(level, tag);
 
