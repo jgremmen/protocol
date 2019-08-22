@@ -87,11 +87,11 @@ public interface ProtocolFormatter<M,R>
    * {@inheritDoc}
    *
    * <p>
-   *   A formatter of this type is automatically initialized by {@link Protocol#format(Level, Tag, ProtocolFormatter)}.
+   *   A formatter of this type is automatically initialized by {@link Protocol#format(ProtocolFormatter, Level, Tag[])}.
    * </p>
    * <p>
    *   Implementing classes must make sure, that the formatter is reusable after invoking
-   *   {@link #init(Level, Tag, int)}. Thread safety however is not a requirement.
+   *   {@link #init(Level, Tag[], int)}. Thread safety however is not a requirement.
    * </p>
    */
   interface InitializableProtocolFormatter<M,R> extends ProtocolFormatter<M,R>
@@ -101,14 +101,14 @@ public interface ProtocolFormatter<M,R>
      * such way that it can be reused.
      *
      * @param level  matching protocol level
-     * @param tag  matching protocol tag
+     * @param tags   matching protocol tag
      * @param estimatedGroupDepth  the estimated depth of nested protocol groups ({@code 0} means the protocol contains
-     *                             no groups). The real depth depends on {@code level}, {@code tag} and group visibility
-     *                             settings but is never greater than the estimated depth.
+     *                             no groups). The real depth depends on {@code level}, {@code tags} and group
+     *                             visibility settings but is never greater than the estimated depth.
      *
-     * @see Protocol#format(Level, Tag, ProtocolFormatter)
+     * @see Protocol#format(ProtocolFormatter, Level, Tag[])
      */
-    void init(@NotNull Level level, @NotNull Tag tag, int estimatedGroupDepth);
+    void init(@NotNull Level level, @NotNull Tag[] tags, int estimatedGroupDepth);
   }
 
 
@@ -129,9 +129,9 @@ public interface ProtocolFormatter<M,R>
     /**
      * Returns the tag to be used for formatting.
      *
-     * @return  tag, never {@code null}
+     * @return  tags, never {@code null}
      */
     @Contract(pure = true)
-    @NotNull Tag getTag();
+    @NotNull Tag[] getTags();
   }
 }

@@ -92,7 +92,7 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
 
 
   @Override
-  public boolean isHeaderVisible(@NotNull Level level, @NotNull Tag tag)
+  public boolean isHeaderVisible(@NotNull Level level, @NotNull Tag ... tags)
   {
     if (groupHeader != null)
       switch(visibility)
@@ -106,10 +106,10 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
           return true;
 
         case SHOW_HEADER_IF_NOT_EMPTY:
-          return matches(level, tag);
+          return matches(level, tags);
 
         case FLATTEN_ON_SINGLE_ENTRY:
-          return super.getVisibleEntryCount(level, tag) > 1;
+          return super.getVisibleEntryCount(level, tags) > 1;
       }
 
     return false;
@@ -117,18 +117,18 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
 
 
   @Override
-  public @NotNull Level getHeaderLevel(@NotNull Level level, @NotNull Tag tag)
+  public @NotNull Level getHeaderLevel(@NotNull Level level, @NotNull Tag ... tags)
   {
     Level headerLevel = NO_VISIBLE_ENTRIES;
 
-    for(ProtocolEntry<M> entry: getEntries(level, tag))
+    for(ProtocolEntry<M> entry: getEntries(level, tags))
     {
       Level protocolEntryLevel;
 
       if (entry instanceof ProtocolEntry.Message)
         protocolEntryLevel = ((ProtocolEntry.Message<M>)entry).getLevel();
       else if (entry instanceof ProtocolEntry.Group)
-        protocolEntryLevel = ((ProtocolEntry.Group<M>)entry).getHeaderLevel(level, tag);
+        protocolEntryLevel = ((ProtocolEntry.Group<M>)entry).getHeaderLevel(level, tags);
       else
         continue;
 
@@ -140,15 +140,15 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
 
 
   @Override
-  public @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag tag) {
-    return getEffectiveVisibility().isShowEntries() ? super.getEntries(level, tag) : Collections.<ProtocolEntry<M>>emptyList();
+  public @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag ... tags) {
+    return getEffectiveVisibility().isShowEntries() ? super.getEntries(level, tags) : Collections.<ProtocolEntry<M>>emptyList();
   }
 
 
   @Override
-  public int getVisibleEntryCount(@NotNull Level level, @NotNull Tag tag)
+  public int getVisibleEntryCount(@NotNull Level level, @NotNull Tag ... tags)
   {
-    if (tag.matches(level))
+    if (LevelHelper.matchLevelAndTags(level, tags))
       switch(getEffectiveVisibility())
       {
         case SHOW_HEADER_ALWAYS:
@@ -157,10 +157,10 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
 
         case FLATTEN_ON_SINGLE_ENTRY:
         case SHOW_HEADER_IF_NOT_EMPTY:
-          return super.getVisibleEntryCount(level, tag) > 0 ? 1 : 0;
+          return super.getVisibleEntryCount(level, tags) > 0 ? 1 : 0;
 
         case FLATTEN:
-          return super.getVisibleEntryCount(level, tag);
+          return super.getVisibleEntryCount(level, tags);
 
         default:
           break;
@@ -170,11 +170,11 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
   }
 
 
-  int getVisibleGroupEntryCount(@NotNull Level level, @NotNull Tag tag)
+  int getVisibleGroupEntryCount(@NotNull Level level, @NotNull Tag ... tags)
   {
-    if (tag.matches(level))
+    if (LevelHelper.matchLevelAndTags(level, tags))
     {
-      int n = super.getVisibleEntryCount(level, tag);
+      int n = super.getVisibleEntryCount(level, tags);
 
       switch(getEffectiveVisibility())
       {
@@ -238,8 +238,8 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
 
 
   @Override
-  public boolean matches(@NotNull Level level, @NotNull Tag tag) {
-    return getEffectiveVisibility().isShowEntries() && super.matches(level, tag);
+  public boolean matches(@NotNull Level level, @NotNull Tag ... tags) {
+    return getEffectiveVisibility().isShowEntries() && super.matches(level, tags);
   }
 
 
@@ -250,9 +250,9 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
 
 
   @Override
-  public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag tag)
+  public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag ... tags)
   {
-    return new ProtocolStructureIterator.ForGroup<M>(level, tag, 0,this, false,
+    return new ProtocolStructureIterator.ForGroup<M>(level, tags, 0,this, false,
         false, true);
   }
 
@@ -349,8 +349,8 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
 
 
     @Override
-    public boolean isHeaderVisible(@NotNull Level level, @NotNull Tag tag) {
-      return ProtocolGroupImpl.this.isHeaderVisible(level, tag);
+    public boolean isHeaderVisible(@NotNull Level level, @NotNull Tag ... tags) {
+      return ProtocolGroupImpl.this.isHeaderVisible(level, tags);
     }
 
 
@@ -373,8 +373,8 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
 
 
     @Override
-    public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag tag) {
-      return ProtocolGroupImpl.this.iterator(level, tag);
+    public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag ... tags) {
+      return ProtocolGroupImpl.this.iterator(level, tags);
     }
   }
 }

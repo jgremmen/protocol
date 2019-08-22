@@ -39,12 +39,12 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
 
 
   /**
-   * Returns the tag used for iteration.
+   * Returns the tags used for iteration.
    *
-   * @return  iteration tag, never {@code null}
+   * @return  iteration tags, never {@code null}
    */
   @Contract(pure = true)
-  @NotNull Tag getTag();
+  @NotNull Tag[] getTags();
 
 
   /**

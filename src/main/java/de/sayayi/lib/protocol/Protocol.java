@@ -174,7 +174,7 @@ public interface Protocol<M> extends ProtocolQuery
 
   @SuppressWarnings("unused")
   @Contract(pure = true)
-  <R> R format(@NotNull Level level, @NotNull Tag tag, @NotNull ProtocolFormatter<M,R> formatter);
+  <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level, @NotNull Tag ... tags);
 
 
   /**
@@ -186,29 +186,29 @@ public interface Protocol<M> extends ProtocolQuery
    *
    * @return  formatted protocol, or {@code null}
    *
-   * @see #format(Level, Tag, ProtocolFormatter)
+   * @see #format(ProtocolFormatter, Level, Tag[])
    */
   @Contract(pure = true)
   <R> R format(@NotNull ConfiguredProtocolFormatter<M,R> formatter);
 
 
   @Contract(pure = true, value = "_, _ -> new")
-  @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag tag);
+  @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag ... tags);
 
 
   /**
-   * Tells if any entry in this protocol matches the given {@code level} and {@code tag}.
+   * Tells if any entry in this protocol matches the given {@code level} and {@code tags}.
    *
-   * @param level  requested protocol level, not {@code null}
-   * @param tag    tag to query, not {@code null}
+   * @param level     requested protocol level, not {@code null}
+   * @param tagNames  tags to query, not {@code null}
    *
    * @return  {@code true} if at least 1 entry in the protocol matches, {@code false} otherwise
    *
-   * @see #matches(Level, Tag)
+   * @see #matches(Level, Tag[])
    * @see ProtocolFactory#getTagByName(String)
    */
   @Contract(pure = true)
-  boolean matches(@NotNull Level level, @NotNull String tag);
+  boolean matches(@NotNull Level level, @NotNull String ... tagNames);
 
 
   /**

@@ -21,7 +21,6 @@ import de.sayayi.lib.protocol.Protocol.GenericMessage;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
 import de.sayayi.lib.protocol.Tag;
-import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
@@ -34,7 +33,7 @@ import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
 public class TechnicalProtocolFormatter<M> extends TreeProtocolFormatter<M>
     implements ConfiguredProtocolFormatter<M,String>
 {
-  @Getter private final Tag tag;
+  private final Tag tag;
 
 
   @SuppressWarnings("WeakerAccess")
@@ -54,6 +53,12 @@ public class TechnicalProtocolFormatter<M> extends TreeProtocolFormatter<M>
   @Override
   public @NotNull Level getLevel() {
     return LOWEST;
+  }
+
+
+  @Override
+  public @NotNull Tag[] getTags() {
+    return new Tag[] { tag };
   }
 
 

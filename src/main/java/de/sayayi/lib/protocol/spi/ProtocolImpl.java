@@ -64,8 +64,8 @@ class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
 
 
   @Override
-  public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag tag) {
-    return new ProtocolStructureIterator.ForProtocol<M>(level, tag, 0,this);
+  public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag ... tags) {
+    return new ProtocolStructureIterator.ForProtocol<M>(level, tags, 0,this);
   }
 
 

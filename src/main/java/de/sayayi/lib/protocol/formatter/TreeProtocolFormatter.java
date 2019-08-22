@@ -55,7 +55,7 @@ public abstract class TreeProtocolFormatter<M> implements InitializableProtocolF
 
 
   @Override
-  public void init(@NotNull Level level, @NotNull Tag tag, int estimatedGroupDepth)
+  public void init(@NotNull Level level, @NotNull Tag[] tags, int estimatedGroupDepth)
   {
     result.delete(0, result.length());
 

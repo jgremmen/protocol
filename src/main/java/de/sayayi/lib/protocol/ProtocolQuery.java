@@ -25,15 +25,15 @@ import org.jetbrains.annotations.NotNull;
 public interface ProtocolQuery
 {
   /**
-   * Tells if this protocol object matches the given {@code level} and {@code tag}.
+   * Tells if this protocol object matches the given {@code level} and at least one of {@code tags}.
    *
    * @param level  requested protocol level, not {@code null}
-   * @param tag    tag to query, not {@code null}
+   * @param tags   tags to query, not {@code null}
    *
    * @return  {@code true} if the protocol object matches, {@code false} otherwise
    */
   @Contract(pure = true)
-  boolean matches(@NotNull Level level, @NotNull Tag tag);
+  boolean matches(@NotNull Level level, @NotNull Tag ... tags);
 
 
   /**
@@ -51,10 +51,10 @@ public interface ProtocolQuery
    * Returns the number of visible entries for the given {@code level} and {@code tag}.
    *
    * @param level  requested protocol level, not {@code null}
-   * @param tag    tag to query, not {@code null}
+   * @param tags   tags to query, not {@code null}
    *
    * @return  number of visible entries
    */
   @Contract(pure = true)
-  int getVisibleEntryCount(@NotNull Level level, @NotNull Tag tag);
+  int getVisibleEntryCount(@NotNull Level level, @NotNull Tag ... tags);
 }

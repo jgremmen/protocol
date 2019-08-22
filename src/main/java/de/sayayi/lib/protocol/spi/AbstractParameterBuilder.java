@@ -158,8 +158,8 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
-  public <R> R format(@NotNull Level level, @NotNull Tag tag, @NotNull ProtocolFormatter<M,R> formatter) {
-    return protocol.format(level, tag, formatter);
+  public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level, @NotNull Tag ... tags) {
+    return protocol.format(formatter, level, tags);
   }
 
 
@@ -170,14 +170,14 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
-  public boolean matches(@NotNull Level level, @NotNull Tag tag) {
-    return protocol.matches(level, tag);
+  public boolean matches(@NotNull Level level, @NotNull Tag ... tags) {
+    return protocol.matches(level, tags);
   }
 
 
   @Override
-  public boolean matches(@NotNull Level level, @NotNull String tag) {
-    return protocol.matches(level, tag);
+  public boolean matches(@NotNull Level level, @NotNull String ... tagNames) {
+    return protocol.matches(level, tagNames);
   }
 
 
@@ -188,13 +188,13 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
-  public int getVisibleEntryCount(@NotNull Level level, @NotNull Tag tag) {
-    return protocol.getVisibleEntryCount(level, tag);
+  public int getVisibleEntryCount(@NotNull Level level, @NotNull Tag ... tags) {
+    return protocol.getVisibleEntryCount(level, tags);
   }
 
 
   @Override
-  public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag tag) {
-    return protocol.iterator(level, tag);
+  public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag ... tags) {
+    return protocol.iterator(level, tags);
   }
 }

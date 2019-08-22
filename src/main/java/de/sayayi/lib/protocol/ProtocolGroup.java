@@ -96,7 +96,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
   @Contract(pure = true)
-  boolean isHeaderVisible(@NotNull Level level, @NotNull Tag tag);
+  boolean isHeaderVisible(@NotNull Level level, @NotNull Tag ... tags);
 
 
   @Override

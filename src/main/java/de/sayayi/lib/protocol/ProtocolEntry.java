@@ -54,24 +54,24 @@ public interface ProtocolEntry<M> extends ProtocolQuery
      * Returns a list of protocol entries provided by this protocol object for the given {@code level} and {@code tag}.
      *
      * @param level  requested protocol level, not {@code null}
-     * @param tag    tag to query, not {@code null}
+     * @param tags   tags to query, not {@code null}
      *
      * @return  a list of protocol entries, never {@code null}
      */
     @Contract(pure = true, value = "_, _ -> new")
-    @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag tag);
+    @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag ... tags);
 
 
     /**
      * Tells if, for the given {@code level} and {@code tag}, the group header message is visible.
      *
      * @param level  protocol level, not {@code null}
-     * @param tag  tag, not {@code null}
+     * @param tags   tags, not {@code null}
      *
      * @return  {@code true} if the group header message is visible, {@code false} otherwise
      */
     @Contract(pure = true)
-    boolean isHeaderVisible(@NotNull Level level, @NotNull Tag tag);
+    boolean isHeaderVisible(@NotNull Level level, @NotNull Tag ... tags);
 
 
     /**
@@ -88,11 +88,11 @@ public interface ProtocolEntry<M> extends ProtocolQuery
      * </p>
      *
      * @param level  protocol level, not {@code null}
-     * @param tag  tag, not {@code null}
+     * @param tags   tags, not {@code null}
      *
      * @return  header message level, never {@code null}
      */
     @Contract(pure = true)
-    @NotNull Level getHeaderLevel(@NotNull Level level, @NotNull Tag tag);
+    @NotNull Level getHeaderLevel(@NotNull Level level, @NotNull Tag ... tags);
   }
 }

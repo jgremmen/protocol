@@ -168,7 +168,7 @@ public class ProtocolIteratorTest
 
     assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolStart);
 
-    assertEquals(tag, iterator.getTag());
+    assertEquals(tag, iterator.getTags()[0]);
     assertEquals(ERROR, iterator.getLevel());
 
     assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolEnd);
@@ -184,7 +184,7 @@ public class ProtocolIteratorTest
     Protocol<String> protocol = factory.createProtocol().debug().message("msg #1");
     ProtocolIterator<String> iterator = protocol.iterator(LOWEST, tag);
 
-    assertEquals(tag, iterator.getTag());
+    assertEquals(tag, iterator.getTags()[0]);
     assertEquals(LOWEST, iterator.getLevel());
 
     DepthEntry entry;
@@ -221,7 +221,7 @@ public class ProtocolIteratorTest
 
     ProtocolIterator<String> iterator = protocol.iterator(LOWEST, tag);
 
-    assertEquals(tag, iterator.getTag());
+    assertEquals(tag, iterator.getTags()[0]);
     assertEquals(LOWEST, iterator.getLevel());
 
     DepthEntry entry;

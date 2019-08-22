@@ -92,11 +92,11 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
 
   @Override
-  public boolean matches(@NotNull Level level, @NotNull Tag tag)
+  public boolean matches(@NotNull Level level, @NotNull Tag ... tags)
   {
-    if (tag.matches(level))
+    if (LevelHelper.matchLevelAndTags(level, tags))
       for(ProtocolEntry<M> entry: entries)
-        if (entry.matches(level, tag))
+        if (entry.matches(level, tags))
           return true;
 
     return false;
@@ -104,10 +104,17 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
 
   @Override
-  public boolean matches(@NotNull Level level, @NotNull String tag)
+  public boolean matches(@NotNull Level level, @NotNull String ... tagNames)
   {
-    //noinspection PatternValidation
-    return matches(level, factory.getTagByName(tag));
+    Tag[] tags = new Tag[tagNames.length];
+
+    for(int n = 0; n < tagNames.length; n++)
+    {
+      //noinspection PatternValidation
+      tags[n] = factory.getTagByName(tagNames[n]);
+    }
+
+    return matches(level, tags);
   }
 
 
@@ -122,13 +129,13 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   }
 
 
-  @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag tag)
+  @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag ... tags)
   {
     List<ProtocolEntry<M>> filteredEntries = new ArrayList<ProtocolEntry<M>>();
 
-    if (tag.matches(level))
+    if (LevelHelper.matchLevelAndTags(level, tags))
       for(ProtocolEntry<M> entry: entries)
-        if (entry.matches(level, tag))
+        if (entry.matches(level, tags))
           filteredEntries.add(entry);
 
     return filteredEntries;
@@ -136,13 +143,13 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
 
   @Override
-  public int getVisibleEntryCount(@NotNull Level level, @NotNull Tag tag)
+  public int getVisibleEntryCount(@NotNull Level level, @NotNull Tag ... tags)
   {
     int count = 0;
 
-    if (tag.matches(level))
+    if (LevelHelper.matchLevelAndTags(level, tags))
       for(ProtocolEntry<M> entry: entries)
-        count += entry.getVisibleEntryCount(level, tag);
+        count += entry.getVisibleEntryCount(level, tags);
 
     return count;
   }
@@ -161,13 +168,13 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
 
   @Override
-  public <R> R format(@NotNull Level level, @NotNull Tag tag, @NotNull ProtocolFormatter<M,R> formatter)
+  public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level, @NotNull Tag ... tags)
   {
     // initialize formatter
     if (formatter instanceof InitializableProtocolFormatter)
-      ((InitializableProtocolFormatter)formatter).init(level, tag, countGroupDepth());
+      ((InitializableProtocolFormatter)formatter).init(level, tags, countGroupDepth());
 
-    for(Iterator<DepthEntry<M>> iterator = iterator(level, tag); iterator.hasNext();)
+    for(Iterator<DepthEntry<M>> iterator = iterator(level, tags); iterator.hasNext();)
     {
       DepthEntry<M> entry = iterator.next();
 
@@ -189,7 +196,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
   @Override
   public <R> R format(@NotNull ConfiguredProtocolFormatter<M,R> formatter) {
-    return format(formatter.getLevel(), formatter.getTag(), formatter);
+    return format(formatter, formatter.getLevel(), formatter.getTags());
   }
 
 

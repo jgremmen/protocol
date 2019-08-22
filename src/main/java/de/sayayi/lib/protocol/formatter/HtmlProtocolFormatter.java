@@ -115,7 +115,7 @@ public abstract class HtmlProtocolFormatter<M> implements InitializableProtocolF
 
 
   @Override
-  public void init(@NotNull Level level, @NotNull Tag tag, int estimatedGroupDepth) {
+  public void init(@NotNull Level level, @NotNull Tag[] tags, int estimatedGroupDepth) {
     html.delete(0, html.length());
   }
 
