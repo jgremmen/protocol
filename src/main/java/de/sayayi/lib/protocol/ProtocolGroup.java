@@ -210,16 +210,6 @@ public interface ProtocolGroup<M> extends Protocol<M>
     @Contract("_, _ -> this")
     @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*")
                                                                String parameter, Object value);
-
-    /**
-     * {@inheritDoc}
-     * <p>
-     *   For a group message this method silently returns without generating a ticket.
-     * </p>
-     */
-    @Override
-    @Contract("-> this")
-    @NotNull Protocol.MessageParameterBuilder<M> withTicket();
   }
 
 

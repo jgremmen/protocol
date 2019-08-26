@@ -30,7 +30,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static de.sayayi.lib.protocol.ProtocolFactory.Constants.TICKET_PARAMETER_NAME;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_IF_NOT_EMPTY;
 
 
@@ -318,15 +317,6 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
   {
     ParameterBuilderImpl(AbstractGenericMessage<M> message) {
       super(ProtocolGroupImpl.this, message);
-    }
-
-
-    @Override
-    public @NotNull Protocol.MessageParameterBuilder<M> withTicket()
-    {
-      //noinspection unchecked
-      return (message instanceof MessageWithLevel)
-          ? with(TICKET_PARAMETER_NAME, getFactory().createTicketFor((MessageWithLevel<M>)message)) : this;
     }
 
 

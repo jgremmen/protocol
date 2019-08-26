@@ -24,8 +24,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static de.sayayi.lib.protocol.ProtocolFactory.Constants.TICKET_PARAMETER_NAME;
-
 
 /**
  * @author Jeroen Gremmen
@@ -89,14 +87,6 @@ class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
   {
     ParameterBuilder(ProtocolMessageEntry<M> message) {
       super(ProtocolImpl.this, message);
-    }
-
-
-    @Override
-    public @NotNull MessageParameterBuilder<M> withTicket()
-    {
-      //noinspection unchecked
-      return with(TICKET_PARAMETER_NAME, getFactory().createTicketFor((MessageWithLevel<M>)message));
     }
   }
 

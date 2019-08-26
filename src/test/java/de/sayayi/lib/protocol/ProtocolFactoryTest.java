@@ -15,7 +15,6 @@
  */
 package de.sayayi.lib.protocol;
 
-import de.sayayi.lib.protocol.Protocol.MessageWithLevel;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -28,7 +27,6 @@ import static de.sayayi.lib.protocol.Level.Shared.ERROR;
 import static de.sayayi.lib.protocol.Level.Shared.INFO;
 import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
 import static de.sayayi.lib.protocol.Level.Shared.WARN;
-import static de.sayayi.lib.protocol.ProtocolFactory.Constants.TICKET_PARAMETER_NAME;
 import static de.sayayi.lib.protocol.Tag.MatchCondition.AT_LEAST;
 import static de.sayayi.lib.protocol.Tag.MatchCondition.EQUAL;
 import static de.sayayi.lib.protocol.Tag.MatchCondition.NOT_EQUAL;
@@ -206,23 +204,5 @@ public class ProtocolFactoryTest
     iterator.next();  // protocol start
 
     assertEquals("msg(ok)", ((MessageEntry<String>)iterator.next()).getMessage());
-  }
-
-
-  @Test
-  public void testCreateTicketFor()
-  {
-    GenericProtocolFactory factory = new GenericProtocolFactory() {
-      @Override public @NotNull String createTicketFor(@NotNull MessageWithLevel<String> message) { return "TICKET"; }
-    };
-
-    Protocol<String> protocol = factory.createProtocol().debug().message("msg").withTicket();
-    ProtocolIterator<String> iterator = protocol.iterator(LOWEST, factory.getDefaultTag());
-
-    iterator.next();  // protocol start
-
-    MessageEntry<String> entry = (MessageEntry<String>)iterator.next();
-
-    assertEquals("TICKET", entry.getParameterValues().get(TICKET_PARAMETER_NAME));
   }
 }

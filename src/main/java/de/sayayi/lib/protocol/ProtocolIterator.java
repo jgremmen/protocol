@@ -199,6 +199,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
    * @param <M>  internal message object type
    *
    * @see GroupMessageEntry
+   * @see GroupEndEntry
    */
   interface GroupStartEntry<M> extends RankingDepthEntry<M>, Protocol.Group<M>
   {
@@ -227,8 +228,13 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
 
 
   /**
+   * <p>
+   *   Marks the end of a protocol group.
+   * </p>
    *
    * @param <M>  internal message object type
+   *
+   * @see GroupStartEntry
    */
   interface GroupEndEntry<M> extends DepthEntry<M> {
   }

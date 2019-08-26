@@ -15,12 +15,8 @@
  */
 package de.sayayi.lib.protocol;
 
-import de.sayayi.lib.protocol.Protocol.MessageWithLevel;
 import de.sayayi.lib.protocol.spi.AbstractProtocolFactory;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Locale;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -32,19 +28,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class GenericProtocolFactory extends AbstractProtocolFactory<String>
 {
-  private static final String TICKET_PREFIX =
-      Long.toString(System.currentTimeMillis() / 1000, Character.MAX_RADIX).toUpperCase(Locale.ROOT);
-  private static final AtomicInteger TICKET = new AtomicInteger(1);
-
-
   @Override
   public String processMessage(@NotNull String message) {
     return message;
-  }
-
-
-  @Override
-  public @NotNull String createTicketFor(@NotNull MessageWithLevel<String> message) {
-    return TICKET_PREFIX + '-' + String.format("%05d", TICKET.getAndIncrement());
   }
 }

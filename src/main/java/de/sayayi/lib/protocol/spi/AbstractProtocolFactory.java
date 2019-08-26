@@ -17,7 +17,6 @@ package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol;
-import de.sayayi.lib.protocol.Protocol.MessageWithLevel;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.Tag;
 import lombok.Getter;
@@ -276,12 +275,6 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
     @Override
     public M processMessage(@NotNull String message) {
       return AbstractProtocolFactory.this.processMessage(message);
-    }
-
-
-    @Override
-    public @NotNull String createTicketFor(@NotNull MessageWithLevel<M> message) {
-      return AbstractProtocolFactory.this.createTicketFor(message);
     }
   }
 
