@@ -49,6 +49,13 @@ public interface Tag
   @NotNull String getName();
 
 
+  /**
+   * Tells the matching condition to be used in level matching.
+   *
+   * @return  matching condition, never {@code null}
+   *
+   * @see #getMatchLevel()
+   */
   @Contract(pure = true)
   @NotNull Tag.MatchCondition getMatchCondition();
 
