@@ -72,7 +72,7 @@ class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements Proto
 
 
   @Override
-  public int getVisibleEntryCount(@NotNull Level level, @NotNull Tag ... tags) {
+  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull Tag ... tags) {
     return matches(level, tags) ? 1 : 0;
   }
 

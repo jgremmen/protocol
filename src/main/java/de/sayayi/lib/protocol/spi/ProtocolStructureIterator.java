@@ -199,6 +199,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
       Visibility visibility = protocol.getEffectiveVisibility();
 
+      // normalize visibility
       if (visibility == SHOW_HEADER_ALWAYS && !iterator.hasNext())
         visibility = SHOW_HEADER_ONLY;
       else if (visibility == SHOW_HEADER_IF_NOT_EMPTY)
@@ -210,7 +211,8 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
           // header + messages, increase depth
           nextEntry = new GroupStartEntryImpl<M>(protocol.getGroupHeader(),
               max(level, protocol.getHeaderLevel(level, tags)),
-              protocol.getVisibleGroupEntryCount(level, tags), ++this.depth, !hasEntryBeforeGroup, !hasEntryAfterGroup);
+              protocol.getVisibleGroupEntryMessageCount(level, tags), ++this.depth,
+              !hasEntryBeforeGroup, !hasEntryAfterGroup);
           forceFirst = true;
           break;
 
@@ -376,7 +378,8 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     @Getter private final int messageCount;
 
 
-    GroupStartEntryImpl(GenericMessage<M> groupMessage, Level level, int messageCount, int depth, boolean first, boolean last)
+    GroupStartEntryImpl(GenericMessage<M> groupMessage, Level level, int messageCount, int depth,
+                        boolean first, boolean last)
     {
       super(depth, first, last);
 
@@ -417,7 +420,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
       while(iterator.hasNext())
       {
         nextEntry = iterator.next();
-        if (nextEntry.getVisibleEntryCount(level, tags) > 0)
+        if (nextEntry.getVisibleEntryCount(true, level, tags) > 0)
           return;
       }
 

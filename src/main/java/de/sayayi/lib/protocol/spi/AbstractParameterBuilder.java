@@ -188,8 +188,8 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
-  public int getVisibleEntryCount(@NotNull Level level, @NotNull Tag ... tags) {
-    return protocol.getVisibleEntryCount(level, tags);
+  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull Tag ... tags) {
+    return protocol.getVisibleEntryCount(recursive, level, tags);
   }
 
 

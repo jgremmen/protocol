@@ -54,9 +54,11 @@ public interface ProtocolQuery
    *
    * @param level  requested protocol level, not {@code null}
    * @param tags   tags to query, not {@code null}
+   * @param recursive  {@code false} returns the number of visible entries for the current depth only,
+   *                   {@code true} returns the number of visible entries for all depths starting at the current one
    *
    * @return  number of visible entries
    */
   @Contract(pure = true)
-  int getVisibleEntryCount(@NotNull Level level, @NotNull Tag ... tags);
+  int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull Tag ... tags);
 }

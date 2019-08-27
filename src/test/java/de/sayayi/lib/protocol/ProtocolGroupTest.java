@@ -103,34 +103,34 @@ public class ProtocolGroupTest
     Tag tag = factory.getDefaultTag();
     ProtocolGroup gp = factory.createProtocol().createGroup();
 
-    assertEquals(0, gp.getVisibleEntryCount(Shared.LOWEST, tag));
+    assertEquals(0, gp.getVisibleEntryCount(true, Shared.LOWEST, tag));
 
     gp.setGroupMessage("Test").with("param1", "Huhu");
 
-    assertEquals(1, gp.setVisibility(SHOW_HEADER_ONLY).getVisibleEntryCount(LOWEST, tag));
-    assertEquals(1, gp.setVisibility(SHOW_HEADER_ALWAYS).getVisibleEntryCount(LOWEST, tag));
-    assertEquals(0, gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).getVisibleEntryCount(LOWEST, tag));
-    assertEquals(0, gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).getVisibleEntryCount(LOWEST, tag));
-    assertEquals(0, gp.setVisibility(HIDDEN).getVisibleEntryCount(LOWEST, tag));
-    assertEquals(0, gp.setVisibility(FLATTEN).getVisibleEntryCount(LOWEST, tag));
+    assertEquals(1, gp.setVisibility(SHOW_HEADER_ONLY).getVisibleEntryCount(true, LOWEST, tag));
+    assertEquals(1, gp.setVisibility(SHOW_HEADER_ALWAYS).getVisibleEntryCount(true, LOWEST, tag));
+    assertEquals(0, gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).getVisibleEntryCount(true, LOWEST, tag));
+    assertEquals(0, gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).getVisibleEntryCount(true, LOWEST, tag));
+    assertEquals(0, gp.setVisibility(HIDDEN).getVisibleEntryCount(true, LOWEST, tag));
+    assertEquals(0, gp.setVisibility(FLATTEN).getVisibleEntryCount(true, LOWEST, tag));
 
     gp.debug().message("msg #1");
 
-    assertEquals(1, gp.setVisibility(SHOW_HEADER_ONLY).getVisibleEntryCount(LOWEST, tag));
-    assertEquals(1, gp.setVisibility(SHOW_HEADER_ALWAYS).getVisibleEntryCount(LOWEST, tag));
-    assertEquals(1, gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).getVisibleEntryCount(LOWEST, tag));
-    assertEquals(1, gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).getVisibleEntryCount(LOWEST, tag));
-    assertEquals(0, gp.setVisibility(HIDDEN).getVisibleEntryCount(LOWEST, tag));
-    assertEquals(1, gp.setVisibility(FLATTEN).getVisibleEntryCount(LOWEST, tag));
+    assertEquals(1, gp.setVisibility(SHOW_HEADER_ONLY).getVisibleEntryCount(true, LOWEST, tag));
+    assertEquals(2, gp.setVisibility(SHOW_HEADER_ALWAYS).getVisibleEntryCount(true, LOWEST, tag));
+    assertEquals(2, gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).getVisibleEntryCount(true, LOWEST, tag));
+    assertEquals(1, gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).getVisibleEntryCount(true, LOWEST, tag));
+    assertEquals(0, gp.setVisibility(HIDDEN).getVisibleEntryCount(true, LOWEST, tag));
+    assertEquals(1, gp.setVisibility(FLATTEN).getVisibleEntryCount(true, LOWEST, tag));
 
     gp.debug().message("msg #2");
 
-    assertEquals(1, gp.setVisibility(SHOW_HEADER_ONLY).getVisibleEntryCount(LOWEST, tag));
-    assertEquals(1, gp.setVisibility(SHOW_HEADER_ALWAYS).getVisibleEntryCount(LOWEST, tag));
-    assertEquals(1, gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).getVisibleEntryCount(LOWEST, tag));
-    assertEquals(1, gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).getVisibleEntryCount(LOWEST, tag));
-    assertEquals(0, gp.setVisibility(HIDDEN).getVisibleEntryCount(LOWEST, tag));
-    assertEquals(2, gp.setVisibility(FLATTEN).getVisibleEntryCount(LOWEST, tag));
+    assertEquals(1, gp.setVisibility(SHOW_HEADER_ONLY).getVisibleEntryCount(true, LOWEST, tag));
+    assertEquals(3, gp.setVisibility(SHOW_HEADER_ALWAYS).getVisibleEntryCount(true, LOWEST, tag));
+    assertEquals(3, gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).getVisibleEntryCount(true, LOWEST, tag));
+    assertEquals(3, gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).getVisibleEntryCount(true, LOWEST, tag));
+    assertEquals(0, gp.setVisibility(HIDDEN).getVisibleEntryCount(true, LOWEST, tag));
+    assertEquals(2, gp.setVisibility(FLATTEN).getVisibleEntryCount(true, LOWEST, tag));
   }
 
 

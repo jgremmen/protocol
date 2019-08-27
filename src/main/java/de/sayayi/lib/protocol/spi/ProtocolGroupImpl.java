@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_IF_NOT_EMPTY;
+import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ONLY;
 
 
 /**
@@ -108,7 +109,7 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
           return matches(level, tags);
 
         case FLATTEN_ON_SINGLE_ENTRY:
-          return super.getVisibleEntryCount(level, tags) > 1;
+          return super.getVisibleEntryCount(true, level, tags) > 1;
       }
 
     return false;
@@ -145,48 +146,51 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
 
 
   @Override
-  public int getVisibleEntryCount(@NotNull Level level, @NotNull Tag ... tags)
+  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull Tag ... tags)
   {
     if (LevelHelper.matchLevelAndTags(level, tags))
-      switch(getEffectiveVisibility())
+    {
+      Visibility effectiveVisibility = getEffectiveVisibility();
+
+      if (effectiveVisibility == SHOW_HEADER_ONLY)
+        return 1;
+
+      int entryCount = super.getVisibleEntryCount(true, level, tags);
+      int recursiveEntryCountWithHeader = recursive ? entryCount + 1 : 1;
+
+      switch(effectiveVisibility)
       {
         case SHOW_HEADER_ALWAYS:
-        case SHOW_HEADER_ONLY:
-          return 1;
+          return recursiveEntryCountWithHeader;
+
+        case SHOW_HEADER_IF_NOT_EMPTY:
+          return (entryCount == 0) ? 0 : recursiveEntryCountWithHeader;
 
         case FLATTEN_ON_SINGLE_ENTRY:
-        case SHOW_HEADER_IF_NOT_EMPTY:
-          return super.getVisibleEntryCount(level, tags) > 0 ? 1 : 0;
+          return (entryCount > 1) ? recursiveEntryCountWithHeader : entryCount;
 
         case FLATTEN:
-          return super.getVisibleEntryCount(level, tags);
+          return entryCount;
 
         default:
           break;
       }
+    }
 
     return 0;
   }
 
 
-  int getVisibleGroupEntryCount(@NotNull Level level, @NotNull Tag ... tags)
+  int getVisibleGroupEntryMessageCount(@NotNull Level level, @NotNull Tag ... tags)
   {
-    if (LevelHelper.matchLevelAndTags(level, tags))
+    switch(getEffectiveVisibility())
     {
-      int n = super.getVisibleEntryCount(level, tags);
+      case HIDDEN:
+      case SHOW_HEADER_ONLY:
+        break;
 
-      switch(getEffectiveVisibility())
-      {
-        case SHOW_HEADER_ALWAYS:
-        case SHOW_HEADER_IF_NOT_EMPTY:
-          return n;
-
-        case FLATTEN_ON_SINGLE_ENTRY:
-          return (n > 1) ? n : 0;
-
-        default:
-          break;
-      }
+      default:
+        return super.getVisibleEntryCount(false, level, tags);
     }
 
     return 0;

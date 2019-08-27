@@ -143,13 +143,13 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
 
   @Override
-  public int getVisibleEntryCount(@NotNull Level level, @NotNull Tag ... tags)
+  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull Tag ... tags)
   {
     int count = 0;
 
     if (LevelHelper.matchLevelAndTags(level, tags))
       for(ProtocolEntry<M> entry: entries)
-        count += entry.getVisibleEntryCount(level, tags);
+        count += entry.getVisibleEntryCount(recursive, level, tags);
 
     return count;
   }
