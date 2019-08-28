@@ -19,7 +19,7 @@ import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol.GenericMessage;
 import de.sayayi.lib.protocol.ProtocolFormatter.InitializableProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupEndEntry;
-import de.sayayi.lib.protocol.ProtocolIterator.GroupEntry;
+import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.Tag;
 import lombok.AccessLevel;
@@ -55,10 +55,12 @@ public abstract class TreeProtocolFormatter<M> implements InitializableProtocolF
 
 
   @Override
-  public void init(@NotNull Level level, @NotNull Tag tag, int estimatedGroupDepth)
+  public void init(@NotNull Level level, @NotNull Tag[] tags, int estimatedGroupDepth)
   {
     result.delete(0, result.length());
-    (prefixes = new String[estimatedGroupDepth + 1])[0] = "";
+
+    prefixes = new String[estimatedGroupDepth + 1];
+    prefixes[0] = "";
   }
 
 
@@ -92,7 +94,7 @@ public abstract class TreeProtocolFormatter<M> implements InitializableProtocolF
 
 
   @Override
-  public void groupStart(@NotNull GroupEntry<M> group)
+  public void groupStart(@NotNull GroupStartEntry<M> group)
   {
     int depth = group.getDepth();
     String prefix = prefixes[depth - 1];

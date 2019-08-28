@@ -24,9 +24,10 @@ import de.sayayi.lib.protocol.ProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolFormatter.InitializableProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolGroup;
+import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupEndEntry;
-import de.sayayi.lib.protocol.ProtocolIterator.GroupEntry;
+import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.ProtocolEnd;
 import de.sayayi.lib.protocol.ProtocolIterator.ProtocolStart;
@@ -86,28 +87,55 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   }
 
 
+  @SuppressWarnings("squid:S3038")
   public abstract @NotNull B add(@NotNull Level level);
 
 
   @Override
-  public boolean isMatch(@NotNull Level level, @NotNull Tag tag)
+  public boolean matches(@NotNull Level level, @NotNull Tag ... tags)
   {
-    if (tag.isMatch(level))
+    if (LevelHelper.matchLevelAndTags(level, tags))
       for(ProtocolEntry<M> entry: entries)
-        if (entry.isMatch(level, tag))
+        if (entry.matches(level, tags))
           return true;
 
     return false;
   }
 
 
-  @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag tag)
+  @Override
+  public boolean matches(@NotNull Level level, @NotNull String ... tagNames)
+  {
+    Tag[] tags = new Tag[tagNames.length];
+
+    for(int n = 0; n < tagNames.length; n++)
+    {
+      //noinspection PatternValidation
+      tags[n] = factory.getTagByName(tagNames[n]);
+    }
+
+    return matches(level, tags);
+  }
+
+
+  @Override
+  public boolean matches(@NotNull Level level)
+  {
+    for(ProtocolEntry<M> entry: entries)
+      if (entry.matches(level))
+        return true;
+
+    return false;
+  }
+
+
+  @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag ... tags)
   {
     List<ProtocolEntry<M>> filteredEntries = new ArrayList<ProtocolEntry<M>>();
 
-    if (tag.isMatch(level))
+    if (LevelHelper.matchLevelAndTags(level, tags))
       for(ProtocolEntry<M> entry: entries)
-        if (entry.isMatch(level, tag))
+        if (entry.matches(level, tags))
           filteredEntries.add(entry);
 
     return filteredEntries;
@@ -115,13 +143,13 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
 
   @Override
-  public int getVisibleEntryCount(@NotNull Level level, @NotNull Tag tag)
+  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull Tag ... tags)
   {
     int count = 0;
 
-    if (tag.isMatch(level))
+    if (LevelHelper.matchLevelAndTags(level, tags))
       for(ProtocolEntry<M> entry: entries)
-        count += entry.getVisibleEntryCount(level, tag);
+        count += entry.getVisibleEntryCount(recursive, level, tags);
 
     return count;
   }
@@ -140,13 +168,13 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
 
   @Override
-  public <R> R format(@NotNull Level level, @NotNull Tag tag, @NotNull ProtocolFormatter<M,R> formatter)
+  public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level, @NotNull Tag ... tags)
   {
     // initialize formatter
     if (formatter instanceof InitializableProtocolFormatter)
-      ((InitializableProtocolFormatter)formatter).init(level, tag, countGroupDepth());
+      ((InitializableProtocolFormatter)formatter).init(level, tags, countGroupDepth());
 
-    for(Iterator<DepthEntry<M>> iterator = iterator(level, tag); iterator.hasNext();)
+    for(Iterator<DepthEntry<M>> iterator = iterator(level, tags); iterator.hasNext();)
     {
       DepthEntry<M> entry = iterator.next();
 
@@ -156,8 +184,8 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
         formatter.protocolEnd();
       else if (entry instanceof MessageEntry)
         formatter.message((MessageEntry<M>)entry);
-      else if (entry instanceof GroupEntry)
-        formatter.groupStart((GroupEntry<M>)entry);
+      else if (entry instanceof ProtocolIterator.GroupStartEntry)
+        formatter.groupStart((GroupStartEntry<M>)entry);
       else if (entry instanceof GroupEndEntry)
         formatter.groupEnd((GroupEndEntry<M>)entry);
     }
@@ -168,7 +196,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
   @Override
   public <R> R format(@NotNull ConfiguredProtocolFormatter<M,R> formatter) {
-    return format(formatter.getLevel(), formatter.getTag(), formatter);
+    return format(formatter, formatter.getLevel(), formatter.getTags());
   }
 
 

@@ -1,11 +1,26 @@
+/*
+ * Copyright 2019 Jeroen Gremmen
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.sayayi.lib.protocol;
 
 import de.sayayi.lib.protocol.Level.Shared;
 import org.junit.Test;
 
-import static de.sayayi.lib.protocol.Level.Shared.ALL;
 import static de.sayayi.lib.protocol.Level.Shared.DEBUG;
 import static de.sayayi.lib.protocol.Level.Shared.INFO;
+import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.FLATTEN;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.FLATTEN_ON_SINGLE_ENTRY;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.HIDDEN;
@@ -25,25 +40,25 @@ public class ProtocolGroupTest
   @Test
   public void testIsHeaderVisible()
   {
-    DefaultProtocolFactory factory = new DefaultProtocolFactory();
+    GenericProtocolFactory factory = new GenericProtocolFactory();
     Tag tag = factory.getDefaultTag();
     ProtocolGroup gp = factory.createProtocol().createGroup();
 
-    assertFalse(gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).isHeaderVisible(ALL, tag));
-    assertFalse(gp.setVisibility(SHOW_HEADER_ALWAYS).isHeaderVisible(ALL, tag));
-    assertFalse(gp.setVisibility(SHOW_HEADER_ONLY).isHeaderVisible(ALL, tag));
-    assertFalse(gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).isHeaderVisible(ALL, tag));
-    assertFalse(gp.setVisibility(FLATTEN).isHeaderVisible(ALL, tag));
-    assertFalse(gp.setVisibility(HIDDEN).isHeaderVisible(ALL, tag));
+    assertFalse(gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).isHeaderVisible(LOWEST, tag));
+    assertFalse(gp.setVisibility(SHOW_HEADER_ALWAYS).isHeaderVisible(LOWEST, tag));
+    assertFalse(gp.setVisibility(SHOW_HEADER_ONLY).isHeaderVisible(LOWEST, tag));
+    assertFalse(gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).isHeaderVisible(LOWEST, tag));
+    assertFalse(gp.setVisibility(FLATTEN).isHeaderVisible(LOWEST, tag));
+    assertFalse(gp.setVisibility(HIDDEN).isHeaderVisible(LOWEST, tag));
 
     gp.setGroupMessage("Test");
 
-    assertFalse(gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).isHeaderVisible(ALL, tag));
-    assertTrue(gp.setVisibility(SHOW_HEADER_ALWAYS).isHeaderVisible(ALL, tag));
-    assertTrue(gp.setVisibility(SHOW_HEADER_ONLY).isHeaderVisible(ALL, tag));
-    assertFalse(gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).isHeaderVisible(ALL, tag));
-    assertFalse(gp.setVisibility(FLATTEN).isHeaderVisible(ALL, tag));
-    assertFalse(gp.setVisibility(HIDDEN).isHeaderVisible(ALL, tag));
+    assertFalse(gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).isHeaderVisible(LOWEST, tag));
+    assertTrue(gp.setVisibility(SHOW_HEADER_ALWAYS).isHeaderVisible(LOWEST, tag));
+    assertTrue(gp.setVisibility(SHOW_HEADER_ONLY).isHeaderVisible(LOWEST, tag));
+    assertFalse(gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).isHeaderVisible(LOWEST, tag));
+    assertFalse(gp.setVisibility(FLATTEN).isHeaderVisible(LOWEST, tag));
+    assertFalse(gp.setVisibility(HIDDEN).isHeaderVisible(LOWEST, tag));
 
     gp.debug().message("Msg #1");
 
@@ -72,57 +87,57 @@ public class ProtocolGroupTest
 
     gp.error().message("Msg #3");
 
-    assertTrue(gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).isHeaderVisible(ALL, tag));
-    assertTrue(gp.setVisibility(SHOW_HEADER_ALWAYS).isHeaderVisible(ALL, tag));
-    assertTrue(gp.setVisibility(SHOW_HEADER_ONLY).isHeaderVisible(ALL, tag));
-    assertTrue(gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).isHeaderVisible(ALL, tag));
-    assertFalse(gp.setVisibility(FLATTEN).isHeaderVisible(ALL, tag));
-    assertFalse(gp.setVisibility(HIDDEN).isHeaderVisible(ALL, tag));
+    assertTrue(gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).isHeaderVisible(LOWEST, tag));
+    assertTrue(gp.setVisibility(SHOW_HEADER_ALWAYS).isHeaderVisible(LOWEST, tag));
+    assertTrue(gp.setVisibility(SHOW_HEADER_ONLY).isHeaderVisible(LOWEST, tag));
+    assertTrue(gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).isHeaderVisible(LOWEST, tag));
+    assertFalse(gp.setVisibility(FLATTEN).isHeaderVisible(LOWEST, tag));
+    assertFalse(gp.setVisibility(HIDDEN).isHeaderVisible(LOWEST, tag));
   }
 
 
   @Test
   public void testHasVisualEntry()
   {
-    DefaultProtocolFactory factory = new DefaultProtocolFactory();
+    GenericProtocolFactory factory = new GenericProtocolFactory();
     Tag tag = factory.getDefaultTag();
     ProtocolGroup gp = factory.createProtocol().createGroup();
 
-    assertEquals(0, gp.getVisibleEntryCount(Shared.ALL, tag));
+    assertEquals(0, gp.getVisibleEntryCount(true, Shared.LOWEST, tag));
 
     gp.setGroupMessage("Test").with("param1", "Huhu");
 
-    assertEquals(1, gp.setVisibility(SHOW_HEADER_ONLY).getVisibleEntryCount(ALL, tag));
-    assertEquals(1, gp.setVisibility(SHOW_HEADER_ALWAYS).getVisibleEntryCount(ALL, tag));
-    assertEquals(0, gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).getVisibleEntryCount(ALL, tag));
-    assertEquals(0, gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).getVisibleEntryCount(ALL, tag));
-    assertEquals(0, gp.setVisibility(HIDDEN).getVisibleEntryCount(ALL, tag));
-    assertEquals(0, gp.setVisibility(FLATTEN).getVisibleEntryCount(ALL, tag));
+    assertEquals(1, gp.setVisibility(SHOW_HEADER_ONLY).getVisibleEntryCount(true, LOWEST, tag));
+    assertEquals(1, gp.setVisibility(SHOW_HEADER_ALWAYS).getVisibleEntryCount(true, LOWEST, tag));
+    assertEquals(0, gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).getVisibleEntryCount(true, LOWEST, tag));
+    assertEquals(0, gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).getVisibleEntryCount(true, LOWEST, tag));
+    assertEquals(0, gp.setVisibility(HIDDEN).getVisibleEntryCount(true, LOWEST, tag));
+    assertEquals(0, gp.setVisibility(FLATTEN).getVisibleEntryCount(true, LOWEST, tag));
 
     gp.debug().message("msg #1");
 
-    assertEquals(1, gp.setVisibility(SHOW_HEADER_ONLY).getVisibleEntryCount(ALL, tag));
-    assertEquals(1, gp.setVisibility(SHOW_HEADER_ALWAYS).getVisibleEntryCount(ALL, tag));
-    assertEquals(1, gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).getVisibleEntryCount(ALL, tag));
-    assertEquals(1, gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).getVisibleEntryCount(ALL, tag));
-    assertEquals(0, gp.setVisibility(HIDDEN).getVisibleEntryCount(ALL, tag));
-    assertEquals(1, gp.setVisibility(FLATTEN).getVisibleEntryCount(ALL, tag));
+    assertEquals(1, gp.setVisibility(SHOW_HEADER_ONLY).getVisibleEntryCount(true, LOWEST, tag));
+    assertEquals(2, gp.setVisibility(SHOW_HEADER_ALWAYS).getVisibleEntryCount(true, LOWEST, tag));
+    assertEquals(2, gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).getVisibleEntryCount(true, LOWEST, tag));
+    assertEquals(1, gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).getVisibleEntryCount(true, LOWEST, tag));
+    assertEquals(0, gp.setVisibility(HIDDEN).getVisibleEntryCount(true, LOWEST, tag));
+    assertEquals(1, gp.setVisibility(FLATTEN).getVisibleEntryCount(true, LOWEST, tag));
 
     gp.debug().message("msg #2");
 
-    assertEquals(1, gp.setVisibility(SHOW_HEADER_ONLY).getVisibleEntryCount(ALL, tag));
-    assertEquals(1, gp.setVisibility(SHOW_HEADER_ALWAYS).getVisibleEntryCount(ALL, tag));
-    assertEquals(1, gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).getVisibleEntryCount(ALL, tag));
-    assertEquals(1, gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).getVisibleEntryCount(ALL, tag));
-    assertEquals(0, gp.setVisibility(HIDDEN).getVisibleEntryCount(ALL, tag));
-    assertEquals(2, gp.setVisibility(FLATTEN).getVisibleEntryCount(ALL, tag));
+    assertEquals(1, gp.setVisibility(SHOW_HEADER_ONLY).getVisibleEntryCount(true, LOWEST, tag));
+    assertEquals(3, gp.setVisibility(SHOW_HEADER_ALWAYS).getVisibleEntryCount(true, LOWEST, tag));
+    assertEquals(3, gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).getVisibleEntryCount(true, LOWEST, tag));
+    assertEquals(3, gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).getVisibleEntryCount(true, LOWEST, tag));
+    assertEquals(0, gp.setVisibility(HIDDEN).getVisibleEntryCount(true, LOWEST, tag));
+    assertEquals(2, gp.setVisibility(FLATTEN).getVisibleEntryCount(true, LOWEST, tag));
   }
 
 
   @Test
   public void testEffectiveVisibility()
   {
-    DefaultProtocolFactory factory = new DefaultProtocolFactory();
+    GenericProtocolFactory factory = new GenericProtocolFactory();
     ProtocolGroup gp = factory.createProtocol().createGroup();
 
     // no group header

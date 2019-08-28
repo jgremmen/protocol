@@ -31,10 +31,12 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static de.sayayi.lib.protocol.Level.Shared.ALL;
+import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
 
 
 /**
+ * {@inheritDoc}
+ *
  * @author Jeroen Gremmen
  */
 public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
@@ -52,7 +54,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
   protected AbstractProtocolFactory()
   {
     id = FACTORY_ID.incrementAndGet();
-    defaultTag = createTag(DEFAULT_TAG_NAME).getTag();
+    defaultTag = createTag(Constants.DEFAULT_TAG_NAME).getTag();
 
     defaultParameterValues = new HashMap<String,Object>();
     defaultParameterValues.put("factoryid", id);
@@ -65,17 +67,18 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
   }
 
 
-  @SuppressWarnings("SuspiciousMethodCalls")
+  @SuppressWarnings({"SuspiciousMethodCalls", "squid:S2583"})
   public boolean isRegisteredTag(@NotNull Tag tag)
   {
     //noinspection ConstantConditions
     if (tag == null)
       throw new NullPointerException("tag must not be null");
 
-    return registeredTags.values().contains(tag);
+    return registeredTags.containsValue(tag);
   }
 
 
+  @SuppressWarnings({"squid:S2589", "squid:S1192"})
   @Override
   public @NotNull TagBuilder<M> createTag(@NotNull String name)
   {
@@ -94,6 +97,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
   }
 
 
+  @SuppressWarnings({"squid:S2589", "squid:S1192"})
   @Override
   public @NotNull TagBuilder<M> modifyTag(@NotNull String name)
   {
@@ -115,6 +119,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
   }
 
 
+  @SuppressWarnings("squid:S2589")
   private TagImpl getTagByName0(@NotNull String name)
   {
     //noinspection ConstantConditions
@@ -125,6 +130,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
   }
 
 
+  @SuppressWarnings("squid:S2589")
   @Override
   public boolean hasTag(@NotNull String name)
   {
@@ -164,7 +170,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
     }
 
 
-    @SuppressWarnings("ConstantConditions")
+    @SuppressWarnings({"ConstantConditions", "squid:S2583"})
     @Override
     public @NotNull TagBuilder<M> match(@NotNull Tag.MatchCondition matchCondition, @NotNull Level matchLevel)
     {
@@ -279,7 +285,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
     @Getter private final String name;
 
     @Getter private MatchCondition matchCondition = MatchCondition.AT_LEAST;
-    @Getter private Level matchLevel = ALL;
+    @Getter private Level matchLevel = LOWEST;
 
     private Set<TagImpl> implies = new HashSet<TagImpl>(8);
 
@@ -291,8 +297,9 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
     }
 
 
+    @SuppressWarnings("squid:S2583")
     @Override
-    public boolean isMatch(@NotNull Level level)
+    public boolean matches(@NotNull Level level)
     {
       //noinspection ConstantConditions
       if (level == null)
@@ -345,6 +352,12 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
 
     @Override
+    public boolean equals(Object o) {
+      return this ==  o || (o instanceof AbstractProtocolFactory && id == ((AbstractProtocolFactory)o).id);
+    }
+
+
+    @Override
     public int compareTo(TagImpl o) {
       return id - o.id;
     }
@@ -387,6 +400,9 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
         case UNTIL:
           s.append("(<=)");
+          break;
+
+        default:
           break;
       }
 

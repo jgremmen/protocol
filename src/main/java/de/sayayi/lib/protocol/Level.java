@@ -49,12 +49,13 @@ public interface Level
 
 
   /**
-   * Level constants
+   * Level constants for the {@linkplain Protocol#debug() debug()}, {@linkplain Protocol#info() info()},
+   * {@linkplain Protocol#warn() warn()} and {@linkplain Protocol#error() error()} protocol methods.
    */
   enum Shared implements Level
   {
     /** Constant representing a level with the lowest possible severity */
-    ALL(Integer.MIN_VALUE),
+    LOWEST(Integer.MIN_VALUE),
 
     /** Constant representing DEBUG level (severity = 100) */
     DEBUG(100),

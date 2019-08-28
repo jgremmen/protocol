@@ -23,7 +23,7 @@ import java.util.Set;
 
 /**
  * <p>
- *   Tags are protocol factory specific labels to be used with protocolling messages.
+ *   Tags are protocol factory specific labels to be used with protocol messages.
  * </p>
  * <p>
  *   Tags can have dependencies to other tags which means that if a message is protocolled
@@ -49,6 +49,13 @@ public interface Tag
   @NotNull String getName();
 
 
+  /**
+   * Tells the matching condition to be used in level matching.
+   *
+   * @return  matching condition, never {@code null}
+   *
+   * @see #getMatchLevel()
+   */
   @Contract(pure = true)
   @NotNull Tag.MatchCondition getMatchCondition();
 
@@ -75,7 +82,7 @@ public interface Tag
    * @see #getMatchLevel()
    */
   @Contract(pure = true)
-  boolean isMatch(@NotNull Level level);
+  boolean matches(@NotNull Level level);
 
 
   /**

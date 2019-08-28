@@ -89,6 +89,7 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
   }
 
 
+  @SuppressWarnings("squid:S2589")
   @Override
   public @NotNull P with(@NotNull String parameter, Object value)
   {
@@ -157,8 +158,8 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
-  public <R> R format(@NotNull Level level, @NotNull Tag tag, @NotNull ProtocolFormatter<M,R> formatter) {
-    return protocol.format(level, tag, formatter);
+  public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level, @NotNull Tag ... tags) {
+    return protocol.format(formatter, level, tags);
   }
 
 
@@ -169,19 +170,31 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
-  public boolean isMatch(@NotNull Level level, @NotNull Tag tag) {
-    return protocol.isMatch(level, tag);
+  public boolean matches(@NotNull Level level, @NotNull Tag ... tags) {
+    return protocol.matches(level, tags);
   }
 
 
   @Override
-  public int getVisibleEntryCount(@NotNull Level level, @NotNull Tag tag) {
-    return protocol.getVisibleEntryCount(level, tag);
+  public boolean matches(@NotNull Level level, @NotNull String ... tagNames) {
+    return protocol.matches(level, tagNames);
   }
 
 
   @Override
-  public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag tag) {
-    return protocol.iterator(level, tag);
+  public boolean matches(@NotNull Level level) {
+    return protocol.matches(level);
+  }
+
+
+  @Override
+  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull Tag ... tags) {
+    return protocol.getVisibleEntryCount(recursive, level, tags);
+  }
+
+
+  @Override
+  public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag ... tags) {
+    return protocol.iterator(level, tags);
   }
 }

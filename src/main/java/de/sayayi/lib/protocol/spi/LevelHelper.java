@@ -16,6 +16,7 @@
 package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.Level;
+import de.sayayi.lib.protocol.Tag;
 
 
 /**
@@ -23,7 +24,21 @@ import de.sayayi.lib.protocol.Level;
  */
 abstract class LevelHelper
 {
+  private LevelHelper() {
+  }
+
+
   static Level max(Level l1, Level l2) {
     return (l1.severity() >= l2.severity()) ? l1 : l2;
+  }
+
+
+  static boolean matchLevelAndTags(Level level, Tag... tags)
+  {
+    for(Tag tag: tags)
+      if (tag.matches(level))
+        return true;
+
+    return false;
   }
 }

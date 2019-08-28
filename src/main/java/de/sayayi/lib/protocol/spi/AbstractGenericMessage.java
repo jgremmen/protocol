@@ -25,6 +25,8 @@ import java.util.Map;
 
 
 /**
+ * {@inheritDoc}
+ *
  * @author Jeroen Gremmen
  */
 abstract class AbstractGenericMessage<M> implements GenericMessage<M>

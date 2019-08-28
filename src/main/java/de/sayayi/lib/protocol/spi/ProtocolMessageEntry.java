@@ -54,14 +54,26 @@ class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements Proto
 
 
   @Override
-  public boolean isMatch(@NotNull Level level, @NotNull Tag tag) {
-    return this.level.severity() >= level.severity() && tags.contains(tag) && tag.isMatch(level);
+  public boolean matches(@NotNull Level level, @NotNull Tag ... tags)
+  {
+    if (matches(level))
+      for(Tag tag: tags)
+        if (this.tags.contains(tag) && tag.matches(level))
+          return true;
+
+    return false;
   }
 
 
   @Override
-  public int getVisibleEntryCount(@NotNull Level level, @NotNull Tag tag) {
-    return isMatch(level, tag) ? 1 : 0;
+  public boolean matches(@NotNull Level level) {
+    return this.level.severity() >= level.severity();
+  }
+
+
+  @Override
+  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull Tag ... tags) {
+    return matches(level, tags) ? 1 : 0;
   }
 
 

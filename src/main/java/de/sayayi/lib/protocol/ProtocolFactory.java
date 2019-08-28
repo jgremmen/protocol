@@ -31,14 +31,18 @@ import java.util.Set;
  *
  * @author Jeroen Gremmen
  */
+@SuppressWarnings("squid:S1214")
 public interface ProtocolFactory<M>
 {
-  /**
-   * Name of the default tag.
-   *
-   * @see #getDefaultTag()
-   */
-  String DEFAULT_TAG_NAME = "default";
+  interface Constants
+  {
+    /**
+     * Name of the default tag.
+     *
+     * @see #getDefaultTag()
+     */
+    String DEFAULT_TAG_NAME = "default";
+  }
 
 
   /**
@@ -95,8 +99,8 @@ public interface ProtocolFactory<M>
    *
    * <ul>
    *   <li>The {@code message} could be a resource key which is used to lookup the actual message text</li>
-   *   <li>Syntax analysis can be performed on the message</li>
    *   <li>The {@code message} could be a Spring Expression and the returned object would be a compiled expression</li>
+   *   <li>Syntax analysis can be performed on the message</li>
    * </ul>
    *
    * @param message  message, not {@code null}
@@ -107,6 +111,10 @@ public interface ProtocolFactory<M>
   M processMessage(@NotNull String message);
 
 
+  /**
+   *
+   * @param <M>  internal message object type
+   */
   @SuppressWarnings("UnusedReturnValue")
   interface TagBuilder<M> extends ProtocolFactory<M>
   {

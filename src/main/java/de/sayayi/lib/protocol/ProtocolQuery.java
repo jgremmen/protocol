@@ -20,22 +20,45 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
+ * This interface provides methods for querying protocol objects in a quantitative matter.
+ *
  * @author Jeroen Gremmen
  */
 public interface ProtocolQuery
 {
   /**
-   * Tells if this protocol object matches the given {@code level} and {@code tag}.
+   * Tells if this protocol object matches the given {@code level} and at least one of {@code tags}.
    *
    * @param level  requested protocol level, not {@code null}
-   * @param tag    tag to query, not {@code null}
+   * @param tags   tags to query, not {@code null}
    *
    * @return  {@code true} if the protocol object matches, {@code false} otherwise
    */
   @Contract(pure = true)
-  boolean isMatch(@NotNull Level level, @NotNull Tag tag);
+  boolean matches(@NotNull Level level, @NotNull Tag ... tags);
 
 
+  /**
+   * Tells if this protocol object matches the given {@code level}.
+   *
+   * @param level  requested protocol level, not {@code null}
+   *
+   * @return  {@code true} if the protocol object matches, {@code false} otherwise
+   */
   @Contract(pure = true)
-  int getVisibleEntryCount(@NotNull Level level, @NotNull Tag tag);
+  boolean matches(@NotNull Level level);
+
+
+  /**
+   * Returns the number of visible entries for the given {@code level} and {@code tag}.
+   *
+   * @param level  requested protocol level, not {@code null}
+   * @param tags   tags to query, not {@code null}
+   * @param recursive  {@code false} returns the number of visible entries for the current depth only,
+   *                   {@code true} returns the number of visible entries for all depths starting at the current one
+   *
+   * @return  number of visible entries
+   */
+  @Contract(pure = true)
+  int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull Tag ... tags);
 }

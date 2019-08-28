@@ -49,6 +49,7 @@ class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
   }
 
 
+  @SuppressWarnings("squid:S2583")
   @Override
   public @NotNull ProtocolMessageBuilder<M> add(@NotNull Level level)
   {
@@ -61,8 +62,8 @@ class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
 
 
   @Override
-  public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag tag) {
-    return new ProtocolStructureIterator.ForProtocol<M>(level, tag, 0,this);
+  public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag ... tags) {
+    return new ProtocolStructureIterator.ForProtocol<M>(level, tags, 0,this);
   }
 
 
@@ -74,9 +75,8 @@ class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
     }
 
 
-    @NotNull
     @Override
-    protected MessageParameterBuilder<M> createMessageParameterBuilder(@NotNull ProtocolMessageEntry<M> message) {
+    protected @NotNull MessageParameterBuilder<M> createMessageParameterBuilder(@NotNull ProtocolMessageEntry<M> message) {
       return new ParameterBuilder(message);
     }
   }
@@ -94,6 +94,12 @@ class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
   @Override
   public int hashCode() {
     return id;
+  }
+
+
+  @Override
+  public boolean equals(Object o) {
+    return this == o || (o instanceof ProtocolImpl && id == ((ProtocolImpl)o).id);
   }
 
 

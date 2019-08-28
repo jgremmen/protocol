@@ -52,6 +52,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   protected abstract @NotNull P createMessageParameterBuilder(@NotNull ProtocolMessageEntry<M> message);
 
 
+  @SuppressWarnings("squid:S2583")
   @Override
   public @NotNull B forTag(@NotNull Tag tag)
   {
@@ -62,9 +63,18 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
     if (!protocol.factory.isRegisteredTag(tag))
       throw new IllegalArgumentException("tag with name " + tag.getName() + " is not registered for this protocol");
 
-    tags.add(tag);
+    if (tag.matches(level))
+      tags.add(tag);
 
     return (B)this;
+  }
+
+
+  @Override
+  public @NotNull ProtocolMessageBuilder<M> forTag(@NotNull String tag)
+  {
+    //noinspection PatternValidation
+    return forTag(protocol.factory.getTagByName(tag));
   }
 
 
@@ -84,11 +94,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
     for(String tagName: tagNames)
     {
       //noinspection PatternValidation
-      Tag tag = protocol.factory.getTagByName(tagName);
-      if (tag == null)
-        throw new IllegalArgumentException("tag with name " + tagName + " is not registered for this protocol");
-
-      tags.add(tag);
+      forTag(protocol.factory.getTagByName(tagName));
     }
 
     return (B)this;
@@ -104,6 +110,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   }
 
 
+  @SuppressWarnings("squid:S2583")
   @Override
   public @NotNull P message(@NotNull String message)
   {
@@ -116,7 +123,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
     // add implied dependencies
     for(Tag tag: tags)
       for(Tag impliedTag: tag.getImpliedTags())
-        if (impliedTag.isMatch(level))
+        if (impliedTag.matches(level))
           resolvedTags.add(impliedTag);
 
     AbstractProtocolFactory<M> factory = protocol.factory;

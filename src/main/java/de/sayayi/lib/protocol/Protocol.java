@@ -24,6 +24,28 @@ import java.util.Map;
 
 
 /**
+ * <pre>
+ *   public void validate(Protocol protocol) {
+ *     try {
+ *       ...
+ *
+ *       if (!check1())
+ *         protocol.info().forTag("ui").message("validation 1 failed");
+ *
+ *       ...
+ *     } catch(Exception ex) {
+ *       String ticket = createTicket();
+ *       protocol.warn().forTags("ui", "support").message("Ticket {0} created. Please contact support").with("0", ticket)
+ *               .error(ex).forTag("support").message("Unexpected validation error occurred");
+ *     }
+ *   }
+ * </pre>
+ * <p>
+ *   Protocol instances are not thread safe.
+ * </p>
+ *
+ * @param <M>  internal message object type
+ *
  * @author Jeroen Gremmen
  */
 public interface Protocol<M> extends ProtocolQuery
@@ -152,15 +174,41 @@ public interface Protocol<M> extends ProtocolQuery
 
   @SuppressWarnings("unused")
   @Contract(pure = true)
-  <R> R format(@NotNull Level level, @NotNull Tag tag, @NotNull ProtocolFormatter<M,R> formatter);
+  <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level, @NotNull Tag ... tags);
 
 
+  /**
+   * Format the protocol using the given formatter.
+   *
+   * @param formatter  formatter, not {@code null}
+   *
+   * @param <R>  formatting result type
+   *
+   * @return  formatted protocol, or {@code null}
+   *
+   * @see #format(ProtocolFormatter, Level, Tag[])
+   */
   @Contract(pure = true)
   <R> R format(@NotNull ConfiguredProtocolFormatter<M,R> formatter);
 
 
   @Contract(pure = true, value = "_, _ -> new")
-  @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag tag);
+  @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag ... tags);
+
+
+  /**
+   * Tells if any entry in this protocol matches the given {@code level} and {@code tags}.
+   *
+   * @param level     requested protocol level, not {@code null}
+   * @param tagNames  tags to query, not {@code null}
+   *
+   * @return  {@code true} if at least 1 entry in the protocol matches, {@code false} otherwise
+   *
+   * @see #matches(Level, Tag[])
+   * @see ProtocolFactory#getTagByName(String)
+   */
+  @Contract(pure = true)
+  boolean matches(@NotNull Level level, @NotNull String ... tagNames);
 
 
   /**
@@ -196,6 +244,23 @@ public interface Protocol<M> extends ProtocolQuery
 
     /**
      * <p>
+     *   Adds a tag to the protocol message.
+     * </p>
+     *
+     * @param tag  tag to associate with the new message, never {@code null}
+     *
+     * @return  this instance
+     *
+     * @throws IllegalArgumentException  if {@code tag} is not registered by the same protocol factory
+     *
+     * @see ProtocolFactory#getTagByName(String)
+     */
+    @Contract("_ -> this")
+    @NotNull ProtocolMessageBuilder<M> forTag(@NotNull String tag);
+
+
+    /**
+     * <p>
      *   Adds multiple tags to the protocol message.
      * </p>
      *
@@ -222,7 +287,7 @@ public interface Protocol<M> extends ProtocolQuery
      *
      * @throws IllegalArgumentException  if at least one tagName is not registered by the protocol factory
      *
-     * @see ProtocolFactory#isRegisteredTag(Tag)
+     * @see ProtocolFactory#getTagByName(String)
      */
     @Contract("_ -> this")
     @NotNull ProtocolMessageBuilder<M> forTags(@NotNull String ... tagNames);
@@ -261,6 +326,13 @@ public interface Protocol<M> extends ProtocolQuery
   }
 
 
+  /**
+   * <p>
+   *   Builder pattern for setting message parameter values.
+   * </p>
+   *
+   * @param <M>  internal message object type
+   */
   interface MessageParameterBuilder<M> extends Protocol<M>
   {
     /**
@@ -378,9 +450,10 @@ public interface Protocol<M> extends ProtocolQuery
 
 
   /**
-   * The simplest representation of a message.
+   * The most generic representation of a message, providing the internal representation of the message and parameter
+   * values to be used for formatting the message.
    *
-   * @param <M>  Internal message object type.
+   * @param <M>  internal message object type
    */
   interface GenericMessage<M>
   {
@@ -413,12 +486,30 @@ public interface Protocol<M> extends ProtocolQuery
   }
 
 
-  interface Message<M> extends GenericMessage<M>
+  /**
+   * A protocol message with level.
+   *
+   * @param <M>  internal message object type
+   */
+  interface MessageWithLevel<M> extends GenericMessage<M>
   {
+    /**
+     * Returns the level for this message.
+     *
+     * @return  message level, never {@code null}
+     */
     @Contract(pure = true)
     @NotNull Level getLevel();
+  }
 
 
+  /**
+   * A protocol message with level and optional throwable.
+   *
+   * @param <M>  internal message object type
+   */
+  interface Message<M> extends MessageWithLevel<M>
+  {
     /**
      * Returns the throwable associated with the message.
      *
@@ -429,6 +520,11 @@ public interface Protocol<M> extends ProtocolQuery
   }
 
 
+  /**
+   * A protocol group with optional group header message.
+   *
+   * @param <M>  internal message object type
+   */
   interface Group<M>
   {
     /**

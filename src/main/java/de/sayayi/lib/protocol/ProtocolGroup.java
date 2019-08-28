@@ -23,6 +23,14 @@ import java.util.Map;
 
 
 /**
+ * <p>
+ *   ProtocolGroup instances are not thread safe. It is however possible to use separate protocol groups for each
+ *   thread, created by the same parent protocol as long as the parent is not used for formatting/querying operations
+ *   during the time other threads are protocolling on their group.
+ * </p>
+ *
+ * @param <M>  internal message object type
+ *
  * @author Jeroen Gremmen
  */
 public interface ProtocolGroup<M> extends Protocol<M>
@@ -63,40 +71,55 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
   /**
-   * Sets a group message and initiates a parameter builder which allows configuring parameter values for the message.
+   * Sets a group header message and initiates a parameter builder which allows configuring parameter values for the
+   * message.
    *
    * @param message  message text
    *
    * @return  parameter builder instance
+   *
+   * @see #removeGroupMessage()
    */
   @Contract("_ -> new")
   @NotNull MessageParameterBuilder<M> setGroupMessage(@NotNull String message);
 
 
+  /**
+   * Removes the group header message.
+   *
+   * @return  this protocol group instance
+   *
+   * @see #setGroupMessage(String)
+   */
   @Contract("-> this")
   @NotNull ProtocolGroup<M> removeGroupMessage();
 
 
   @Contract(pure = true)
-  boolean isHeaderVisible(@NotNull Level level, @NotNull Tag tag);
+  boolean isHeaderVisible(@NotNull Level level, @NotNull Tag ... tags);
 
 
+  @Override
   @Contract(pure = true, value = "-> new")
   @NotNull ProtocolMessageBuilder<M> debug();
 
 
+  @Override
   @Contract(pure = true, value = "-> new")
   @NotNull ProtocolMessageBuilder<M> info();
 
 
+  @Override
   @Contract(pure = true, value = "-> new")
   @NotNull ProtocolMessageBuilder<M> warn();
 
 
+  @Override
   @Contract(pure = true, value = "-> new")
   @NotNull ProtocolMessageBuilder<M> error();
 
 
+  @Override
   @Contract(pure = true, value = "_ -> new")
   @NotNull ProtocolMessageBuilder<M> add(@NotNull Level level);
 
@@ -110,74 +133,97 @@ public interface ProtocolGroup<M> extends Protocol<M>
   @NotNull Protocol<M> getRootProtocol();
 
 
+  /**
+   * {@inheritDoc}
+   */
+  @SuppressWarnings("squid:S2176")
   interface ProtocolMessageBuilder<M> extends Protocol.ProtocolMessageBuilder<M>
   {
+    @Override
     @Contract("_ -> this")
     @NotNull ProtocolMessageBuilder<M> forTag(@NotNull Tag tag);
 
 
+    @Override
     @Contract("_ -> this")
     @NotNull ProtocolMessageBuilder<M> forTags(@NotNull Tag ... tags);
 
 
+    @Override
     @Contract("_ -> this")
     @NotNull ProtocolMessageBuilder<M> forTags(@NotNull String ... tagNames);
 
 
+    @Override
     @Contract("_ -> this")
     @NotNull ProtocolMessageBuilder<M> withThrowable(Throwable throwable);
 
 
+    @Override
     @Contract("_ -> new")
     @NotNull MessageParameterBuilder<M> message(@NotNull String message);
   }
 
 
+  /**
+   * {@inheritDoc}
+   */
+  @SuppressWarnings("squid:S2176")
   interface MessageParameterBuilder<M> extends Protocol.MessageParameterBuilder<M>, ProtocolGroup<M>
   {
+    @Override
     @Contract("_ -> this")
     @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull Map<String,Object> parameterValues);
 
 
+    @Override
     @Contract("_, _ -> this")
     @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*")
                                                                String parameter, boolean value);
 
 
+    @Override
     @Contract("_, _ -> this")
     @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*")
                                                                String parameter, int value);
 
 
+    @Override
     @Contract("_, _ -> this")
     @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*")
                                                                String parameter, long value);
 
 
+    @Override
     @Contract("_, _ -> this")
     @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*")
                                                                String parameter, float value);
 
 
+    @Override
     @Contract("_, _ -> this")
     @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*")
                                                                String parameter, double value);
 
 
+    @Override
     @Contract("_, _ -> this")
     @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*")
                                                                String parameter, Object value);
   }
 
 
+  /**
+   * The various visibility settings allow for more control on how to format a protocol group.
+   */
   enum Visibility
   {
     /**
      * <p>
-     *   Show the group message header, regardless whether the group contains visible entries or not.
+     *   Show the group header message, regardless whether the group contains visible entries or not.
      * </p>
      * <p>
-     *   If no group message is set, the effective visibility is {@link #FLATTEN}.
+     *   If no group header message is set, the effective visibility is {@link #FLATTEN}.
      * </p>
      *
      * @see ProtocolGroup#getEffectiveVisibility()
@@ -187,10 +233,10 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
     /**
      * <p>
-     *   Show the group message header only if the group contains one or more visible entries.
+     *   Show the group header message only if the group contains one or more visible entries.
      * </p>
      * <p>
-     *   If no group message is set, the effective visibility is {@link #FLATTEN}.
+     *   If no group header message is set, the effective visibility is {@link #FLATTEN}.
      * </p>
      *
      * @see ProtocolGroup#getEffectiveVisibility()
@@ -200,10 +246,10 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
     /**
      * <p>
-     *   Show the group message header only. If the group contains visible entries, they are ignored.
+     *   Show the group header message only. If the group contains visible entries, they are ignored.
      * </p>
      * <p>
-     *   If no group message is set, the effective visibility is {@link #HIDDEN}.
+     *   If no group header message is set, the effective visibility is {@link #HIDDEN}.
      * </p>
      *
      * @see ProtocolGroup#getEffectiveVisibility()
@@ -212,13 +258,18 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
     /**
-     * Do not show the group message header, regardless of the number of visible entries contained in the group.
+     * <p>
+     *   Do not show the group header message, regardless of the number of visible entries contained in the group.
+     * </p>
+     * <p>
+     *   All group entries are merged with the parent as if the messages had been added to the parent protocol directly.
+     * </p>
      */
     FLATTEN,
 
 
     /**
-     * Do not show the group message header if the group only contains 1 visible entry.
+     * Do not show the group header message if the group only contains 1 visible entry.
      */
     FLATTEN_ON_SINGLE_ENTRY,
 
@@ -230,6 +281,11 @@ public interface ProtocolGroup<M> extends Protocol<M>
     ;
 
 
+    /**
+     * Returns the effective visibility in case a group has no header message.
+     *
+     * @return  effective visibility for a group without a header message
+     */
     public @NotNull Visibility forAbsentHeader()
     {
       if (this == SHOW_HEADER_ALWAYS || this == SHOW_HEADER_IF_NOT_EMPTY)
@@ -241,6 +297,11 @@ public interface ProtocolGroup<M> extends Protocol<M>
     }
 
 
+    /**
+     * Tells if group entries are to be shown for this visibility instance.
+     *
+     * @return  {@code true} if group entries are shown, {@code false} otherwise
+     */
     public boolean isShowEntries() {
       return this != SHOW_HEADER_ONLY && this != HIDDEN;
     }

@@ -16,11 +16,10 @@
 package de.sayayi.lib.protocol.formatter;
 
 import de.sayayi.lib.protocol.Level;
-import de.sayayi.lib.protocol.Protocol;
-import de.sayayi.lib.protocol.Protocol.Message;
+import de.sayayi.lib.protocol.Protocol.MessageWithLevel;
 import de.sayayi.lib.protocol.ProtocolFormatter.InitializableProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupEndEntry;
-import de.sayayi.lib.protocol.ProtocolIterator.GroupEntry;
+import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.Tag;
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +43,17 @@ public abstract class HtmlProtocolFormatter<M> implements InitializableProtocolF
 
 
   @SuppressWarnings("WeakerAccess")
-  protected abstract String formatMessage(Protocol.Message<M> message);
+  protected abstract String formatMessage(MessageWithLevel<M> message);
+
+
+  @SuppressWarnings("WeakerAccess")
+  protected String levelToHtmlClass(Level level)
+  {
+    if (level instanceof Enum)
+      return ((Enum)level).name();
+
+    return level.toString();
+  }
 
 
   @Override
@@ -69,21 +78,21 @@ public abstract class HtmlProtocolFormatter<M> implements InitializableProtocolF
     String msg = formatMessage(message);
 
     indent(message.getDepth());
-    html.append("<li class=\"level-").append(message.getLevel())
+    html.append("<li class=\"level-").append(levelToHtmlClass(message.getLevel()))
         .append("\"><span class=\"").append(message.isGroupMessage() ? "group-message " : "").append("message\">")
         .append(HtmlEscape.escapeHtml5(msg)).append("</span></li>\n");
   }
 
 
   @Override
-  public void groupStart(@NotNull GroupEntry<M> group)
+  public void groupStart(@NotNull GroupStartEntry<M> group)
   {
     int depth = group.getDepth();
-    Message<M> message = group.getGroupHeader();
+    MessageWithLevel<M> message = group.getGroupHeader();
     String msg = formatMessage(group.getGroupHeader());
 
     indent(depth - 1);
-    html.append("<li class=\"level-").append(message.getLevel())
+    html.append("<li class=\"level-").append(levelToHtmlClass(message.getLevel()))
         .append("\"><span class=\"group\">").append(HtmlEscape.escapeHtml5(msg)).append("</span></li>\n");
 
     indent(depth - 1);
@@ -100,13 +109,13 @@ public abstract class HtmlProtocolFormatter<M> implements InitializableProtocolF
 
 
   @Override
-  public String getResult() {
+  public @NotNull String getResult() {
     return html.toString();
   }
 
 
   @Override
-  public void init(@NotNull Level level, @NotNull Tag tag, int estimatedGroupDepth) {
+  public void init(@NotNull Level level, @NotNull Tag[] tags, int estimatedGroupDepth) {
     html.delete(0, html.length());
   }
 

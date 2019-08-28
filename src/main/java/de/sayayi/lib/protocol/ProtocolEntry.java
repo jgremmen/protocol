@@ -23,11 +23,18 @@ import java.util.Set;
 
 
 /**
+ * @param <M>  internal message object type
+ *
  * @author Jeroen Gremmen
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "squid:S2326"})
 public interface ProtocolEntry<M> extends ProtocolQuery
 {
+  /**
+   *
+   * @param <M>  internal message object type
+   */
+  @SuppressWarnings("squid:S2176")
   interface Message<M> extends ProtocolEntry<M>, Protocol.Message<M>
   {
     @SuppressWarnings("unused")
@@ -36,25 +43,56 @@ public interface ProtocolEntry<M> extends ProtocolQuery
   }
 
 
+  /**
+   *
+   * @param <M>  internal message object type
+   */
+  @SuppressWarnings("squid:S2176")
   interface Group<M> extends ProtocolEntry<M>, Protocol.Group<M>
   {
     /**
      * Returns a list of protocol entries provided by this protocol object for the given {@code level} and {@code tag}.
      *
      * @param level  requested protocol level, not {@code null}
-     * @param tag    tag to query, not {@code null}
+     * @param tags   tags to query, not {@code null}
      *
      * @return  a list of protocol entries, never {@code null}
      */
     @Contract(pure = true, value = "_, _ -> new")
-    @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag tag);
+    @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag ... tags);
 
 
+    /**
+     * Tells if, for the given {@code level} and {@code tag}, the group header message is visible.
+     *
+     * @param level  protocol level, not {@code null}
+     * @param tags   tags, not {@code null}
+     *
+     * @return  {@code true} if the group header message is visible, {@code false} otherwise
+     */
     @Contract(pure = true)
-    boolean isHeaderVisible(@NotNull Level level, @NotNull Tag tag);
+    boolean isHeaderVisible(@NotNull Level level, @NotNull Tag ... tags);
 
 
+    /**
+     * <p>
+     *   Returns the level of the group header message for the given {@code level} and {@code tag}.
+     * </p>
+     * <p>
+     *   The group header message level is defined as the highest (= most severe) level of all containing messages
+     *   and sub-groups which are visible for the given {@code level} and {@code tag}.
+     * </p>
+     * <p>
+     *   If the group does not contain any messages, the returned value will be a level with the lowest possible
+     *   severity.
+     * </p>
+     *
+     * @param level  protocol level, not {@code null}
+     * @param tags   tags, not {@code null}
+     *
+     * @return  header message level, never {@code null}
+     */
     @Contract(pure = true)
-    Level getHeaderLevel(@NotNull Level level, @NotNull Tag tag);
+    @NotNull Level getHeaderLevel(@NotNull Level level, @NotNull Tag ... tags);
   }
 }
