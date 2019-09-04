@@ -54,7 +54,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
   protected AbstractProtocolFactory()
   {
     id = FACTORY_ID.incrementAndGet();
-    defaultTag = createTag(Constants.DEFAULT_TAG_NAME).getTag();
+    defaultTag = createTag(Constant.DEFAULT_TAG_NAME).getTag();
 
     defaultParameterValues = new HashMap<String,Object>();
     defaultParameterValues.put("factoryid", id);

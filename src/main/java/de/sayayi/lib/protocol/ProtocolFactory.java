@@ -34,7 +34,7 @@ import java.util.Set;
 @SuppressWarnings("squid:S1214")
 public interface ProtocolFactory<M>
 {
-  interface Constants
+  interface Constant
   {
     /**
      * Name of the default tag.
@@ -70,10 +70,22 @@ public interface ProtocolFactory<M>
   boolean hasTag(@NotNull @Pattern("\\p{Alpha}\\p{Graph}*") String name);
 
 
+  /**
+   * Tells whether {@code tag} is registered with this factory.
+   *
+   * @param tag  tag to check
+   *
+   * @return  {@code true} if this tag is registered with this factory, {@code false} otherwise
+   */
   @Contract(pure = true)
   boolean isRegisteredTag(@NotNull Tag tag);
 
 
+  /**
+   * Returns a set of all tags registered with this factory.
+   *
+   * @return  set of all tags registered with this factory, never {@code null}
+   */
   @Contract(pure = true, value = "-> new")
   @NotNull Set<Tag> getTags();
 
@@ -81,18 +93,24 @@ public interface ProtocolFactory<M>
   /**
    * Returns the default tag which is used for each message protocolled.
    *
-   * @return  default tag
+   * @return  default tag, never {@code null}
    */
   @Contract(pure = true)
   @NotNull Tag getDefaultTag();
 
 
+  /**
+   * returns a map with parameter name/value entries which will be available to every message created by protocol
+   * instances belonging directly or indirectly to this factory.
+   *
+   * @return  map with default name/value entries, never {@code null}
+   */
   @Contract(pure = true)
   @NotNull Map<String,Object> getDefaultParameterValues();
 
 
   /**
-   * Transform the given message into its internal representation.
+   * Transforms the given message into its internal representation.
    * <p>
    * The simplest implementation would be to return the message as is. However this method provides a way to
    * integrate more complex message retrieval and/or formatting strategies:
