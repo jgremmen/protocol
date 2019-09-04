@@ -51,6 +51,8 @@ public interface ProtocolGroup<M> extends Protocol<M>
    * set for this group as well as the existence of a group message.
    *
    * @return  effective visibility, never {@code null}
+   *
+   * @see #getVisibility()
    */
   @Contract(pure = true)
   @NotNull Visibility getEffectiveVisibility();
@@ -139,6 +141,11 @@ public interface ProtocolGroup<M> extends Protocol<M>
   @SuppressWarnings("squid:S2176")
   interface ProtocolMessageBuilder<M> extends Protocol.ProtocolMessageBuilder<M>
   {
+    @Override
+    @Contract("_ -> this")
+    @NotNull ProtocolMessageBuilder<M> forTag(@NotNull String tagName);
+
+
     @Override
     @Contract("_ -> this")
     @NotNull ProtocolMessageBuilder<M> forTag(@NotNull Tag tag);

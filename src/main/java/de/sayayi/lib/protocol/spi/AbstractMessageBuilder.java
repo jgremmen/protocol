@@ -71,7 +71,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
 
 
   @Override
-  public @NotNull ProtocolMessageBuilder<M> forTag(@NotNull String tag)
+  public @NotNull B forTag(@NotNull String tag)
   {
     //noinspection PatternValidation
     return forTag(protocol.factory.getTagByName(tag));
