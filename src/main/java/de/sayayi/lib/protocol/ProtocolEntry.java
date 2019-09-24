@@ -26,6 +26,9 @@ import java.util.Set;
  * @param <M>  internal message object type
  *
  * @author Jeroen Gremmen
+ *
+ * @see Message
+ * @see Group
  */
 @SuppressWarnings({"unused", "squid:S2326"})
 public interface ProtocolEntry<M> extends ProtocolQuery
@@ -37,6 +40,11 @@ public interface ProtocolEntry<M> extends ProtocolQuery
   @SuppressWarnings("squid:S2176")
   interface Message<M> extends ProtocolEntry<M>, Protocol.Message<M>
   {
+    /**
+     * Returns a set containing all tags defined for this message.
+     *
+     * @return  set containing all tags, never {@code null}
+     */
     @SuppressWarnings("unused")
     @Contract(pure = true, value = "-> new")
     @NotNull Set<Tag> getTags();
@@ -51,7 +59,7 @@ public interface ProtocolEntry<M> extends ProtocolQuery
   interface Group<M> extends ProtocolEntry<M>, Protocol.Group<M>
   {
     /**
-     * Returns a list of protocol entries provided by this protocol object for the given {@code level} and {@code tag}.
+     * Returns a list of protocol entries provided by this protocol object for the given {@code level} and {@code tags}.
      *
      * @param level  requested protocol level, not {@code null}
      * @param tags   tags to query, not {@code null}
@@ -63,7 +71,7 @@ public interface ProtocolEntry<M> extends ProtocolQuery
 
 
     /**
-     * Tells if, for the given {@code level} and {@code tag}, the group header message is visible.
+     * Tells if, for the given {@code level} and {@code tags}, the group header message is visible.
      *
      * @param level  protocol level, not {@code null}
      * @param tags   tags, not {@code null}
@@ -76,11 +84,11 @@ public interface ProtocolEntry<M> extends ProtocolQuery
 
     /**
      * <p>
-     *   Returns the level of the group header message for the given {@code level} and {@code tag}.
+     *   Returns the level of the group header message for the given {@code level} and {@code tags}.
      * </p>
      * <p>
      *   The group header message level is defined as the highest (= most severe) level of all containing messages
-     *   and sub-groups which are visible for the given {@code level} and {@code tag}.
+     *   and sub-groups which are visible for the given {@code level} and {@code tags}.
      * </p>
      * <p>
      *   If the group does not contain any messages, the returned value will be a level with the lowest possible

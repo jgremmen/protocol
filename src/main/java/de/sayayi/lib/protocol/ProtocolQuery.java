@@ -50,7 +50,7 @@ public interface ProtocolQuery
 
 
   /**
-   * Returns the number of visible entries for the given {@code level} and {@code tag}.
+   * Returns the number of visible entries for the given {@code level} and {@code tags}.
    *
    * @param level  requested protocol level, not {@code null}
    * @param tags   tags to query, not {@code null}

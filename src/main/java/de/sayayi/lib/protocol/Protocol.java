@@ -24,6 +24,14 @@ import java.util.Map;
 
 
 /**
+ * <p>
+ *   This interface is the core instance for protocolling messages.
+ * </p>
+ * <p>
+ *   A protocol is created by a protocol factory or by creating a group protocol using another protocol. Group
+ *   protocols have additional functionality but share the same core functions defined in this interface.
+ * </p>
+ *
  * <pre>
  *   public void validate(Protocol protocol) {
  *     try {
@@ -70,10 +78,10 @@ public interface Protocol<M> extends ProtocolQuery
 
   /**
    * <p>
-   *   Prepare a new debug level message.
+   *   Prepares a new debug level message.
    * </p>
    * <p>
-   *   This method is functionally identical to {@code add(Level.Shared.DEBUG)}
+   *   This method is a convenience function and is identical to {@code add(Level.Shared.DEBUG)}
    * </p>
    *
    * @return  message builder instance for the debug message, never {@code null}
@@ -86,10 +94,10 @@ public interface Protocol<M> extends ProtocolQuery
 
   /**
    * <p>
-   *   Prepare a new info level message.
+   *   Prepares a new info level message.
    * </p>
    * <p>
-   *   This method is functionally identical to {@code add(Level.Shared.INFO)}
+   *   This method is a convenience function and is identical to {@code add(Level.Shared.INFO)}
    * </p>
    *
    * @return  message builder instance for the info message, never {@code null}
@@ -102,10 +110,10 @@ public interface Protocol<M> extends ProtocolQuery
 
   /**
    * <p>
-   *   Prepare a new warning level message.
+   *   Prepares a new warning level message.
    * </p>
    * <p>
-   *   This method is functionally identical to {@code add(Level.Shared.WARN)}
+   *   This method is a convenience function and is identical to {@code add(Level.Shared.WARN)}
    * </p>
    *
    * @return  message builder instance for the warning message, never {@code null}
@@ -118,10 +126,10 @@ public interface Protocol<M> extends ProtocolQuery
 
   /**
    * <p>
-   *   Prepare a new error level message.
+   *   Prepares a new error level message.
    * </p>
    * <p>
-   *   This method is functionally identical to {@code add(Level.Shared.ERROR)}
+   *   This method is a convenience function and is identical to {@code add(Level.Shared.ERROR)}
    * </p>
    *
    * @return  message builder instance for the error message, never {@code null}
@@ -134,10 +142,11 @@ public interface Protocol<M> extends ProtocolQuery
 
   /**
    * <p>
-   *   Prepare a new error level message with throwable.
+   *   Prepares a new error level message with throwable.
    * </p>
    * <p>
-   *   This method is functionally identical to {@code add(Level.Shared.ERROR).withThrowable(throwable)}
+   *   This method is a convenience function and is identical to
+   *   {@code add(Level.Shared.ERROR).withThrowable(throwable)}
    * </p>
    *
    * @param throwable  throwable associated with message
@@ -152,7 +161,7 @@ public interface Protocol<M> extends ProtocolQuery
 
   /**
    * <p>
-   *   Prepare a new message with the given protocol {@code level}.
+   *   Prepares a new message with the given protocol {@code level}.
    * </p>
    *
    * @param level  protocol level, never {@code null}
@@ -172,13 +181,24 @@ public interface Protocol<M> extends ProtocolQuery
   @NotNull ProtocolGroup<M> createGroup();
 
 
+  /**
+   * Formats this protocol using the given {@code formatter} iterating over all elements matching {@code level} and at
+   * least one of the {@code tags}.
+   *
+   * @param formatter  protocol formatter to use for formatting this protocol
+   * @param level      level to match
+   * @param tags       tag or tags to match
+   * @param <R>        result type
+   *
+   * @return  formatted protocol, or {@code null}
+   */
   @SuppressWarnings("unused")
   @Contract(pure = true)
   <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level, @NotNull Tag ... tags);
 
 
   /**
-   * Format the protocol using the given formatter.
+   * Formats this protocol using the given {@code formatter}.
    *
    * @param formatter  formatter, not {@code null}
    *
@@ -247,16 +267,16 @@ public interface Protocol<M> extends ProtocolQuery
      *   Adds a tag to the protocol message.
      * </p>
      *
-     * @param tag  tag to associate with the new message, never {@code null}
+     * @param tagName  tag to associate with the new message, never {@code null}
      *
      * @return  this instance
      *
-     * @throws IllegalArgumentException  if {@code tag} is not registered by the same protocol factory
+     * @throws IllegalArgumentException  if {@code tagName} is not registered by the same protocol factory
      *
      * @see ProtocolFactory#getTagByName(String)
      */
     @Contract("_ -> this")
-    @NotNull ProtocolMessageBuilder<M> forTag(@NotNull String tag);
+    @NotNull ProtocolMessageBuilder<M> forTag(@NotNull String tagName);
 
 
     /**
@@ -464,6 +484,10 @@ public interface Protocol<M> extends ProtocolQuery
      */
     @Contract(pure = true)
     @NotNull M getMessage();
+
+
+    @Contract(pure = true)
+    long getTimeMillis();
 
 
     /**

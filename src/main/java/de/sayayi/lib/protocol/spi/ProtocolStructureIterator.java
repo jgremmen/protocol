@@ -313,6 +313,12 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
     @Override
+    public long getTimeMillis() {
+      return message.getTimeMillis();
+    }
+
+
+    @Override
     public String toString() {
       return message.toString();
     }
@@ -365,6 +371,12 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
     @Override
+    public long getTimeMillis() {
+      return groupHeader.getTimeMillis();
+    }
+
+
+    @Override
     public String toString() {
       return groupHeader.toString();
     }
@@ -396,6 +408,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
         @Override public @NotNull Level getLevel() { return level; }
         @Override public @NotNull M getMessage() { return groupMessage.getMessage(); }
         @Override public @NotNull Map<String,Object> getParameterValues() { return groupMessage.getParameterValues(); }
+        @Override public long getTimeMillis() { return groupMessage.getTimeMillis(); }
       };
     }
   }
