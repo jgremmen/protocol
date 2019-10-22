@@ -22,9 +22,10 @@ import de.sayayi.lib.protocol.ProtocolIterator.GroupEndEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.Tag;
-import org.unbescape.html.HtmlEscape;
 
 import org.jetbrains.annotations.NotNull;
+
+import org.unbescape.html.HtmlEscape;
 
 import java.util.Arrays;
 
