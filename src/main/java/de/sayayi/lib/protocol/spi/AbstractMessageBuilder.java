@@ -19,6 +19,7 @@ import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol.MessageParameterBuilder;
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.Tag;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -71,9 +72,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
 
 
   @Override
-  public @NotNull B forTag(@NotNull String tag)
-  {
-    //noinspection PatternValidation
+  public @NotNull B forTag(@NotNull String tag) {
     return forTag(protocol.factory.getTagByName(tag));
   }
 
@@ -92,10 +91,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   public @NotNull B forTags(@NotNull String ... tagNames)
   {
     for(String tagName: tagNames)
-    {
-      //noinspection PatternValidation
       forTag(protocol.factory.getTagByName(tagName));
-    }
 
     return (B)this;
   }
