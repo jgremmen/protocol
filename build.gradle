@@ -11,7 +11,7 @@ plugins {
 
 description 'Protocol Library'
 group 'de.sayayi.lib'
-version '0.2.0'
+version '0.2.1'
 
 
 apply from: file('gradle/versions.gradle')
