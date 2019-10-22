@@ -16,7 +16,7 @@
 package de.sayayi.lib.protocol;
 
 import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
-import org.intellij.lang.annotations.Pattern;
+
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -195,6 +195,25 @@ public interface Protocol<M> extends ProtocolQuery
   @SuppressWarnings("unused")
   @Contract(pure = true)
   <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level, @NotNull Tag ... tags);
+
+
+  /**
+   * Formats this protocol using the given {@code formatter} iterating over all elements matching {@code level} and at
+   * least one of the {@code tags}.
+   *
+   * @param formatter  protocol formatter to use for formatting this protocol
+   * @param level      level to match
+   * @param tagNames   tag or tags to match
+   * @param <R>        result type
+   *
+   * @return  formatted protocol, or {@code null}
+   *
+   * @throws IllegalArgumentException  if at least one of the {@code tagNames} is not registered by the same
+   *                                   protocol factory
+   */
+  @SuppressWarnings("unused")
+  @Contract(pure = true)
+  <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level, @NotNull String ... tagNames);
 
 
   /**
@@ -385,7 +404,7 @@ public interface Protocol<M> extends ProtocolQuery
      * @return  paramter builder instance for the current message
      */
     @Contract("_, _ -> this")
-    @NotNull MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*") String parameter, boolean value);
+    @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, boolean value);
 
 
     /**
@@ -401,7 +420,7 @@ public interface Protocol<M> extends ProtocolQuery
      * @return  paramter builder instance for the current message
      */
     @Contract("_, _ -> this")
-    @NotNull MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*") String parameter, int value);
+    @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, int value);
 
 
     /**
@@ -417,7 +436,7 @@ public interface Protocol<M> extends ProtocolQuery
      * @return  paramter builder instance for the current message
      */
     @Contract("_, _ -> this")
-    @NotNull MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*") String parameter, long value);
+    @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, long value);
 
 
     /**
@@ -433,7 +452,7 @@ public interface Protocol<M> extends ProtocolQuery
      * @return  paramter builder instance for the current message
      */
     @Contract("_, _ -> this")
-    @NotNull MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*") String parameter, float value);
+    @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, float value);
 
 
     /**
@@ -449,7 +468,7 @@ public interface Protocol<M> extends ProtocolQuery
      * @return  paramter builder instance for the current message
      */
     @Contract("_, _ -> this")
-    @NotNull MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*") String parameter, double value);
+    @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, double value);
 
 
     /**
@@ -465,7 +484,7 @@ public interface Protocol<M> extends ProtocolQuery
      * @return  paramter builder instance for the current message
      */
     @Contract("_, _ -> this")
-    @NotNull MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*") String parameter, Object value);
+    @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, Object value);
   }
 
 
@@ -486,6 +505,11 @@ public interface Protocol<M> extends ProtocolQuery
     @NotNull M getMessage();
 
 
+    /**
+     * Returns the message creation time.
+     *
+     * @return  creation time measured in milliseconds since midnight, January 1, 1970 UTC
+     */
     @Contract(pure = true)
     long getTimeMillis();
 

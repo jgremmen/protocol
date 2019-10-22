@@ -25,6 +25,7 @@ import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.Tag;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -34,7 +35,7 @@ import java.util.Map.Entry;
 /**
  * @author Jeroen Gremmen
  */
-@SuppressWarnings({ "unchecked", "PatternValidation" })
+@SuppressWarnings({ "unchecked" })
 abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B extends ProtocolMessageBuilder<M>>
     implements MessageParameterBuilder<M>
 {
@@ -154,6 +155,12 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
   @Override
   public @NotNull ProtocolGroup<M> createGroup() {
     return protocol.createGroup();
+  }
+
+
+  @Override
+  public <R> R format(@NotNull ProtocolFormatter<M, R> formatter, @NotNull Level level, @NotNull String... tagNames) {
+    return protocol.format(formatter, level, tagNames);
   }
 
 

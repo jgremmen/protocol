@@ -20,6 +20,9 @@ import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.Tag;
+
+import lombok.EqualsAndHashCode;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -28,10 +31,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * @author Jeroen Gremmen
  */
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, doNotUseGetters = true, callSuper = false)
 class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
 {
   private static final AtomicInteger PROTOCOL_ID = new AtomicInteger(0);
 
+  @EqualsAndHashCode.Include
   private final int id;
 
 
@@ -88,18 +93,6 @@ class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
     ParameterBuilder(ProtocolMessageEntry<M> message) {
       super(ProtocolImpl.this, message);
     }
-  }
-
-
-  @Override
-  public int hashCode() {
-    return id;
-  }
-
-
-  @Override
-  public boolean equals(Object o) {
-    return this == o || (o instanceof ProtocolImpl && id == ((ProtocolImpl)o).id);
   }
 
 

@@ -32,7 +32,9 @@ import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.ProtocolEnd;
 import de.sayayi.lib.protocol.ProtocolIterator.ProtocolStart;
 import de.sayayi.lib.protocol.Tag;
+
 import lombok.Getter;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -109,10 +111,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
     Tag[] tags = new Tag[tagNames.length];
 
     for(int n = 0; n < tagNames.length; n++)
-    {
-      //noinspection PatternValidation
       tags[n] = factory.getTagByName(tagNames[n]);
-    }
 
     return matches(level, tags);
   }
@@ -164,6 +163,25 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
     entries.add(group);
 
     return group;
+  }
+
+
+  @Override
+  public <R> R format(@NotNull ProtocolFormatter<M, R> formatter, @NotNull Level level, @NotNull String... tagNames)
+  {
+    int tagCount = tagNames.length;
+    Tag[] tags = new Tag[tagCount];
+
+    for(int n = 0; n < tagCount; n++)
+    {
+      Tag tag = factory.getTagByName(tagNames[n]);
+      if (tag == null)
+        throw new IllegalArgumentException("tag with name " + tagNames[n] + " does not exist");
+
+      tags[n] = tag;
+    }
+
+    return format(formatter, level, tags);
   }
 
 
