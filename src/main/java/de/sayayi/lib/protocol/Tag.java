@@ -30,7 +30,7 @@ import java.util.Set;
  *   with a particular tag, all tags implied by that tag are also assigned to that message.
  * </p>
  * <p>
- *   The validity of a tag can be related to a protocol level. This allows for certain
+ *   The validity of a tag is related to a protocol level. This allows for certain
  *   tags to match only when a particular protocol level is selected.
  * </p>
  *
@@ -43,7 +43,7 @@ public interface Tag
   /**
    * Tells the tag name.
    *
-   * @return  tag name
+   * @return  tag name, never {@code null}
    */
   @Contract(pure = true)
   @NotNull String getName();

@@ -22,8 +22,10 @@ import de.sayayi.lib.protocol.ProtocolIterator.GroupEndEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.Tag;
+
 import lombok.AccessLevel;
 import lombok.Setter;
+
 import org.jetbrains.annotations.NotNull;
 
 

@@ -15,6 +15,7 @@
  */
 package de.sayayi.lib.protocol;
 
+import de.sayayi.lib.protocol.ProtocolFactory.Constant;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -98,7 +99,7 @@ public class ProtocolFactoryTest
     assertTrue(tags.contains(tagUI));
     assertTrue(tags.contains(tagSummary));
 
-    assertTrue(factory.hasTag(ProtocolFactory.Constants.DEFAULT_TAG_NAME));
+    assertTrue(factory.hasTag(Constant.DEFAULT_TAG_NAME));
     assertTrue(factory.hasTag("tag1"));
     assertTrue(factory.hasTag("UI"));
     assertTrue(factory.hasTag("summary"));
@@ -128,7 +129,7 @@ public class ProtocolFactoryTest
 
     assertEquals("tag1", tag1.getName());
     assertEquals(tag1, factory.getTagByName("tag1"));
-    assertEquals(factory.getDefaultTag(), factory.getTagByName(ProtocolFactory.Constants.DEFAULT_TAG_NAME));
+    assertEquals(factory.getDefaultTag(), factory.getTagByName(Constant.DEFAULT_TAG_NAME));
     assertNull(factory.getTagByName("xyz"));
 
     try {

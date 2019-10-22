@@ -23,7 +23,9 @@ import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.ProtocolGroup.Visibility;
 import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.Tag;
+
 import lombok.Getter;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -50,7 +52,6 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   private ForGroup<M> groupIterator;
   private final EnumSet<StructureMarker> structureMarker;
   private final boolean rootProtocol;
-
 
   int depth;
   Iterator<ProtocolEntry<M>> iterator;
@@ -313,6 +314,12 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
     @Override
+    public long getTimeMillis() {
+      return message.getTimeMillis();
+    }
+
+
+    @Override
     public String toString() {
       return message.toString();
     }
@@ -365,6 +372,12 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
     @Override
+    public long getTimeMillis() {
+      return groupHeader.getTimeMillis();
+    }
+
+
+    @Override
     public String toString() {
       return groupHeader.toString();
     }
@@ -396,6 +409,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
         @Override public @NotNull Level getLevel() { return level; }
         @Override public @NotNull M getMessage() { return groupMessage.getMessage(); }
         @Override public @NotNull Map<String,Object> getParameterValues() { return groupMessage.getParameterValues(); }
+        @Override public long getTimeMillis() { return groupMessage.getTimeMillis(); }
       };
     }
   }

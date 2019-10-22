@@ -23,7 +23,10 @@ import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.ProtocolGroup.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.Tag;
+
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -37,6 +40,7 @@ import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ONLY;
 /**
  * @author Jeroen Gremmen
  */
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, doNotUseGetters = true, callSuper = false)
 final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
     implements ProtocolGroup<M>, Group<M>
 {
@@ -49,6 +53,8 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
 
 
   private final AbstractProtocol<M,Protocol.ProtocolMessageBuilder<M>> parent;
+
+  @EqualsAndHashCode.Include
   private final int id;
 
   @Getter private Visibility visibility;
@@ -257,18 +263,6 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
   {
     return new ProtocolStructureIterator.ForGroup<M>(level, tags, 0,this, false,
         false, true);
-  }
-
-
-  @Override
-  public int hashCode() {
-    return id;
-  }
-
-
-  @Override
-  public boolean equals(Object o) {
-    return this == o || (o instanceof ProtocolGroupImpl && id == ((ProtocolGroupImpl)o).id);
   }
 
 

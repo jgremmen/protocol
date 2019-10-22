@@ -15,7 +15,6 @@
  */
 package de.sayayi.lib.protocol;
 
-import org.intellij.lang.annotations.Pattern;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,6 +22,11 @@ import java.util.Map;
 
 
 /**
+ * <p>
+ *   A protocol group provides the same functionality as a {@link Protocol}. In addition, a protocol group
+ *   can be assigned a group header message and the visibility of the protocol entries in the group can be
+ *   controlled by setting the {@link Visibility}.
+ * </p>
  * <p>
  *   ProtocolGroup instances are not thread safe. It is however possible to use separate protocol groups for each
  *   thread, created by the same parent protocol as long as the parent is not used for formatting/querying operations
@@ -51,6 +55,8 @@ public interface ProtocolGroup<M> extends Protocol<M>
    * set for this group as well as the existence of a group message.
    *
    * @return  effective visibility, never {@code null}
+   *
+   * @see #getVisibility()
    */
   @Contract(pure = true)
   @NotNull Visibility getEffectiveVisibility();
@@ -141,6 +147,11 @@ public interface ProtocolGroup<M> extends Protocol<M>
   {
     @Override
     @Contract("_ -> this")
+    @NotNull ProtocolMessageBuilder<M> forTag(@NotNull String tagName);
+
+
+    @Override
+    @Contract("_ -> this")
     @NotNull ProtocolMessageBuilder<M> forTag(@NotNull Tag tag);
 
 
@@ -178,38 +189,32 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
     @Override
     @Contract("_, _ -> this")
-    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*")
-                                                               String parameter, boolean value);
+    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, boolean value);
 
 
     @Override
     @Contract("_, _ -> this")
-    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*")
-                                                               String parameter, int value);
+    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, int value);
 
 
     @Override
     @Contract("_, _ -> this")
-    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*")
-                                                               String parameter, long value);
+    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, long value);
 
 
     @Override
     @Contract("_, _ -> this")
-    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*")
-                                                               String parameter, float value);
+    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, float value);
 
 
     @Override
     @Contract("_, _ -> this")
-    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*")
-                                                               String parameter, double value);
+    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, double value);
 
 
     @Override
     @Contract("_, _ -> this")
-    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull @Pattern("\\p{Alnum}\\p{Graph}*")
-                                                               String parameter, Object value);
+    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, Object value);
   }
 
 

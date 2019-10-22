@@ -19,7 +19,9 @@ import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.Tag;
+
 import lombok.Getter;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -54,7 +56,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
   protected AbstractProtocolFactory()
   {
     id = FACTORY_ID.incrementAndGet();
-    defaultTag = createTag(Constants.DEFAULT_TAG_NAME).getTag();
+    defaultTag = createTag(Constant.DEFAULT_TAG_NAME).getTag();
 
     defaultParameterValues = new HashMap<String,Object>();
     defaultParameterValues.put("factoryid", id);
@@ -86,7 +88,6 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
     if (name == null || name.isEmpty())
       throw new IllegalArgumentException("name must not be empty");
 
-    //noinspection PatternValidation
     if (hasTag(name))
       throw new IllegalArgumentException("tag with name " + name + " already exists");
 
@@ -214,14 +215,12 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
     }
 
 
-    @SuppressWarnings("PatternValidation")
     @Override
     public @NotNull TagBuilder<M> createTag(@NotNull String name) {
       return AbstractProtocolFactory.this.createTag(name);
     }
 
 
-    @SuppressWarnings("PatternValidation")
     @Override
     public @NotNull TagBuilder<M> modifyTag(@NotNull String name) {
       return AbstractProtocolFactory.this.modifyTag(name);
@@ -234,14 +233,12 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
     }
 
 
-    @SuppressWarnings("PatternValidation")
     @Override
     public Tag getTagByName(@NotNull String name) {
       return AbstractProtocolFactory.this.getTagByName(name);
     }
 
 
-    @SuppressWarnings("PatternValidation")
     @Override
     public boolean hasTag(@NotNull String name) {
       return AbstractProtocolFactory.this.hasTag(name);

@@ -21,6 +21,7 @@ import de.sayayi.lib.protocol.Protocol.GenericMessage;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
 import de.sayayi.lib.protocol.Tag;
+
 import org.jetbrains.annotations.NotNull;
 
 import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
