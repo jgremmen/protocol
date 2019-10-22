@@ -16,7 +16,9 @@
 package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.Protocol.GenericMessage;
+
 import lombok.Getter;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;

@@ -23,7 +23,9 @@ import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.ProtocolGroup.Visibility;
 import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.Tag;
+
 import lombok.Getter;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -50,7 +52,6 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   private ForGroup<M> groupIterator;
   private final EnumSet<StructureMarker> structureMarker;
   private final boolean rootProtocol;
-
 
   int depth;
   Iterator<ProtocolEntry<M>> iterator;
