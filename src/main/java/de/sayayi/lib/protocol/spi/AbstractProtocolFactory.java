@@ -20,6 +20,7 @@ import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.Tag;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +51,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
   private final int id;
   @Getter private final Tag defaultTag;
 
-  final Map<String,Object> defaultParameterValues;
+  protected final Map<String,Object> defaultParameterValues;
 
 
   protected AbstractProtocolFactory()
@@ -276,15 +277,18 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
   }
 
 
+  @EqualsAndHashCode(doNotUseGetters = true, onlyExplicitlyIncluded = true)
   static class TagImpl implements Tag, Comparable<TagImpl>
   {
-    @Getter private final int id;
+    @EqualsAndHashCode.Include
+    private final int id;
+
     @Getter private final String name;
 
     @Getter private MatchCondition matchCondition = MatchCondition.AT_LEAST;
     @Getter private Level matchLevel = LOWEST;
 
-    private Set<TagImpl> implies = new HashSet<TagImpl>(8);
+    private Set<TagImpl> implies = new TreeSet<TagImpl>();
 
 
     TagImpl(@NotNull String name)
@@ -339,18 +343,6 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
       for(TagImpl tag: implies)
         if (!tags.contains(tag))
           tag.collectImpliedTags(tags);
-    }
-
-
-    @Override
-    public int hashCode() {
-      return id;
-    }
-
-
-    @Override
-    public boolean equals(Object o) {
-      return this ==  o || (o instanceof AbstractProtocolFactory && id == ((AbstractProtocolFactory)o).id);
     }
 
 

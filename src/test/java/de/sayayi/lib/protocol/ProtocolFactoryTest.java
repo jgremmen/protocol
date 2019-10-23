@@ -17,8 +17,9 @@ package de.sayayi.lib.protocol;
 
 import de.sayayi.lib.protocol.ProtocolFactory.Constant;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.Set;
@@ -34,6 +35,7 @@ import static de.sayayi.lib.protocol.Tag.MatchCondition.NOT_EQUAL;
 import static de.sayayi.lib.protocol.Tag.MatchCondition.UNTIL;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -42,9 +44,60 @@ import static org.junit.Assert.fail;
 /**
  * @author Jeroen Gremmen
  */
-@SuppressWarnings({ "ConstantConditions" })
+@SuppressWarnings({ "ConstantConditions", "ResultOfMethodCallIgnored" })
 public class ProtocolFactoryTest
 {
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateEmptyTag() {
+    new GenericProtocolFactory().createTag("");
+  }
+
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateDuplicateTag()
+  {
+    GenericProtocolFactory factory = new GenericProtocolFactory();
+    factory.createTag("tag");
+    factory.createTag("tag");
+  }
+
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testModifyEmptyTag() {
+    new GenericProtocolFactory().modifyTag("");
+  }
+
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testModifyUnknownTag() {
+    new GenericProtocolFactory().modifyTag("unknown");
+  }
+
+
+  @Test
+  public void testModifyKnownTag()
+  {
+    GenericProtocolFactory factory = new GenericProtocolFactory();
+    factory.createTag("tag");
+
+    assertNotNull(factory.modifyTag("tag"));
+  }
+
+
+  @Test
+  public void testDefaultParameters()
+  {
+    GenericProtocolFactory factory = new GenericProtocolFactory() {
+      {
+        defaultParameterValues.put("name", "protocol factory");
+      }
+    };
+
+    assertTrue(factory.getDefaultParameterValues().containsKey("factoryid"));
+    assertEquals("protocol factory", factory.getDefaultParameterValues().get("name"));
+  }
+
+
   @Test
   public void testIsRegisteredTag()
   {
@@ -112,7 +165,7 @@ public class ProtocolFactoryTest
     }
 
     try {
-      //noinspection ResultOfMethodCallIgnored,PatternValidation
+      // noinspection ResultOfMethodCallIgnored
       factory.hasTag("");
       fail();
     } catch(Exception ignore) {
@@ -140,7 +193,7 @@ public class ProtocolFactoryTest
     }
 
     try {
-      //noinspection ResultOfMethodCallIgnored,PatternValidation
+      // noinspection ResultOfMethodCallIgnored
       factory.getTagByName("");
       fail();
     } catch(Exception ignore) {
@@ -205,5 +258,19 @@ public class ProtocolFactoryTest
     iterator.next();  // protocol start
 
     assertEquals("msg(ok)", ((MessageEntry<String>)iterator.next()).getMessage());
+  }
+
+
+  @Test
+  public void testToString()
+  {
+    GenericProtocolFactory factory = new GenericProtocolFactory();
+    factory.createTag("XYZ1");
+    factory.createTag("XYZ2");
+
+    String s = factory.toString();
+
+    assertTrue(s.contains("XYZ1"));
+    assertTrue(s.contains("XYZ2"));
   }
 }
