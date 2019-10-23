@@ -81,7 +81,8 @@ public abstract class HtmlProtocolFormatter<M> implements InitializableProtocolF
 
     indent(message.getDepth());
     html.append("<li class=\"level-").append(levelToHtmlClass(message.getLevel()))
-        .append("\"><span class=\"").append(message.isGroupMessage() ? "group-message " : "").append("message\">")
+        .append("\"><span class=\"")
+        .append(message.isGroupMessage() ? "group-message " : "").append("message\">")
         .append(HtmlEscape.escapeHtml5(msg)).append("</span></li>\n");
   }
 
@@ -95,7 +96,8 @@ public abstract class HtmlProtocolFormatter<M> implements InitializableProtocolF
 
     indent(depth - 1);
     html.append("<li class=\"level-").append(levelToHtmlClass(message.getLevel()))
-        .append("\"><span class=\"group\">").append(HtmlEscape.escapeHtml5(msg)).append("</span></li>\n");
+        .append("\"><span class=\"group\">").append(HtmlEscape.escapeHtml5(msg))
+        .append("</span></li>\n");
 
     indent(depth - 1);
     html.append("<ul class=\"depth-").append(depth).append(" group\">\n");
