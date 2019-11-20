@@ -372,7 +372,7 @@ public interface Protocol<M> extends ProtocolQuery
    *
    * @param <M>  internal message object type
    */
-  interface MessageParameterBuilder<M> extends Protocol<M>
+  interface MessageParameterBuilder<M> extends Protocol<M>, GenericMessage<M>
   {
     /**
      * <p>
