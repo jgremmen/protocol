@@ -27,6 +27,7 @@ import static de.sayayi.lib.protocol.Tag.MatchCondition.AT_LEAST;
  */
 public class ProtocolTest
 {
+  @SuppressWarnings("squid:S2699")
   @Test
   public void testBasics()
   {

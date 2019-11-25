@@ -105,6 +105,24 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
+  public @NotNull M getMessage() {
+    return message.message;
+  }
+
+
+  @Override
+  public long getTimeMillis() {
+    return message.timeMillis;
+  }
+
+
+  @Override
+  public @NotNull Map<String,Object> getParameterValues() {
+    return message.getParameterValues();
+  }
+
+
+  @Override
   public @NotNull ProtocolFactory<M> getFactory() {
     return protocol.getFactory();
   }

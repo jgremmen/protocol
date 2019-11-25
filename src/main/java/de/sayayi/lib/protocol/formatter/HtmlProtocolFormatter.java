@@ -80,8 +80,10 @@ public abstract class HtmlProtocolFormatter<M> implements InitializableProtocolF
     String msg = formatMessage(message);
 
     indent(message.getDepth());
+
     html.append("<li class=\"level-").append(levelToHtmlClass(message.getLevel()))
-        .append("\"><span class=\"").append(message.isGroupMessage() ? "group-message " : "").append("message\">")
+        .append("\"><span class=\"")
+        .append(message.isGroupMessage() ? "group-message " : "").append("message\">")
         .append(HtmlEscape.escapeHtml5(msg)).append("</span></li>\n");
   }
 
@@ -89,15 +91,18 @@ public abstract class HtmlProtocolFormatter<M> implements InitializableProtocolF
   @Override
   public void groupStart(@NotNull GroupStartEntry<M> group)
   {
-    int depth = group.getDepth();
-    MessageWithLevel<M> message = group.getGroupHeader();
-    String msg = formatMessage(group.getGroupHeader());
+    final int depth = group.getDepth();
+    final MessageWithLevel<M> message = group.getGroupHeader();
+    final String msg = formatMessage(group.getGroupHeader());
 
     indent(depth - 1);
+
     html.append("<li class=\"level-").append(levelToHtmlClass(message.getLevel()))
-        .append("\"><span class=\"group\">").append(HtmlEscape.escapeHtml5(msg)).append("</span></li>\n");
+        .append("\"><span class=\"group\">").append(HtmlEscape.escapeHtml5(msg))
+        .append("</span></li>\n");
 
     indent(depth - 1);
+
     html.append("<ul class=\"depth-").append(depth).append(" group\">\n");
   }
 
@@ -106,6 +111,7 @@ public abstract class HtmlProtocolFormatter<M> implements InitializableProtocolF
   public void groupEnd(GroupEndEntry<M> groupEnd)
   {
     indent(groupEnd.getDepth() - 1);
+    
     html.append("</ul>\n");
   }
 
