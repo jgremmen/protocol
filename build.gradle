@@ -33,7 +33,7 @@ dependencies {
   compileOnly 'org.projectlombok:lombok:'
   compileOnly 'org.jetbrains:annotations:'
 
-  testCompile 'junit:junit:'
+  testImplementation 'junit:junit:'
 
   testCompileOnly 'org.jetbrains:annotations:'
 }
