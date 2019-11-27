@@ -167,6 +167,12 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
 
   @Override
+  public <R> R format(@NotNull ProtocolFormatter<M, R> formatter, @NotNull Level level) {
+    return format(formatter, level, factory.getDefaultTag());
+  }
+
+
+  @Override
   public <R> R format(@NotNull ProtocolFormatter<M, R> formatter, @NotNull Level level, @NotNull String... tagNames)
   {
     int tagCount = tagNames.length;

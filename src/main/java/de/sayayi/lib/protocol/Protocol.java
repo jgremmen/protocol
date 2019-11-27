@@ -182,6 +182,20 @@ public interface Protocol<M> extends ProtocolQuery
 
 
   /**
+   * Formats this protocol using the given {@code formatter} iterating over all elements matching {@code level}.
+   *
+   * @param formatter  protocol formatter to use for formatting this protocol
+   * @param level      level to match
+   * @param <R>        result type
+   *
+   * @return  formatted protocol, or {@code null}
+   */
+  @SuppressWarnings("unused")
+  @Contract(pure = true)
+  <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level);
+
+
+  /**
    * Formats this protocol using the given {@code formatter} iterating over all elements matching {@code level} and at
    * least one of the {@code tags}.
    *
