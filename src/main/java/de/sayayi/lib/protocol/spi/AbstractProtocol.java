@@ -196,7 +196,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   {
     // initialize formatter
     if (formatter instanceof InitializableProtocolFormatter)
-      ((InitializableProtocolFormatter)formatter).init(level, tags, countGroupDepth());
+      ((InitializableProtocolFormatter<M,R>)formatter).init(level, tags, countGroupDepth());
 
     for(Iterator<DepthEntry<M>> iterator = iterator(level, tags); iterator.hasNext();)
     {
@@ -230,7 +230,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
     for(ProtocolEntry<M> entry: entries)
       if (entry instanceof ProtocolGroupImpl)
-        depth = Math.max(depth, 1 + ((ProtocolGroupImpl)entry).countGroupDepth());
+        depth = Math.max(depth, 1 + ((ProtocolGroupImpl<M>)entry).countGroupDepth());
 
     return depth;
   }
