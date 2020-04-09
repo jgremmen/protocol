@@ -376,6 +376,10 @@ public interface Protocol<M> extends ProtocolQuery
      */
     @Contract("_ -> new")
     @NotNull MessageParameterBuilder<M> message(@NotNull String message);
+
+
+    @Contract("_ -> new")
+    @NotNull MessageParameterBuilder<M> withMessage(@NotNull M message);
   }
 
 

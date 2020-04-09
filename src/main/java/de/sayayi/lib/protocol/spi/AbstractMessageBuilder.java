@@ -114,6 +114,25 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
     if (message == null)
       throw new NullPointerException("message must not be null");
 
+    return message0(protocol.factory.processMessage(message));
+  }
+
+
+  @SuppressWarnings("squid:S2583")
+  @Override
+  public @NotNull P withMessage(@NotNull M message)
+  {
+    //noinspection ConstantConditions
+    if (message == null)
+      throw new NullPointerException("message must not be null");
+
+    return message0(message);
+  }
+
+
+  @SuppressWarnings("squid:S2583")
+  private @NotNull P message0(@NotNull M message)
+  {
     Set<Tag> resolvedTags = new HashSet<Tag>();
 
     // add implied dependencies
@@ -122,9 +141,8 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
         if (impliedTag.matches(level))
           resolvedTags.add(impliedTag);
 
-    AbstractProtocolFactory<M> factory = protocol.factory;
     ProtocolMessageEntry<M> msg = new ProtocolMessageEntry<M>(level, resolvedTags, throwable,
-        factory.processMessage(message), factory.defaultParameterValues);
+        message, protocol.factory.defaultParameterValues);
 
     protocol.entries.add(msg);
 
