@@ -111,7 +111,7 @@ public abstract class TreeProtocolFormatter<M> extends AbstractProtocolFormatter
   }
 
 
-  interface MessageFormatter<M>
+  public interface MessageFormatter<M>
   {
     String format(GenericMessage<M> message);
   }
