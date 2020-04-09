@@ -34,14 +34,8 @@ import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
 public class TechnicalProtocolFormatter<M> extends TreeProtocolFormatter<M>
     implements ConfiguredProtocolFormatter<M,String>
 {
-  private final Tag tag;
-
-
   @SuppressWarnings("WeakerAccess")
-  public TechnicalProtocolFormatter(@NotNull ProtocolFactory<M> factory)
-  {
-    tag = factory.getDefaultTag();
-
+  public TechnicalProtocolFormatter() {
     setMessageFormatter(new MessageFormatter<M>() {
       @Override
       public String format(GenericMessage<M> message) {
@@ -58,12 +52,12 @@ public class TechnicalProtocolFormatter<M> extends TreeProtocolFormatter<M>
 
 
   @Override
-  public @NotNull Tag[] getTags() {
-    return new Tag[] { tag };
+  public @NotNull Tag[] getTags(@NotNull ProtocolFactory<M> protocolFactory) {
+    return new Tag[] { protocolFactory.getDefaultTag() };
   }
 
 
   public static @NotNull <M> String format(@NotNull Protocol<M> protocol) {
-    return protocol.format(new TechnicalProtocolFormatter<M>(protocol.getFactory()));
+    return protocol.format(new TechnicalProtocolFormatter<M>());
   }
 }

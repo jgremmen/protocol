@@ -177,6 +177,12 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
+  public <R> R format(@NotNull ProtocolFormatter<M, R> formatter, @NotNull Level level) {
+    return protocol.format(formatter, level);
+  }
+
+
+  @Override
   public <R> R format(@NotNull ProtocolFormatter<M, R> formatter, @NotNull Level level, @NotNull String... tagNames) {
     return protocol.format(formatter, level, tagNames);
   }
