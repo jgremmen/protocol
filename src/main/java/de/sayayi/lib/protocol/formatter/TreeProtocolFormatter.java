@@ -18,7 +18,6 @@ package de.sayayi.lib.protocol.formatter;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol.GenericMessage;
 import de.sayayi.lib.protocol.ProtocolFormatter.InitializableProtocolFormatter;
-import de.sayayi.lib.protocol.ProtocolIterator.GroupEndEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.Tag;
@@ -32,7 +31,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Jeroen Gremmen
  */
-public abstract class TreeProtocolFormatter<M> implements InitializableProtocolFormatter<M,String>
+public abstract class TreeProtocolFormatter<M> extends AbstractProtocolFormatter<M,String>
+    implements InitializableProtocolFormatter<M,String>
 {
   private static final String GRAPH_ROOT_NODE_PREFIX = "\u25a0\u2500\u2500";
   private static final String GRAPH_MIDDLE_NODE_PREFIX = "\u251c\u2500\u2500";
@@ -63,16 +63,6 @@ public abstract class TreeProtocolFormatter<M> implements InitializableProtocolF
 
     prefixes = new String[estimatedGroupDepth + 1];
     prefixes[0] = "";
-  }
-
-
-  @Override
-  public void protocolStart() {
-  }
-
-
-  @Override
-  public void protocolEnd() {
   }
 
 
@@ -112,11 +102,6 @@ public abstract class TreeProtocolFormatter<M> implements InitializableProtocolF
     result.append(messageFormatter.format(group.getGroupHeader())).append('\n');
 
     prefixes[depth] = prefix + (group.isLast() ? GRAPH_LEVEL_SEPARATOR_EMPTY : GRAPH_LEVEL_SEPARATOR_BAR);
-  }
-
-
-  @Override
-  public void groupEnd(GroupEndEntry<M> groupEnd) {
   }
 
 

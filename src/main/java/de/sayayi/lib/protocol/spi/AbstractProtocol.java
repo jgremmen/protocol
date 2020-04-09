@@ -220,7 +220,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
   @Override
   public <R> R format(@NotNull ConfiguredProtocolFormatter<M,R> formatter) {
-    return format(formatter, formatter.getLevel(), formatter.getTags());
+    return format(formatter, formatter.getLevel(), formatter.getTags(factory));
   }
 
 

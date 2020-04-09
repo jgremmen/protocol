@@ -128,11 +128,13 @@ public interface ProtocolFormatter<M,R>
 
 
     /**
-     * Returns the tag to be used for formatting.
+     * Returns the tags to be used for formatting.
+     *
+     * @param protocolFactory  the protocol factory to be used for generating tags
      *
      * @return  tags, never {@code null}
      */
     @Contract(pure = true)
-    @NotNull Tag[] getTags();
+    @NotNull Tag[] getTags(@NotNull ProtocolFactory<M> protocolFactory);
   }
 }
