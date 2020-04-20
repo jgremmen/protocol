@@ -31,9 +31,7 @@ import lombok.Setter;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayDeque;
 import java.util.Arrays;
-import java.util.Deque;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -61,7 +59,10 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   private final boolean rootProtocol;
   private boolean finished;
 
-  protected final Deque<DepthEntry<M>> nextEntries = new ArrayDeque<DepthEntry<M>>(4);
+  // FIFO queue with maximum size 3
+  @SuppressWarnings("unchecked")
+  private final DepthEntry<M>[] nextEntries = new DepthEntry[4];
+  private int firstEntryIdx, lastEntryIdx;
 
 
   protected ProtocolStructureIterator(@NotNull Level level, @NotNull Tag[] tags, int depth,
@@ -74,13 +75,24 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     iterator = new VisibleEntryIterator(protocol.getEntries(level, tags).iterator());
 
     if (this.rootProtocol = rootProtocol)
-      nextEntries.add(new ProtocolStartImpl<M>());
+      addNextEntry(new ProtocolStartImpl<M>());
+  }
+
+
+  protected void addNextEntry(@NotNull DepthEntry<M> entry)
+  {
+    nextEntries[lastEntryIdx] = entry;
+    lastEntryIdx = (lastEntryIdx + 1) & 3;
+
+    // this should not happen, checking anyway
+    if (lastEntryIdx == firstEntryIdx)
+      throw new IllegalStateException();
   }
 
 
   @Override
   public boolean hasNext() {
-    return !nextEntries.isEmpty();
+    return firstEntryIdx != lastEntryIdx;
   }
 
 
@@ -101,14 +113,17 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     if (!hasNext())
       throw new NoSuchElementException();
 
-    DepthEntry<M> returnValue = nextEntries.remove();
+    final DepthEntry<M> entry = nextEntries[firstEntryIdx];
 
-    if (returnValue instanceof RankingDepthEntry)
-      previousVisibleEntry = (RankingDepthEntry<M>)returnValue;
+    nextEntries[firstEntryIdx] = null;
+    firstEntryIdx = (firstEntryIdx + 1) & 3;
+
+    if (entry instanceof RankingDepthEntry)
+      previousVisibleEntry = (RankingDepthEntry<M>)entry;
 
     prepareNextEntry();
 
-    return returnValue;
+    return entry;
   }
 
 
@@ -131,7 +146,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   protected void lastEntryEncountered()
   {
     if (rootProtocol)
-      nextEntries.add(new ProtocolEndImpl<M>());
+      addNextEntry(new ProtocolEndImpl<M>());
   }
 
 
@@ -144,7 +159,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
       {
         if (groupIterator.hasNext())
         {
-          nextEntries.add(groupIterator.next());
+          addNextEntry(groupIterator.next());
           return;
         }
         else
@@ -162,7 +177,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
         return;
       }
 
-      ProtocolEntry<M> protocolEntry = iterator.next();
+      final ProtocolEntry<M> protocolEntry = iterator.next();
 
       if (protocolEntry instanceof ProtocolGroupImpl)
       {
@@ -171,7 +186,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
         continue;
       }
 
-      nextEntries.add(new MessageEntryImpl<M>(depth, !hasEntryBefore, !iterator.hasNext(),
+      addNextEntry(new MessageEntryImpl<M>(depth, !hasEntryBefore, !iterator.hasNext(),
           (ProtocolMessageEntry<M>)protocolEntry));
       return;
     }
@@ -227,7 +242,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
         case SHOW_HEADER_ALWAYS:
           // header + messages, increase depth
           setDepth(depth + 1);
-          nextEntries.add(new GroupStartEntryImpl<M>(protocol.getGroupMessage(),
+          addNextEntry(new GroupStartEntryImpl<M>(protocol.getGroupMessage(),
               max(level, protocol.getHeaderLevel(level, tags)),
               protocol.getVisibleGroupEntryMessageCount(level, tags), depth + 1,
               !hasEntryBeforeGroup, !hasEntryAfterGroup));
@@ -238,7 +253,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
         case SHOW_HEADER_ONLY:
           // header only, no messages; remain at same depth
           setLastMessageOrGroupEncountered();
-          nextEntries.add(new GroupMessageEntryImpl<M>(depth, !hasEntryBeforeGroup, !hasEntryAfterGroup,
+          addNextEntry(new GroupMessageEntryImpl<M>(depth, !hasEntryBeforeGroup, !hasEntryAfterGroup,
               max(level, protocol.getHeaderLevel(level, tags)), protocol.getGroupMessage()));
           break;
 
@@ -258,7 +273,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     protected void lastEntryEncountered()
     {
       if (groupHeader)
-        nextEntries.add(new GroupEndEntryImpl<M>(getDepth()));
+        addNextEntry(new GroupEndEntryImpl<M>(getDepth()));
 
       super.lastEntryEncountered();
     }
