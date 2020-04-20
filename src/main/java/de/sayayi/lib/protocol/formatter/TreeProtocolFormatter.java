@@ -99,7 +99,7 @@ public abstract class TreeProtocolFormatter<M> extends AbstractProtocolFormatter
             .append(prefix).append(group.isLast() ? GRAPH_LAST_NODE_PREFIX : GRAPH_MIDDLE_NODE_PREFIX);
     }
 
-    result.append(messageFormatter.format(group.getGroupHeader())).append('\n');
+    result.append(messageFormatter.format(group.getGroupMessage())).append('\n');
 
     prefixes[depth] = prefix + (group.isLast() ? GRAPH_LEVEL_SEPARATOR_EMPTY : GRAPH_LEVEL_SEPARATOR_BAR);
   }

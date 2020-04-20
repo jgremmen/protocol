@@ -54,11 +54,11 @@ public interface ProtocolFactory<M>
 
 
   @Contract("_ -> new")
-  @NotNull TagBuilder createTag(@NotNull String name);
+  @NotNull TagBuilder<M> createTag(@NotNull String name);
 
 
   @Contract(pure = true, value = "_ -> new")
-  @NotNull TagBuilder modifyTag(@NotNull String name);
+  @NotNull TagBuilder<M> modifyTag(@NotNull String name);
 
 
   @Contract(pure = true)
@@ -136,15 +136,15 @@ public interface ProtocolFactory<M>
   interface TagBuilder<M> extends ProtocolFactory<M>
   {
     @Contract("_ -> this")
-    @NotNull TagBuilder dependsOn(@NotNull String ... tags);
+    @NotNull TagBuilder<M> dependsOn(@NotNull String ... tags);
 
 
     @Contract("_ -> this")
-    @NotNull TagBuilder implies(@NotNull String ... tags);
+    @NotNull TagBuilder<M> implies(@NotNull String ... tags);
 
 
     @Contract("_, _ -> this")
-    @NotNull TagBuilder match(@NotNull Tag.MatchCondition matchCondition, @NotNull Level matchLevel);
+    @NotNull TagBuilder<M> match(@NotNull Tag.MatchCondition matchCondition, @NotNull Level matchLevel);
 
 
     /**
