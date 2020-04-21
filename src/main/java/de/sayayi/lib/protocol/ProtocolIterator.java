@@ -183,7 +183,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
      * @return  always {@code true}
      */
     @Override
-    @Contract(pure = true)
+    @Contract(value = "-> true", pure = true)
     boolean isGroupMessage();
   }
 
@@ -211,7 +211,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
      */
     @Override
     @Contract(pure = true)
-    @NotNull MessageWithLevel<M> getGroupHeader();
+    @NotNull MessageWithLevel<M> getGroupMessage();
 
 
     /**

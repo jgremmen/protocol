@@ -599,6 +599,6 @@ public interface Protocol<M> extends ProtocolQuery
      * @return  group header message or {@code null}
      */
     @Contract(pure = true)
-    GenericMessage<M> getGroupHeader();
+    GenericMessage<M> getGroupMessage();
   }
 }

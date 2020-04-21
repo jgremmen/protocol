@@ -49,12 +49,8 @@ public abstract class HtmlProtocolFormatter<M> implements InitializableProtocolF
 
 
   @SuppressWarnings("WeakerAccess")
-  protected String levelToHtmlClass(Level level)
-  {
-    if (level instanceof Enum)
-      return ((Enum)level).name();
-
-    return level.toString();
+  protected String levelToHtmlClass(@NotNull Level level) {
+    return level.toString().toLowerCase();
   }
 
 
@@ -92,8 +88,8 @@ public abstract class HtmlProtocolFormatter<M> implements InitializableProtocolF
   public void groupStart(@NotNull GroupStartEntry<M> group)
   {
     final int depth = group.getDepth();
-    final MessageWithLevel<M> message = group.getGroupHeader();
-    final String msg = formatMessage(group.getGroupHeader());
+    final MessageWithLevel<M> message = group.getGroupMessage();
+    final String msg = formatMessage(group.getGroupMessage());
 
     indent(depth - 1);
 
@@ -111,7 +107,7 @@ public abstract class HtmlProtocolFormatter<M> implements InitializableProtocolF
   public void groupEnd(GroupEndEntry<M> groupEnd)
   {
     indent(groupEnd.getDepth() - 1);
-    
+
     html.append("</ul>\n");
   }
 
