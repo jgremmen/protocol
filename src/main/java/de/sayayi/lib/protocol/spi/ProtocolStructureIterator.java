@@ -140,7 +140,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   }
 
 
-  abstract void prepareNextEntry();
+  protected abstract void prepareNextEntry();
 
 
   protected void lastEntryEncountered()
@@ -212,7 +212,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
     @Override
-    void prepareNextEntry() {
+    protected void prepareNextEntry() {
       prepareNextEntry(hasPreviousVisibleEntry());
     }
   }
@@ -280,7 +280,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
     @Override
-    void prepareNextEntry()
+    protected void prepareNextEntry()
     {
       prepareNextEntry(hasPreviousVisibleEntry() && !forceFirst);
       forceFirst = false;
