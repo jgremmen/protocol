@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Jeroen Gremmen
+ * Copyright 2020 Jeroen Gremmen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,41 +16,26 @@
 package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.Level;
+import de.sayayi.lib.protocol.ProtocolQuery;
 import de.sayayi.lib.protocol.Tag;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 
 /**
  * @author Jeroen Gremmen
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-abstract class LevelHelper
+interface InternalProtocolQuery extends ProtocolQuery
 {
-  static Level max(Level l1, Level l2) {
-    return l1.severity() >= l2.severity() ? l1 : l2;
-  }
+  @Contract(pure = true)
+  boolean matches0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag... tags);
 
 
-  static Level min(Level l1, Level l2) {
-    return l1.severity() <= l2.severity() ? l1 : l2;
-  }
+  @Contract(pure = true)
+  boolean matches0(@NotNull Level levelLimit, @NotNull Level level);
 
 
-  static boolean matchLevelAndTags(@NotNull Level levelLimit, @NotNull Level level, Tag... tags) {
-    return levelLimit.severity() >= level.severity() && matchLevelAndTags(level, tags);
-  }
-
-
-  static boolean matchLevelAndTags(Level level, Tag... tags)
-  {
-    for(Tag tag: tags)
-      if (tag.matches(level))
-        return true;
-
-    return false;
-  }
+  @Contract(pure = true)
+  int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive, @NotNull Level level, @NotNull Tag ... tags);
 }

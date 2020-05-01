@@ -45,16 +45,16 @@ import java.util.List;
 /**
  * @author Jeroen Gremmen
  */
-abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implements Protocol<M>
+abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implements Protocol<M>, InternalProtocolQuery
 {
   @Getter final AbstractProtocolFactory<M> factory;
-  final List<ProtocolEntry<M>> entries;
+  final List<InternalProtocolEntry<M>> entries;
 
 
   AbstractProtocol(@NotNull AbstractProtocolFactory<M> factory)
   {
     this.factory = factory;
-    entries = new ArrayList<ProtocolEntry<M>>(8);
+    entries = new ArrayList<InternalProtocolEntry<M>>(8);
   }
 
 
@@ -94,11 +94,11 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
 
   @Override
-  public boolean matches(@NotNull Level level, @NotNull Tag ... tags)
+  public boolean matches0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag... tags)
   {
-    if (LevelHelper.matchLevelAndTags(level, tags))
-      for(ProtocolEntry<M> entry: entries)
-        if (entry.matches(level, tags))
+    if (LevelHelper.matchLevelAndTags(levelLimit, level, tags))
+      for(InternalProtocolEntry<M> entry: entries)
+        if (entry.matches0(levelLimit, level, tags))
           return true;
 
     return false;
@@ -118,37 +118,46 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
 
   @Override
-  public boolean matches(@NotNull Level level)
+  public boolean matches0(@NotNull Level levelLimit, @NotNull Level level)
   {
-    for(ProtocolEntry<M> entry: entries)
-      if (entry.matches(level))
-        return true;
+    if (levelLimit.severity() >= level.severity())
+      for(InternalProtocolEntry<M> entry: entries)
+        if (entry.matches0(levelLimit, level))
+          return true;
 
     return false;
   }
 
 
-  @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag ... tags)
+  @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag ... tags)
   {
-    List<ProtocolEntry<M>> filteredEntries = new ArrayList<ProtocolEntry<M>>();
+    final List<ProtocolEntry<M>> filteredEntries = new ArrayList<ProtocolEntry<M>>();
 
-    if (LevelHelper.matchLevelAndTags(level, tags))
-      for(ProtocolEntry<M> entry: entries)
-        if (entry.matches(level, tags))
-          filteredEntries.add(entry);
+    if (LevelHelper.matchLevelAndTags(levelLimit, level, tags))
+      for(InternalProtocolEntry<M> entry: entries)
+        if (entry.matches0(levelLimit, level, tags))
+        {
+          if (entry instanceof InternalProtocolEntry.Message)
+            filteredEntries.add(ProtocolMessageEntryAdapter.from(levelLimit, (InternalProtocolEntry.Message<M>)entry));
+          else if (entry instanceof InternalProtocolEntry.Group)
+            filteredEntries.add(ProtocolGroupEntryAdapter.from(levelLimit, (InternalProtocolEntry.Group<M>)entry));
+          else
+            filteredEntries.add(entry);
+        }
 
     return filteredEntries;
   }
 
 
   @Override
-  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull Tag ... tags)
+  public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive, @NotNull Level level,
+                                   @NotNull Tag... tags)
   {
     int count = 0;
 
-    if (LevelHelper.matchLevelAndTags(level, tags))
-      for(ProtocolEntry<M> entry: entries)
-        count += entry.getVisibleEntryCount(recursive, level, tags);
+    if (LevelHelper.matchLevelAndTags(levelLimit, level, tags))
+      for(InternalProtocolEntry<M> entry: entries)
+        count += entry.getVisibleEntryCount0(levelLimit, recursive, level, tags);
 
     return count;
   }
@@ -158,7 +167,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   public @NotNull ProtocolGroup<M> createGroup()
   {
     @SuppressWarnings("unchecked")
-    ProtocolGroupImpl<M> group = new ProtocolGroupImpl<M>((AbstractProtocol<M,ProtocolMessageBuilder<M>>)this);
+    final ProtocolGroupImpl<M> group = new ProtocolGroupImpl<M>((AbstractProtocol<M,ProtocolMessageBuilder<M>>)this);
 
     entries.add(group);
 
@@ -167,13 +176,13 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
 
   @Override
-  public <R> R format(@NotNull ProtocolFormatter<M, R> formatter, @NotNull Level level) {
+  public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level) {
     return format(formatter, level, factory.getDefaultTag());
   }
 
 
   @Override
-  public <R> R format(@NotNull ProtocolFormatter<M, R> formatter, @NotNull Level level, @NotNull String... tagNames)
+  public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level, @NotNull String... tagNames)
   {
     int tagCount = tagNames.length;
     Tag[] tags = new Tag[tagCount];
