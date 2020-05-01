@@ -112,7 +112,7 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
       s.append(tag.getName());
     }
 
-    s.append("},message=").append(message);
+    s.append("},message=").append(message.getMessage());
 
     final Map<String,Object> parameterValues = getParameterValues();
     if (!parameterValues.isEmpty())

@@ -123,7 +123,8 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     if (entry instanceof RankingDepthEntry)
       previousVisibleEntry = (RankingDepthEntry<M>)entry;
 
-    prepareNextEntry();
+    if (!hasNext())
+      prepareNextEntry();
 
     return entry;
   }
@@ -189,7 +190,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
       }
 
       addNextEntry(new MessageEntryImpl<M>(depth, !hasEntryBefore, !iterator.hasNext(),
-          (ProtocolMessageEntry<M>)protocolEntry));
+          (Protocol.Message<M>)protocolEntry));
       return;
     }
   }
@@ -381,7 +382,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
     @Override
     public String toString() {
-      return "Message[depth=" + depth + ",first=" + first + ",last=" + last + ',' + message + ']';
+      return "MessageEntry[depth=" + depth + ",first=" + first + ",last=" + last + ',' + message + ']';
     }
   }
 
@@ -444,7 +445,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     @Override
     public String toString()
     {
-      return "GroupMessage[depth=" + depth + ",first=" + first + ",last=" + last + ",level=" + level +
+      return "GroupMessageEntry[depth=" + depth + ",first=" + first + ",last=" + last + ",level=" + level +
              ',' + groupMessage + ']';
     }
   }
@@ -547,7 +548,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
     @Override
     public String toString() {
-      return "GroupStart[depth=" + depth + ",level=" + groupMessage.getLevel() + ",messages=" + messageCount + ']';
+      return "GroupStartEntry[depth=" + depth + ",level=" + groupMessage.getLevel() + ",messages=" + messageCount + ']';
     }
   }
 
@@ -563,7 +564,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
     @Override
     public String toString() {
-      return "GroupEnd[depth=" + depth + ']';
+      return "GroupEndEntry[depth=" + depth + ']';
     }
   }
 }
