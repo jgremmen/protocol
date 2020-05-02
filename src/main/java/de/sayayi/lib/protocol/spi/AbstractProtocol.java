@@ -20,11 +20,11 @@ import de.sayayi.lib.protocol.Level.Shared;
 import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.ProtocolEntry;
+import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolFormatter.InitializableProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolGroup;
-import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupEndEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
@@ -47,11 +47,11 @@ import java.util.List;
  */
 abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implements Protocol<M>, InternalProtocolQuery
 {
-  @Getter final AbstractProtocolFactory<M> factory;
+  @Getter final ProtocolFactory<M> factory;
   final List<InternalProtocolEntry<M>> entries;
 
 
-  AbstractProtocol(@NotNull AbstractProtocolFactory<M> factory)
+  protected AbstractProtocol(@NotNull ProtocolFactory<M> factory)
   {
     this.factory = factory;
     entries = new ArrayList<InternalProtocolEntry<M>>(8);
@@ -137,12 +137,10 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
       for(InternalProtocolEntry<M> entry: entries)
         if (entry.matches0(levelLimit, level, tags))
         {
-          if (entry instanceof InternalProtocolEntry.Message)
-            filteredEntries.add(ProtocolMessageEntryAdapter.from(levelLimit, (InternalProtocolEntry.Message<M>)entry));
-          else if (entry instanceof InternalProtocolEntry.Group)
+          if (entry instanceof InternalProtocolEntry.Group)
             filteredEntries.add(ProtocolGroupEntryAdapter.from(levelLimit, (InternalProtocolEntry.Group<M>)entry));
           else
-            filteredEntries.add(entry);
+            filteredEntries.add(ProtocolMessageEntryAdapter.from(levelLimit, (InternalProtocolEntry.Message<M>)entry));
         }
 
     return filteredEntries;
@@ -167,7 +165,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   public @NotNull ProtocolGroup<M> createGroup()
   {
     @SuppressWarnings("unchecked")
-    final ProtocolGroupImpl<M> group = new ProtocolGroupImpl<M>((AbstractProtocol<M,ProtocolMessageBuilder<M>>)this);
+    final ProtocolGroupImpl<M> group = new ProtocolGroupImpl<M>(this);
 
     entries.add(group);
 
@@ -217,7 +215,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
         formatter.protocolEnd();
       else if (entry instanceof MessageEntry)
         formatter.message((MessageEntry<M>)entry);
-      else if (entry instanceof ProtocolIterator.GroupStartEntry)
+      else if (entry instanceof GroupStartEntry)
         formatter.groupStart((GroupStartEntry<M>)entry);
       else if (entry instanceof GroupEndEntry)
         formatter.groupEnd((GroupEndEntry<M>)entry);

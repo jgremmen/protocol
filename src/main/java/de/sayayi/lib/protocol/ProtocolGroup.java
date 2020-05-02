@@ -98,7 +98,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
    * </p>
    * <p>
    *   Messages returned by the protocol iterator or passed to formatting methods during formatting, will respect
-   *   the limit set by this method. References to the message itself will show the real severity level.
+   *   the limit set by this method. References to the message itself however will show the real severity level.
    * </p>
    *
    * @param level  the highest level propagated for messages in this group, never {@code null}
@@ -168,10 +168,12 @@ public interface ProtocolGroup<M> extends Protocol<M>
   /**
    * Returns the protocol instance this protocol group belongs to.
    *
-   * @return  protocol root instance
+   * @return  protocol root instance, never {@code null}
    */
   @Contract(pure = true)
   @NotNull Protocol<M> getRootProtocol();
+
+
 
 
   /**
@@ -209,6 +211,8 @@ public interface ProtocolGroup<M> extends Protocol<M>
     @Contract("_ -> new")
     @NotNull MessageParameterBuilder<M> message(@NotNull String message);
   }
+
+
 
 
   /**
@@ -251,6 +255,8 @@ public interface ProtocolGroup<M> extends Protocol<M>
     @Contract("_, _ -> this")
     @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, Object value);
   }
+
+
 
 
   /**

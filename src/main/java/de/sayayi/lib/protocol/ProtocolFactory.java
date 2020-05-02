@@ -15,6 +15,8 @@
  */
 package de.sayayi.lib.protocol;
 
+import de.sayayi.lib.protocol.Tag.MatchCondition;
+
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -122,10 +124,12 @@ public interface ProtocolFactory<M>
    *
    * @param message  message, not {@code null}
    *
-   * @return  internal representation for {@code message}
+   * @return  internal representation for {@code message}, never {@code null}
    */
   @Contract(pure = true)
-  M processMessage(@NotNull String message);
+  @NotNull M processMessage(@NotNull String message);
+
+
 
 
   /**
@@ -144,7 +148,7 @@ public interface ProtocolFactory<M>
 
 
     @Contract("_, _ -> this")
-    @NotNull TagBuilder<M> match(@NotNull Tag.MatchCondition matchCondition, @NotNull Level matchLevel);
+    @NotNull TagBuilder<M> match(@NotNull MatchCondition matchCondition, @NotNull Level matchLevel);
 
 
     /**

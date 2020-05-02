@@ -84,6 +84,8 @@ public interface ProtocolFormatter<M,R>
   R getResult();
 
 
+
+
   /**
    * {@inheritDoc}
    *
@@ -111,6 +113,8 @@ public interface ProtocolFormatter<M,R>
      */
     void init(@NotNull Level level, @NotNull Tag[] tags, int estimatedGroupDepth);
   }
+
+
 
 
   /**

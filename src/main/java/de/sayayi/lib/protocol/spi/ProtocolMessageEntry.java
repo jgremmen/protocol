@@ -49,12 +49,6 @@ final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements
 
 
   @Override
-  public @NotNull Level getLevel0(@NotNull Level levelLimit) {
-    return LevelHelper.min(level, levelLimit);
-  }
-
-
-  @Override
   public @NotNull Set<Tag> getTags() {
     return Collections.unmodifiableSet(tags);
   }

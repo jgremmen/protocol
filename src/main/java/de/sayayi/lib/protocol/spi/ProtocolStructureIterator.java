@@ -153,7 +153,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   }
 
 
-  @SuppressWarnings("squid:S3776")
+  @SuppressWarnings({ "squid:S3776", "unchecked" })
   void prepareNextEntry(boolean hasEntryBefore)
   {
     while(!hasNext())
@@ -304,7 +304,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     @Getter final int depth;
 
 
-    DepthEntryImpl(int depth) {
+    protected DepthEntryImpl(int depth) {
       this.depth = depth;
     }
   }
@@ -318,7 +318,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     @Getter final boolean last;
 
 
-    RankingDepthEntryImpl(int depth, boolean first, boolean last)
+    protected RankingDepthEntryImpl(int depth, boolean first, boolean last)
     {
       super(depth);
 
@@ -335,7 +335,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     final Protocol.Message<M> message;
 
 
-    MessageEntryImpl(int depth, boolean first, boolean last, @NotNull Protocol.Message<M> message)
+    private MessageEntryImpl(int depth, boolean first, boolean last, @NotNull Protocol.Message<M> message)
     {
       super(depth, first, last);
 
@@ -395,7 +395,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     final GenericMessage<M> groupMessage;
 
 
-    GroupMessageEntryImpl(int depth, boolean first, boolean last, Level level, GenericMessage<M> groupMessage)
+    private GroupMessageEntryImpl(int depth, boolean first, boolean last, Level level, GenericMessage<M> groupMessage)
     {
       super(depth, first, last);
 
@@ -459,7 +459,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     private ProtocolEntry<M> nextEntry;
 
 
-    VisibleEntryIterator(Iterator<ProtocolEntry<M>> iterator)
+    private VisibleEntryIterator(Iterator<ProtocolEntry<M>> iterator)
     {
       this.iterator = iterator;
 
@@ -514,14 +514,20 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   }
 
 
+
+
   private static class ProtocolStartImpl<M> extends RootProtocolEntry<M> implements ProtocolStart<M> {
     @Override public String toString() { return "ProtocolStart"; }
   }
 
 
+
+
   private static class ProtocolEndImpl<M> extends RootProtocolEntry<M> implements ProtocolEnd<M> {
     @Override public String toString() { return "ProtocolEnd"; }
   }
+
+
 
 
   private static class GroupStartEntryImpl<M> extends RankingDepthEntryImpl<M> implements GroupStartEntry<M>
@@ -530,7 +536,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     @Getter private final int messageCount;
 
 
-    GroupStartEntryImpl(final GenericMessage<M> groupMessage, final Level level, int messageCount, int depth,
+    private GroupStartEntryImpl(final GenericMessage<M> groupMessage, final Level level, int messageCount, int depth,
                         boolean first, boolean last)
     {
       super(depth, first, last);
@@ -557,7 +563,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
   private static class GroupEndEntryImpl<M> extends DepthEntryImpl<M> implements GroupEndEntry<M>
   {
-    GroupEndEntryImpl(int depth) {
+    private GroupEndEntryImpl(int depth) {
       super(depth);
     }
 

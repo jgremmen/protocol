@@ -17,7 +17,7 @@ package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.ProtocolEntry;
-import de.sayayi.lib.protocol.ProtocolGroup;
+import de.sayayi.lib.protocol.ProtocolGroup.Visibility;
 import de.sayayi.lib.protocol.Tag;
 
 import org.jetbrains.annotations.Contract;
@@ -31,10 +31,7 @@ import java.util.List;
  */
 interface InternalProtocolEntry<M> extends ProtocolEntry<M>, InternalProtocolQuery
 {
-  interface Message<M> extends ProtocolEntry.Message<M>, InternalProtocolEntry<M>
-  {
-    @Contract(pure = true)
-    @NotNull Level getLevel0(@NotNull Level levelLimit);
+  interface Message<M> extends ProtocolEntry.Message<M>, InternalProtocolEntry<M> {
   }
 
 
@@ -45,11 +42,11 @@ interface InternalProtocolEntry<M> extends ProtocolEntry<M>, InternalProtocolQue
 
 
     @Contract(pure = true)
-    ProtocolGroup.Visibility getVisibility();
+    Visibility getVisibility();
 
 
     @Contract(pure = true)
-    ProtocolGroup.Visibility getEffectiveVisibility();
+    Visibility getEffectiveVisibility();
 
 
     @Contract(pure = true, value = "_, _, _ -> new")

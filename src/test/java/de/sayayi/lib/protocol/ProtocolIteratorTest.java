@@ -124,7 +124,7 @@ public class ProtocolIteratorTest
 
     protocol.createGroup().setGroupMessage("grp #1, header")
                           .debug().message("grp #1, msg #1")
-            .getGroupParent()
+            .getParent()
             .createGroup().setGroupMessage("grp #2, header").setVisibility(FLATTEN_ON_SINGLE_ENTRY)
                           .debug().message("grp #2, msg #1");
 

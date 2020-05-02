@@ -18,6 +18,7 @@ package de.sayayi.lib.protocol.spi;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
+import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.Tag;
 
@@ -42,7 +43,7 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
   private final int id;
 
 
-  ProtocolImpl(@NotNull AbstractProtocolFactory<M> factory)
+  ProtocolImpl(@NotNull ProtocolFactory<M> factory)
   {
     super(factory);
 
@@ -51,7 +52,7 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
 
 
   @Override
-  public Protocol<M> getGroupParent() {
+  public Protocol<M> getParent() {
     return null;
   }
 

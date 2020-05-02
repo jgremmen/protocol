@@ -48,7 +48,7 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
   private static final AtomicInteger PROTOCOL_GROUP_ID = new AtomicInteger(0);
 
 
-  private final AbstractProtocol<M,Protocol.ProtocolMessageBuilder<M>> parent;
+  @Getter private final Protocol<M> parent;
 
   @EqualsAndHashCode.Include
   @Getter private final int id;
@@ -58,9 +58,9 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
   @Getter private GroupMessage groupMessage;
 
 
-  ProtocolGroupImpl(@NotNull AbstractProtocol<M,Protocol.ProtocolMessageBuilder<M>> parent)
+  ProtocolGroupImpl(@NotNull Protocol<M> parent)
   {
-    super(parent.factory);
+    super(parent.getFactory());
 
     id = PROTOCOL_GROUP_ID.incrementAndGet();
 
@@ -68,12 +68,6 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
 
     levelLimit = HIGHEST;
     visibility = SHOW_HEADER_IF_NOT_EMPTY;
-  }
-
-
-  @Override
-  public Protocol<M> getGroupParent() {
-    return parent;
   }
 
 
@@ -274,7 +268,6 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
   }
 
 
-  @SuppressWarnings("unchecked")
   @Override
   public @NotNull Protocol<M> getRootProtocol() {
     return (parent instanceof ProtocolGroup) ? ((ProtocolGroup<M>)parent).getRootProtocol() : parent;
@@ -335,11 +328,13 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
   }
 
 
+
+
   private class MessageBuilder
       extends AbstractMessageBuilder<M,ProtocolGroup.ProtocolMessageBuilder<M>,ProtocolGroup.MessageParameterBuilder<M>>
       implements ProtocolGroup.ProtocolMessageBuilder<M>
   {
-    MessageBuilder(@NotNull Level level) {
+    private MessageBuilder(@NotNull Level level) {
       super(ProtocolGroupImpl.this, level);
     }
 
@@ -352,10 +347,12 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
   }
 
 
+
+
   private class GroupMessage extends AbstractGenericMessage<M>
   {
-    GroupMessage(@NotNull M message) {
-      super(message, factory.defaultParameterValues);
+    private GroupMessage(@NotNull M message) {
+      super(message, factory.getDefaultParameterValues());
     }
 
 
@@ -372,11 +369,13 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
   }
 
 
+
+
   private class ParameterBuilderImpl
       extends AbstractParameterBuilder<M,ProtocolGroup.MessageParameterBuilder<M>,ProtocolGroup.ProtocolMessageBuilder<M>>
       implements ProtocolGroup.MessageParameterBuilder<M>
   {
-    ParameterBuilderImpl(AbstractGenericMessage<M> message) {
+    private ParameterBuilderImpl(AbstractGenericMessage<M> message) {
       super(ProtocolGroupImpl.this, message);
     }
 

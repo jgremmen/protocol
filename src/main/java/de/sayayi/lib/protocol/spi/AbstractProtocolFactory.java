@@ -271,7 +271,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
 
     @Override
-    public M processMessage(@NotNull String message) {
+    public @NotNull M processMessage(@NotNull String message) {
       return AbstractProtocolFactory.this.processMessage(message);
     }
   }

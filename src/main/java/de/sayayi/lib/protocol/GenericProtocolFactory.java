@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 public class GenericProtocolFactory extends AbstractProtocolFactory<String>
 {
   @Override
-  public String processMessage(@NotNull String message) {
+  public @NotNull String processMessage(@NotNull String message) {
     return message;
   }
 }
