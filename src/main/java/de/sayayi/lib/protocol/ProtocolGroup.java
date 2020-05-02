@@ -77,6 +77,41 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
   /**
+   * Returns the level limit valid for this group.
+   *
+   * @return  level limit, never {@code null}
+   *
+   * @see #setLevelLimit(Level)
+   */
+  @Contract(pure = true)
+  @NotNull Level getLevelLimit();
+
+
+  /**
+   * <p>
+   *   Sets the highest level for this protocol group. The default setting is {@link Level.Shared#HIGHEST}.
+   * </p>
+   * <p>
+   *   The severity for messages in this protocol group are limited to {@code level}. If a message has a higher
+   *   severity its level will equal to the limit set by this method. If a message has a lower severity level,
+   *   the level is not modified.
+   * </p>
+   * <p>
+   *   Messages returned by the protocol iterator or passed to formatting methods during formatting, will respect
+   *   the limit set by this method. References to the message itself however will show the real severity level.
+   * </p>
+   *
+   * @param level  the highest level propagated for messages in this group, never {@code null}
+   *
+   * @return  this protocol group instance
+   *
+   * @see #getLevelLimit()
+   */
+  @Contract("_ -> this")
+  @NotNull ProtocolGroup<M> setLevelLimit(@NotNull Level level);
+
+
+  /**
    * Sets a group header message and initiates a parameter builder which allows configuring parameter values for the
    * message.
    *
@@ -133,10 +168,12 @@ public interface ProtocolGroup<M> extends Protocol<M>
   /**
    * Returns the protocol instance this protocol group belongs to.
    *
-   * @return  protocol root instance
+   * @return  protocol root instance, never {@code null}
    */
   @Contract(pure = true)
   @NotNull Protocol<M> getRootProtocol();
+
+
 
 
   /**
@@ -174,6 +211,8 @@ public interface ProtocolGroup<M> extends Protocol<M>
     @Contract("_ -> new")
     @NotNull MessageParameterBuilder<M> message(@NotNull String message);
   }
+
+
 
 
   /**
@@ -216,6 +255,8 @@ public interface ProtocolGroup<M> extends Protocol<M>
     @Contract("_, _ -> this")
     @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, Object value);
   }
+
+
 
 
   /**

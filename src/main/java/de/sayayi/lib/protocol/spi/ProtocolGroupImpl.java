@@ -18,7 +18,6 @@ package de.sayayi.lib.protocol.spi;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolEntry;
-import de.sayayi.lib.protocol.ProtocolEntry.Group;
 import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.ProtocolGroup.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.ProtocolIterator;
@@ -33,6 +32,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
+import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_IF_NOT_EMPTY;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ONLY;
 
@@ -42,34 +43,31 @@ import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ONLY;
  */
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, doNotUseGetters = true, callSuper = false)
 final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
-    implements ProtocolGroup<M>, Group<M>
+    implements ProtocolGroup<M>, InternalProtocolEntry.Group<M>
 {
   private static final AtomicInteger PROTOCOL_GROUP_ID = new AtomicInteger(0);
 
 
-  private final AbstractProtocol<M,Protocol.ProtocolMessageBuilder<M>> parent;
+  @Getter private final Protocol<M> parent;
 
   @EqualsAndHashCode.Include
-  private final int id;
+  @Getter private final int id;
 
+  @Getter private Level levelLimit;
   @Getter private Visibility visibility;
   @Getter private GroupMessage groupMessage;
 
 
-  ProtocolGroupImpl(@NotNull AbstractProtocol<M,Protocol.ProtocolMessageBuilder<M>> parent)
+  ProtocolGroupImpl(@NotNull Protocol<M> parent)
   {
-    super(parent.factory);
+    super(parent.getFactory());
 
     id = PROTOCOL_GROUP_ID.incrementAndGet();
 
     this.parent = parent;
+
+    levelLimit = HIGHEST;
     visibility = SHOW_HEADER_IF_NOT_EMPTY;
-  }
-
-
-  @Override
-  public Protocol<M> getGroupParent() {
-    return parent;
   }
 
 
@@ -92,8 +90,21 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
   }
 
 
+  @SuppressWarnings("ConstantConditions")
   @Override
-  public boolean isHeaderVisible(@NotNull Level level, @NotNull Tag ... tags)
+  public @NotNull ProtocolGroup<M> setLevelLimit(@NotNull Level level)
+  {
+    if (level == null)
+      throw new NullPointerException("level must not be null");
+
+    levelLimit = level;
+
+    return this;
+  }
+
+
+  @Override
+  public boolean isHeaderVisible0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag... tags)
   {
     if (groupMessage != null)
       switch(visibility)
@@ -107,10 +118,10 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
           return true;
 
         case SHOW_HEADER_IF_NOT_EMPTY:
-          return matches(level, tags);
+          return matches0(levelLimit, level, tags);
 
         case FLATTEN_ON_SINGLE_ENTRY:
-          return super.getVisibleEntryCount(true, level, tags) > 1;
+          return super.getVisibleEntryCount0(LevelHelper.min(this.levelLimit, levelLimit),true, level, tags) > 1;
       }
 
     return false;
@@ -118,11 +129,20 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
 
 
   @Override
-  public @NotNull Level getHeaderLevel(@NotNull Level level, @NotNull Tag ... tags)
-  {
-    Level headerLevel = Level.Shared.LOWEST;
+  public boolean isHeaderVisible(@NotNull Level level, @NotNull Tag ... tags) {
+    return isHeaderVisible0(levelLimit, level, tags);
+  }
 
-    for(ProtocolEntry<M> entry: getEntries(level, tags))
+
+  @NotNull
+  @Override
+  public Level getHeaderLevel0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag... tags)
+  {
+    Level headerLevel = LOWEST;
+
+    levelLimit = LevelHelper.min(this.levelLimit, levelLimit);
+
+    for(ProtocolEntry<M> entry: getEntries(levelLimit, level, tags))
     {
       Level protocolEntryLevel;
 
@@ -134,47 +154,67 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
         continue;
 
       headerLevel = LevelHelper.max(headerLevel, protocolEntryLevel);
+
+      if (headerLevel.severity() > levelLimit.severity())
+        return levelLimit;
     }
 
-    return headerLevel;
+    return LevelHelper.min(levelLimit, headerLevel);
+  }
+
+
+  @Override
+  public @NotNull Level getHeaderLevel(@NotNull Level level, @NotNull Tag ... tags) {
+    return getHeaderLevel0(levelLimit, level, tags);
+  }
+
+
+  @NotNull
+  @Override
+  public List<ProtocolEntry<M>> getEntries0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag... tags)
+  {
+    levelLimit = LevelHelper.min(this.levelLimit, levelLimit);
+
+    return levelLimit.severity() >= level.severity() && getEffectiveVisibility().isShowEntries()
+        ? super.getEntries(levelLimit, level, tags) : Collections.<ProtocolEntry<M>>emptyList();
   }
 
 
   @Override
   public @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag ... tags) {
-    return getEffectiveVisibility().isShowEntries() ? super.getEntries(level, tags) : Collections.<ProtocolEntry<M>>emptyList();
+    return getEntries(levelLimit, level, tags);
   }
 
 
   @Override
-  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull Tag ... tags)
+  public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive, @NotNull Level level,
+                                   @NotNull Tag... tags)
   {
-    if (LevelHelper.matchLevelAndTags(level, tags))
+    levelLimit = LevelHelper.min(this.levelLimit, levelLimit);
+
+    if (levelLimit.severity() >= level.severity() && LevelHelper.matchLevelAndTags(level, tags))
     {
-      Visibility effectiveVisibility = getEffectiveVisibility();
+      final Visibility effectiveVisibility = getEffectiveVisibility();
 
       if (effectiveVisibility == SHOW_HEADER_ONLY)
         return 1;
 
-      int entryCount = super.getVisibleEntryCount(true, level, tags);
-      int recursiveEntryCountWithHeader = recursive ? entryCount + 1 : 1;
+      final int recursiveEntryCount = super.getVisibleEntryCount0(levelLimit, true, level, tags);
+      final int entryCountWithHeader = recursive ? recursiveEntryCount + 1 : 1;
 
       switch(effectiveVisibility)
       {
         case SHOW_HEADER_ALWAYS:
-          return recursiveEntryCountWithHeader;
+          return entryCountWithHeader;
 
         case SHOW_HEADER_IF_NOT_EMPTY:
-          return (entryCount == 0) ? 0 : recursiveEntryCountWithHeader;
+          return (recursiveEntryCount == 0) ? 0 : entryCountWithHeader;
 
         case FLATTEN_ON_SINGLE_ENTRY:
-          return (entryCount > 1) ? recursiveEntryCountWithHeader : entryCount;
+          return (recursiveEntryCount > 1) ? entryCountWithHeader : recursiveEntryCount;
 
         case FLATTEN:
-          return entryCount;
-
-        default:
-          break;
+          return recursiveEntryCount;
       }
     }
 
@@ -182,17 +222,17 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
   }
 
 
-  int getVisibleGroupEntryMessageCount(@NotNull Level level, @NotNull Tag ... tags)
-  {
-    switch(getEffectiveVisibility())
-    {
-      case HIDDEN:
-      case SHOW_HEADER_ONLY:
-        return 0;
+  @Override
+  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull Tag ... tags) {
+    return getVisibleEntryCount0(levelLimit, recursive, level, tags);
+  }
 
-      default:
-        return super.getVisibleEntryCount(false, level, tags);
-    }
+
+  @Override
+  public int getVisibleGroupEntryMessageCount0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag ... tags)
+  {
+    return getEffectiveVisibility().isShowEntries()
+        ? super.getVisibleEntryCount0(LevelHelper.min(this.levelLimit, levelLimit), false, level, tags) : 0;
   }
 
 
@@ -228,7 +268,6 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
   }
 
 
-  @SuppressWarnings("unchecked")
   @Override
   public @NotNull Protocol<M> getRootProtocol() {
     return (parent instanceof ProtocolGroup) ? ((ProtocolGroup<M>)parent).getRootProtocol() : parent;
@@ -236,36 +275,66 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
 
 
   @Override
+  public boolean matches0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag... tags)
+  {
+    levelLimit = LevelHelper.min(this.levelLimit, levelLimit);
+
+    return levelLimit.severity() >= level.severity() &&
+           getEffectiveVisibility().isShowEntries() &&
+           super.matches0(levelLimit, level, tags);
+  }
+
+
+  @Override
   public boolean matches(@NotNull Level level, @NotNull Tag ... tags) {
-    return getEffectiveVisibility().isShowEntries() && super.matches(level, tags);
+    return matches0(levelLimit, level, tags);
+  }
+
+
+  @Override
+  public boolean matches0(@NotNull Level levelLimit, @NotNull Level level)
+  {
+    levelLimit = LevelHelper.min(this.levelLimit, levelLimit);
+
+    return levelLimit.severity() >= level.severity() &&
+           getEffectiveVisibility().isShowEntries() &&
+           super.matches0(levelLimit, level);
   }
 
 
   @Override
   public boolean matches(@NotNull Level level) {
-    return getEffectiveVisibility().isShowEntries() && super.matches(level);
+    return matches0(levelLimit, level);
   }
 
 
   @Override
   public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag ... tags)
   {
-    return new ProtocolStructureIterator.ForGroup<M>(level, tags, 0,this, false,
-        false, true);
+    return new ProtocolStructureIterator.ForGroup<M>(levelLimit, level, tags, 0,this,
+        false, false, true);
   }
 
 
   @Override
-  public String toString() {
-    return "ProtocolGroup[id=" + id + ",visibility=" + visibility + ']';
+  public String toString()
+  {
+    final StringBuilder s = new StringBuilder("ProtocolGroup[id=").append(id).append(",visibility=").append(visibility);
+
+    if (levelLimit.severity() < HIGHEST.severity())
+      s.append(",levelLimit=").append(levelLimit);
+
+    return s.append(']').toString();
   }
+
+
 
 
   private class MessageBuilder
       extends AbstractMessageBuilder<M,ProtocolGroup.ProtocolMessageBuilder<M>,ProtocolGroup.MessageParameterBuilder<M>>
       implements ProtocolGroup.ProtocolMessageBuilder<M>
   {
-    MessageBuilder(@NotNull Level level) {
+    private MessageBuilder(@NotNull Level level) {
       super(ProtocolGroupImpl.this, level);
     }
 
@@ -278,10 +347,12 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
   }
 
 
+
+
   private class GroupMessage extends AbstractGenericMessage<M>
   {
-    GroupMessage(@NotNull M message) {
-      super(message, factory.defaultParameterValues);
+    private GroupMessage(@NotNull M message) {
+      super(message, factory.getDefaultParameterValues());
     }
 
 
@@ -298,11 +369,13 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
   }
 
 
+
+
   private class ParameterBuilderImpl
       extends AbstractParameterBuilder<M,ProtocolGroup.MessageParameterBuilder<M>,ProtocolGroup.ProtocolMessageBuilder<M>>
       implements ProtocolGroup.MessageParameterBuilder<M>
   {
-    ParameterBuilderImpl(AbstractGenericMessage<M> message) {
+    private ParameterBuilderImpl(AbstractGenericMessage<M> message) {
       super(ProtocolGroupImpl.this, message);
     }
 
@@ -322,6 +395,18 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
     @Override
     public @NotNull ProtocolGroup<M> setVisibility(@NotNull Visibility visibility) {
       return ProtocolGroupImpl.this.setVisibility(visibility);
+    }
+
+
+    @Override
+    public @NotNull Level getLevelLimit() {
+      return ProtocolGroupImpl.this.getLevelLimit();
+    }
+
+
+    @Override
+    public @NotNull ProtocolGroup<M> setLevelLimit(@NotNull Level level) {
+      return ProtocolGroupImpl.this.setLevelLimit(level);
     }
 
 

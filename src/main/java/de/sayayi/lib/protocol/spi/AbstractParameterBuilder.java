@@ -43,7 +43,7 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
   private final AbstractGenericMessage<M> message;
 
 
-  AbstractParameterBuilder(AbstractProtocol<M,B> protocol, @NotNull AbstractGenericMessage<M> message)
+  protected AbstractParameterBuilder(AbstractProtocol<M,B> protocol, @NotNull AbstractGenericMessage<M> message)
   {
     this.protocol = protocol;
     this.message = message;
@@ -129,8 +129,8 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
-  public Protocol<M> getGroupParent() {
-    return protocol.getGroupParent();
+  public Protocol<M> getParent() {
+    return protocol.getParent();
   }
 
 

@@ -18,6 +18,7 @@ package de.sayayi.lib.protocol.spi;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
+import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.Tag;
 
@@ -27,12 +28,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
+
 
 /**
  * @author Jeroen Gremmen
  */
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, doNotUseGetters = true, callSuper = false)
-class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
+final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
 {
   private static final AtomicInteger PROTOCOL_ID = new AtomicInteger(0);
 
@@ -40,7 +43,7 @@ class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
   private final int id;
 
 
-  ProtocolImpl(@NotNull AbstractProtocolFactory<M> factory)
+  ProtocolImpl(@NotNull ProtocolFactory<M> factory)
   {
     super(factory);
 
@@ -49,7 +52,7 @@ class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
 
 
   @Override
-  public Protocol<M> getGroupParent() {
+  public Protocol<M> getParent() {
     return null;
   }
 
@@ -67,8 +70,26 @@ class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
 
 
   @Override
+  public boolean matches(@NotNull Level level, @NotNull Tag... tags) {
+    return matches0(HIGHEST, level, tags);
+  }
+
+
+  @Override
+  public boolean matches(@NotNull Level level) {
+    return matches0(HIGHEST, level);
+  }
+
+
+  @Override
+  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull Tag... tags) {
+    return getVisibleEntryCount0(HIGHEST, recursive, level, tags);
+  }
+
+
+  @Override
   public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag ... tags) {
-    return new ProtocolStructureIterator.ForProtocol<M>(level, tags, 0,this);
+    return new ProtocolStructureIterator.ForProtocol<M>(level, tags, 0, this);
   }
 
 
@@ -81,7 +102,8 @@ class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
 
 
     @Override
-    protected @NotNull MessageParameterBuilder<M> createMessageParameterBuilder(@NotNull ProtocolMessageEntry<M> message) {
+    protected @NotNull MessageParameterBuilder<M> createMessageParameterBuilder(
+        @NotNull ProtocolMessageEntry<M> message) {
       return new ParameterBuilder(message);
     }
   }

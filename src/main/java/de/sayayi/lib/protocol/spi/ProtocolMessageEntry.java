@@ -16,7 +16,6 @@
 package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.Level;
-import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.Tag;
 
 import lombok.Getter;
@@ -31,7 +30,7 @@ import java.util.Set;
 /**
  * @author Jeroen Gremmen
  */
-class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements ProtocolEntry.Message<M>
+final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements InternalProtocolEntry.Message<M>
 {
   @Getter private final Level level;
   private final Set<Tag> tags;
@@ -56,14 +55,26 @@ class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements Proto
 
 
   @Override
-  public boolean matches(@NotNull Level level, @NotNull Tag ... tags)
+  public boolean matches0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag... tags)
   {
-    if (matches(level))
+    if (matches0(levelLimit, level))
       for(Tag tag: tags)
         if (this.tags.contains(tag) && tag.matches(level))
           return true;
 
     return false;
+  }
+
+
+  @Override
+  public boolean matches(@NotNull Level level, @NotNull Tag ... tags) {
+    return matches0(Level.Shared.HIGHEST, level, tags);
+  }
+
+
+  @Override
+  public boolean matches0(@NotNull Level levelLimit, @NotNull Level level) {
+    return LevelHelper.min(this.level, levelLimit).severity() >= level.severity();
   }
 
 
@@ -74,8 +85,15 @@ class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements Proto
 
 
   @Override
+  public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive, @NotNull Level level,
+                                   @NotNull Tag... tags) {
+    return matches0(levelLimit, level, tags) ? 1 : 0;
+  }
+
+
+  @Override
   public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull Tag ... tags) {
-    return matches(level, tags) ? 1 : 0;
+    return getVisibleEntryCount0(Level.Shared.HIGHEST, recursive, level, tags);
   }
 
 

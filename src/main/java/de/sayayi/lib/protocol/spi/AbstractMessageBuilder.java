@@ -40,7 +40,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   private Throwable throwable;
 
 
-  AbstractMessageBuilder(@NotNull AbstractProtocol<M,B> protocol, @NotNull Level level)
+  protected AbstractMessageBuilder(@NotNull AbstractProtocol<M,B> protocol, @NotNull Level level)
   {
     this.protocol = protocol;
     this.level = level;
@@ -142,7 +142,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
           resolvedTags.add(impliedTag);
 
     ProtocolMessageEntry<M> msg = new ProtocolMessageEntry<M>(level, resolvedTags, throwable,
-        message, protocol.factory.defaultParameterValues);
+        message, protocol.factory.getDefaultParameterValues());
 
     protocol.entries.add(msg);
 

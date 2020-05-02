@@ -39,7 +39,7 @@ abstract class AbstractGenericMessage<M> implements GenericMessage<M>
   final Map<String,Object> parameterValues;
 
 
-  AbstractGenericMessage(@NotNull M message, @NotNull Map<String,Object> defaultParameterValues)
+  protected AbstractGenericMessage(@NotNull M message, @NotNull Map<String,Object> defaultParameterValues)
   {
     this.message = message;
     this.parameterValues = new HashMap<String,Object>(defaultParameterValues);

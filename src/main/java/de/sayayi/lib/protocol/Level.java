@@ -67,7 +67,10 @@ public interface Level
     WARN(300),
 
     /** Constant representing ERROR level (severity = 400) */
-    ERROR(400);
+    ERROR(400),
+
+    /** Constant representing a level with the highest possible severity */
+    HIGHEST(Integer.MAX_VALUE);
 
 
     private final int severity;

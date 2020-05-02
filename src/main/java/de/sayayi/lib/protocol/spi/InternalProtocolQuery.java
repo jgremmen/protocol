@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Jeroen Gremmen
+ * Copyright 2020 Jeroen Gremmen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,24 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.sayayi.lib.protocol;
+package de.sayayi.lib.protocol.spi;
 
-import de.sayayi.lib.protocol.spi.AbstractProtocolFactory;
+import de.sayayi.lib.protocol.Level;
+import de.sayayi.lib.protocol.ProtocolQuery;
+import de.sayayi.lib.protocol.Tag;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 
 /**
- * <p>
- *   Generic protocol factory for text messages where the messages are stored internally as {@code String} objects.
- * </p>
- *
  * @author Jeroen Gremmen
  */
-public class GenericProtocolFactory extends AbstractProtocolFactory<String>
+interface InternalProtocolQuery extends ProtocolQuery
 {
-  @Override
-  public @NotNull String processMessage(@NotNull String message) {
-    return message;
-  }
+  @Contract(pure = true)
+  boolean matches0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag... tags);
+
+
+  @Contract(pure = true)
+  boolean matches0(@NotNull Level levelLimit, @NotNull Level level);
+
+
+  @Contract(pure = true)
+  int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive, @NotNull Level level, @NotNull Tag ... tags);
 }
