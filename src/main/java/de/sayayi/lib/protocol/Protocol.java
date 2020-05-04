@@ -73,7 +73,7 @@ public interface Protocol<M> extends ProtocolQuery
    * @return  parent protocol or {@code null} if this is the root protocol
    */
   @Contract(pure = true)
-  Protocol<M> getGroupParent();
+  Protocol<M> getParent();
 
 
   /**

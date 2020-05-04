@@ -116,7 +116,7 @@ public class ProtocolFactoryTest
 
     assertFalse(factory.isRegisteredTag(tagSame));
 
-    ProtocolFactory factory2 = new GenericProtocolFactory();
+    ProtocolFactory<String> factory2 = new GenericProtocolFactory();
     Tag tag2 = factory2.createTag("tag").getTag();
 
     assertTrue(factory2.isRegisteredTag(tag2));
@@ -249,7 +249,7 @@ public class ProtocolFactoryTest
   public void testProcessMessage()
   {
     GenericProtocolFactory factory = new GenericProtocolFactory() {
-      @Override public String processMessage(@NotNull String message) { return message + "(ok)"; }
+      @Override public @NotNull String processMessage(@NotNull String message) { return message + "(ok)"; }
     };
 
     Protocol<String> protocol = factory.createProtocol().debug().message("msg");
