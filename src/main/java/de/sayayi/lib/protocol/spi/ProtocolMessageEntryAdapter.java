@@ -38,16 +38,14 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
   private final InternalProtocolEntry.Message<M> message;
 
 
-  @NotNull
   @Override
-  public Set<Tag> getTags() {
+  public @NotNull Set<Tag> getTags() {
     return message.getTags();
   }
 
 
-  @NotNull
   @Override
-  public M getMessage() {
+  public @NotNull M getMessage() {
     return message.getMessage();
   }
 
@@ -58,16 +56,14 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
   }
 
 
-  @NotNull
   @Override
-  public Map<String,Object> getParameterValues() {
+  public @NotNull Map<String,Object> getParameterValues() {
     return message.getParameterValues();
   }
 
 
-  @NotNull
   @Override
-  public Level getLevel() {
+  public @NotNull Level getLevel() {
     return levelLimit;
   }
 

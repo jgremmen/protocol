@@ -104,7 +104,7 @@ public abstract class HtmlProtocolFormatter<M> implements InitializableProtocolF
 
 
   @Override
-  public void groupEnd(GroupEndEntry<M> groupEnd)
+  public void groupEnd(@NotNull GroupEndEntry<M> groupEnd)
   {
     indent(groupEnd.getDepth() - 1);
 

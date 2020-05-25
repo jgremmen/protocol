@@ -31,7 +31,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Jeroen Gremmen
  */
-public abstract class TreeProtocolFormatter<M> extends AbstractProtocolFormatter<M,String>
+public abstract class TreeProtocolFormatter<M>
+    extends AbstractProtocolFormatter<M,String>
     implements InitializableProtocolFormatter<M,String>
 {
   private static final String GRAPH_ROOT_NODE_PREFIX = "\u25a0\u2500\u2500";
@@ -113,6 +114,6 @@ public abstract class TreeProtocolFormatter<M> extends AbstractProtocolFormatter
 
   public interface MessageFormatter<M>
   {
-    String format(GenericMessage<M> message);
+    String format(@NotNull GenericMessage<M> message);
   }
 }
