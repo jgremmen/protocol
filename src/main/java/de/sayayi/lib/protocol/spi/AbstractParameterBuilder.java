@@ -51,6 +51,24 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
+  public @NotNull Protocol<M> translateTag(@NotNull String tagName, @NotNull String translatedTagName) {
+    return protocol.translateTag(tagName, translatedTagName);
+  }
+
+
+  @Override
+  public @NotNull Protocol<M> translateTag(@NotNull Tag tag, @NotNull Tag translatedTag) {
+    return protocol.translateTag(tag, translatedTag);
+  }
+
+
+  @Override
+  public @NotNull Tag getEffectiveTag(@NotNull Tag tag) {
+    return protocol.getEffectiveTag(tag);
+  }
+
+
+  @Override
   public @NotNull P with(@NotNull Map<String, Object> parameterValues)
   {
     for(Entry<String,Object> entry: parameterValues.entrySet())

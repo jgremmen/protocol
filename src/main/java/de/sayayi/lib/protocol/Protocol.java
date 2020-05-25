@@ -78,6 +78,57 @@ public interface Protocol<M> extends ProtocolQuery
 
   /**
    * <p>
+   *   Set a tag translation for this protocol and all underlying protocol groups.
+   * </p>
+   * <p>
+   *   The translation takes effect for new protocol messages. Existing messages are not affected by this setting.
+   * </p>
+   *
+   * @param tagName            name for the tag to be translated, not {@code null}
+   * @param translatedTagName  name for the translated tag, not {@code null}
+   *
+   * @return  this protocol instance
+   *
+   * @see #getEffectiveTag(Tag)
+   */
+  @Contract("_, _ -> this")
+  @NotNull Protocol<M> translateTag(@NotNull String tagName, @NotNull String translatedTagName);
+
+
+  /**
+   * <p>
+   *   Set a tag translation for this protocol and all underlying protocol groups.
+   * </p>
+   * <p>
+   *   The translation takes effect for new protocol messages. Existing messages are not affected by this setting.
+   * </p>
+   *
+   * @param tag            tag to be translated, not {@code null}
+   * @param translatedTag  translated tag, not {@code null}
+   *
+   * @return  this protocol instance
+   *
+   * @see #getEffectiveTag(Tag)
+   */
+  @Contract("_, _ -> this")
+  @NotNull Protocol<M> translateTag(@NotNull Tag tag, @NotNull Tag translatedTag);
+
+
+  /**
+   *
+   * @param tag  tag, not {@code null}
+   *
+   * @return  translated tag, if a translation has been set, or the provided tag. Never {@code null}
+   *
+   * @see #translateTag(String, String)
+   * @see #translateTag(Tag, Tag)
+   */
+  @Contract(pure = true)
+  @NotNull Tag getEffectiveTag(@NotNull Tag tag);
+
+
+  /**
+   * <p>
    *   Prepares a new debug level message.
    * </p>
    * <p>

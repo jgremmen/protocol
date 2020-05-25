@@ -61,6 +61,8 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
     if (tag == null)
       throw new NullPointerException("tag must not be null");
 
+    tag = protocol.getEffectiveTag(tag);
+
     if (!protocol.factory.isRegisteredTag(tag))
       throw new IllegalArgumentException("tag with name " + tag.getName() + " is not registered for this protocol");
 
