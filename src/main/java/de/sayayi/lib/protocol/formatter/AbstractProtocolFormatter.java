@@ -42,6 +42,6 @@ public abstract class AbstractProtocolFormatter<M,R> implements ProtocolFormatte
 
 
   @Override
-  public void groupEnd(ProtocolIterator.GroupEndEntry<M> groupEnd) {
+  public void groupEnd(@NotNull ProtocolIterator.GroupEndEntry<M> groupEnd) {
   }
 }

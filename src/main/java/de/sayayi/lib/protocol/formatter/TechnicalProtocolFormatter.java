@@ -38,7 +38,7 @@ public class TechnicalProtocolFormatter<M> extends TreeProtocolFormatter<M>
   public TechnicalProtocolFormatter() {
     setMessageFormatter(new MessageFormatter<M>() {
       @Override
-      public String format(GenericMessage<M> message) {
+      public String format(@NotNull GenericMessage<M> message) {
         return message.toString();
       }
     });

@@ -39,7 +39,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -48,13 +50,61 @@ import java.util.List;
 abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implements Protocol<M>, InternalProtocolQuery
 {
   @Getter final ProtocolFactory<M> factory;
+
   final List<InternalProtocolEntry<M>> entries;
+  final Map<Tag,Tag> tagTranslationMap;
 
 
   protected AbstractProtocol(@NotNull ProtocolFactory<M> factory)
   {
     this.factory = factory;
+
     entries = new ArrayList<InternalProtocolEntry<M>>(8);
+    tagTranslationMap = new LinkedHashMap<Tag,Tag>(8);
+  }
+
+
+  @Override
+  public @NotNull Protocol<M> translateTag(@NotNull String tagName, @NotNull String translatedTagName)
+  {
+    final Tag tag = factory.getTagByName(tagName);
+    final Tag translatedTag = factory.getTagByName(translatedTagName);
+
+    if (tag == null)
+      throw new IllegalArgumentException("tag with name " + tagName + " is not registered for this protocol");
+    if (translatedTag == null)
+      throw new IllegalArgumentException("tag with name " + translatedTagName + " is not registered for this protocol");
+
+    return translateTag(tag, translatedTag);
+  }
+
+
+  @Override
+  public @NotNull Protocol<M> translateTag(@NotNull Tag tag, @NotNull Tag translatedTag)
+  {
+    if (!factory.isRegisteredTag(tag))
+      throw new IllegalArgumentException("tag with name " + tag.getName() + " is not registered for this protocol");
+
+    if (tag == translatedTag)
+      tagTranslationMap.remove(tag);
+    else
+    {
+      if (!factory.isRegisteredTag(translatedTag))
+        throw new IllegalArgumentException("tag with name " + translatedTag.getName() +
+                                           " is not registered for this protocol");
+
+      tagTranslationMap.put(tag, translatedTag);
+    }
+
+    return this;
+  }
+
+
+  @Override
+  public @NotNull Tag getEffectiveTag(@NotNull Tag tag)
+  {
+    Tag translatedTag = tagTranslationMap.get(tag);
+    return translatedTag != null ? translatedTag : tag;
   }
 
 
@@ -164,7 +214,6 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   @Override
   public @NotNull ProtocolGroup<M> createGroup()
   {
-    @SuppressWarnings("unchecked")
     final ProtocolGroupImpl<M> group = new ProtocolGroupImpl<M>(this);
 
     entries.add(group);

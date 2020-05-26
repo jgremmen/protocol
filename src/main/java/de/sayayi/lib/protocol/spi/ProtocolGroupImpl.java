@@ -42,7 +42,8 @@ import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ONLY;
  * @author Jeroen Gremmen
  */
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, doNotUseGetters = true, callSuper = false)
-final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
+final class ProtocolGroupImpl<M>
+    extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
     implements ProtocolGroup<M>, InternalProtocolEntry.Group<M>
 {
   private static final AtomicInteger PROTOCOL_GROUP_ID = new AtomicInteger(0);
@@ -62,12 +63,29 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
   {
     super(parent.getFactory());
 
-    id = PROTOCOL_GROUP_ID.incrementAndGet();
-
     this.parent = parent;
 
+    id = PROTOCOL_GROUP_ID.incrementAndGet();
     levelLimit = HIGHEST;
     visibility = SHOW_HEADER_IF_NOT_EMPTY;
+  }
+
+
+  @Override
+  public @NotNull ProtocolGroup<M> translateTag(@NotNull String tagName, @NotNull String translatedTagName) {
+    return (ProtocolGroup<M>)super.translateTag(tagName, translatedTagName);
+  }
+
+
+  @Override
+  public @NotNull ProtocolGroup<M> translateTag(@NotNull Tag tag, @NotNull Tag translatedTag) {
+    return (ProtocolGroup<M>)super.translateTag(tag, translatedTag);
+  }
+
+
+  @Override
+  public @NotNull Tag getEffectiveTag(@NotNull Tag tag) {
+    return parent.getEffectiveTag(super.getEffectiveTag(tag));
   }
 
 
@@ -121,7 +139,8 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
           return matches0(levelLimit, level, tags);
 
         case FLATTEN_ON_SINGLE_ENTRY:
-          return super.getVisibleEntryCount0(LevelHelper.min(this.levelLimit, levelLimit),true, level, tags) > 1;
+          return super.getVisibleEntryCount0(
+              LevelHelper.min(this.levelLimit, levelLimit),true, level, tags) > 1;
       }
 
     return false;
@@ -134,9 +153,8 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
   }
 
 
-  @NotNull
   @Override
-  public Level getHeaderLevel0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag... tags)
+  public @NotNull Level getHeaderLevel0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag... tags)
   {
     Level headerLevel = LOWEST;
 
@@ -169,9 +187,9 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
   }
 
 
-  @NotNull
   @Override
-  public List<ProtocolEntry<M>> getEntries0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag... tags)
+  public @NotNull List<ProtocolEntry<M>> getEntries0(@NotNull Level levelLimit, @NotNull Level level,
+                                                     @NotNull Tag... tags)
   {
     levelLimit = LevelHelper.min(this.levelLimit, levelLimit);
 
@@ -377,6 +395,18 @@ final class ProtocolGroupImpl<M> extends AbstractProtocol<M,ProtocolMessageBuild
   {
     private ParameterBuilderImpl(AbstractGenericMessage<M> message) {
       super(ProtocolGroupImpl.this, message);
+    }
+
+
+    @Override
+    public @NotNull ProtocolGroup<M> translateTag(@NotNull String tagName, @NotNull String translatedTagName) {
+      return ProtocolGroupImpl.this.translateTag(tagName, translatedTagName);
+    }
+
+
+    @Override
+    public @NotNull ProtocolGroup<M> translateTag(@NotNull Tag tag, @NotNull Tag translatedTag) {
+      return ProtocolGroupImpl.this.translateTag(tag, translatedTag);
     }
 
 

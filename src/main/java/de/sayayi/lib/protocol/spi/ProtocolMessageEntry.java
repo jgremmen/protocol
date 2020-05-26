@@ -30,7 +30,9 @@ import java.util.Set;
 /**
  * @author Jeroen Gremmen
  */
-final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements InternalProtocolEntry.Message<M>
+final class ProtocolMessageEntry<M>
+    extends AbstractGenericMessage<M>
+    implements InternalProtocolEntry.Message<M>
 {
   @Getter private final Level level;
   private final Set<Tag> tags;

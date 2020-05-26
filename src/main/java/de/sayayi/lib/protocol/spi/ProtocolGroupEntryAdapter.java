@@ -39,9 +39,8 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
   private final InternalProtocolEntry.Group<M> group;
 
 
-  @NotNull
   @Override
-  public List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag... tags) {
+  public @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag... tags) {
     return group.getEntries0(levelLimit, level, tags);
   }
 
@@ -52,9 +51,8 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
   }
 
 
-  @NotNull
   @Override
-  public Level getHeaderLevel(@NotNull Level level, @NotNull Tag... tags) {
+  public @NotNull Level getHeaderLevel(@NotNull Level level, @NotNull Tag... tags) {
     return group.getHeaderLevel0(levelLimit, level, tags);
   }
 
@@ -101,9 +99,9 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
   }
 
 
-  @NotNull
   @Override
-  public List<ProtocolEntry<M>> getEntries0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag... tags) {
+  public @NotNull List<ProtocolEntry<M>> getEntries0(@NotNull Level levelLimit, @NotNull Level level,
+                                                     @NotNull Tag... tags) {
     return group.getEntries0(levelLimit, level, tags);
   }
 
@@ -114,9 +112,8 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
   }
 
 
-  @NotNull
   @Override
-  public Level getHeaderLevel0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag... tags) {
+  public @NotNull Level getHeaderLevel0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag... tags) {
     return group.getHeaderLevel0(levelLimit, level, tags);
   }
 

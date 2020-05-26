@@ -39,6 +39,16 @@ import java.util.Map;
  */
 public interface ProtocolGroup<M> extends Protocol<M>
 {
+  @Override
+  @Contract("_, _ -> this")
+  @NotNull ProtocolGroup<M> translateTag(@NotNull String tagName, @NotNull String translatedTagName);
+
+
+  @Override
+  @Contract("_, _ -> this")
+  @NotNull ProtocolGroup<M> translateTag(@NotNull Tag tag, @NotNull Tag translatedTag);
+
+
   /**
    * Returns the visibility for this protocol group.
    *

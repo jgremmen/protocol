@@ -72,7 +72,7 @@ public interface ProtocolFormatter<M,R>
   void groupStart(@NotNull GroupStartEntry<M> group);
 
 
-  void groupEnd(GroupEndEntry<M> groupEnd);
+  void groupEnd(@NotNull GroupEndEntry<M> groupEnd);
 
 
   /**
