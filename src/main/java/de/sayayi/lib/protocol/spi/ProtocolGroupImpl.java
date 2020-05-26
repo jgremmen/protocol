@@ -108,7 +108,7 @@ final class ProtocolGroupImpl<M>
   }
 
 
-  @SuppressWarnings("ConstantConditions")
+  @SuppressWarnings({ "squid:S2583", "ConstantConditions" })
   @Override
   public @NotNull ProtocolGroup<M> setLevelLimit(@NotNull Level level)
   {
@@ -204,6 +204,7 @@ final class ProtocolGroupImpl<M>
   }
 
 
+  @SuppressWarnings("squid:SwitchLastCaseIsDefaultCheck")
   @Override
   public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive, @NotNull Level level,
                                    @NotNull Tag... tags)
@@ -261,7 +262,9 @@ final class ProtocolGroupImpl<M>
     if (message == null)
       throw new NullPointerException("message must not be null");
 
-    return new ParameterBuilderImpl(groupMessage = new GroupMessage(factory.processMessage(message)));
+    groupMessage = new GroupMessage(factory.processMessage(message));
+
+    return new ParameterBuilderImpl(groupMessage);
   }
 
 

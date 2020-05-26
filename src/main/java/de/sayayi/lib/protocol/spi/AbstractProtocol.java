@@ -71,9 +71,10 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
     final Tag translatedTag = factory.getTagByName(translatedTagName);
 
     if (tag == null)
-      throw new IllegalArgumentException("tag with name " + tagName + " is not registered for this protocol");
+      failTag(tagName);
+
     if (translatedTag == null)
-      throw new IllegalArgumentException("tag with name " + translatedTagName + " is not registered for this protocol");
+      failTag(translatedTagName);
 
     return translateTag(tag, translatedTag);
   }
@@ -83,15 +84,14 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   public @NotNull Protocol<M> translateTag(@NotNull Tag tag, @NotNull Tag translatedTag)
   {
     if (!factory.isRegisteredTag(tag))
-      throw new IllegalArgumentException("tag with name " + tag.getName() + " is not registered for this protocol");
+      failTag(tag.getName());
 
     if (tag == translatedTag)
       tagTranslationMap.remove(tag);
     else
     {
       if (!factory.isRegisteredTag(translatedTag))
-        throw new IllegalArgumentException("tag with name " + translatedTag.getName() +
-                                           " is not registered for this protocol");
+        failTag(translatedTag.getName());
 
       tagTranslationMap.put(tag, translatedTag);
     }
@@ -284,10 +284,15 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   {
     int depth = 0;
 
-    for(ProtocolEntry<M> entry: entries)
+    for(InternalProtocolEntry<M> entry: entries)
       if (entry instanceof ProtocolGroupImpl)
         depth = Math.max(depth, 1 + ((ProtocolGroupImpl<M>)entry).countGroupDepth());
 
     return depth;
+  }
+
+
+  private static void failTag(String tagName) {
+    throw new IllegalArgumentException("tag with name " + tagName + " is not registered for this protocol");
   }
 }

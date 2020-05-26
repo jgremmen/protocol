@@ -63,7 +63,8 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   // FIFO queue with maximum size 3
   @SuppressWarnings("unchecked")
   private final DepthEntry<M>[] nextEntries = new DepthEntry[4];
-  private int firstEntryIdx, lastEntryIdx;
+  private int firstEntryIdx;
+  private int lastEntryIdx;
 
 
   protected ProtocolStructureIterator(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag[] tags, int depth,
@@ -73,10 +74,11 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     this.level = level;
     this.tags = tags;
     this.depth = depth;
+    this.rootProtocol = rootProtocol;
 
     iterator = new VisibleEntryIterator(protocolEntries.iterator());
 
-    if (this.rootProtocol = rootProtocol)
+    if (rootProtocol)
       addNextEntry(new ProtocolStartImpl<M>());
   }
 
@@ -232,6 +234,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     private boolean forceFirst;
 
 
+    @SuppressWarnings("squid:S00107")
     ForGroup(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag[] tags, int depth,
              @NotNull InternalProtocolEntry.Group<M> protocol, boolean hasEntryBeforeGroup, boolean hasEntryAfterGroup,
              boolean rootProtocol)
@@ -509,7 +512,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
 
-  private static abstract class RootProtocolEntry<M> implements DepthEntry<M> {
+  private abstract static class RootProtocolEntry<M> implements DepthEntry<M> {
     @Override public int getDepth() { return 0; }
   }
 
