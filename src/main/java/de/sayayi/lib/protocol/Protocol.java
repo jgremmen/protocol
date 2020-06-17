@@ -85,7 +85,7 @@ public interface Protocol<M> extends ProtocolQuery
    *   added to this protocol or its underlying protocol groups.
    * </p>
    * <p>
-   *   If a message is added with tag X and a propagation definition exists for X -> Y then the
+   *   If a message is added with tag X and a propagation definition exists for X -&gt; Y then the
    *   message will have both tags X and Y (as long as it matches the message level) as well as the
    *   tags implicated by X and Y as defined for each tag itself.
    * </p>
@@ -107,7 +107,7 @@ public interface Protocol<M> extends ProtocolQuery
    *   added to this protocol or its underlying protocol groups.
    * </p>
    * <p>
-   *   If a message is added with tag X and a propagation definition exists for X -> Y then the
+   *   If a message is added with tag X and a propagation definition exists for X -&gt; Y then the
    *   message will have both tags X and Y (as long as it matches the message level) as well as the
    *   tags implicated by X and Y as defined for each tag itself.
    * </p>
