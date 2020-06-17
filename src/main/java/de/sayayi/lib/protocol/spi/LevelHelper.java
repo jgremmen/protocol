@@ -16,12 +16,9 @@
 package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.Level;
-import de.sayayi.lib.protocol.Tag;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-
-import org.jetbrains.annotations.NotNull;
 
 
 /**
@@ -37,20 +34,5 @@ abstract class LevelHelper
 
   static Level min(Level l1, Level l2) {
     return l1.severity() <= l2.severity() ? l1 : l2;
-  }
-
-
-  static boolean matchLevelAndTags(@NotNull Level levelLimit, @NotNull Level level, Tag... tags) {
-    return levelLimit.severity() >= level.severity() && matchLevelAndTags(level, tags);
-  }
-
-
-  static boolean matchLevelAndTags(Level level, Tag... tags)
-  {
-    for(Tag tag: tags)
-      if (tag.matches(level))
-        return true;
-
-    return false;
   }
 }

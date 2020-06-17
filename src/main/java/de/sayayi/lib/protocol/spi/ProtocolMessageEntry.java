@@ -26,6 +26,9 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
+import static de.sayayi.lib.protocol.spi.LevelHelper.min;
+
 
 /**
  * @author Jeroen Gremmen
@@ -39,8 +42,8 @@ final class ProtocolMessageEntry<M>
   @Getter private final Throwable throwable;
 
 
-  ProtocolMessageEntry(@NotNull Level level, @NotNull Set<Tag> tags, Throwable throwable, @NotNull M message,
-                       @NotNull Map<String,Object> defaultParameterValues)
+  ProtocolMessageEntry(@NotNull Level level, @NotNull Set<Tag> tags, Throwable throwable,
+                       @NotNull M message, @NotNull Map<String,Object> defaultParameterValues)
   {
     super(message, defaultParameterValues);
 
@@ -61,7 +64,7 @@ final class ProtocolMessageEntry<M>
   {
     if (matches0(levelLimit, level))
       for(Tag tag: tags)
-        if (this.tags.contains(tag) && tag.matches(level))
+        if (this.tags.contains(tag))
           return true;
 
     return false;
@@ -70,13 +73,13 @@ final class ProtocolMessageEntry<M>
 
   @Override
   public boolean matches(@NotNull Level level, @NotNull Tag ... tags) {
-    return matches0(Level.Shared.HIGHEST, level, tags);
+    return matches0(HIGHEST, level, tags);
   }
 
 
   @Override
   public boolean matches0(@NotNull Level levelLimit, @NotNull Level level) {
-    return LevelHelper.min(this.level, levelLimit).severity() >= level.severity();
+    return min(this.level, levelLimit).severity() >= level.severity();
   }
 
 
@@ -87,15 +90,15 @@ final class ProtocolMessageEntry<M>
 
 
   @Override
-  public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive, @NotNull Level level,
-                                   @NotNull Tag... tags) {
+  public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive,
+                                   @NotNull Level level, @NotNull Tag... tags) {
     return matches0(levelLimit, level, tags) ? 1 : 0;
   }
 
 
   @Override
   public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull Tag ... tags) {
-    return getVisibleEntryCount0(Level.Shared.HIGHEST, recursive, level, tags);
+    return getVisibleEntryCount0(HIGHEST, recursive, level, tags);
   }
 
 

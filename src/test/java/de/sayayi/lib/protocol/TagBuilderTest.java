@@ -22,6 +22,9 @@ import java.util.Set;
 import static org.junit.Assert.assertTrue;
 
 
+/**
+ * @author Jeroen Gremmen
+ */
 @SuppressWarnings({ "ResultOfMethodCallIgnored", "ConstantConditions" })
 public class TagBuilderTest
 {

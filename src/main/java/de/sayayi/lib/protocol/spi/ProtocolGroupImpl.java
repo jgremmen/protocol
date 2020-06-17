@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
@@ -49,7 +50,7 @@ final class ProtocolGroupImpl<M>
   private static final AtomicInteger PROTOCOL_GROUP_ID = new AtomicInteger(0);
 
 
-  @Getter private final Protocol<M> parent;
+  @Getter private final AbstractProtocol<M,Protocol.ProtocolMessageBuilder<M>> parent;
 
   @EqualsAndHashCode.Include
   @Getter private final int id;
@@ -59,7 +60,7 @@ final class ProtocolGroupImpl<M>
   @Getter private GroupMessage groupMessage;
 
 
-  ProtocolGroupImpl(@NotNull Protocol<M> parent)
+  ProtocolGroupImpl(@NotNull AbstractProtocol<M,Protocol.ProtocolMessageBuilder<M>> parent)
   {
     super(parent.getFactory());
 
@@ -72,20 +73,8 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public @NotNull ProtocolGroup<M> translateTag(@NotNull String tagName, @NotNull String translatedTagName) {
-    return (ProtocolGroup<M>)super.translateTag(tagName, translatedTagName);
-  }
-
-
-  @Override
-  public @NotNull ProtocolGroup<M> translateTag(@NotNull Tag tag, @NotNull Tag translatedTag) {
-    return (ProtocolGroup<M>)super.translateTag(tag, translatedTag);
-  }
-
-
-  @Override
-  public @NotNull Tag getEffectiveTag(@NotNull Tag tag) {
-    return parent.getEffectiveTag(super.getEffectiveTag(tag));
+  protected @NotNull Set<Tag> getPropagatedTags(@NotNull Set<Tag> tags) {
+    return parent.getPropagatedTags(super.getPropagatedTags(tags));
   }
 
 
@@ -95,8 +84,8 @@ final class ProtocolGroupImpl<M>
   }
 
 
-  @SuppressWarnings({ "squid:S2583", "ConstantConditions" })
   @Override
+  @SuppressWarnings({ "squid:S2583", "ConstantConditions" })
   public @NotNull ProtocolGroup<M> setVisibility(@NotNull Visibility visibility)
   {
     if (visibility == null)
@@ -108,8 +97,8 @@ final class ProtocolGroupImpl<M>
   }
 
 
-  @SuppressWarnings({ "squid:S2583", "ConstantConditions" })
   @Override
+  @SuppressWarnings({ "squid:S2583", "ConstantConditions" })
   public @NotNull ProtocolGroup<M> setLevelLimit(@NotNull Level level)
   {
     if (level == null)
@@ -122,7 +111,7 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public boolean isHeaderVisible0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag... tags)
+  public boolean isHeaderVisible0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag ... tags)
   {
     if (groupMessage != null)
       switch(visibility)
@@ -154,7 +143,8 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public @NotNull Level getHeaderLevel0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag... tags)
+  public @NotNull Level getHeaderLevel0(@NotNull Level levelLimit, @NotNull Level level,
+                                        @NotNull Tag ... tags)
   {
     Level headerLevel = LOWEST;
 
@@ -189,7 +179,7 @@ final class ProtocolGroupImpl<M>
 
   @Override
   public @NotNull List<ProtocolEntry<M>> getEntries0(@NotNull Level levelLimit, @NotNull Level level,
-                                                     @NotNull Tag... tags)
+                                                     @NotNull Tag ... tags)
   {
     levelLimit = LevelHelper.min(this.levelLimit, levelLimit);
 
@@ -204,14 +194,14 @@ final class ProtocolGroupImpl<M>
   }
 
 
-  @SuppressWarnings("squid:SwitchLastCaseIsDefaultCheck")
   @Override
-  public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive, @NotNull Level level,
-                                   @NotNull Tag... tags)
+  @SuppressWarnings("squid:SwitchLastCaseIsDefaultCheck")
+  public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive,
+                                   @NotNull Level level, @NotNull Tag ... tags)
   {
     levelLimit = LevelHelper.min(this.levelLimit, levelLimit);
 
-    if (levelLimit.severity() >= level.severity() && LevelHelper.matchLevelAndTags(level, tags))
+    if (levelLimit.severity() >= level.severity())
     {
       final Visibility effectiveVisibility = getEffectiveVisibility();
 
@@ -248,15 +238,16 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public int getVisibleGroupEntryMessageCount0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag ... tags)
+  public int getVisibleGroupEntryMessageCount0(@NotNull Level levelLimit, @NotNull Level level,
+                                               @NotNull Tag ... tags)
   {
     return getEffectiveVisibility().isShowEntries()
         ? super.getVisibleEntryCount0(LevelHelper.min(this.levelLimit, levelLimit), false, level, tags) : 0;
   }
 
 
-  @SuppressWarnings({ "squid:S2583", "ConstantConditions" })
   @Override
+  @SuppressWarnings({ "squid:S2583", "ConstantConditions" })
   public @NotNull ProtocolGroup.MessageParameterBuilder<M> setGroupMessage(@NotNull String message)
   {
     if (message == null)
@@ -277,11 +268,10 @@ final class ProtocolGroupImpl<M>
   }
 
 
-  @SuppressWarnings("squid:S2583")
   @Override
+  @SuppressWarnings({ "squid:S2583", "ConstantConditions" })
   public @NotNull ProtocolGroup.ProtocolMessageBuilder<M> add(@NotNull Level level)
   {
-    //noinspection ConstantConditions
     if (level == null)
       throw new NullPointerException("level must not be null");
 
@@ -290,13 +280,14 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
+  @SuppressWarnings("unchecked")
   public @NotNull Protocol<M> getRootProtocol() {
     return (parent instanceof ProtocolGroup) ? ((ProtocolGroup<M>)parent).getRootProtocol() : parent;
   }
 
 
   @Override
-  public boolean matches0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag... tags)
+  public boolean matches0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag ... tags)
   {
     levelLimit = LevelHelper.min(this.levelLimit, levelLimit);
 
@@ -338,9 +329,22 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
+  public @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull String tagName) {
+    return new PropagationTargetTagBuilder(resolveTagByName(tagName));
+  }
+
+
+  @Override
+  public @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull Tag tag) {
+    return new PropagationTargetTagBuilder(validateTag(tag));
+  }
+
+
+  @Override
   public String toString()
   {
-    final StringBuilder s = new StringBuilder("ProtocolGroup[id=").append(id).append(",visibility=").append(visibility);
+    final StringBuilder s = new StringBuilder("ProtocolGroup[id=").append(id)
+        .append(",visibility=").append(visibility);
 
     if (levelLimit.severity() < HIGHEST.severity())
       s.append(",levelLimit=").append(levelLimit);
@@ -402,18 +406,6 @@ final class ProtocolGroupImpl<M>
 
 
     @Override
-    public @NotNull ProtocolGroup<M> translateTag(@NotNull String tagName, @NotNull String translatedTagName) {
-      return ProtocolGroupImpl.this.translateTag(tagName, translatedTagName);
-    }
-
-
-    @Override
-    public @NotNull ProtocolGroup<M> translateTag(@NotNull Tag tag, @NotNull Tag translatedTag) {
-      return ProtocolGroupImpl.this.translateTag(tag, translatedTag);
-    }
-
-
-    @Override
     public @NotNull Visibility getVisibility() {
       return ProtocolGroupImpl.this.getVisibility();
     }
@@ -470,6 +462,52 @@ final class ProtocolGroupImpl<M>
     @Override
     public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag ... tags) {
       return ProtocolGroupImpl.this.iterator(level, tags);
+    }
+
+
+    @Override
+    public @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull String tagName) {
+      return (ProtocolGroup.TargetTagBuilder<M>)super.propagate(tagName);
+    }
+
+
+    @Override
+    public @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull Tag tag) {
+      return (ProtocolGroup.TargetTagBuilder<M>)super.propagate(tag);
+    }
+  }
+
+
+  private class PropagationTargetTagBuilder
+      extends AbstractPropagationTargetTagBuilder<M,ProtocolGroup.ProtocolMessageBuilder<M>>
+      implements ProtocolGroup.TargetTagBuilder<M>
+  {
+    PropagationTargetTagBuilder(Tag sourceTag) {
+      super(ProtocolGroupImpl.this, sourceTag);
+    }
+
+
+    @Override
+    public @NotNull ProtocolGroup<M> to(@NotNull String targetTagName) {
+      return (ProtocolGroup<M>)super.to(targetTagName);
+    }
+
+
+    @Override
+    public @NotNull ProtocolGroup<M> to(@NotNull Tag targetTag) {
+      return (ProtocolGroup<M>)super.to(targetTag);
+    }
+
+
+    @Override
+    public @NotNull ProtocolGroup<M> to(@NotNull String ... targetTagNames) {
+      return (ProtocolGroup<M>)super.to(targetTagNames);
+    }
+
+
+    @Override
+    public @NotNull ProtocolGroup<M> to(@NotNull Tag ... targetTags) {
+      return (ProtocolGroup<M>)super.to(targetTags);
     }
   }
 }

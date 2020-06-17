@@ -37,34 +37,18 @@ import java.util.Map.Entry;
  */
 @SuppressWarnings({ "unchecked" })
 abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B extends ProtocolMessageBuilder<M>>
+    extends AbstractBuilder<M,B>
     implements MessageParameterBuilder<M>
 {
-  private final AbstractProtocol<M,B> protocol;
   private final AbstractGenericMessage<M> message;
 
 
-  protected AbstractParameterBuilder(AbstractProtocol<M,B> protocol, @NotNull AbstractGenericMessage<M> message)
+  protected AbstractParameterBuilder(@NotNull AbstractProtocol<M,B> protocol,
+                                     @NotNull AbstractGenericMessage<M> message)
   {
-    this.protocol = protocol;
+    super(protocol);
+
     this.message = message;
-  }
-
-
-  @Override
-  public @NotNull Protocol<M> translateTag(@NotNull String tagName, @NotNull String translatedTagName) {
-    return protocol.translateTag(tagName, translatedTagName);
-  }
-
-
-  @Override
-  public @NotNull Protocol<M> translateTag(@NotNull Tag tag, @NotNull Tag translatedTag) {
-    return protocol.translateTag(tag, translatedTag);
-  }
-
-
-  @Override
-  public @NotNull Tag getEffectiveTag(@NotNull Tag tag) {
-    return protocol.getEffectiveTag(tag);
   }
 
 
@@ -108,11 +92,10 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
   }
 
 
-  @SuppressWarnings("squid:S2589")
+  @SuppressWarnings({ "squid:S2589", "ConstantConditions" })
   @Override
   public @NotNull P with(@NotNull String parameter, Object value)
   {
-    //noinspection ConstantConditions
     if (parameter == null || parameter.isEmpty())
       throw new IllegalArgumentException("parameter must not be empty");
 
@@ -201,13 +184,15 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
-  public <R> R format(@NotNull ProtocolFormatter<M, R> formatter, @NotNull Level level, @NotNull String... tagNames) {
+  public <R> R format(@NotNull ProtocolFormatter<M, R> formatter, @NotNull Level level,
+                      @NotNull String... tagNames) {
     return protocol.format(formatter, level, tagNames);
   }
 
 
   @Override
-  public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level, @NotNull Tag ... tags) {
+  public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level,
+                      @NotNull Tag ... tags) {
     return protocol.format(formatter, level, tags);
   }
 
@@ -245,5 +230,17 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
   @Override
   public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag ... tags) {
     return protocol.iterator(level, tags);
+  }
+
+
+  @Override
+  public @NotNull TargetTagBuilder<M> propagate(@NotNull String tagName) {
+    return protocol.propagate(tagName);
+  }
+
+
+  @Override
+  public @NotNull TargetTagBuilder<M> propagate(@NotNull Tag tag) {
+    return protocol.propagate(tag);
   }
 }
