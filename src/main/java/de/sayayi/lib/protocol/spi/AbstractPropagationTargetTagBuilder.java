@@ -17,6 +17,7 @@ package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
+import de.sayayi.lib.protocol.Protocol.TargetTagBuilder;
 import de.sayayi.lib.protocol.Tag;
 
 import org.jetbrains.annotations.NotNull;
@@ -29,16 +30,62 @@ import java.util.Set;
  * @author Jeroen Gremmen
  */
 abstract class AbstractPropagationTargetTagBuilder<M,B extends ProtocolMessageBuilder<M>>
-    extends AbstractTargetTagBuilder<M,B>
+    extends AbstractBuilder<M,B>
+    implements TargetTagBuilder<M>
 {
+  private final Tag sourceTag;
+
+
   protected AbstractPropagationTargetTagBuilder(@NotNull AbstractProtocol<M,B> protocol,
-                                                @NotNull Tag sourceTag) {
-    super(protocol, sourceTag);
+                                                @NotNull Tag sourceTag)
+  {
+    super(protocol);
+
+    this.sourceTag = sourceTag;
   }
 
 
   @Override
-  protected @NotNull Protocol<M> to0(@NotNull Tag targetTag)
+  public @NotNull Protocol<M> to(@NotNull String targetTagName) {
+    return to0(protocol.resolveTagByName(targetTagName));
+  }
+
+
+  @Override
+  public @NotNull Protocol<M> to(@NotNull Tag targetTag) {
+    return to0(protocol.validateTag(targetTag));
+  }
+
+
+  @Override
+  @SuppressWarnings({ "java:S2583", "java:S2589", "ConstantConditions" })
+  public @NotNull Protocol<M> to(@NotNull String... targetTagNames)
+  {
+    if (targetTagNames == null || targetTagNames.length == 0)
+      throw new NullPointerException("targetTagNames must not be empty");
+
+    for(String targetTagName: targetTagNames)
+      to(targetTagName);
+
+    return protocol;
+  }
+
+
+  @Override
+  @SuppressWarnings({ "java:S2583", "java:S2589", "ConstantConditions" })
+  public @NotNull Protocol<M> to(@NotNull Tag... targetTags)
+  {
+    if (targetTags == null || targetTags.length == 0)
+      throw new NullPointerException("targetTags must not be empty");
+
+    for(Tag targetTag: targetTags)
+      to(targetTag);
+
+    return protocol;
+  }
+
+
+  private @NotNull Protocol<M> to0(@NotNull Tag targetTag)
   {
     Set<Tag> propagationSet = protocol.tagPropagationMap.get(sourceTag);
 

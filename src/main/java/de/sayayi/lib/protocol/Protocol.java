@@ -76,10 +76,46 @@ public interface Protocol<M> extends ProtocolQuery
   Protocol<M> getParent();
 
 
+  /**
+   * <p>
+   *   Prepare a tag propagation definition for this protocol.
+   * </p>
+   * <p>
+   *   Tag propagation means that a source tag automatically implies a target tag for each message
+   *   added to this protocol or its underlying protocol groups.
+   * </p>
+   * <p>
+   *   If a message is added with tag X and a propagation definition exists for X -> Y then the
+   *   message will have both tags X and Y (as long as it matches the message level) as well as the
+   *   tags implicated by X and Y as defined for each tag itself.
+   * </p>
+   *
+   * @param tagName  source tag name
+   *
+   * @return  propagation target tag builder instance, never {@code null}
+   */
   @Contract("_ -> new")
   @NotNull TargetTagBuilder<M> propagate(@NotNull String tagName);
 
 
+  /**
+   * <p>
+   *   Prepare a tag propagation definition for this protocol.
+   * </p>
+   * <p>
+   *   Tag propagation means that a source tag automatically implies a target tag for each message
+   *   added to this protocol or its underlying protocol groups.
+   * </p>
+   * <p>
+   *   If a message is added with tag X and a propagation definition exists for X -> Y then the
+   *   message will have both tags X and Y (as long as it matches the message level) as well as the
+   *   tags implicated by X and Y as defined for each tag itself.
+   * </p>
+   *
+   * @param tag  source tag
+   *
+   * @return  propagation target tag builder instance, never {@code null}
+   */
   @Contract("_ -> new")
   @NotNull TargetTagBuilder<M> propagate(@NotNull Tag tag);
 

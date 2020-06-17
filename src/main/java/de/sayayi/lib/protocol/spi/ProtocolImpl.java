@@ -104,6 +104,14 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
   }
 
 
+  @Override
+  public String toString() {
+    return "Protocol[id=" + id + ']';
+  }
+
+
+
+
   private class MessageBuilder
       extends AbstractMessageBuilder<M,ProtocolMessageBuilder<M>,MessageParameterBuilder<M>>
   {
@@ -120,6 +128,8 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
   }
 
 
+
+
   private class ParameterBuilder
       extends AbstractParameterBuilder<M,MessageParameterBuilder<M>,ProtocolMessageBuilder<M>>
   {
@@ -129,10 +139,6 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
   }
 
 
-  @Override
-  public String toString() {
-    return "Protocol[id=" + id + ']';
-  }
 
 
   private class PropagationTargetTagBuilder

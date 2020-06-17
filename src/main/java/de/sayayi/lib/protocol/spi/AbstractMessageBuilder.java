@@ -20,6 +20,7 @@ import de.sayayi.lib.protocol.Protocol.MessageParameterBuilder;
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.Tag;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -51,6 +52,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   }
 
 
+  @Contract("_ -> new")
   protected abstract @NotNull P createMessageParameterBuilder(@NotNull ProtocolMessageEntry<M> message);
 
 
@@ -101,8 +103,8 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   }
 
 
-  @SuppressWarnings({ "squid:S2583", "ConstantConditions" })
   @Override
+  @SuppressWarnings({ "squid:S2583", "ConstantConditions" })
   public @NotNull P message(@NotNull String message)
   {
     if (message == null)
@@ -112,8 +114,8 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   }
 
 
-  @SuppressWarnings({ "squid:S2583", "ConstantConditions" })
   @Override
+  @SuppressWarnings({ "squid:S2583", "ConstantConditions" })
   public @NotNull P withMessage(@NotNull M message)
   {
     if (message == null)

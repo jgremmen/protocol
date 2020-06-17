@@ -310,9 +310,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
 
 
   @Contract("_ -> fail")
-  static void failTag(@NotNull String tagName)
-  {
-    throw new IllegalArgumentException("tag with name " + tagName +
-                                       " is not registered for this protocol");
+  static void failTag(@NotNull String tagName) {
+    throw new IllegalArgumentException("tag with name " + tagName + " is not registered for this protocol");
   }
 }

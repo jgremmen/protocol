@@ -17,16 +17,20 @@ package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 
+import org.jetbrains.annotations.NotNull;
+
 
 /**
+ * Generic abstract builder class with a reference to the protocol instance that created the builder.
+ *
  * @author Jeroen Gremmen
  */
 abstract class AbstractBuilder<M,B extends ProtocolMessageBuilder<M>>
 {
-  final AbstractProtocol<M,B> protocol;
+  protected final AbstractProtocol<M,B> protocol;
 
 
-  protected AbstractBuilder(AbstractProtocol<M,B> protocol) {
+  protected AbstractBuilder(@NotNull AbstractProtocol<M,B> protocol) {
     this.protocol = protocol;
   }
 }

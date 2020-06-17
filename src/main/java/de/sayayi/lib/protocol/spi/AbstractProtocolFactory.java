@@ -157,6 +157,8 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
   }
 
 
+
+
   private class TagBuilderImpl implements TagBuilder<M>
   {
     @Getter private final TagImpl tag;
@@ -271,6 +273,8 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
       return AbstractProtocolFactory.this.processMessage(message);
     }
   }
+
+
 
 
   @EqualsAndHashCode(doNotUseGetters = true, onlyExplicitlyIncluded = true)
