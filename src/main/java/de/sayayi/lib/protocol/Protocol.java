@@ -78,53 +78,46 @@ public interface Protocol<M> extends ProtocolQuery
 
   /**
    * <p>
-   *   Set a tag translation for this protocol and all underlying protocol groups.
+   *   Prepare a tag propagation definition for this protocol.
    * </p>
    * <p>
-   *   The translation takes effect for new protocol messages. Existing messages are not affected by this setting.
+   *   Tag propagation means that a source tag automatically implies a target tag for each message
+   *   added to this protocol or its underlying protocol groups.
+   * </p>
+   * <p>
+   *   If a message is added with tag X and a propagation definition exists for X -&gt; Y then the
+   *   message will have both tags X and Y (as long as it matches the message level) as well as the
+   *   tags implicated by X and Y as defined for each tag itself.
    * </p>
    *
-   * @param tagName            name for the tag to be translated, not {@code null}
-   * @param translatedTagName  name for the translated tag, not {@code null}
+   * @param tagName  source tag name
    *
-   * @return  this protocol instance
-   *
-   * @see #getEffectiveTag(Tag)
+   * @return  propagation target tag builder instance, never {@code null}
    */
-  @Contract("_, _ -> this")
-  @NotNull Protocol<M> translateTag(@NotNull String tagName, @NotNull String translatedTagName);
+  @Contract("_ -> new")
+  @NotNull TargetTagBuilder<M> propagate(@NotNull String tagName);
 
 
   /**
    * <p>
-   *   Set a tag translation for this protocol and all underlying protocol groups.
+   *   Prepare a tag propagation definition for this protocol.
    * </p>
    * <p>
-   *   The translation takes effect for new protocol messages. Existing messages are not affected by this setting.
+   *   Tag propagation means that a source tag automatically implies a target tag for each message
+   *   added to this protocol or its underlying protocol groups.
+   * </p>
+   * <p>
+   *   If a message is added with tag X and a propagation definition exists for X -&gt; Y then the
+   *   message will have both tags X and Y (as long as it matches the message level) as well as the
+   *   tags implicated by X and Y as defined for each tag itself.
    * </p>
    *
-   * @param tag            tag to be translated, not {@code null}
-   * @param translatedTag  translated tag, not {@code null}
+   * @param tag  source tag
    *
-   * @return  this protocol instance
-   *
-   * @see #getEffectiveTag(Tag)
+   * @return  propagation target tag builder instance, never {@code null}
    */
-  @Contract("_, _ -> this")
-  @NotNull Protocol<M> translateTag(@NotNull Tag tag, @NotNull Tag translatedTag);
-
-
-  /**
-   *
-   * @param tag  tag, not {@code null}
-   *
-   * @return  translated tag, if a translation has been set, or the provided tag. Never {@code null}
-   *
-   * @see #translateTag(String, String)
-   * @see #translateTag(Tag, Tag)
-   */
-  @Contract(pure = true)
-  @NotNull Tag getEffectiveTag(@NotNull Tag tag);
+  @Contract("_ -> new")
+  @NotNull TargetTagBuilder<M> propagate(@NotNull Tag tag);
 
 
   /**
@@ -651,5 +644,20 @@ public interface Protocol<M> extends ProtocolQuery
      */
     @Contract(pure = true)
     GenericMessage<M> getGroupMessage();
+  }
+
+
+  interface TargetTagBuilder<M>
+  {
+    @NotNull Protocol<M> to(@NotNull String targetTagName);
+
+
+    @NotNull Protocol<M> to(@NotNull Tag targetTag);
+
+
+    @NotNull Protocol<M> to(@NotNull String ... targetTagNames);
+
+
+    @NotNull Protocol<M> to(@NotNull Tag ... targetTags);
   }
 }

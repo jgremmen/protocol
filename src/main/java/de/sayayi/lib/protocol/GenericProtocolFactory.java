@@ -22,7 +22,8 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * <p>
- *   Generic protocol factory for text messages where the messages are stored internally as {@code String} objects.
+ *   Generic protocol factory for text messages where the messages are stored internally as
+ *   {@code String} objects.
  * </p>
  *
  * @author Jeroen Gremmen

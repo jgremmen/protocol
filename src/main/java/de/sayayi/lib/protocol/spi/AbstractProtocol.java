@@ -35,24 +35,28 @@ import de.sayayi.lib.protocol.Tag;
 
 import lombok.Getter;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
  * @author Jeroen Gremmen
  */
-abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implements Protocol<M>, InternalProtocolQuery
+abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
+    implements Protocol<M>, InternalProtocolQuery
 {
   @Getter final ProtocolFactory<M> factory;
 
   final List<InternalProtocolEntry<M>> entries;
-  final Map<Tag,Tag> tagTranslationMap;
+  final Map<Tag,Set<Tag>> tagPropagationMap;
 
 
   protected AbstractProtocol(@NotNull ProtocolFactory<M> factory)
@@ -60,51 +64,27 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
     this.factory = factory;
 
     entries = new ArrayList<InternalProtocolEntry<M>>(8);
-    tagTranslationMap = new LinkedHashMap<Tag,Tag>(8);
+    tagPropagationMap = new HashMap<Tag,Set<Tag>>(8);
   }
 
 
-  @Override
-  public @NotNull Protocol<M> translateTag(@NotNull String tagName, @NotNull String translatedTagName)
+  protected @NotNull Set<Tag> getPropagatedTags(@NotNull Set<Tag> tags)
   {
-    final Tag tag = factory.getTagByName(tagName);
-    final Tag translatedTag = factory.getTagByName(translatedTagName);
+    if (tagPropagationMap.isEmpty())
+      return tags;
 
-    if (tag == null)
-      throw new IllegalArgumentException("tag with name " + tagName + " is not registered for this protocol");
-    if (translatedTag == null)
-      throw new IllegalArgumentException("tag with name " + translatedTagName + " is not registered for this protocol");
+    final Set<Tag> collectedPropagatedTags = new HashSet<Tag>();
 
-    return translateTag(tag, translatedTag);
-  }
-
-
-  @Override
-  public @NotNull Protocol<M> translateTag(@NotNull Tag tag, @NotNull Tag translatedTag)
-  {
-    if (!factory.isRegisteredTag(tag))
-      throw new IllegalArgumentException("tag with name " + tag.getName() + " is not registered for this protocol");
-
-    if (tag == translatedTag)
-      tagTranslationMap.remove(tag);
-    else
+    for(Tag tag: tags)
     {
-      if (!factory.isRegisteredTag(translatedTag))
-        throw new IllegalArgumentException("tag with name " + translatedTag.getName() +
-                                           " is not registered for this protocol");
+      collectedPropagatedTags.add(tag);
 
-      tagTranslationMap.put(tag, translatedTag);
+      Set<Tag> propagatedTags = tagPropagationMap.get(tag);
+      if (propagatedTags != null)
+        collectedPropagatedTags.addAll(propagatedTags);
     }
 
-    return this;
-  }
-
-
-  @Override
-  public @NotNull Tag getEffectiveTag(@NotNull Tag tag)
-  {
-    Tag translatedTag = tagTranslationMap.get(tag);
-    return translatedTag != null ? translatedTag : tag;
+    return collectedPropagatedTags;
   }
 
 
@@ -146,7 +126,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   @Override
   public boolean matches0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag... tags)
   {
-    if (LevelHelper.matchLevelAndTags(levelLimit, level, tags))
+    if (levelLimit.severity() >= level.severity())
       for(InternalProtocolEntry<M> entry: entries)
         if (entry.matches0(levelLimit, level, tags))
           return true;
@@ -183,14 +163,20 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   {
     final List<ProtocolEntry<M>> filteredEntries = new ArrayList<ProtocolEntry<M>>();
 
-    if (LevelHelper.matchLevelAndTags(levelLimit, level, tags))
+    if (levelLimit.severity() >= level.severity())
       for(InternalProtocolEntry<M> entry: entries)
         if (entry.matches0(levelLimit, level, tags))
         {
           if (entry instanceof InternalProtocolEntry.Group)
-            filteredEntries.add(ProtocolGroupEntryAdapter.from(levelLimit, (InternalProtocolEntry.Group<M>)entry));
+          {
+            filteredEntries.add(ProtocolGroupEntryAdapter.from(levelLimit,
+                (InternalProtocolEntry.Group<M>)entry));
+          }
           else
-            filteredEntries.add(ProtocolMessageEntryAdapter.from(levelLimit, (InternalProtocolEntry.Message<M>)entry));
+          {
+            filteredEntries.add(ProtocolMessageEntryAdapter.from(levelLimit,
+                (InternalProtocolEntry.Message<M>)entry));
+          }
         }
 
     return filteredEntries;
@@ -203,7 +189,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   {
     int count = 0;
 
-    if (LevelHelper.matchLevelAndTags(levelLimit, level, tags))
+    if (levelLimit.severity() >= level.severity())
       for(InternalProtocolEntry<M> entry: entries)
         count += entry.getVisibleEntryCount0(levelLimit, recursive, level, tags);
 
@@ -214,7 +200,9 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   @Override
   public @NotNull ProtocolGroup<M> createGroup()
   {
-    final ProtocolGroupImpl<M> group = new ProtocolGroupImpl<M>(this);
+    @SuppressWarnings("unchecked")
+    final ProtocolGroupImpl<M> group =
+        new ProtocolGroupImpl<M>((AbstractProtocol<M,ProtocolMessageBuilder<M>>)this);
 
     entries.add(group);
 
@@ -229,7 +217,8 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
 
   @Override
-  public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level, @NotNull String... tagNames)
+  public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level,
+                      @NotNull String... tagNames)
   {
     int tagCount = tagNames.length;
     Tag[] tags = new Tag[tagCount];
@@ -248,7 +237,8 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
 
   @Override
-  public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level, @NotNull Tag ... tags)
+  public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level,
+                      @NotNull Tag ... tags)
   {
     // initialize formatter
     if (formatter instanceof InitializableProtocolFormatter)
@@ -284,10 +274,43 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   {
     int depth = 0;
 
-    for(ProtocolEntry<M> entry: entries)
+    for(InternalProtocolEntry<M> entry: entries)
       if (entry instanceof ProtocolGroupImpl)
         depth = Math.max(depth, 1 + ((ProtocolGroupImpl<M>)entry).countGroupDepth());
 
     return depth;
+  }
+
+
+  @Contract(value = "null -> fail", pure = true)
+  @NotNull Tag resolveTagByName(String tagName)
+  {
+    if (tagName == null)
+      throw new NullPointerException("tagName must not be null");
+
+    Tag tag = factory.getTagByName(tagName);
+    if (tag == null)
+      failTag(tagName);
+
+    return tag;
+  }
+
+
+  @Contract(value = "null -> fail", pure = true)
+  @NotNull Tag validateTag(Tag tag)
+  {
+    if (tag == null)
+      throw new NullPointerException("tag must not be null");
+
+    if (!factory.isRegisteredTag(tag))
+      failTag(tag.getName());
+
+    return tag;
+  }
+
+
+  @Contract("_ -> fail")
+  static void failTag(@NotNull String tagName) {
+    throw new IllegalArgumentException("tag with name " + tagName + " is not registered for this protocol");
   }
 }

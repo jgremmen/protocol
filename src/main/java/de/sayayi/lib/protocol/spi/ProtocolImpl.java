@@ -57,11 +57,10 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
   }
 
 
-  @SuppressWarnings("squid:S2583")
+  @SuppressWarnings({ "squid:S2583", "ConstantConditions" })
   @Override
   public @NotNull ProtocolMessageBuilder<M> add(@NotNull Level level)
   {
-    //noinspection ConstantConditions
     if (level == null)
       throw new NullPointerException("level must not be null");
 
@@ -70,7 +69,7 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
 
 
   @Override
-  public boolean matches(@NotNull Level level, @NotNull Tag... tags) {
+  public boolean matches(@NotNull Level level, @NotNull Tag ... tags) {
     return matches0(HIGHEST, level, tags);
   }
 
@@ -82,7 +81,7 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
 
 
   @Override
-  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull Tag... tags) {
+  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull Tag ... tags) {
     return getVisibleEntryCount0(HIGHEST, recursive, level, tags);
   }
 
@@ -91,6 +90,26 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
   public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag ... tags) {
     return new ProtocolStructureIterator.ForProtocol<M>(level, tags, 0, this);
   }
+
+
+  @Override
+  public @NotNull TargetTagBuilder<M> propagate(@NotNull String tagName) {
+    return new PropagationTargetTagBuilder(resolveTagByName(tagName));
+  }
+
+
+  @Override
+  public @NotNull TargetTagBuilder<M> propagate(@NotNull Tag tag) {
+    return new PropagationTargetTagBuilder(validateTag(tag));
+  }
+
+
+  @Override
+  public String toString() {
+    return "Protocol[id=" + id + ']';
+  }
+
+
 
 
   private class MessageBuilder
@@ -109,6 +128,8 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
   }
 
 
+
+
   private class ParameterBuilder
       extends AbstractParameterBuilder<M,MessageParameterBuilder<M>,ProtocolMessageBuilder<M>>
   {
@@ -118,8 +139,13 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
   }
 
 
-  @Override
-  public String toString() {
-    return "Protocol[id=" + id + ']';
+
+
+  private class PropagationTargetTagBuilder
+      extends AbstractPropagationTargetTagBuilder<M,ProtocolMessageBuilder<M>>
+  {
+    PropagationTargetTagBuilder(Tag sourceTag) {
+      super(ProtocolImpl.this, sourceTag);
+    }
   }
 }

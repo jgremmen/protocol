@@ -107,19 +107,22 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
 
 
   @Override
-  public boolean isHeaderVisible0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag... tags) {
+  public boolean isHeaderVisible0(@NotNull Level levelLimit, @NotNull Level level,
+                                  @NotNull Tag... tags) {
     return group.isHeaderVisible0(levelLimit, level, tags);
   }
 
 
   @Override
-  public @NotNull Level getHeaderLevel0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag... tags) {
+  public @NotNull Level getHeaderLevel0(@NotNull Level levelLimit, @NotNull Level level,
+                                        @NotNull Tag... tags) {
     return group.getHeaderLevel0(levelLimit, level, tags);
   }
 
 
   @Override
-  public int getVisibleGroupEntryMessageCount0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag... tags) {
+  public int getVisibleGroupEntryMessageCount0(@NotNull Level levelLimit, @NotNull Level level,
+                                               @NotNull Tag... tags) {
     return group.getVisibleGroupEntryMessageCount0(levelLimit, level, tags);
   }
 
@@ -137,7 +140,8 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
 
 
   @Override
-  public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive, @NotNull Level level, @NotNull Tag... tags) {
+  public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive,
+                                   @NotNull Level level, @NotNull Tag... tags) {
     return group.getVisibleEntryCount0(levelLimit, recursive, level, tags);
   }
 

@@ -39,16 +39,6 @@ import java.util.Map;
  */
 public interface ProtocolGroup<M> extends Protocol<M>
 {
-  @Override
-  @Contract("_, _ -> this")
-  @NotNull ProtocolGroup<M> translateTag(@NotNull String tagName, @NotNull String translatedTagName);
-
-
-  @Override
-  @Contract("_, _ -> this")
-  @NotNull ProtocolGroup<M> translateTag(@NotNull Tag tag, @NotNull Tag translatedTag);
-
-
   /**
    * Returns the visibility for this protocol group.
    *
@@ -173,6 +163,16 @@ public interface ProtocolGroup<M> extends Protocol<M>
   @Override
   @Contract(pure = true, value = "_ -> new")
   @NotNull ProtocolMessageBuilder<M> add(@NotNull Level level);
+
+
+  @Override
+  @Contract("_ -> new")
+  @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull String tagName);
+
+
+  @Override
+  @Contract("_ -> new")
+  @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull Tag tag);
 
 
   /**
@@ -361,5 +361,24 @@ public interface ProtocolGroup<M> extends Protocol<M>
     public boolean isShowEntries() {
       return this != SHOW_HEADER_ONLY && this != HIDDEN;
     }
+  }
+
+
+  interface TargetTagBuilder<M> extends Protocol.TargetTagBuilder<M>
+  {
+    @Override
+    @NotNull ProtocolGroup<M> to(@NotNull String targetTagName);
+
+
+    @Override
+    @NotNull ProtocolGroup<M> to(@NotNull Tag targetTag);
+
+
+    @Override
+    @NotNull ProtocolGroup<M> to(@NotNull String... targetTagNames);
+
+
+    @Override
+    @NotNull ProtocolGroup<M> to(@NotNull Tag... targetTags);
   }
 }

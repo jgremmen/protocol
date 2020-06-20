@@ -20,6 +20,7 @@ import de.sayayi.lib.protocol.Protocol.MessageParameterBuilder;
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.Tag;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -31,9 +32,9 @@ import java.util.Set;
  */
 @SuppressWarnings("unchecked")
 abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P extends MessageParameterBuilder<M>>
+    extends AbstractBuilder<M,B>
     implements ProtocolMessageBuilder<M>
 {
-  private final AbstractProtocol<M,B> protocol;
   private final Level level;
   private final Set<Tag> tags;
 
@@ -42,7 +43,8 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
 
   protected AbstractMessageBuilder(@NotNull AbstractProtocol<M,B> protocol, @NotNull Level level)
   {
-    this.protocol = protocol;
+    super(protocol);
+
     this.level = level;
 
     tags = new HashSet<Tag>();
@@ -50,21 +52,14 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   }
 
 
+  @Contract("_ -> new")
   protected abstract @NotNull P createMessageParameterBuilder(@NotNull ProtocolMessageEntry<M> message);
 
 
-  @SuppressWarnings("squid:S2583")
   @Override
   public @NotNull B forTag(@NotNull Tag tag)
   {
-    //noinspection ConstantConditions
-    if (tag == null)
-      throw new NullPointerException("tag must not be null");
-
-    tag = protocol.getEffectiveTag(tag);
-
-    if (!protocol.factory.isRegisteredTag(tag))
-      throw new IllegalArgumentException("tag with name " + tag.getName() + " is not registered for this protocol");
+    tag = protocol.validateTag(tag);
 
     if (tag.matches(level))
       tags.add(tag);
@@ -74,8 +69,8 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
 
 
   @Override
-  public @NotNull B forTag(@NotNull String tag) {
-    return forTag(protocol.factory.getTagByName(tag));
+  public @NotNull B forTag(@NotNull String tagName) {
+    return forTag(protocol.resolveTagByName(tagName));
   }
 
 
@@ -93,7 +88,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   public @NotNull B forTags(@NotNull String ... tagNames)
   {
     for(String tagName: tagNames)
-      forTag(protocol.factory.getTagByName(tagName));
+      forTag(tagName);
 
     return (B)this;
   }
@@ -108,11 +103,10 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   }
 
 
-  @SuppressWarnings("squid:S2583")
   @Override
+  @SuppressWarnings({ "squid:S2583", "ConstantConditions" })
   public @NotNull P message(@NotNull String message)
   {
-    //noinspection ConstantConditions
     if (message == null)
       throw new NullPointerException("message must not be null");
 
@@ -120,11 +114,10 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   }
 
 
-  @SuppressWarnings("squid:S2583")
   @Override
+  @SuppressWarnings({ "squid:S2583", "ConstantConditions" })
   public @NotNull P withMessage(@NotNull M message)
   {
-    //noinspection ConstantConditions
     if (message == null)
       throw new NullPointerException("message must not be null");
 
@@ -138,7 +131,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
     Set<Tag> resolvedTags = new HashSet<Tag>();
 
     // add implied dependencies
-    for(Tag tag: tags)
+    for(Tag tag: protocol.getPropagatedTags(tags))
       for(Tag impliedTag: tag.getImpliedTags())
         if (impliedTag.matches(level))
           resolvedTags.add(impliedTag);

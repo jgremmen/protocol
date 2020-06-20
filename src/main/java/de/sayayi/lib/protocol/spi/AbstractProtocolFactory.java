@@ -70,10 +70,9 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
   }
 
 
-  @SuppressWarnings({"SuspiciousMethodCalls", "squid:S2583"})
+  @SuppressWarnings({ "SuspiciousMethodCalls", "squid:S2583", "ConstantConditions" })
   public boolean isRegisteredTag(@NotNull Tag tag)
   {
-    //noinspection ConstantConditions
     if (tag == null)
       throw new NullPointerException("tag must not be null");
 
@@ -81,11 +80,10 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
   }
 
 
-  @SuppressWarnings({"squid:S2589", "squid:S1192"})
   @Override
+  @SuppressWarnings({ "squid:S2589", "squid:S1192", "ConstantConditions" })
   public @NotNull TagBuilder<M> createTag(@NotNull String name)
   {
-    //noinspection ConstantConditions
     if (name == null || name.isEmpty())
       throw new IllegalArgumentException("name must not be empty");
 
@@ -99,11 +97,10 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
   }
 
 
-  @SuppressWarnings({"squid:S2589", "squid:S1192"})
   @Override
+  @SuppressWarnings({ "squid:S2589", "squid:S1192", "ConstantConditions" })
   public @NotNull TagBuilder<M> modifyTag(@NotNull String name)
   {
-    //noinspection ConstantConditions
     if (name == null || name.isEmpty())
       throw new IllegalArgumentException("name must not be empty");
 
@@ -121,10 +118,9 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
   }
 
 
-  @SuppressWarnings("squid:S2589")
+  @SuppressWarnings({ "squid:S2589", "ConstantConditions" })
   private TagImpl getTagByName0(@NotNull String name)
   {
-    //noinspection ConstantConditions
     if (name == null || name.isEmpty())
       throw new IllegalArgumentException("name must not be empty");
 
@@ -132,11 +128,10 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
   }
 
 
-  @SuppressWarnings("squid:S2589")
   @Override
+  @SuppressWarnings({ "squid:S2589", "ConstantConditions" })
   public boolean hasTag(@NotNull String name)
   {
-    //noinspection ConstantConditions
     if (name == null || name.isEmpty())
       throw new IllegalArgumentException("name must not be empty");
 
@@ -162,6 +157,8 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
   }
 
 
+
+
   private class TagBuilderImpl implements TagBuilder<M>
   {
     @Getter private final TagImpl tag;
@@ -174,7 +171,8 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
     @SuppressWarnings({"ConstantConditions", "squid:S2583"})
     @Override
-    public @NotNull TagBuilder<M> match(@NotNull Tag.MatchCondition matchCondition, @NotNull Level matchLevel)
+    public @NotNull TagBuilder<M> match(@NotNull Tag.MatchCondition matchCondition,
+                                        @NotNull Level matchLevel)
     {
       if (matchCondition == null)
         throw new NullPointerException("matchCondition must not be null");
@@ -277,6 +275,8 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
   }
 
 
+
+
   @EqualsAndHashCode(doNotUseGetters = true, onlyExplicitlyIncluded = true)
   static class TagImpl implements Tag, Comparable<TagImpl>
   {
@@ -288,7 +288,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
     @Getter private MatchCondition matchCondition = MatchCondition.AT_LEAST;
     @Getter private Level matchLevel = LOWEST;
 
-    private Set<TagImpl> implies = new TreeSet<TagImpl>();
+    private final Set<TagImpl> implies = new TreeSet<TagImpl>();
 
 
     TagImpl(@NotNull String name)
@@ -298,11 +298,10 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
     }
 
 
-    @SuppressWarnings("squid:S2583")
     @Override
+    @SuppressWarnings({ "squid:S2583", "ConstantConditions" })
     public boolean matches(@NotNull Level level)
     {
-      //noinspection ConstantConditions
       if (level == null)
         throw new NullPointerException("level must not be null");
 

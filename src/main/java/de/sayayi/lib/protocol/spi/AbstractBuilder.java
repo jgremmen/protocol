@@ -15,28 +15,22 @@
  */
 package de.sayayi.lib.protocol.spi;
 
-import de.sayayi.lib.protocol.Level;
-import de.sayayi.lib.protocol.ProtocolQuery;
-import de.sayayi.lib.protocol.Tag;
+import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 
 /**
+ * Generic abstract builder class with a reference to the protocol instance that created the builder.
+ *
  * @author Jeroen Gremmen
  */
-interface InternalProtocolQuery extends ProtocolQuery
+abstract class AbstractBuilder<M,B extends ProtocolMessageBuilder<M>>
 {
-  @Contract(pure = true)
-  boolean matches0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag... tags);
+  protected final AbstractProtocol<M,B> protocol;
 
 
-  @Contract(pure = true)
-  boolean matches0(@NotNull Level levelLimit, @NotNull Level level);
-
-
-  @Contract(pure = true)
-  int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive, @NotNull Level level,
-                            @NotNull Tag ... tags);
+  protected AbstractBuilder(@NotNull AbstractProtocol<M,B> protocol) {
+    this.protocol = protocol;
+  }
 }
