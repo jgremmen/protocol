@@ -17,7 +17,7 @@ package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.ProtocolQuery;
-import de.sayayi.lib.protocol.Tag;
+import de.sayayi.lib.protocol.TagSelector;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 interface InternalProtocolQuery extends ProtocolQuery
 {
   @Contract(pure = true)
-  boolean matches0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag... tags);
+  boolean matches0(@NotNull Level levelLimit, @NotNull Level level, @NotNull TagSelector tagSelector);
 
 
   @Contract(pure = true)
@@ -38,5 +38,5 @@ interface InternalProtocolQuery extends ProtocolQuery
 
   @Contract(pure = true)
   int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive, @NotNull Level level,
-                            @NotNull Tag ... tags);
+                            @NotNull TagSelector tagSelector);
 }

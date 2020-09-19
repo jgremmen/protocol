@@ -20,7 +20,7 @@ import de.sayayi.lib.protocol.Protocol.GenericMessage;
 import de.sayayi.lib.protocol.ProtocolFormatter.InitializableProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
-import de.sayayi.lib.protocol.Tag;
+import de.sayayi.lib.protocol.TagSelector;
 
 import lombok.AccessLevel;
 import lombok.Setter;
@@ -58,7 +58,7 @@ public abstract class TreeProtocolFormatter<M>
 
 
   @Override
-  public void init(@NotNull Level level, @NotNull Tag[] tags, int estimatedGroupDepth)
+  public void init(@NotNull Level level, @NotNull TagSelector tagSelector, int estimatedGroupDepth)
   {
     result.delete(0, result.length());
 

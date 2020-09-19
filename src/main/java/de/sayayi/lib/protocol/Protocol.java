@@ -100,28 +100,6 @@ public interface Protocol<M> extends ProtocolQuery
 
   /**
    * <p>
-   *   Prepare a tag propagation definition for this protocol.
-   * </p>
-   * <p>
-   *   Tag propagation means that a source tag automatically implies a target tag for each message
-   *   added to this protocol or its underlying protocol groups.
-   * </p>
-   * <p>
-   *   If a message is added with tag X and a propagation definition exists for X -&gt; Y then the
-   *   message will have both tags X and Y (as long as it matches the message level) as well as the
-   *   tags implicated by X and Y as defined for each tag itself.
-   * </p>
-   *
-   * @param tag  source tag
-   *
-   * @return  propagation target tag builder instance, never {@code null}
-   */
-  @Contract("_ -> new")
-  @NotNull TargetTagBuilder<M> propagate(@NotNull Tag tag);
-
-
-  /**
-   * <p>
    *   Prepares a new debug level message.
    * </p>
    * <p>
@@ -243,35 +221,16 @@ public interface Protocol<M> extends ProtocolQuery
    * Formats this protocol using the given {@code formatter} iterating over all elements matching {@code level} and at
    * least one of the {@code tags}.
    *
-   * @param formatter  protocol formatter to use for formatting this protocol
-   * @param level      level to match
-   * @param tags       tag or tags to match
-   * @param <R>        result type
+   * @param formatter    protocol formatter to use for formatting this protocol
+   * @param level        level to match
+   * @param tagSelector  selector to match tags
+   * @param <R>          result type
    *
    * @return  formatted protocol, or {@code null}
    */
   @SuppressWarnings("unused")
   @Contract(pure = true)
-  <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level, @NotNull Tag ... tags);
-
-
-  /**
-   * Formats this protocol using the given {@code formatter} iterating over all elements matching {@code level} and at
-   * least one of the {@code tags}.
-   *
-   * @param formatter  protocol formatter to use for formatting this protocol
-   * @param level      level to match
-   * @param tagNames   tag or tags to match
-   * @param <R>        result type
-   *
-   * @return  formatted protocol, or {@code null}
-   *
-   * @throws IllegalArgumentException  if at least one of the {@code tagNames} is not registered by the same
-   *                                   protocol factory
-   */
-  @SuppressWarnings("unused")
-  @Contract(pure = true)
-  <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level, @NotNull String ... tagNames);
+  <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level, @NotNull TagSelector tagSelector);
 
 
   /**
@@ -283,29 +242,29 @@ public interface Protocol<M> extends ProtocolQuery
    *
    * @return  formatted protocol, or {@code null}
    *
-   * @see #format(ProtocolFormatter, Level, Tag[])
+   * @see #format(ProtocolFormatter, Level, TagSelector)
    */
   @Contract(pure = true)
   <R> R format(@NotNull ConfiguredProtocolFormatter<M,R> formatter);
 
 
   @Contract(pure = true, value = "_, _ -> new")
-  @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag ... tags);
+  @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull TagSelector tagSelector);
 
 
   /**
-   * Tells if any entry in this protocol matches the given {@code level} and {@code tags}.
+   * Tells if any entry in this protocol matches the given {@code level} and {@code tagSelector}.
    *
-   * @param level     requested protocol level, not {@code null}
-   * @param tagNames  tags to query, not {@code null}
+   * @param level        requested protocol level, not {@code null}
+   * @param tagSelector  tag selector, not {@code null}
    *
    * @return  {@code true} if at least 1 entry in the protocol matches, {@code false} otherwise
    *
-   * @see #matches(Level, Tag[])
+   * @see #matches(Level, TagSelector)
    * @see ProtocolFactory#getTagByName(String)
    */
   @Contract(pure = true)
-  boolean matches(@NotNull Level level, @NotNull String ... tagNames);
+  boolean matches(@NotNull Level level, @NotNull TagSelector tagSelector);
 
 
   /**
@@ -327,23 +286,6 @@ public interface Protocol<M> extends ProtocolQuery
      *   Adds a tag to the protocol message.
      * </p>
      *
-     * @param tag  tag to associate with the new message, never {@code null}
-     *
-     * @return  this instance
-     *
-     * @throws IllegalArgumentException  if {@code tag} is not registered by the same protocol factory
-     *
-     * @see ProtocolFactory#isRegisteredTag(Tag)
-     */
-    @Contract("_ -> this")
-    @NotNull ProtocolMessageBuilder<M> forTag(@NotNull Tag tag);
-
-
-    /**
-     * <p>
-     *   Adds a tag to the protocol message.
-     * </p>
-     *
      * @param tagName  tag to associate with the new message, never {@code null}
      *
      * @return  this instance
@@ -354,23 +296,6 @@ public interface Protocol<M> extends ProtocolQuery
      */
     @Contract("_ -> this")
     @NotNull ProtocolMessageBuilder<M> forTag(@NotNull String tagName);
-
-
-    /**
-     * <p>
-     *   Adds multiple tags to the protocol message.
-     * </p>
-     *
-     * @param tags  tags to associate with the new message, never {@code null}
-     *
-     * @return  this instance
-     *
-     * @throws IllegalArgumentException  if at least one tag is not registered by the same protocol factory
-     *
-     * @see ProtocolFactory#isRegisteredTag(Tag)
-     */
-    @Contract("_ -> this")
-    @NotNull ProtocolMessageBuilder<M> forTags(@NotNull Tag ... tags);
 
 
     /**
@@ -652,12 +577,6 @@ public interface Protocol<M> extends ProtocolQuery
     @NotNull Protocol<M> to(@NotNull String targetTagName);
 
 
-    @NotNull Protocol<M> to(@NotNull Tag targetTag);
-
-
     @NotNull Protocol<M> to(@NotNull String ... targetTagNames);
-
-
-    @NotNull Protocol<M> to(@NotNull Tag ... targetTags);
   }
 }

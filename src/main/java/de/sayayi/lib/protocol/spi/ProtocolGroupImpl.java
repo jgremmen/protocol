@@ -21,7 +21,8 @@ import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.ProtocolGroup.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.ProtocolIterator;
-import de.sayayi.lib.protocol.Tag;
+import de.sayayi.lib.protocol.TagDef;
+import de.sayayi.lib.protocol.TagSelector;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -73,8 +74,8 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  protected @NotNull Set<Tag> getPropagatedTags(@NotNull Set<Tag> tags) {
-    return parent.getPropagatedTags(super.getPropagatedTags(tags));
+  protected @NotNull Set<TagDef> getPropagatedTags(@NotNull Set<TagDef> tagDefs) {
+    return parent.getPropagatedTags(super.getPropagatedTags(tagDefs));
   }
 
 
@@ -111,7 +112,7 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public boolean isHeaderVisible0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag ... tags)
+  public boolean isHeaderVisible0(@NotNull Level levelLimit, @NotNull Level level, @NotNull TagSelector tagSelector)
   {
     if (groupMessage != null)
       switch(visibility)
@@ -125,11 +126,11 @@ final class ProtocolGroupImpl<M>
           return true;
 
         case SHOW_HEADER_IF_NOT_EMPTY:
-          return matches0(levelLimit, level, tags);
+          return matches0(levelLimit, level, tagSelector);
 
         case FLATTEN_ON_SINGLE_ENTRY:
           return super.getVisibleEntryCount0(
-              LevelHelper.min(this.levelLimit, levelLimit),true, level, tags) > 1;
+              LevelHelper.min(this.levelLimit, levelLimit),true, level, tagSelector) > 1;
       }
 
     return false;
@@ -137,27 +138,27 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public boolean isHeaderVisible(@NotNull Level level, @NotNull Tag ... tags) {
-    return isHeaderVisible0(levelLimit, level, tags);
+  public boolean isHeaderVisible(@NotNull Level level, @NotNull TagSelector tagSelector) {
+    return isHeaderVisible0(levelLimit, level, tagSelector);
   }
 
 
   @Override
   public @NotNull Level getHeaderLevel0(@NotNull Level levelLimit, @NotNull Level level,
-                                        @NotNull Tag ... tags)
+                                        @NotNull TagSelector tagSelector)
   {
     Level headerLevel = LOWEST;
 
     levelLimit = LevelHelper.min(this.levelLimit, levelLimit);
 
-    for(ProtocolEntry<M> entry: getEntries(levelLimit, level, tags))
+    for(ProtocolEntry<M> entry: getEntries(levelLimit, level, tagSelector))
     {
       Level protocolEntryLevel;
 
       if (entry instanceof ProtocolEntry.Message)
         protocolEntryLevel = ((ProtocolEntry.Message<M>)entry).getLevel();
       else if (entry instanceof ProtocolEntry.Group)
-        protocolEntryLevel = ((ProtocolEntry.Group<M>)entry).getHeaderLevel(level, tags);
+        protocolEntryLevel = ((ProtocolEntry.Group<M>)entry).getHeaderLevel(level, tagSelector);
       else
         continue;
 
@@ -172,32 +173,32 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public @NotNull Level getHeaderLevel(@NotNull Level level, @NotNull Tag ... tags) {
-    return getHeaderLevel0(levelLimit, level, tags);
+  public @NotNull Level getHeaderLevel(@NotNull Level level, @NotNull TagSelector tagSelector) {
+    return getHeaderLevel0(levelLimit, level, tagSelector);
   }
 
 
   @Override
   public @NotNull List<ProtocolEntry<M>> getEntries0(@NotNull Level levelLimit, @NotNull Level level,
-                                                     @NotNull Tag ... tags)
+                                                     @NotNull TagSelector tagSelector)
   {
     levelLimit = LevelHelper.min(this.levelLimit, levelLimit);
 
     return levelLimit.severity() >= level.severity() && getEffectiveVisibility().isShowEntries()
-        ? super.getEntries(levelLimit, level, tags) : Collections.<ProtocolEntry<M>>emptyList();
+        ? super.getEntries(levelLimit, level, tagSelector) : Collections.<ProtocolEntry<M>>emptyList();
   }
 
 
   @Override
-  public @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag ... tags) {
-    return getEntries(levelLimit, level, tags);
+  public @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull TagSelector tagSelector) {
+    return getEntries(levelLimit, level, tagSelector);
   }
 
 
   @Override
   @SuppressWarnings("squid:SwitchLastCaseIsDefaultCheck")
   public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive,
-                                   @NotNull Level level, @NotNull Tag ... tags)
+                                   @NotNull Level level, @NotNull TagSelector tagSelector)
   {
     levelLimit = LevelHelper.min(this.levelLimit, levelLimit);
 
@@ -208,7 +209,7 @@ final class ProtocolGroupImpl<M>
       if (effectiveVisibility == SHOW_HEADER_ONLY)
         return 1;
 
-      final int recursiveEntryCount = super.getVisibleEntryCount0(levelLimit, true, level, tags);
+      final int recursiveEntryCount = super.getVisibleEntryCount0(levelLimit, true, level, tagSelector);
       final int entryCountWithHeader = recursive ? recursiveEntryCount + 1 : 1;
 
       switch(effectiveVisibility)
@@ -232,17 +233,18 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull Tag ... tags) {
-    return getVisibleEntryCount0(levelLimit, recursive, level, tags);
+  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull TagSelector tagSelector) {
+    return getVisibleEntryCount0(levelLimit, recursive, level, tagSelector);
   }
 
 
   @Override
   public int getVisibleGroupEntryMessageCount0(@NotNull Level levelLimit, @NotNull Level level,
-                                               @NotNull Tag ... tags)
+                                               @NotNull TagSelector tagSelector)
   {
     return getEffectiveVisibility().isShowEntries()
-        ? super.getVisibleEntryCount0(LevelHelper.min(this.levelLimit, levelLimit), false, level, tags) : 0;
+        ? super.getVisibleEntryCount0(LevelHelper.min(this.levelLimit, levelLimit), false, level, tagSelector)
+        : 0;
   }
 
 
@@ -287,19 +289,19 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public boolean matches0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag ... tags)
+  public boolean matches0(@NotNull Level levelLimit, @NotNull Level level, @NotNull TagSelector tagSelector)
   {
     levelLimit = LevelHelper.min(this.levelLimit, levelLimit);
 
     return levelLimit.severity() >= level.severity() &&
            getEffectiveVisibility().isShowEntries() &&
-           super.matches0(levelLimit, level, tags);
+           super.matches0(levelLimit, level, tagSelector);
   }
 
 
   @Override
-  public boolean matches(@NotNull Level level, @NotNull Tag ... tags) {
-    return matches0(levelLimit, level, tags);
+  public boolean matches(@NotNull Level level, @NotNull TagSelector tagSelector) {
+    return matches0(levelLimit, level, tagSelector);
   }
 
 
@@ -321,22 +323,16 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag ... tags)
+  public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull TagSelector tagSelector)
   {
-    return new ProtocolStructureIterator.ForGroup<M>(levelLimit, level, tags, 0,this,
+    return new ProtocolStructureIterator.ForGroup<M>(levelLimit, level, tagSelector, 0,this,
         false, false, true);
   }
 
 
   @Override
   public @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull String tagName) {
-    return new PropagationTargetTagBuilder(resolveTagByName(tagName));
-  }
-
-
-  @Override
-  public @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull Tag tag) {
-    return new PropagationTargetTagBuilder(validateTag(tag));
+    return new PropagationTargetTagBuilder(factory.getTagByName(tagName));
   }
 
 
@@ -436,8 +432,8 @@ final class ProtocolGroupImpl<M>
 
 
     @Override
-    public boolean isHeaderVisible(@NotNull Level level, @NotNull Tag ... tags) {
-      return ProtocolGroupImpl.this.isHeaderVisible(level, tags);
+    public boolean isHeaderVisible(@NotNull Level level, @NotNull TagSelector tagSelector) {
+      return ProtocolGroupImpl.this.isHeaderVisible(level, tagSelector);
     }
 
 
@@ -460,20 +456,14 @@ final class ProtocolGroupImpl<M>
 
 
     @Override
-    public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag ... tags) {
-      return ProtocolGroupImpl.this.iterator(level, tags);
+    public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull TagSelector tagSelector) {
+      return ProtocolGroupImpl.this.iterator(level, tagSelector);
     }
 
 
     @Override
     public @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull String tagName) {
       return (ProtocolGroup.TargetTagBuilder<M>)super.propagate(tagName);
-    }
-
-
-    @Override
-    public @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull Tag tag) {
-      return (ProtocolGroup.TargetTagBuilder<M>)super.propagate(tag);
     }
   }
 
@@ -484,8 +474,8 @@ final class ProtocolGroupImpl<M>
       extends AbstractPropagationTargetTagBuilder<M,ProtocolGroup.ProtocolMessageBuilder<M>>
       implements ProtocolGroup.TargetTagBuilder<M>
   {
-    PropagationTargetTagBuilder(Tag sourceTag) {
-      super(ProtocolGroupImpl.this, sourceTag);
+    PropagationTargetTagBuilder(TagDef sourceTagDef) {
+      super(ProtocolGroupImpl.this, sourceTagDef);
     }
 
 
@@ -496,20 +486,8 @@ final class ProtocolGroupImpl<M>
 
 
     @Override
-    public @NotNull ProtocolGroup<M> to(@NotNull Tag targetTag) {
-      return (ProtocolGroup<M>)super.to(targetTag);
-    }
-
-
-    @Override
     public @NotNull ProtocolGroup<M> to(@NotNull String ... targetTagNames) {
       return (ProtocolGroup<M>)super.to(targetTagNames);
-    }
-
-
-    @Override
-    public @NotNull ProtocolGroup<M> to(@NotNull Tag ... targetTags) {
-      return (ProtocolGroup<M>)super.to(targetTags);
     }
   }
 }

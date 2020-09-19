@@ -19,7 +19,7 @@ import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.ProtocolGroup;
-import de.sayayi.lib.protocol.Tag;
+import de.sayayi.lib.protocol.TagSelector;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -40,20 +40,20 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
 
 
   @Override
-  public @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag... tags) {
-    return group.getEntries0(levelLimit, level, tags);
+  public @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull TagSelector tagSelector) {
+    return group.getEntries0(levelLimit, level, tagSelector);
   }
 
 
   @Override
-  public boolean isHeaderVisible(@NotNull Level level, @NotNull Tag... tags) {
-    return group.isHeaderVisible0(levelLimit, level, tags);
+  public boolean isHeaderVisible(@NotNull Level level, @NotNull TagSelector tagSelector) {
+    return group.isHeaderVisible0(levelLimit, level, tagSelector);
   }
 
 
   @Override
-  public @NotNull Level getHeaderLevel(@NotNull Level level, @NotNull Tag... tags) {
-    return group.getHeaderLevel0(levelLimit, level, tags);
+  public @NotNull Level getHeaderLevel(@NotNull Level level, @NotNull TagSelector tagSelector) {
+    return group.getHeaderLevel0(levelLimit, level, tagSelector);
   }
 
 
@@ -64,8 +64,8 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
 
 
   @Override
-  public boolean matches(@NotNull Level level, @NotNull Tag... tags) {
-    return group.matches0(levelLimit, level, tags);
+  public boolean matches(@NotNull Level level, @NotNull TagSelector tagSelector) {
+    return group.matches0(levelLimit, level, tagSelector);
   }
 
 
@@ -76,8 +76,8 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
 
 
   @Override
-  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull Tag... tags) {
-    return group.getVisibleEntryCount0(levelLimit, recursive, level, tags);
+  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull TagSelector tagSelector) {
+    return group.getVisibleEntryCount0(levelLimit, recursive, level, tagSelector);
   }
 
 
@@ -101,35 +101,35 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
 
   @Override
   public @NotNull List<ProtocolEntry<M>> getEntries0(@NotNull Level levelLimit, @NotNull Level level,
-                                                     @NotNull Tag... tags) {
-    return group.getEntries0(levelLimit, level, tags);
+                                                     @NotNull TagSelector tagSelector) {
+    return group.getEntries0(levelLimit, level, tagSelector);
   }
 
 
   @Override
   public boolean isHeaderVisible0(@NotNull Level levelLimit, @NotNull Level level,
-                                  @NotNull Tag... tags) {
-    return group.isHeaderVisible0(levelLimit, level, tags);
+                                  @NotNull TagSelector tagSelector) {
+    return group.isHeaderVisible0(levelLimit, level, tagSelector);
   }
 
 
   @Override
   public @NotNull Level getHeaderLevel0(@NotNull Level levelLimit, @NotNull Level level,
-                                        @NotNull Tag... tags) {
-    return group.getHeaderLevel0(levelLimit, level, tags);
+                                        @NotNull TagSelector tagSelector) {
+    return group.getHeaderLevel0(levelLimit, level, tagSelector);
   }
 
 
   @Override
   public int getVisibleGroupEntryMessageCount0(@NotNull Level levelLimit, @NotNull Level level,
-                                               @NotNull Tag... tags) {
-    return group.getVisibleGroupEntryMessageCount0(levelLimit, level, tags);
+                                               @NotNull TagSelector tagSelector) {
+    return group.getVisibleGroupEntryMessageCount0(levelLimit, level, tagSelector);
   }
 
 
   @Override
-  public boolean matches0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag... tags) {
-    return group.matches0(levelLimit, level, tags);
+  public boolean matches0(@NotNull Level levelLimit, @NotNull Level level, @NotNull TagSelector tagSelector) {
+    return group.matches0(levelLimit, level, tagSelector);
   }
 
 
@@ -141,8 +141,8 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
 
   @Override
   public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive,
-                                   @NotNull Level level, @NotNull Tag... tags) {
-    return group.getVisibleEntryCount0(levelLimit, recursive, level, tags);
+                                   @NotNull Level level, @NotNull TagSelector tagSelector) {
+    return group.getVisibleEntryCount0(levelLimit, recursive, level, tagSelector);
   }
 
 

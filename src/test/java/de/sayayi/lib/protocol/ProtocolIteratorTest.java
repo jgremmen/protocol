@@ -40,7 +40,6 @@ public class ProtocolIteratorTest
   public void testDepth()
   {
     GenericProtocolFactory factory = new GenericProtocolFactory();
-    Tag tag = factory.getDefaultTag();
     Protocol<String> protocol = factory.createProtocol();
 
     ProtocolGroup<String> grp1, grp2;
@@ -58,7 +57,7 @@ public class ProtocolIteratorTest
 
     //String tree = protocol.format(new TechnicalProtocolFormatter<String>(factory));
 
-    ProtocolIterator<String> iterator = protocol.iterator(LOWEST, tag);
+    ProtocolIterator<String> iterator = protocol.iterator(LOWEST, Tag.any());
     GroupStartEntry<String> grpEntry;
     MessageEntry<String> msgEntry;
 
@@ -119,7 +118,6 @@ public class ProtocolIteratorTest
   public void testGroupGroup()
   {
     GenericProtocolFactory factory = new GenericProtocolFactory();
-    Tag tag = factory.getDefaultTag();
     Protocol<String> protocol = factory.createProtocol();
 
     protocol.createGroup().setGroupMessage("grp #1, header")
@@ -128,7 +126,7 @@ public class ProtocolIteratorTest
             .createGroup().setGroupMessage("grp #2, header").setVisibility(FLATTEN_ON_SINGLE_ENTRY)
                           .debug().message("grp #2, msg #1");
 
-    ProtocolIterator<String> iterator = protocol.iterator(LOWEST, tag);
+    ProtocolIterator<String> iterator = protocol.iterator(LOWEST, Tag.any());
     GroupStartEntry<String> grpEntry;
     MessageEntry<String> msgEntry;
 
@@ -162,13 +160,11 @@ public class ProtocolIteratorTest
   public void testNoMessages()
   {
     GenericProtocolFactory factory = new GenericProtocolFactory();
-    Tag tag = factory.getDefaultTag();
     Protocol<String> protocol = factory.createProtocol().debug().message("msg");
-    ProtocolIterator<String> iterator = protocol.iterator(ERROR, tag);
+    ProtocolIterator<String> iterator = protocol.iterator(ERROR, Tag.any());
 
     assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolStart);
 
-    assertEquals(tag, iterator.getTags()[0]);
     assertEquals(ERROR, iterator.getLevel());
 
     assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolEnd);
@@ -179,11 +175,9 @@ public class ProtocolIteratorTest
   public void testSingleMessage()
   {
     GenericProtocolFactory factory = new GenericProtocolFactory();
-    Tag tag = factory.getDefaultTag();
     Protocol<String> protocol = factory.createProtocol().debug().message("msg #1");
-    ProtocolIterator<String> iterator = protocol.iterator(LOWEST, tag);
+    ProtocolIterator<String> iterator = protocol.iterator(LOWEST, Tag.any());
 
-    assertEquals(tag, iterator.getTags()[0]);
     assertEquals(LOWEST, iterator.getLevel());
 
     DepthEntry<String> entry;
@@ -210,16 +204,14 @@ public class ProtocolIteratorTest
   public void testMessagesOnly()
   {
     GenericProtocolFactory factory = new GenericProtocolFactory();
-    Tag tag = factory.getDefaultTag();
     Protocol<String> protocol = factory.createProtocol();
 
     protocol.debug().message("msg #1")
             .warn().message("msg #2")
             .error().message("msg #3");
 
-    ProtocolIterator<String> iterator = protocol.iterator(LOWEST, tag);
+    ProtocolIterator<String> iterator = protocol.iterator(LOWEST, Tag.any());
 
-    assertEquals(tag, iterator.getTags()[0]);
     assertEquals(LOWEST, iterator.getLevel());
 
     DepthEntry<String> entry;
@@ -268,13 +260,13 @@ public class ProtocolIteratorTest
   public void testBug1()
   {
     GenericProtocolFactory factory = new GenericProtocolFactory();
-    Tag tag = factory.getDefaultTag();
     ProtocolGroup<String> protocol = factory.createProtocol().createGroup();
 
-    protocol.setVisibility(SHOW_HEADER_ALWAYS).setGroupMessage("Group")
-            .error().message("Error");
+    protocol.setVisibility(SHOW_HEADER_ALWAYS)
+        .setGroupMessage("Group")
+        .error().message("Error");
 
-    ProtocolIterator<String> iterator = protocol.iterator(LOWEST, tag);
+    ProtocolIterator<String> iterator = protocol.iterator(LOWEST, Tag.any());
 
     assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolStart);
     assertTrue(iterator.next() instanceof ProtocolIterator.GroupStartEntry);

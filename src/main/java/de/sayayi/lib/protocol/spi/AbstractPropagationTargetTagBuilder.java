@@ -18,7 +18,7 @@ package de.sayayi.lib.protocol.spi;
 import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.Protocol.TargetTagBuilder;
-import de.sayayi.lib.protocol.Tag;
+import de.sayayi.lib.protocol.TagDef;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -33,27 +33,32 @@ abstract class AbstractPropagationTargetTagBuilder<M,B extends ProtocolMessageBu
     extends AbstractBuilder<M,B>
     implements TargetTagBuilder<M>
 {
-  private final Tag sourceTag;
+  private final TagDef sourceTagDef;
 
 
-  protected AbstractPropagationTargetTagBuilder(@NotNull AbstractProtocol<M,B> protocol,
-                                                @NotNull Tag sourceTag)
+  protected AbstractPropagationTargetTagBuilder(@NotNull AbstractProtocol<M,B> protocol, @NotNull TagDef sourceTagDef)
   {
     super(protocol);
 
-    this.sourceTag = sourceTag;
+    this.sourceTagDef = sourceTagDef;
   }
 
 
   @Override
-  public @NotNull Protocol<M> to(@NotNull String targetTagName) {
-    return to0(protocol.resolveTagByName(targetTagName));
-  }
+  public @NotNull Protocol<M> to(@NotNull String targetTagName)
+  {
+    final TagDef targetTagDef = protocol.factory.getTagByName(targetTagName);
+    Set<TagDef> propagationSet = protocol.tagPropagationMap.get(sourceTagDef);
 
+    if (propagationSet == null)
+    {
+      propagationSet = new HashSet<TagDef>(4);
+      protocol.tagPropagationMap.put(sourceTagDef, propagationSet);
+    }
 
-  @Override
-  public @NotNull Protocol<M> to(@NotNull Tag targetTag) {
-    return to0(protocol.validateTag(targetTag));
+    propagationSet.add(targetTagDef);
+
+    return protocol;
   }
 
 
@@ -66,36 +71,6 @@ abstract class AbstractPropagationTargetTagBuilder<M,B extends ProtocolMessageBu
 
     for(String targetTagName: targetTagNames)
       to(targetTagName);
-
-    return protocol;
-  }
-
-
-  @Override
-  @SuppressWarnings({ "java:S2583", "java:S2589", "ConstantConditions" })
-  public @NotNull Protocol<M> to(@NotNull Tag... targetTags)
-  {
-    if (targetTags == null || targetTags.length == 0)
-      throw new NullPointerException("targetTags must not be empty");
-
-    for(Tag targetTag: targetTags)
-      to(targetTag);
-
-    return protocol;
-  }
-
-
-  private @NotNull Protocol<M> to0(@NotNull Tag targetTag)
-  {
-    Set<Tag> propagationSet = protocol.tagPropagationMap.get(sourceTag);
-
-    if (propagationSet == null)
-    {
-      propagationSet = new HashSet<Tag>(4);
-      protocol.tagPropagationMap.put(sourceTag, propagationSet);
-    }
-
-    propagationSet.add(targetTag);
 
     return protocol;
   }

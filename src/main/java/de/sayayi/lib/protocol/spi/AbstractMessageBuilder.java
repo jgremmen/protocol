@@ -18,13 +18,14 @@ package de.sayayi.lib.protocol.spi;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol.MessageParameterBuilder;
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
-import de.sayayi.lib.protocol.Tag;
+import de.sayayi.lib.protocol.TagDef;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 
 /**
@@ -36,7 +37,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
     implements ProtocolMessageBuilder<M>
 {
   private final Level level;
-  private final Set<Tag> tags;
+  private final Set<TagDef> tagDefs;
 
   private Throwable throwable;
 
@@ -47,8 +48,8 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
 
     this.level = level;
 
-    tags = new HashSet<Tag>();
-    tags.add(protocol.factory.getDefaultTag());
+    tagDefs = new HashSet<TagDef>();
+    tagDefs.add(protocol.factory.getDefaultTag());
   }
 
 
@@ -57,28 +58,12 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
 
 
   @Override
-  public @NotNull B forTag(@NotNull Tag tag)
+  public @NotNull B forTag(@NotNull String tagName)
   {
-    tag = protocol.validateTag(tag);
+    final TagDef tagDef = protocol.factory.getTagByName(tagName);
 
-    if (tag.matches(level))
-      tags.add(tag);
-
-    return (B)this;
-  }
-
-
-  @Override
-  public @NotNull B forTag(@NotNull String tagName) {
-    return forTag(protocol.resolveTagByName(tagName));
-  }
-
-
-  @Override
-  public @NotNull B forTags(@NotNull Tag ... tags)
-  {
-    for(Tag tag: tags)
-      forTag(tag);
+    if (tagDef.matches(level))
+      tagDefs.add(tagDef);
 
     return (B)this;
   }
@@ -128,13 +113,13 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   @SuppressWarnings("squid:S2583")
   private @NotNull P message0(@NotNull M message)
   {
-    Set<Tag> resolvedTags = new HashSet<Tag>();
+    Set<String> resolvedTags = new TreeSet<String>();
 
     // add implied dependencies
-    for(Tag tag: protocol.getPropagatedTags(tags))
-      for(Tag impliedTag: tag.getImpliedTags())
-        if (impliedTag.matches(level))
-          resolvedTags.add(impliedTag);
+    for(TagDef tagDef: protocol.getPropagatedTags(tagDefs))
+      for(TagDef impliedTagDef: tagDef.getImpliedTags())
+        if (impliedTagDef.matches(level))
+          resolvedTags.add(impliedTagDef.getName());
 
     ProtocolMessageEntry<M> msg = new ProtocolMessageEntry<M>(level, resolvedTags, throwable,
         message, protocol.factory.getDefaultParameterValues());

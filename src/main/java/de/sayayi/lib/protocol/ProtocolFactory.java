@@ -15,7 +15,7 @@
  */
 package de.sayayi.lib.protocol;
 
-import de.sayayi.lib.protocol.Tag.MatchCondition;
+import de.sayayi.lib.protocol.TagDef.MatchCondition;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -64,7 +64,7 @@ public interface ProtocolFactory<M>
 
 
   @Contract(pure = true)
-  Tag getTagByName(@NotNull String name);
+  @NotNull TagDef getTagByName(@NotNull String name);
 
 
   @Contract(pure = true)
@@ -72,14 +72,12 @@ public interface ProtocolFactory<M>
 
 
   /**
-   * Tells whether {@code tag} is registered with this factory.
+   * Returns a set of all tag names registered with this factory.
    *
-   * @param tag  tag to check
-   *
-   * @return  {@code true} if this tag is registered with this factory, {@code false} otherwise
+   * @return  set of all tag names registered with this factory, never {@code null}
    */
-  @Contract(pure = true)
-  boolean isRegisteredTag(@NotNull Tag tag);
+  @Contract(pure = true, value = "-> new")
+  @NotNull Set<String> getTagNames();
 
 
   /**
@@ -88,7 +86,7 @@ public interface ProtocolFactory<M>
    * @return  set of all tags registered with this factory, never {@code null}
    */
   @Contract(pure = true, value = "-> new")
-  @NotNull Set<Tag> getTags();
+  @NotNull Set<TagDef> getTagDefs();
 
 
   /**
@@ -97,7 +95,7 @@ public interface ProtocolFactory<M>
    * @return  default tag, never {@code null}
    */
   @Contract(pure = true)
-  @NotNull Tag getDefaultTag();
+  @NotNull TagDef getDefaultTag();
 
 
   /**
@@ -133,18 +131,17 @@ public interface ProtocolFactory<M>
 
 
   /**
-   *
    * @param <M>  internal message object type
    */
   @SuppressWarnings("UnusedReturnValue")
   interface TagBuilder<M> extends ProtocolFactory<M>
   {
     @Contract("_ -> this")
-    @NotNull TagBuilder<M> dependsOn(@NotNull String ... tags);
+    @NotNull TagBuilder<M> dependsOn(@NotNull String ... tagNames);
 
 
     @Contract("_ -> this")
-    @NotNull TagBuilder<M> implies(@NotNull String ... tags);
+    @NotNull TagBuilder<M> implies(@NotNull String ... tagNames);
 
 
     @Contract("_, _ -> this")
@@ -152,11 +149,11 @@ public interface ProtocolFactory<M>
 
 
     /**
-     * Returns the tag instance build by this builder.
+     * Returns the tag definition instance build by this builder.
      *
-     * @return  tag instance
+     * @return  tag definition instance
      */
     @Contract(pure = true)
-    @NotNull Tag getTag();
+    @NotNull TagDef getTagDef();
   }
 }

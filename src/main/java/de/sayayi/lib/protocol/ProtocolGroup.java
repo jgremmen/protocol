@@ -137,7 +137,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
   @Contract(pure = true)
-  boolean isHeaderVisible(@NotNull Level level, @NotNull Tag ... tags);
+  boolean isHeaderVisible(@NotNull Level level, @NotNull TagSelector tagSelector);
 
 
   @Override
@@ -170,11 +170,6 @@ public interface ProtocolGroup<M> extends Protocol<M>
   @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull String tagName);
 
 
-  @Override
-  @Contract("_ -> new")
-  @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull Tag tag);
-
-
   /**
    * Returns the protocol instance this protocol group belongs to.
    *
@@ -195,16 +190,6 @@ public interface ProtocolGroup<M> extends Protocol<M>
     @Override
     @Contract("_ -> this")
     @NotNull ProtocolMessageBuilder<M> forTag(@NotNull String tagName);
-
-
-    @Override
-    @Contract("_ -> this")
-    @NotNull ProtocolMessageBuilder<M> forTag(@NotNull Tag tag);
-
-
-    @Override
-    @Contract("_ -> this")
-    @NotNull ProtocolMessageBuilder<M> forTags(@NotNull Tag ... tags);
 
 
     @Override
@@ -371,14 +356,6 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
     @Override
-    @NotNull ProtocolGroup<M> to(@NotNull Tag targetTag);
-
-
-    @Override
     @NotNull ProtocolGroup<M> to(@NotNull String... targetTagNames);
-
-
-    @Override
-    @NotNull ProtocolGroup<M> to(@NotNull Tag... targetTags);
   }
 }

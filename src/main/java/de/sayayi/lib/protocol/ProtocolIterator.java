@@ -45,7 +45,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
    * @return  iteration tags, never {@code null}
    */
   @Contract(pure = true)
-  @NotNull Tag[] getTags();
+  @NotNull TagSelector getTagSelector();
 
 
   /**

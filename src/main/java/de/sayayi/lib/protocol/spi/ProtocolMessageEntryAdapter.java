@@ -17,7 +17,7 @@ package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.ProtocolEntry;
-import de.sayayi.lib.protocol.Tag;
+import de.sayayi.lib.protocol.TagSelector;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -39,7 +39,7 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
 
 
   @Override
-  public @NotNull Set<Tag> getTags() {
+  public @NotNull Set<String> getTags() {
     return message.getTags();
   }
 
@@ -75,8 +75,8 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
 
 
   @Override
-  public boolean matches(@NotNull Level level, @NotNull Tag... tags) {
-    return message.matches0(levelLimit, level, tags);
+  public boolean matches(@NotNull Level level, @NotNull TagSelector tagSelector) {
+    return message.matches0(levelLimit, level, tagSelector);
   }
 
 
@@ -87,25 +87,25 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
 
 
   @Override
-  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull Tag... tags) {
-    return message.getVisibleEntryCount0(levelLimit, recursive, level, tags);
+  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull TagSelector tagSelector) {
+    return message.getVisibleEntryCount0(levelLimit, recursive, level, tagSelector);
   }
 
 
   @Override
   public String toString()
   {
-    StringBuilder s = new StringBuilder("Message[level=").append(levelLimit).append(",tags={");
+    final StringBuilder s = new StringBuilder("Message[level=").append(levelLimit).append(",tags={");
     boolean first = true;
 
-    for(Tag tag: getTags())
+    for(String tag: getTags())
     {
       if (first)
         first = false;
       else
         s.append(',');
 
-      s.append(tag.getName());
+      s.append(tag);
     }
 
     s.append("},message=").append(message.getMessage());

@@ -21,7 +21,7 @@ import de.sayayi.lib.protocol.ProtocolFormatter.InitializableProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupEndEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
-import de.sayayi.lib.protocol.Tag;
+import de.sayayi.lib.protocol.TagSelector;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -119,7 +119,7 @@ public abstract class HtmlProtocolFormatter<M> implements InitializableProtocolF
 
 
   @Override
-  public void init(@NotNull Level level, @NotNull Tag[] tags, int estimatedGroupDepth) {
+  public void init(@NotNull Level level, @NotNull TagSelector tagSelector, int estimatedGroupDepth) {
     html.delete(0, html.length());
   }
 
