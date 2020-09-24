@@ -27,7 +27,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author Jeroen Gremmen
  */
-public class TagDefPropagationTest
+public class TagPropagationTest
 {
   @Test
   public void testProtocolPropagation()
@@ -36,7 +36,7 @@ public class TagDefPropagationTest
     TagDef uiTagDef = factory.createTag("ui").match(AT_LEAST, INFO).getTagDef();
 
     Protocol<String> protocol = factory.createProtocol()
-        .propagate(factory.getDefaultTag().getName()).to("ui");
+        .propagate(factory.getDefaultTag().asSelector()).to("ui");
 
     protocol.debug().message("debug")
             .warn().message("error");

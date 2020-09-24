@@ -20,7 +20,6 @@ import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolIterator;
-import de.sayayi.lib.protocol.TagDef;
 import de.sayayi.lib.protocol.TagSelector;
 
 import lombok.EqualsAndHashCode;
@@ -94,8 +93,8 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
 
 
   @Override
-  public @NotNull TargetTagBuilder<M> propagate(@NotNull String tagName) {
-    return new PropagationTargetTagBuilder(factory.getTagByName(tagName));
+  public @NotNull TargetTagBuilder<M> propagate(@NotNull TagSelector tagSelector) {
+    return new PropagationBuilder(tagSelector);
   }
 
 
@@ -135,10 +134,10 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
 
 
 
-  private class PropagationTargetTagBuilder extends AbstractPropagationTargetTagBuilder<M,ProtocolMessageBuilder<M>>
+  private class PropagationBuilder extends AbstractPropagationBuilder<M,ProtocolMessageBuilder<M>>
   {
-    PropagationTargetTagBuilder(TagDef sourceTagDef) {
-      super(ProtocolImpl.this, sourceTagDef);
+    PropagationBuilder(TagSelector tagSelector) {
+      super(ProtocolImpl.this, tagSelector);
     }
   }
 }

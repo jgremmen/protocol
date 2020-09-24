@@ -221,7 +221,7 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
-  public @NotNull TargetTagBuilder<M> propagate(@NotNull String tagName) {
-    return protocol.propagate(tagName);
+  public @NotNull TargetTagBuilder<M> propagate(@NotNull TagSelector tagSelector) {
+    return protocol.propagate(tagSelector);
   }
 }

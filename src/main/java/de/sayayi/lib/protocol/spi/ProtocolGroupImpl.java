@@ -21,11 +21,11 @@ import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.ProtocolGroup.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.ProtocolIterator;
-import de.sayayi.lib.protocol.TagDef;
 import de.sayayi.lib.protocol.TagSelector;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.val;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -74,8 +74,8 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  protected @NotNull Set<TagDef> getPropagatedTags(@NotNull Set<TagDef> tagDefs) {
-    return parent.getPropagatedTags(super.getPropagatedTags(tagDefs));
+  protected @NotNull Set<String> getPropagatedTags(@NotNull Set<String> tags) {
+    return parent.getPropagatedTags(super.getPropagatedTags(tags));
   }
 
 
@@ -204,13 +204,13 @@ final class ProtocolGroupImpl<M>
 
     if (levelLimit.severity() >= level.severity())
     {
-      final Visibility effectiveVisibility = getEffectiveVisibility();
+      val effectiveVisibility = getEffectiveVisibility();
 
       if (effectiveVisibility == SHOW_HEADER_ONLY)
         return 1;
 
-      final int recursiveEntryCount = super.getVisibleEntryCount0(levelLimit, true, level, tagSelector);
-      final int entryCountWithHeader = recursive ? recursiveEntryCount + 1 : 1;
+      val recursiveEntryCount = super.getVisibleEntryCount0(levelLimit, true, level, tagSelector);
+      val entryCountWithHeader = recursive ? recursiveEntryCount + 1 : 1;
 
       switch(effectiveVisibility)
       {
@@ -331,16 +331,15 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull String tagName) {
-    return new PropagationTargetTagBuilder(factory.getTagByName(tagName));
+  public @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull TagSelector tagSelector) {
+    return new PropagationBuilder(tagSelector);
   }
 
 
   @Override
   public String toString()
   {
-    final StringBuilder s = new StringBuilder("ProtocolGroup[id=").append(id)
-        .append(",visibility=").append(visibility);
+    final StringBuilder s = new StringBuilder("ProtocolGroup[id=").append(id).append(",visibility=").append(visibility);
 
     if (levelLimit.severity() < HIGHEST.severity())
       s.append(",levelLimit=").append(levelLimit);
@@ -380,7 +379,7 @@ final class ProtocolGroupImpl<M>
     @Override
     public String toString()
     {
-      StringBuilder s = new StringBuilder("GroupMessage[message=").append(message);
+      val s = new StringBuilder("GroupMessage[message=").append(message);
 
       if (!parameterValues.isEmpty())
         s.append(",params=").append(parameterValues);
@@ -462,20 +461,20 @@ final class ProtocolGroupImpl<M>
 
 
     @Override
-    public @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull String tagName) {
-      return (ProtocolGroup.TargetTagBuilder<M>)super.propagate(tagName);
+    public @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull TagSelector tagSelector) {
+      return (ProtocolGroup.TargetTagBuilder<M>)super.propagate(tagSelector);
     }
   }
 
 
 
 
-  private class PropagationTargetTagBuilder
-      extends AbstractPropagationTargetTagBuilder<M,ProtocolGroup.ProtocolMessageBuilder<M>>
+  private class PropagationBuilder
+      extends AbstractPropagationBuilder<M,ProtocolGroup.ProtocolMessageBuilder<M>>
       implements ProtocolGroup.TargetTagBuilder<M>
   {
-    PropagationTargetTagBuilder(TagDef sourceTagDef) {
-      super(ProtocolGroupImpl.this, sourceTagDef);
+    PropagationBuilder(TagSelector tagSelector) {
+      super(ProtocolGroupImpl.this, tagSelector);
     }
 
 

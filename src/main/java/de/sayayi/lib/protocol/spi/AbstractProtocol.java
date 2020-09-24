@@ -32,20 +32,20 @@ import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.ProtocolEnd;
 import de.sayayi.lib.protocol.ProtocolIterator.ProtocolStart;
 import de.sayayi.lib.protocol.Tag;
-import de.sayayi.lib.protocol.TagDef;
 import de.sayayi.lib.protocol.TagSelector;
 
 import lombok.Getter;
+import lombok.val;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 
 /**
@@ -56,7 +56,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   @Getter final ProtocolFactory<M> factory;
 
   final List<InternalProtocolEntry<M>> entries;
-  final Map<TagDef,Set<TagDef>> tagPropagationMap;
+  final Map<TagSelector,Set<String>> tagPropagationMap;
 
 
   protected AbstractProtocol(@NotNull ProtocolFactory<M> factory)
@@ -64,24 +64,21 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
     this.factory = factory;
 
     entries = new ArrayList<InternalProtocolEntry<M>>(8);
-    tagPropagationMap = new HashMap<TagDef,Set<TagDef>>(8);
+    tagPropagationMap = new HashMap<TagSelector,Set<String>>(8);
   }
 
 
-  protected @NotNull Set<TagDef> getPropagatedTags(@NotNull Set<TagDef> tagDefs)
+  protected @NotNull Set<String> getPropagatedTags(@NotNull Set<String> tags)
   {
     if (tagPropagationMap.isEmpty())
-      return tagDefs;
+      return tags;
 
-    final Set<TagDef> collectedPropagatedTagDefs = new HashSet<TagDef>();
+    val collectedPropagatedTagDefs = new TreeSet<String>(tags);
 
-    for(TagDef tagDef: tagDefs)
+    for(val tagPropagation: tagPropagationMap.entrySet())
     {
-      collectedPropagatedTagDefs.add(tagDef);
-
-      Set<TagDef> propagatedTagDefs = tagPropagationMap.get(tagDef);
-      if (propagatedTagDefs != null)
-        collectedPropagatedTagDefs.addAll(propagatedTagDefs);
+      if (tagPropagation.getKey().match(collectedPropagatedTagDefs))
+        collectedPropagatedTagDefs.addAll(tagPropagation.getValue());
     }
 
     return collectedPropagatedTagDefs;

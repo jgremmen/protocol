@@ -55,6 +55,10 @@ public interface ProtocolFactory<M>
   @NotNull Protocol<M> createProtocol();
 
 
+  @Contract(value = "null -> false", pure = true)
+  boolean isValidTagName(String tagName);
+
+
   @Contract("_ -> new")
   @NotNull TagBuilder<M> createTag(@NotNull String name);
 
@@ -67,8 +71,8 @@ public interface ProtocolFactory<M>
   @NotNull TagDef getTagByName(@NotNull String name);
 
 
-  @Contract(pure = true)
-  boolean hasTag(@NotNull String name);
+  @Contract(value = "null -> false", pure = true)
+  boolean hasTag(String name);
 
 
   /**

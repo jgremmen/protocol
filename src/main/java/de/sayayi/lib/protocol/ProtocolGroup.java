@@ -167,7 +167,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
   @Override
   @Contract("_ -> new")
-  @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull String tagName);
+  @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull TagSelector tagSelector);
 
 
   /**

@@ -19,6 +19,8 @@ import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.TagSelector;
 
 import lombok.Getter;
+import lombok.val;
+import lombok.var;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -97,10 +99,10 @@ final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements
   @Override
   public String toString()
   {
-    StringBuilder s = new StringBuilder("Message[level=").append(level).append(",tags={");
-    boolean first = true;
+    val s = new StringBuilder("Message[level=").append(level).append(",tags={");
+    var first = true;
 
-    for(String tag: tags)
+    for(val tag: tags)
     {
       if (first)
         first = false;

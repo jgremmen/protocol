@@ -90,12 +90,12 @@ public interface Protocol<M> extends ProtocolQuery
    *   tags implicated by X and Y as defined for each tag itself.
    * </p>
    *
-   * @param tagName  source tag name
+   * @param tagSelector  tag selector
    *
    * @return  propagation target tag builder instance, never {@code null}
    */
   @Contract("_ -> new")
-  @NotNull TargetTagBuilder<M> propagate(@NotNull String tagName);
+  @NotNull TargetTagBuilder<M> propagate(@NotNull TagSelector tagSelector);
 
 
   /**

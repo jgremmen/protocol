@@ -20,12 +20,13 @@ import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.Protocol.GenericMessage;
 import de.sayayi.lib.protocol.Protocol.MessageWithLevel;
 import de.sayayi.lib.protocol.ProtocolEntry;
-import de.sayayi.lib.protocol.ProtocolGroup.Visibility;
 import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.TagSelector;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.val;
+import lombok.var;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -116,7 +117,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     if (!hasNext())
       throw new NoSuchElementException();
 
-    final DepthEntry<M> entry = nextEntries[firstEntryIdx];
+    val entry = nextEntries[firstEntryIdx];
 
     nextEntries[firstEntryIdx] = null;
     firstEntryIdx = (firstEntryIdx + 1) & 3;
@@ -181,7 +182,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
         return;
       }
 
-      final ProtocolEntry<M> protocolEntry = iterator.next();
+      val protocolEntry = iterator.next();
 
       if (protocolEntry instanceof InternalProtocolEntry.Group)
       {
@@ -242,7 +243,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
       super(protocol.getHeaderLevel0(levelLimit, level, tagSelector), level, tagSelector, depth,
           protocol.getEntries0(levelLimit, level, tagSelector), rootProtocol);
 
-      Visibility visibility = protocol.getEffectiveVisibility();
+      var visibility = protocol.getEffectiveVisibility();
 
       // normalize visibility
       if (visibility == SHOW_HEADER_ALWAYS && !hasNextMessageOrGroup())
@@ -500,7 +501,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
       if (!hasNext())
         throw new NoSuchElementException();
 
-      ProtocolEntry<M> entry = nextEntry;
+      val entry = nextEntry;
 
       prepareNextEntry();
 

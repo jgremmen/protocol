@@ -18,45 +18,48 @@ package de.sayayi.lib.protocol.spi;
 import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.Protocol.TargetTagBuilder;
-import de.sayayi.lib.protocol.TagDef;
+import de.sayayi.lib.protocol.TagSelector;
+
+import lombok.var;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.TreeSet;
 
 
 /**
  * @author Jeroen Gremmen
  */
-abstract class AbstractPropagationTargetTagBuilder<M,B extends ProtocolMessageBuilder<M>>
+abstract class AbstractPropagationBuilder<M,B extends ProtocolMessageBuilder<M>>
     extends AbstractBuilder<M,B>
     implements TargetTagBuilder<M>
 {
-  private final TagDef sourceTagDef;
+  private final TagSelector tagSelector;
 
 
-  protected AbstractPropagationTargetTagBuilder(@NotNull AbstractProtocol<M,B> protocol, @NotNull TagDef sourceTagDef)
+  protected AbstractPropagationBuilder(@NotNull AbstractProtocol<M,B> protocol, @NotNull TagSelector tagSelector)
   {
     super(protocol);
 
-    this.sourceTagDef = sourceTagDef;
+    this.tagSelector = tagSelector;
   }
 
 
   @Override
   public @NotNull Protocol<M> to(@NotNull String targetTagName)
   {
-    final TagDef targetTagDef = protocol.factory.getTagByName(targetTagName);
-    Set<TagDef> propagationSet = protocol.tagPropagationMap.get(sourceTagDef);
+    if (!protocol.factory.isValidTagName(targetTagName))
+      throw new IllegalArgumentException("invalid target tag name '" + targetTagName + "'");
+
+    var propagationSet = protocol.tagPropagationMap.get(tagSelector);
 
     if (propagationSet == null)
     {
-      propagationSet = new HashSet<TagDef>(4);
-      protocol.tagPropagationMap.put(sourceTagDef, propagationSet);
+      propagationSet = new TreeSet<String>();
+      protocol.tagPropagationMap.put(tagSelector, propagationSet);
     }
 
-    propagationSet.add(targetTagDef);
+    propagationSet.add(targetTagName);
 
     return protocol;
   }

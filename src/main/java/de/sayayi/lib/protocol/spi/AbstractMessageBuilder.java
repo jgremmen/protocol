@@ -18,7 +18,9 @@ package de.sayayi.lib.protocol.spi;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol.MessageParameterBuilder;
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
-import de.sayayi.lib.protocol.TagDef;
+import de.sayayi.lib.protocol.ProtocolFactory;
+
+import lombok.val;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +39,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
     implements ProtocolMessageBuilder<M>
 {
   private final Level level;
-  private final Set<TagDef> tagDefs;
+  private final Set<String> tags;
 
   private Throwable throwable;
 
@@ -48,8 +50,8 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
 
     this.level = level;
 
-    tagDefs = new HashSet<TagDef>();
-    tagDefs.add(protocol.factory.getDefaultTag());
+    tags = new HashSet<String>();
+    tags.add(ProtocolFactory.Constant.DEFAULT_TAG_NAME);
   }
 
 
@@ -60,10 +62,10 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   @Override
   public @NotNull B forTag(@NotNull String tagName)
   {
-    final TagDef tagDef = protocol.factory.getTagByName(tagName);
+    val tagDef = protocol.factory.getTagByName(tagName);
 
     if (tagDef.matches(level))
-      tagDefs.add(tagDef);
+      tags.add(tagName);
 
     return (B)this;
   }
@@ -72,7 +74,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   @Override
   public @NotNull B forTags(@NotNull String ... tagNames)
   {
-    for(String tagName: tagNames)
+    for(val tagName: tagNames)
       forTag(tagName);
 
     return (B)this;
@@ -113,15 +115,15 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   @SuppressWarnings("squid:S2583")
   private @NotNull P message0(@NotNull M message)
   {
-    Set<String> resolvedTags = new TreeSet<String>();
+    val resolvedTags = new TreeSet<String>();
 
     // add implied dependencies
-    for(TagDef tagDef: protocol.getPropagatedTags(tagDefs))
-      for(TagDef impliedTagDef: tagDef.getImpliedTags())
+    for(val tag: protocol.getPropagatedTags(tags))
+      for(val impliedTagDef: protocol.factory.getTagByName(tag).getImpliedTags())
         if (impliedTagDef.matches(level))
           resolvedTags.add(impliedTagDef.getName());
 
-    ProtocolMessageEntry<M> msg = new ProtocolMessageEntry<M>(level, resolvedTags, throwable,
+    val msg = new ProtocolMessageEntry<M>(level, resolvedTags, throwable,
         message, protocol.factory.getDefaultParameterValues());
 
     protocol.entries.add(msg);

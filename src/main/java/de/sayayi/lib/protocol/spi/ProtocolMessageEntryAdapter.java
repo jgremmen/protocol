@@ -21,6 +21,8 @@ import de.sayayi.lib.protocol.TagSelector;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.val;
+import lombok.var;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -95,10 +97,10 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
   @Override
   public String toString()
   {
-    final StringBuilder s = new StringBuilder("Message[level=").append(levelLimit).append(",tags={");
-    boolean first = true;
+    val s = new StringBuilder("Message[level=").append(levelLimit).append(",tags={");
+    var first = true;
 
-    for(String tag: getTags())
+    for(val tag: getTags())
     {
       if (first)
         first = false;
@@ -110,7 +112,7 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
 
     s.append("},message=").append(message.getMessage());
 
-    final Map<String,Object> parameterValues = getParameterValues();
+    val parameterValues = getParameterValues();
     if (!parameterValues.isEmpty())
       s.append(",params=").append(parameterValues);
 

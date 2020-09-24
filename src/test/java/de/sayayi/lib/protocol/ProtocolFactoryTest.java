@@ -118,20 +118,9 @@ public class ProtocolFactoryTest
     assertTrue(factory.hasTag("tag1"));
     assertTrue(factory.hasTag("UI"));
     assertTrue(factory.hasTag("summary"));
-
-    try {
-      //noinspection ResultOfMethodCallIgnored
-      factory.hasTag(null);
-      fail();
-    } catch(Exception ignore) {
-    }
-
-    try {
-      // noinspection ResultOfMethodCallIgnored
-      factory.hasTag("");
-      fail();
-    } catch(Exception ignore) {
-    }
+    assertFalse(factory.hasTag(null));
+    assertFalse(factory.hasTag(""));
+    assertFalse(factory.hasTag("(.,"));
   }
 
 
