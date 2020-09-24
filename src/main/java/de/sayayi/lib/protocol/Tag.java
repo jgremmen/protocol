@@ -15,14 +15,17 @@
  */
 package de.sayayi.lib.protocol;
 
-import de.sayayi.lib.protocol.TagSelector.MatchType;
 import de.sayayi.lib.protocol.TagSelector.SelectorReference;
 import de.sayayi.lib.protocol.TagSelector.TagReference;
+import de.sayayi.lib.protocol.selector.TagSelectorParser;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.val;
+import lombok.var;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +37,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.TreeSet;
 
 import static de.sayayi.lib.protocol.TagSelector.MatchType.ALL_OF;
@@ -53,6 +55,14 @@ import static de.sayayi.lib.protocol.TagSelector.MatchType.OR;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Tag
 {
+  private static final Comparator<TagSelector> CMP_TYPE = new Comparator<TagSelector>() {
+    @Override
+    public int compare(TagSelector o1, TagSelector o2) {
+      return o1.getType().compareTo(o2.getType());
+    }
+  };
+
+
   private static final Comparator<TagSelector> CMP_NOT_FIRST = new Comparator<TagSelector>() {
     @Override
     public int compare(TagSelector o1, TagSelector o2) {
@@ -75,6 +85,12 @@ public final class Tag
       return (isAnyOfMatcher(o1) ? 0 : 1) - (isAnyOfMatcher(o2) ? 0 : 1);
     }
   };
+
+
+  @Contract(pure = true)
+  public static @NotNull TagSelector parseSelector(@NotNull String selector) {
+    return new TagSelectorParser(selector).parseSelector();
+  }
 
 
   @Contract(pure = true)
@@ -153,7 +169,7 @@ public final class Tag
     if (selectors.length == 0)
       throw new IllegalArgumentException("tag selector array must not be empty");
 
-    List<TagSelector> selectorList = new ArrayList<TagSelector>(selectors.length);
+    val selectorList = new ArrayList<TagSelector>(selectors.length);
     Collections.addAll(selectorList, selectors);
 
     return and(selectorList);
@@ -162,7 +178,7 @@ public final class Tag
 
   private static @NotNull TagSelector.Builder and(@NotNull List<TagSelector> selectors)
   {
-    final int size = selectors.size();
+    val size = selectors.size();
 
     if (size == 0)
       return new MatchFixResult(false);
@@ -175,17 +191,20 @@ public final class Tag
       and_bundleNot(selectors);
     }
 
-    return selectors.size() == 1
-        ? wrap(selectors.get(0))
-        : new MatchAnd(selectors.toArray(new TagSelector[0]));
+    if (selectors.size() == 1)
+      return wrap(selectors.get(0));
+
+    Collections.sort(selectors, CMP_TYPE);
+
+    return new MatchAnd(selectors.toArray(new TagSelector[0]));
   }
 
 
   private static void and_reduceAny(List<TagSelector> selectors)
   {
-    boolean hasOf = false;
+    var hasOf = false;
 
-    for(TagSelector selector: selectors)
+    for(val selector: selectors)
       if (selector.getType().isOf())
       {
         hasOf = true;
@@ -221,7 +240,7 @@ public final class Tag
   @SuppressWarnings({"java:S1121"})
   private static void and_flatten(List<TagSelector> selectors)
   {
-    final List<TagSelector> collectedAndSelectors = new ArrayList<TagSelector>();
+    val collectedAndSelectors = new ArrayList<TagSelector>();
     TagSelector selector;
 
     for(Iterator<TagSelector> selectorIterator = selectors.iterator(); selectorIterator.hasNext();)
@@ -241,8 +260,8 @@ public final class Tag
 
     while(selectors.size() >= 2)
     {
-      final TagSelector selector0 = selectors.get(0);
-      final TagSelector selector1 = selectors.get(1);
+      val selector0 = selectors.get(0);
+      val selector1 = selectors.get(1);
 
       if (selector0.getType() != NOT || selector1.getType() != NOT)
         break;
@@ -261,8 +280,8 @@ public final class Tag
 
     while(selectors.size() >= 2)
     {
-      final TagSelector selector0 = selectors.get(0);
-      final TagSelector selector1 = selectors.get(1);
+      val selector0 = selectors.get(0);
+      val selector1 = selectors.get(1);
 
       if (selector0.getType() != ALL_OF || selector1.getType() != ALL_OF)
         break;
@@ -281,7 +300,7 @@ public final class Tag
     if (selectors.length == 0)
       throw new IllegalArgumentException("tag selector array must not be empty");
 
-    List<TagSelector> selectorList = new ArrayList<TagSelector>(selectors.length);
+    val selectorList = new ArrayList<TagSelector>(selectors.length);
     Collections.addAll(selectorList, selectors);
 
     return or(selectorList);
@@ -291,7 +310,7 @@ public final class Tag
   @SuppressWarnings({"java:S1121", "java:S131"})
   private static @NotNull TagSelector.Builder or(@NotNull List<TagSelector> selectors)
   {
-    final int size = selectors.size();
+    val size = selectors.size();
 
     if (size == 0)
       return new MatchFixResult(false);
@@ -303,9 +322,12 @@ public final class Tag
       or_bundleNot(selectors);
     }
 
-    return selectors.size() == 1
-        ? wrap(selectors.get(0))
-        : new MatchOr(selectors.toArray(new TagSelector[0]));
+    if (selectors.size() == 1)
+      return wrap(selectors.get(0));
+
+    Collections.sort(selectors, CMP_TYPE);
+
+    return new MatchOr(selectors.toArray(new TagSelector[0]));
   }
 
 
@@ -332,7 +354,7 @@ public final class Tag
   @SuppressWarnings("java:S1121")
   private static void or_flatten(List<TagSelector> selectors)
   {
-    final List<TagSelector> collectedOrSelectors = new ArrayList<TagSelector>();
+    val collectedOrSelectors = new ArrayList<TagSelector>();
     TagSelector selector;
 
     for(Iterator<TagSelector> selectorIterator = selectors.iterator(); selectorIterator.hasNext();)
@@ -352,8 +374,8 @@ public final class Tag
 
     while(selectors.size() >= 2)
     {
-      final TagSelector selector0 = selectors.get(0);
-      final TagSelector selector1 = selectors.get(1);
+      val selector0 = selectors.get(0);
+      val selector1 = selectors.get(1);
 
       if (!isAnyOfMatcher(selector0) || !isAnyOfMatcher(selector1))
         break;
@@ -372,8 +394,8 @@ public final class Tag
 
     while(selectors.size() >= 2)
     {
-      final TagSelector selector0 = selectors.get(0);
-      final TagSelector selector1 = selectors.get(1);
+      val selector0 = selectors.get(0);
+      val selector1 = selectors.get(1);
 
       if (selector0.getType() != NOT || selector1.getType() != NOT)
         break;
@@ -388,7 +410,7 @@ public final class Tag
 
   private static String[] merge(String[] array1, String[] array2)
   {
-    final Set<String> set = new TreeSet<String>();
+    val set = new TreeSet<String>();
 
     Collections.addAll(set, array1);
     Collections.addAll(set, array2);
@@ -421,7 +443,7 @@ public final class Tag
 
   private static boolean isAnyOfMatcher(@NotNull TagSelector selector)
   {
-    final MatchType type = selector.getType();
+    val type = selector.getType();
 
     return type == ANY_OF || (type == ALL_OF && ((TagReference)selector).getTagNames().length == 1);
   }
@@ -463,6 +485,7 @@ public final class Tag
 
 
   @AllArgsConstructor(access = AccessLevel.PRIVATE)
+  @EqualsAndHashCode(callSuper = false)
   private static final class MatchAll extends AbstractTagSelectorBuilder implements TagReference
   {
     @Getter private final String[] tagNames;
@@ -481,7 +504,7 @@ public final class Tag
       if (tagNames.isEmpty())
         return false;
 
-      for(String tagName: this.tagNames)
+      for(val tagName: this.tagNames)
         if (!tagNames.contains(tagName))
           return false;
 
@@ -495,10 +518,10 @@ public final class Tag
       if (tagNames.length == 1)
         return tagNames[0];
 
-      final StringBuilder s = new StringBuilder("allOf(");
-      boolean first = true;
+      val s = new StringBuilder("allOf(");
+      var first = true;
 
-      for(String tagName: tagNames)
+      for(val tagName: tagNames)
       {
         if (first)
           first = false;
@@ -516,6 +539,7 @@ public final class Tag
 
 
   @AllArgsConstructor(access = AccessLevel.PRIVATE)
+  @EqualsAndHashCode(callSuper = false)
   private static final class MatchAny extends AbstractTagSelectorBuilder implements TagReference
   {
     @Getter private final String[] tagNames;
@@ -541,7 +565,7 @@ public final class Tag
         if (this.tagNames == null)
           return true;
 
-        for(String tagName: tagNames)
+        for(val tagName: tagNames)
           if (Arrays.binarySearch(this.tagNames, tagName) >= 0)
             return true;
       }
@@ -556,8 +580,8 @@ public final class Tag
       if (tagNames == null)
         return "any()";
 
-      final StringBuilder s = new StringBuilder("anyOf(");
-      boolean first = true;
+      val s = new StringBuilder("anyOf(");
+      var first = true;
 
       for(String tagName: tagNames)
       {
@@ -627,7 +651,7 @@ public final class Tag
     @Override
     public boolean match(@NotNull Collection<String> tagNames)
     {
-      for(TagSelector tagSelector: selectors)
+      for(val tagSelector: selectors)
         if (!tagSelector.match(tagNames))
           return false;
 
@@ -641,10 +665,10 @@ public final class Tag
       if (selectors.length == 1)
         return selectors[0].toString();
 
-      final StringBuilder s = new StringBuilder("and(");
-      boolean first = true;
+      val s = new StringBuilder("and(");
+      var first = true;
 
-      for(TagSelector selector: selectors)
+      for(val selector: selectors)
       {
         if (first)
           first = false;
@@ -691,10 +715,10 @@ public final class Tag
       if (selectors.length == 1)
         return selectors[0].toString();
 
-      final StringBuilder s = new StringBuilder("or(");
-      boolean first = true;
+      val s = new StringBuilder("or(");
+      var first = true;
 
-      for(TagSelector selector: selectors)
+      for(val selector: selectors)
       {
         if (first)
           first = false;
@@ -712,6 +736,7 @@ public final class Tag
 
 
   @AllArgsConstructor(access = AccessLevel.PRIVATE)
+  @EqualsAndHashCode(callSuper = false)
   private static final class MatchFixResult extends AbstractTagSelectorBuilder
   {
     private final boolean result;
@@ -804,17 +829,6 @@ public final class Tag
     @Override
     public String toString() {
       return selector.toString();
-    }
-  }
-
-
-
-
-  public static final class Parser
-  {
-    public static @NotNull TagSelector from(@NotNull String selector)
-    {
-      return Tag.any();
     }
   }
 }
