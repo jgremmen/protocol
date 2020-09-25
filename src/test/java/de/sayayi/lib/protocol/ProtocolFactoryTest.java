@@ -91,7 +91,6 @@ public class ProtocolFactoryTest
       }
     };
 
-    assertTrue(factory.getDefaultParameterValues().containsKey("factoryid"));
     assertEquals("protocol factory", factory.getDefaultParameterValues().get("name"));
   }
 
