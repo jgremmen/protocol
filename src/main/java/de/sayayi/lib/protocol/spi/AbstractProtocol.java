@@ -36,6 +36,7 @@ import de.sayayi.lib.protocol.TagSelector;
 
 import lombok.Getter;
 import lombok.val;
+import lombok.var;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -76,10 +77,8 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
     val collectedPropagatedTagDefs = new TreeSet<String>(tags);
 
     for(val tagPropagation: tagPropagationMap.entrySet())
-    {
       if (tagPropagation.getKey().match(collectedPropagatedTagDefs))
         collectedPropagatedTagDefs.addAll(tagPropagation.getValue());
-    }
 
     return collectedPropagatedTagDefs;
   }
@@ -111,7 +110,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
   @SuppressWarnings("unchecked")
   @Override
-  public @NotNull B error(Throwable throwable) {
+  public @NotNull B error(@NotNull Throwable throwable) {
     return (B)add(Shared.ERROR).withThrowable(throwable);
   }
 
@@ -124,7 +123,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   public boolean matches0(@NotNull Level levelLimit, @NotNull Level level, @NotNull TagSelector tagSelector)
   {
     if (levelLimit.severity() >= level.severity())
-      for(InternalProtocolEntry<M> entry: entries)
+      for(val entry: entries)
         if (entry.matches0(levelLimit, level, tagSelector))
           return true;
 
@@ -136,7 +135,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   public boolean matches0(@NotNull Level levelLimit, @NotNull Level level)
   {
     if (levelLimit.severity() >= level.severity())
-      for(InternalProtocolEntry<M> entry: entries)
+      for(val entry: entries)
         if (entry.matches0(levelLimit, level))
           return true;
 
@@ -147,7 +146,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level levelLimit, @NotNull Level level,
                                              @NotNull TagSelector tagSelector)
   {
-    final List<ProtocolEntry<M>> filteredEntries = new ArrayList<ProtocolEntry<M>>();
+    val filteredEntries = new ArrayList<ProtocolEntry<M>>();
 
     if (levelLimit.severity() >= level.severity())
       for(InternalProtocolEntry<M> entry: entries)
@@ -173,10 +172,10 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive, @NotNull Level level,
                                    @NotNull TagSelector tagSelector)
   {
-    int count = 0;
+    var count = 0;
 
     if (levelLimit.severity() >= level.severity())
-      for(InternalProtocolEntry<M> entry: entries)
+      for(val entry: entries)
         count += entry.getVisibleEntryCount0(levelLimit, recursive, level, tagSelector);
 
     return count;
@@ -187,8 +186,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   public @NotNull ProtocolGroup<M> createGroup()
   {
     @SuppressWarnings("unchecked")
-    final ProtocolGroupImpl<M> group =
-        new ProtocolGroupImpl<M>((AbstractProtocol<M,ProtocolMessageBuilder<M>>)this);
+    val group = new ProtocolGroupImpl<M>((AbstractProtocol<M,ProtocolMessageBuilder<M>>)this);
 
     entries.add(group);
 
@@ -211,7 +209,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
     for(Iterator<DepthEntry<M>> iterator = iterator(level, tagSelector); iterator.hasNext();)
     {
-      DepthEntry<M> entry = iterator.next();
+      val entry = iterator.next();
 
       if (entry instanceof ProtocolStart)
         formatter.protocolStart();
@@ -237,7 +235,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
   int countGroupDepth()
   {
-    int depth = 0;
+    var depth = 0;
 
     for(InternalProtocolEntry<M> entry: entries)
       if (entry instanceof ProtocolGroupImpl)

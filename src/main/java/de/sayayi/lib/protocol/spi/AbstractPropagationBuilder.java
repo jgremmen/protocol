@@ -20,6 +20,7 @@ import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.Protocol.TargetTagBuilder;
 import de.sayayi.lib.protocol.TagSelector;
 
+import lombok.val;
 import lombok.var;
 
 import org.jetbrains.annotations.NotNull;
@@ -52,7 +53,6 @@ abstract class AbstractPropagationBuilder<M,B extends ProtocolMessageBuilder<M>>
       throw new IllegalArgumentException("invalid target tag name '" + targetTagName + "'");
 
     var propagationSet = protocol.tagPropagationMap.get(tagSelector);
-
     if (propagationSet == null)
     {
       propagationSet = new TreeSet<String>();
@@ -70,9 +70,9 @@ abstract class AbstractPropagationBuilder<M,B extends ProtocolMessageBuilder<M>>
   public @NotNull Protocol<M> to(@NotNull String... targetTagNames)
   {
     if (targetTagNames == null || targetTagNames.length == 0)
-      throw new NullPointerException("targetTagNames must not be empty");
+      throw new IllegalArgumentException("targetTagNames must not be empty");
 
-    for(String targetTagName: targetTagNames)
+    for(val targetTagName: targetTagNames)
       to(targetTagName);
 
     return protocol;

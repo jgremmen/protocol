@@ -145,7 +145,7 @@ public final class TagSelectorParser
 
     val tagList = parseTagList(t + 1);
 
-    TagSelector selector = null;
+    TagSelector selector;
 
     switch(type)
     {
@@ -160,6 +160,9 @@ public final class TagSelectorParser
       case NONE_OF:
         selector = Tag.noneOf(tagList.result.toArray(new String[0]));
         break;
+
+      default:
+        throw new IllegalStateException("Unexpected value: " + type);
     }
 
     return new ParsedRule<TagSelector>(t, tagList.tokenLast, selector);

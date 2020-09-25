@@ -53,7 +53,7 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
-  public @NotNull P with(@NotNull Map<String, Object> parameterValues)
+  public @NotNull P with(@NotNull Map<String,Object> parameterValues)
   {
     for(Entry<String,Object> entry: parameterValues.entrySet())
       with(entry.getKey(), entry.getValue());
@@ -92,11 +92,11 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
   }
 
 
-  @SuppressWarnings({ "squid:S2589", "ConstantConditions" })
+  @SuppressWarnings("java:S2589")
   @Override
   public @NotNull P with(@NotNull String parameter, Object value)
   {
-    if (parameter == null || parameter.isEmpty())
+    if (parameter.isEmpty())
       throw new IllegalArgumentException("parameter must not be empty");
 
     message.parameterValues.put(parameter, value);
@@ -160,7 +160,7 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
-  public @NotNull B error(Throwable throwable) {
+  public @NotNull B error(@NotNull Throwable throwable) {
     return protocol.error(throwable);
   }
 

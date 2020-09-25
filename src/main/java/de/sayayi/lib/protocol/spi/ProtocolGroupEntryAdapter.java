@@ -23,6 +23,7 @@ import de.sayayi.lib.protocol.TagSelector;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.val;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -107,8 +108,7 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
 
 
   @Override
-  public boolean isHeaderVisible0(@NotNull Level levelLimit, @NotNull Level level,
-                                  @NotNull TagSelector tagSelector) {
+  public boolean isHeaderVisible0(@NotNull Level levelLimit, @NotNull Level level, @NotNull TagSelector tagSelector) {
     return group.isHeaderVisible0(levelLimit, level, tagSelector);
   }
 
@@ -149,7 +149,7 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
   @Override
   public String toString()
   {
-    final StringBuilder s = new StringBuilder("ProtocolGroup[id=").append(group.getId())
+    val s = new StringBuilder("ProtocolGroup[id=").append(group.getId())
         .append(",visibility=").append(group.getVisibility());
 
     if (levelLimit.severity() < Level.Shared.HIGHEST.severity())

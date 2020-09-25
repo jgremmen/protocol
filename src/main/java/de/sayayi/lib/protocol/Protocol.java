@@ -178,7 +178,7 @@ public interface Protocol<M> extends ProtocolQuery
    * @see Level.Shared#ERROR ERROR
    */
   @Contract(pure = true, value = "_ -> new")
-  @NotNull ProtocolMessageBuilder<M> error(Throwable throwable);
+  @NotNull ProtocolMessageBuilder<M> error(@NotNull Throwable throwable);
 
 
   /**
@@ -327,7 +327,7 @@ public interface Protocol<M> extends ProtocolQuery
      * @see Protocol#error(Throwable)
      */
     @Contract("_ -> this")
-    @NotNull ProtocolMessageBuilder<M> withThrowable(Throwable throwable);
+    @NotNull ProtocolMessageBuilder<M> withThrowable(@NotNull Throwable throwable);
 
 
     /**

@@ -67,10 +67,9 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
   protected AbstractProtocolFactory()
   {
     id = FACTORY_ID.incrementAndGet();
-    defaultTag = createTag(Constant.DEFAULT_TAG_NAME).getTagDef();
 
+    defaultTag = createTag(Constant.DEFAULT_TAG_NAME).getTagDef();
     defaultParameterValues = new HashMap<String,Object>();
-    defaultParameterValues.put("factoryid", id);
   }
 
 
@@ -183,8 +182,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
     @SuppressWarnings({"ConstantConditions", "squid:S2583"})
     @Override
-    public @NotNull TagBuilder<M> match(@NotNull TagDef.MatchCondition matchCondition,
-                                        @NotNull Level matchLevel)
+    public @NotNull TagBuilder<M> match(@NotNull TagDef.MatchCondition matchCondition, @NotNull Level matchLevel)
     {
       if (matchCondition == null)
         throw new NullPointerException("matchCondition must not be null");

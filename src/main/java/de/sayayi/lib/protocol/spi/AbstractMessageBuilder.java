@@ -82,7 +82,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
 
 
   @Override
-  public @NotNull B withThrowable(Throwable throwable)
+  public @NotNull B withThrowable(@NotNull Throwable throwable)
   {
     this.throwable = throwable;
 

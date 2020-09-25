@@ -27,7 +27,7 @@ public final class TagSelectorParserException extends RuntimeException
   @Getter private final int endIndex;
 
 
-  public TagSelectorParserException(int startIndex, int endIndex, String message)
+  TagSelectorParserException(int startIndex, int endIndex, String message)
   {
     super(message);
 

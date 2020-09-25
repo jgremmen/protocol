@@ -38,6 +38,7 @@ import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
 import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_IF_NOT_EMPTY;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ONLY;
+import static de.sayayi.lib.protocol.spi.LevelHelper.min;
 
 
 /**
@@ -129,8 +130,7 @@ final class ProtocolGroupImpl<M>
           return matches0(levelLimit, level, tagSelector);
 
         case FLATTEN_ON_SINGLE_ENTRY:
-          return super.getVisibleEntryCount0(
-              LevelHelper.min(this.levelLimit, levelLimit),true, level, tagSelector) > 1;
+          return super.getVisibleEntryCount0(min(this.levelLimit, levelLimit),true, level, tagSelector) > 1;
       }
 
     return false;
@@ -149,7 +149,7 @@ final class ProtocolGroupImpl<M>
   {
     Level headerLevel = LOWEST;
 
-    levelLimit = LevelHelper.min(this.levelLimit, levelLimit);
+    levelLimit = min(this.levelLimit, levelLimit);
 
     for(ProtocolEntry<M> entry: getEntries(levelLimit, level, tagSelector))
     {
@@ -168,7 +168,7 @@ final class ProtocolGroupImpl<M>
         return levelLimit;
     }
 
-    return LevelHelper.min(levelLimit, headerLevel);
+    return min(levelLimit, headerLevel);
   }
 
 
@@ -182,7 +182,7 @@ final class ProtocolGroupImpl<M>
   public @NotNull List<ProtocolEntry<M>> getEntries0(@NotNull Level levelLimit, @NotNull Level level,
                                                      @NotNull TagSelector tagSelector)
   {
-    levelLimit = LevelHelper.min(this.levelLimit, levelLimit);
+    levelLimit = min(this.levelLimit, levelLimit);
 
     return levelLimit.severity() >= level.severity() && getEffectiveVisibility().isShowEntries()
         ? super.getEntries(levelLimit, level, tagSelector) : Collections.<ProtocolEntry<M>>emptyList();
@@ -200,7 +200,7 @@ final class ProtocolGroupImpl<M>
   public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive,
                                    @NotNull Level level, @NotNull TagSelector tagSelector)
   {
-    levelLimit = LevelHelper.min(this.levelLimit, levelLimit);
+    levelLimit = min(this.levelLimit, levelLimit);
 
     if (levelLimit.severity() >= level.severity())
     {
@@ -243,7 +243,7 @@ final class ProtocolGroupImpl<M>
                                                @NotNull TagSelector tagSelector)
   {
     return getEffectiveVisibility().isShowEntries()
-        ? super.getVisibleEntryCount0(LevelHelper.min(this.levelLimit, levelLimit), false, level, tagSelector)
+        ? super.getVisibleEntryCount0(min(this.levelLimit, levelLimit), false, level, tagSelector)
         : 0;
   }
 
@@ -291,7 +291,7 @@ final class ProtocolGroupImpl<M>
   @Override
   public boolean matches0(@NotNull Level levelLimit, @NotNull Level level, @NotNull TagSelector tagSelector)
   {
-    levelLimit = LevelHelper.min(this.levelLimit, levelLimit);
+    levelLimit = min(this.levelLimit, levelLimit);
 
     return levelLimit.severity() >= level.severity() &&
            getEffectiveVisibility().isShowEntries() &&
@@ -308,7 +308,7 @@ final class ProtocolGroupImpl<M>
   @Override
   public boolean matches0(@NotNull Level levelLimit, @NotNull Level level)
   {
-    levelLimit = LevelHelper.min(this.levelLimit, levelLimit);
+    levelLimit = min(this.levelLimit, levelLimit);
 
     return levelLimit.severity() >= level.severity() &&
            getEffectiveVisibility().isShowEntries() &&
@@ -339,7 +339,7 @@ final class ProtocolGroupImpl<M>
   @Override
   public String toString()
   {
-    final StringBuilder s = new StringBuilder("ProtocolGroup[id=").append(id).append(",visibility=").append(visibility);
+    val s = new StringBuilder("ProtocolGroup[id=").append(id).append(",visibility=").append(visibility);
 
     if (levelLimit.severity() < HIGHEST.severity())
       s.append(",levelLimit=").append(levelLimit);

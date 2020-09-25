@@ -23,6 +23,8 @@ import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.TagSelector;
 
+import lombok.val;
+
 import org.jetbrains.annotations.NotNull;
 
 import org.unbescape.html.HtmlEscape;
@@ -73,7 +75,7 @@ public abstract class HtmlProtocolFormatter<M> implements InitializableProtocolF
   @Override
   public void message(@NotNull MessageEntry<M> message)
   {
-    String msg = formatMessage(message);
+    val msg = formatMessage(message);
 
     indent(message.getDepth());
 
@@ -87,9 +89,9 @@ public abstract class HtmlProtocolFormatter<M> implements InitializableProtocolF
   @Override
   public void groupStart(@NotNull GroupStartEntry<M> group)
   {
-    final int depth = group.getDepth();
-    final MessageWithLevel<M> message = group.getGroupMessage();
-    final String msg = formatMessage(group.getGroupMessage());
+    val depth = group.getDepth();
+    val message = group.getGroupMessage();
+    val msg = formatMessage(group.getGroupMessage());
 
     indent(depth - 1);
 
@@ -126,7 +128,7 @@ public abstract class HtmlProtocolFormatter<M> implements InitializableProtocolF
 
   private void indent(int depth)
   {
-    char[] spaces = new char[(depth + 2) * 2];
+    val spaces = new char[(depth + 2) * 2];
     Arrays.fill(spaces, ' ');
 
     html.append(spaces);

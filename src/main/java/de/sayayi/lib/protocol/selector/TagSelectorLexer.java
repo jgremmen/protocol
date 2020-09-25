@@ -20,8 +20,12 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+import lombok.val;
 
+import java.util.EnumMap;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 
 /**
@@ -29,69 +33,29 @@ import java.util.Iterator;
  */
 public final class TagSelectorLexer implements Iterable<TagSelectorLexer.Token>
 {
+  private static final Map<TokenType,String> TOKEN_NAME_MAP =
+      new EnumMap<TokenType,String>(TokenType.class);
+
   @Getter private final String message;
   @Getter private final int length;
 
 
-  TagSelectorLexer(String message) {
-    length = (this.message = message).length();
+  static
+  {
+    TOKEN_NAME_MAP.put(TokenType.ALL_OF, "allOf");
+    TOKEN_NAME_MAP.put(TokenType.AND, "and");
+    TOKEN_NAME_MAP.put(TokenType.ANY, "any");
+    TOKEN_NAME_MAP.put(TokenType.ANY_OF, "anyOf");
+    TOKEN_NAME_MAP.put(TokenType.FALSE, "false");
+    TOKEN_NAME_MAP.put(TokenType.NONE_OF, "noneOf");
+    TOKEN_NAME_MAP.put(TokenType.NOT, "not");
+    TOKEN_NAME_MAP.put(TokenType.OR, "or");
+    TOKEN_NAME_MAP.put(TokenType.TRUE, "true");
   }
 
 
-  private Token nextToken(TokenIterator data)
-  {
-    while(data.pos < length && message.charAt(data.pos) == ' ')
-      data.pos++;
-
-    if (data.pos == length)
-      return null;
-
-    final int start = data.pos;
-
-    switch(message.charAt(start))
-    {
-      case '(':
-        data.pos++;
-        return new Token(start, start, TokenType.L_PAREN, "(");
-
-      case ')':
-        data.pos++;
-        return new Token(start, start, TokenType.R_PAREN, ")");
-
-      case ',':
-        data.pos++;
-        return new Token(start, start, TokenType.COMMA, ",");
-    }
-
-    final StringBuilder tagBuilder = new StringBuilder();
-
-    for(; data.pos < length; data.pos++)
-    {
-      final char c = message.charAt(data.pos);
-      if (c == '(' || c == ')' || c == ',' || c == ' ')
-        break;
-
-      tagBuilder.append(c);
-    }
-
-    final String tag = tagBuilder.toString();
-
-    if ("allOf".equals(tag))
-      return new Token(start, start + 4, TokenType.ALL_OF, tag);
-    if ("and".equals(tag))
-      return new Token(start, start + 2, TokenType.AND, tag);
-    if ("any".equals(tag))
-      return new Token(start, start + 2, TokenType.ANY, tag);
-    if ("anyOf".equals(tag))
-      return new Token(start, start + 4, TokenType.ANY_OF, tag);
-    if ("noneOf".equals(tag))
-      return new Token(start, start + 5, TokenType.NONE_OF, tag);
-    if ("not".equals(tag))
-      return new Token(start, start + 2, TokenType.NOT, tag);
-    if ("or".equals(tag))
-      return new Token(start, start + 1, TokenType.OR, tag);
-
-    return new Token(start, data.pos - 1, TokenType.TAG, tag);
+  TagSelectorLexer(String message) {
+    length = (this.message = message).length();
   }
 
 
@@ -116,6 +80,56 @@ public final class TagSelectorLexer implements Iterable<TagSelectorLexer.Token>
     }
 
 
+    private Token nextToken(TokenIterator data)
+    {
+      while(data.pos < length && message.charAt(data.pos) == ' ')
+        data.pos++;
+
+      if (data.pos == length)
+        return null;
+
+      val start = data.pos;
+
+      switch(message.charAt(start))
+      {
+        case '(':
+          data.pos++;
+          return new Token(start, start, TokenType.L_PAREN, "(");
+
+        case ')':
+          data.pos++;
+          return new Token(start, start, TokenType.R_PAREN, ")");
+
+        case ',':
+          data.pos++;
+          return new Token(start, start, TokenType.COMMA, ",");
+      }
+
+      val tagBuilder = new StringBuilder();
+
+      for(; data.pos < length; data.pos++)
+      {
+        final char c = message.charAt(data.pos);
+        if (c == '(' || c == ')' || c == ',' || c == ' ')
+          break;
+
+        tagBuilder.append(c);
+      }
+
+      val tag = tagBuilder.toString();
+
+      for(val tokenNameEntry: TOKEN_NAME_MAP.entrySet())
+      {
+        val name = tokenNameEntry.getValue();
+
+        if (name.equals(tag))
+          return new Token(start, start + name.length() - 1, tokenNameEntry.getKey(), tag);
+      }
+
+      return new Token(start, data.pos - 1, TokenType.TAG, tag);
+    }
+
+
     @Override
     public boolean hasNext() {
       return token != null;
@@ -126,9 +140,9 @@ public final class TagSelectorLexer implements Iterable<TagSelectorLexer.Token>
     public Token next()
     {
       if (!hasNext())
-        throw new IllegalStateException("no more tokens available");
+        throw new NoSuchElementException("no more tokens available");
 
-      final Token returnToken = token;
+      val returnToken = token;
       token = nextToken(this);
 
       return returnToken;
@@ -156,9 +170,19 @@ public final class TagSelectorLexer implements Iterable<TagSelectorLexer.Token>
 
   enum TokenType
   {
-    TAG("tag name"), ANY("'any'"), ANY_OF("'anyOf'"), ALL_OF("'allOf'"),
-    NONE_OF("'noneOf'"), AND("'and'"), OR("'or'"), NOT("'not'"),
-    L_PAREN("'('"), R_PAREN("')'"), COMMA("','");
+    TAG("tag name"),
+    ANY("'any'"),
+    ANY_OF("'anyOf'"),
+    ALL_OF("'allOf'"),
+    NONE_OF("'noneOf'"),
+    AND("'and'"),
+    OR("'or'"),
+    NOT("'not'"),
+    TRUE("'true'"),
+    FALSE("'false"),
+    L_PAREN("'('"),
+    R_PAREN("')'"),
+    COMMA("','");
 
 
     @Getter private final String text;

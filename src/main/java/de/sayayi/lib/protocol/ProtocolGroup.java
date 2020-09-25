@@ -199,7 +199,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
     @Override
     @Contract("_ -> this")
-    @NotNull ProtocolMessageBuilder<M> withThrowable(Throwable throwable);
+    @NotNull ProtocolMessageBuilder<M> withThrowable(@NotNull Throwable throwable);
 
 
     @Override
