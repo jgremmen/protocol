@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.sayayi.lib.protocol.selector;
+package de.sayayi.lib.protocol.selector.parser;
 
-import de.sayayi.lib.protocol.selector.TagSelectorLexer.Token;
-import de.sayayi.lib.protocol.selector.TagSelectorLexer.TokenType;
+import de.sayayi.lib.protocol.selector.parser.TagSelectorLexer.Token;
+import de.sayayi.lib.protocol.selector.parser.TagSelectorLexer.TokenType;
 import org.junit.Test;
 
 import java.util.Iterator;
 
-import static de.sayayi.lib.protocol.selector.TagSelectorLexer.TokenType.*;
+import static de.sayayi.lib.protocol.selector.parser.TagSelectorLexer.TokenType.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 

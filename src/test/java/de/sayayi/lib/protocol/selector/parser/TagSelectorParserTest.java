@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.sayayi.lib.protocol.selector;
+package de.sayayi.lib.protocol.selector.parser;
 
 import de.sayayi.lib.protocol.TagSelector;
 import org.junit.Test;

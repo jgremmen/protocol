@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.sayayi.lib.protocol.selector;
+package de.sayayi.lib.protocol.selector.parser;
 
 import de.sayayi.lib.protocol.Tag;
 import de.sayayi.lib.protocol.TagSelector;
-import de.sayayi.lib.protocol.selector.TagSelectorLexer.Token;
-import de.sayayi.lib.protocol.selector.TagSelectorLexer.TokenType;
+import de.sayayi.lib.protocol.selector.match.MatchAny;
+import de.sayayi.lib.protocol.selector.match.MatchFixResult;
+import de.sayayi.lib.protocol.selector.parser.TagSelectorLexer.Token;
+import de.sayayi.lib.protocol.selector.parser.TagSelectorLexer.TokenType;
 
 import lombok.AllArgsConstructor;
 import lombok.val;
@@ -29,7 +31,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static de.sayayi.lib.protocol.selector.TagSelectorLexer.TokenType.*;
+import static de.sayayi.lib.protocol.selector.parser.TagSelectorLexer.TokenType.AND;
+import static de.sayayi.lib.protocol.selector.parser.TagSelectorLexer.TokenType.COMMA;
+import static de.sayayi.lib.protocol.selector.parser.TagSelectorLexer.TokenType.L_PAREN;
+import static de.sayayi.lib.protocol.selector.parser.TagSelectorLexer.TokenType.R_PAREN;
+import static de.sayayi.lib.protocol.selector.parser.TagSelectorLexer.TokenType.TAG;
+import static de.sayayi.lib.protocol.selector.parser.TagSelectorLexer.TokenType.TRUE;
 
 
 /**
@@ -87,39 +94,29 @@ public final class TagSelectorParser
       throw new TagSelectorParserException(idx, idx, "missing selector");
     }
 
-    switch(t0.getType())
+    val type = t0.getType();
+
+    switch(type)
     {
       case TAG:
-        // t0=<tag>
         return new ParsedRule<TagSelector>(t, t, Tag.of(t0.getText()));
 
       case ALL_OF:
-        // t0=allOf ...
-        return parseXXXOf(t, ALL_OF);
+      case ANY_OF:
+      case NONE_OF:
+        return parseXXXOf(t, type);
 
       case AND:
-        // t0=and ...
-        return parseAndOr(t, true);
+      case OR:
+        return parseAndOr(t, type == AND);
 
       case ANY:
-        // t0=any ...
-        return parseAny(t);
-
-      case ANY_OF:
-        // t0=anyOf ...
-        return parseXXXOf(t, ANY_OF);
-
-      case NONE_OF:
-        // t0=noneOf ...
-        return parseXXXOf(t, NONE_OF);
+      case TRUE:
+      case FALSE:
+        return parseNoArgsFunction(t, type);
 
       case NOT:
-        // t0=not ...
         return parseNot(t);
-
-      case OR:
-        // t0=or ...
-        return parseAndOr(t, false);
 
       default:
         throw new TagSelectorParserException(t0.getStart(), t0.getEnd(), "unexpected token '" + t0.getText() + "'");
@@ -169,15 +166,25 @@ public final class TagSelectorParser
   }
 
 
-  private ParsedRule<TagSelector> parseAny(int t)
+  private ParsedRule<TagSelector> parseNoArgsFunction(int t, @NotNull TokenType type)
   {
-    // t0=any t1=( t2=)
-    assert getTypeAt(t) == ANY;
+    assert getTypeAt(t) == type;
 
     expect(t + 1, L_PAREN);
     expect(t + 2, R_PAREN);
 
-    return new ParsedRule<TagSelector>(t, t + 2, Tag.any());
+    switch(type)
+    {
+      case ANY:
+        return new ParsedRule<TagSelector>(t, t + 2, new MatchAny());
+
+      case TRUE:
+      case FALSE:
+        return new ParsedRule<TagSelector>(t, t + 2, MatchFixResult.valueOf(type == TRUE));
+
+      default:
+        throw new IllegalStateException("Unexpected value: " + type);
+    }
   }
 
 
