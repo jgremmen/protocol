@@ -16,7 +16,7 @@
 package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.Level;
-import de.sayayi.lib.protocol.ProtocolQuery;
+import de.sayayi.lib.protocol.ProtocolQueryable;
 import de.sayayi.lib.protocol.TagSelector;
 
 import org.jetbrains.annotations.Contract;
@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Jeroen Gremmen
  */
-interface InternalProtocolQuery extends ProtocolQuery
+interface InternalProtocolQueryable extends ProtocolQueryable
 {
   @Contract(pure = true)
   boolean matches0(@NotNull Level levelLimit, @NotNull Level level, @NotNull TagSelector tagSelector);

@@ -31,7 +31,7 @@ import java.util.Set;
  * @see Group
  */
 @SuppressWarnings({"unused", "squid:S2326"})
-public interface ProtocolEntry<M> extends ProtocolQuery
+public interface ProtocolEntry<M> extends ProtocolQueryable
 {
   /**
    *

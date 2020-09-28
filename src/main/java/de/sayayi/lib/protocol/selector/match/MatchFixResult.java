@@ -57,7 +57,7 @@ public final class MatchFixResult extends AbstractTagSelectorBuilder
 
 
   @Contract(pure = true)
-  public static final MatchFixResult valueOf(boolean result) {
+  public static MatchFixResult valueOf(boolean result) {
     return result ? TRUE : FALSE;
   }
 }

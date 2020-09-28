@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Jeroen Gremmen
  */
-public interface ProtocolQuery
+public interface ProtocolQueryable
 {
   /**
    * Tells if this protocol object matches the given {@code level} and {@code tagSelector}.

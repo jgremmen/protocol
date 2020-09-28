@@ -71,7 +71,7 @@ abstract class AbstractTagNameMatch extends AbstractTagSelectorBuilder implement
 
   @Contract(value = "null -> false", pure = true)
   public boolean contains(String tagName) {
-    return binarySearch(this.tagNames, tagName) >= 0;
+    return binarySearch(tagNames, tagName) >= 0;
   }
 
 

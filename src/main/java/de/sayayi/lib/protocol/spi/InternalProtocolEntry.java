@@ -30,7 +30,7 @@ import java.util.List;
  * @author Jeroen Gremmen
  */
 @SuppressWarnings("squid:S2176")
-interface InternalProtocolEntry<M> extends ProtocolEntry<M>, InternalProtocolQuery
+interface InternalProtocolEntry<M> extends ProtocolEntry<M>, InternalProtocolQueryable
 {
   interface Message<M> extends ProtocolEntry.Message<M>, InternalProtocolEntry<M> {
   }

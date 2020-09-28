@@ -61,7 +61,9 @@ public final class MatchAllOf extends AbstractTagNameMatch
 
 
   @Override
-  public String toString() {
-    return "allOf(" + tagNamesAsCSV() + ')';
+  public String toString()
+  {
+    final String tagNames = tagNamesAsCSV();
+    return getTagNames().length == 1 ? tagNames : ("allOf(" + tagNames + ')');
   }
 }

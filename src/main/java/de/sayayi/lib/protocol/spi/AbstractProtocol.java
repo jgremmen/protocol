@@ -52,7 +52,7 @@ import java.util.TreeSet;
 /**
  * @author Jeroen Gremmen
  */
-abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implements Protocol<M>, InternalProtocolQuery
+abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implements Protocol<M>, InternalProtocolQueryable
 {
   @Getter final ProtocolFactory<M> factory;
 

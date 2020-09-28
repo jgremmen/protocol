@@ -172,4 +172,19 @@ public class TagTest
     assertFalse(selector.match(asList("console")));
     assertFalse(selector.match(Collections.<String>emptyList()));
   }
+
+
+  @Test
+  public void testParse()
+  {
+    TagSelector selector = Tag.parse("and(system,noneOf(info,test,warning),or(fatal,not(debug)))");
+
+    assertTrue(selector.match(asList("system")));
+    assertTrue(selector.match(asList("system", "fatal")));
+    assertFalse(selector.match(asList("system", "debug")));
+    assertFalse(selector.match(asList("system", "info")));
+    assertFalse(selector.match(asList("system", "test")));
+    assertFalse(selector.match(asList("system", "warning")));
+    assertFalse(selector.match(asList("system", "warning", "fatal", "info")));
+  }
 }
