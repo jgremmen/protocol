@@ -20,7 +20,7 @@ import org.junit.Test;
 import static de.sayayi.lib.protocol.Level.Shared.DEBUG;
 import static de.sayayi.lib.protocol.Level.Shared.ERROR;
 import static de.sayayi.lib.protocol.Level.Shared.INFO;
-import static de.sayayi.lib.protocol.Tag.MatchCondition.AT_LEAST;
+import static de.sayayi.lib.protocol.TagDef.MatchCondition.AT_LEAST;
 import static org.junit.Assert.assertEquals;
 
 
@@ -33,15 +33,15 @@ public class TagPropagationTest
   public void testProtocolPropagation()
   {
     GenericProtocolFactory factory = new GenericProtocolFactory();
-    Tag uiTag = factory.createTag("ui").match(AT_LEAST, INFO).getTag();
+    TagDef uiTagDef = factory.createTag("ui").match(AT_LEAST, INFO).getTagDef();
 
     Protocol<String> protocol = factory.createProtocol()
-        .propagate(factory.getDefaultTag()).to(uiTag);
+        .propagate(factory.getDefaultTag().asSelector()).to("ui");
 
     protocol.debug().message("debug")
             .warn().message("error");
 
-    assertEquals(0, protocol.getVisibleEntryCount(false, ERROR, uiTag));
-    assertEquals(1, protocol.getVisibleEntryCount(false, DEBUG, uiTag));
+    assertEquals(0, protocol.getVisibleEntryCount(false, ERROR, uiTagDef.asSelector()));
+    assertEquals(1, protocol.getVisibleEntryCount(false, DEBUG, uiTagDef.asSelector()));
   }
 }

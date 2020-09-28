@@ -90,11 +90,12 @@ public interface ProtocolFormatter<M,R>
    * {@inheritDoc}
    *
    * <p>
-   *   A formatter of this type is automatically initialized by {@link Protocol#format(ProtocolFormatter, Level, Tag[])}.
+   *   A formatter of this type is automatically initialized by
+   *   {@link Protocol#format(ProtocolFormatter, Level, TagSelector)}.
    * </p>
    * <p>
    *   Implementing classes must make sure, that the formatter is reusable after invoking
-   *   {@link #init(Level, Tag[], int)}. Thread safety however is not a requirement.
+   *   {@link #init(Level, TagSelector, int)}. Thread safety however is not a requirement.
    * </p>
    */
   interface InitializableProtocolFormatter<M,R> extends ProtocolFormatter<M,R>
@@ -104,14 +105,14 @@ public interface ProtocolFormatter<M,R>
      * such way that it can be reused.
      *
      * @param level  matching protocol level
-     * @param tags   matching protocol tag
+     * @param tagSelector  tag selector
      * @param estimatedGroupDepth  the estimated depth of nested protocol groups ({@code 0} means the protocol contains
      *                             no groups). The real depth depends on {@code level}, {@code tags} and group
      *                             visibility settings but is never greater than the estimated depth.
      *
-     * @see Protocol#format(ProtocolFormatter, Level, Tag[])
+     * @see Protocol#format(ProtocolFormatter, Level, TagSelector)
      */
-    void init(@NotNull Level level, @NotNull Tag[] tags, int estimatedGroupDepth);
+    void init(@NotNull Level level, @NotNull TagSelector tagSelector, int estimatedGroupDepth);
   }
 
 
@@ -132,13 +133,13 @@ public interface ProtocolFormatter<M,R>
 
 
     /**
-     * Returns the tags to be used for formatting.
+     * Returns the tag selector to be used for formatting.
      *
-     * @param protocolFactory  the protocol factory to be used for generating tags
+     * @param protocolFactory  the factory from which the protocol was created
      *
-     * @return  tags, never {@code null}
+     * @return  tag selector, never {@code null}
      */
     @Contract(pure = true)
-    @NotNull Tag[] getTags(@NotNull ProtocolFactory<M> protocolFactory);
+    @NotNull TagSelector getTagSelector(@NotNull ProtocolFactory<M> protocolFactory);
   }
 }

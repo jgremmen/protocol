@@ -137,7 +137,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
   @Contract(pure = true)
-  boolean isHeaderVisible(@NotNull Level level, @NotNull Tag ... tags);
+  boolean isHeaderVisible(@NotNull Level level, @NotNull TagSelector tagSelector);
 
 
   @Override
@@ -167,12 +167,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
   @Override
   @Contract("_ -> new")
-  @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull String tagName);
-
-
-  @Override
-  @Contract("_ -> new")
-  @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull Tag tag);
+  @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull TagSelector tagSelector);
 
 
   /**
@@ -199,22 +194,12 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
     @Override
     @Contract("_ -> this")
-    @NotNull ProtocolMessageBuilder<M> forTag(@NotNull Tag tag);
-
-
-    @Override
-    @Contract("_ -> this")
-    @NotNull ProtocolMessageBuilder<M> forTags(@NotNull Tag ... tags);
-
-
-    @Override
-    @Contract("_ -> this")
     @NotNull ProtocolMessageBuilder<M> forTags(@NotNull String ... tagNames);
 
 
     @Override
     @Contract("_ -> this")
-    @NotNull ProtocolMessageBuilder<M> withThrowable(Throwable throwable);
+    @NotNull ProtocolMessageBuilder<M> withThrowable(@NotNull Throwable throwable);
 
 
     @Override
@@ -371,14 +356,6 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
     @Override
-    @NotNull ProtocolGroup<M> to(@NotNull Tag targetTag);
-
-
-    @Override
     @NotNull ProtocolGroup<M> to(@NotNull String... targetTagNames);
-
-
-    @Override
-    @NotNull ProtocolGroup<M> to(@NotNull Tag... targetTags);
   }
 }

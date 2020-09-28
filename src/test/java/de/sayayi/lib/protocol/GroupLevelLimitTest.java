@@ -37,7 +37,6 @@ public class GroupLevelLimitTest
   public void testLevelLimit1()
   {
     GenericProtocolFactory factory = new GenericProtocolFactory();
-    Tag tag = factory.getDefaultTag();
     ProtocolGroup<String> gp = factory.createProtocol().createGroup();
 
     gp.setGroupMessage("Test");
@@ -49,7 +48,7 @@ public class GroupLevelLimitTest
 
     assertFalse(gp.matches(Shared.ERROR));
 
-    ProtocolIterator<String> iterator = gp.iterator(INFO, tag);
+    ProtocolIterator<String> iterator = gp.iterator(INFO, Tag.any());
 
     assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolStart);
     assertTrue(iterator.next() instanceof ProtocolIterator.GroupStartEntry);
@@ -64,7 +63,6 @@ public class GroupLevelLimitTest
   public void testLevelLimitPropagation()
   {
     GenericProtocolFactory factory = new GenericProtocolFactory();
-    Tag tag = factory.getDefaultTag();
     Protocol<String> p = factory.createProtocol();
     ProtocolGroup<String> gp1 = p.createGroup().createGroup();
     ProtocolGroup<String> gp2 = gp1.createGroup().createGroup();
@@ -72,7 +70,7 @@ public class GroupLevelLimitTest
     gp2.setVisibility(FLATTEN_ON_SINGLE_ENTRY).error().message("msg").setLevelLimit(ERROR);
     gp1.setLevelLimit(WARN);
 
-    ProtocolIterator<String> iterator = p.iterator(LOWEST, tag);
+    ProtocolIterator<String> iterator = p.iterator(LOWEST, Tag.any());
 
     assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolStart);
     assertMessageWithLevel(iterator.next(), WARN, true, true);

@@ -32,31 +32,32 @@ import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.ProtocolEnd;
 import de.sayayi.lib.protocol.ProtocolIterator.ProtocolStart;
 import de.sayayi.lib.protocol.Tag;
+import de.sayayi.lib.protocol.TagSelector;
 
 import lombok.Getter;
+import lombok.val;
+import lombok.var;
 
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 
 /**
  * @author Jeroen Gremmen
  */
-abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
-    implements Protocol<M>, InternalProtocolQuery
+abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implements Protocol<M>, InternalProtocolQueryable
 {
   @Getter final ProtocolFactory<M> factory;
 
   final List<InternalProtocolEntry<M>> entries;
-  final Map<Tag,Set<Tag>> tagPropagationMap;
+  final Map<TagSelector,Set<String>> tagPropagationMap;
 
 
   protected AbstractProtocol(@NotNull ProtocolFactory<M> factory)
@@ -64,27 +65,22 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
     this.factory = factory;
 
     entries = new ArrayList<InternalProtocolEntry<M>>(8);
-    tagPropagationMap = new HashMap<Tag,Set<Tag>>(8);
+    tagPropagationMap = new HashMap<TagSelector,Set<String>>(8);
   }
 
 
-  protected @NotNull Set<Tag> getPropagatedTags(@NotNull Set<Tag> tags)
+  protected @NotNull Set<String> getPropagatedTags(@NotNull Set<String> tags)
   {
     if (tagPropagationMap.isEmpty())
       return tags;
 
-    final Set<Tag> collectedPropagatedTags = new HashSet<Tag>();
+    val collectedPropagatedTagDefs = new TreeSet<String>(tags);
 
-    for(Tag tag: tags)
-    {
-      collectedPropagatedTags.add(tag);
+    for(val tagPropagation: tagPropagationMap.entrySet())
+      if (tagPropagation.getKey().match(collectedPropagatedTagDefs))
+        collectedPropagatedTagDefs.addAll(tagPropagation.getValue());
 
-      Set<Tag> propagatedTags = tagPropagationMap.get(tag);
-      if (propagatedTags != null)
-        collectedPropagatedTags.addAll(propagatedTags);
-    }
-
-    return collectedPropagatedTags;
+    return collectedPropagatedTagDefs;
   }
 
 
@@ -114,7 +110,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
 
   @SuppressWarnings("unchecked")
   @Override
-  public @NotNull B error(Throwable throwable) {
+  public @NotNull B error(@NotNull Throwable throwable) {
     return (B)add(Shared.ERROR).withThrowable(throwable);
   }
 
@@ -124,26 +120,14 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
 
 
   @Override
-  public boolean matches0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag... tags)
+  public boolean matches0(@NotNull Level levelLimit, @NotNull Level level, @NotNull TagSelector tagSelector)
   {
     if (levelLimit.severity() >= level.severity())
-      for(InternalProtocolEntry<M> entry: entries)
-        if (entry.matches0(levelLimit, level, tags))
+      for(val entry: entries)
+        if (entry.matches0(levelLimit, level, tagSelector))
           return true;
 
     return false;
-  }
-
-
-  @Override
-  public boolean matches(@NotNull Level level, @NotNull String ... tagNames)
-  {
-    Tag[] tags = new Tag[tagNames.length];
-
-    for(int n = 0; n < tagNames.length; n++)
-      tags[n] = factory.getTagByName(tagNames[n]);
-
-    return matches(level, tags);
   }
 
 
@@ -151,7 +135,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   public boolean matches0(@NotNull Level levelLimit, @NotNull Level level)
   {
     if (levelLimit.severity() >= level.severity())
-      for(InternalProtocolEntry<M> entry: entries)
+      for(val entry: entries)
         if (entry.matches0(levelLimit, level))
           return true;
 
@@ -159,13 +143,14 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   }
 
 
-  @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag ... tags)
+  @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level levelLimit, @NotNull Level level,
+                                             @NotNull TagSelector tagSelector)
   {
-    final List<ProtocolEntry<M>> filteredEntries = new ArrayList<ProtocolEntry<M>>();
+    val filteredEntries = new ArrayList<ProtocolEntry<M>>();
 
     if (levelLimit.severity() >= level.severity())
       for(InternalProtocolEntry<M> entry: entries)
-        if (entry.matches0(levelLimit, level, tags))
+        if (entry.matches0(levelLimit, level, tagSelector))
         {
           if (entry instanceof InternalProtocolEntry.Group)
           {
@@ -185,13 +170,13 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
 
   @Override
   public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive, @NotNull Level level,
-                                   @NotNull Tag... tags)
+                                   @NotNull TagSelector tagSelector)
   {
-    int count = 0;
+    var count = 0;
 
     if (levelLimit.severity() >= level.severity())
-      for(InternalProtocolEntry<M> entry: entries)
-        count += entry.getVisibleEntryCount0(levelLimit, recursive, level, tags);
+      for(val entry: entries)
+        count += entry.getVisibleEntryCount0(levelLimit, recursive, level, tagSelector);
 
     return count;
   }
@@ -201,8 +186,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   public @NotNull ProtocolGroup<M> createGroup()
   {
     @SuppressWarnings("unchecked")
-    final ProtocolGroupImpl<M> group =
-        new ProtocolGroupImpl<M>((AbstractProtocol<M,ProtocolMessageBuilder<M>>)this);
+    val group = new ProtocolGroupImpl<M>((AbstractProtocol<M,ProtocolMessageBuilder<M>>)this);
 
     entries.add(group);
 
@@ -212,41 +196,20 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
 
   @Override
   public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level) {
-    return format(formatter, level, factory.getDefaultTag());
+    return format(formatter, level, Tag.any());
   }
 
 
   @Override
-  public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level,
-                      @NotNull String... tagNames)
-  {
-    int tagCount = tagNames.length;
-    Tag[] tags = new Tag[tagCount];
-
-    for(int n = 0; n < tagCount; n++)
-    {
-      Tag tag = factory.getTagByName(tagNames[n]);
-      if (tag == null)
-        throw new IllegalArgumentException("tag with name " + tagNames[n] + " does not exist");
-
-      tags[n] = tag;
-    }
-
-    return format(formatter, level, tags);
-  }
-
-
-  @Override
-  public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level,
-                      @NotNull Tag ... tags)
+  public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level, @NotNull TagSelector tagSelector)
   {
     // initialize formatter
     if (formatter instanceof InitializableProtocolFormatter)
-      ((InitializableProtocolFormatter<M,R>)formatter).init(level, tags, countGroupDepth());
+      ((InitializableProtocolFormatter<M,R>)formatter).init(level, tagSelector, countGroupDepth());
 
-    for(Iterator<DepthEntry<M>> iterator = iterator(level, tags); iterator.hasNext();)
+    for(Iterator<DepthEntry<M>> iterator = iterator(level, tagSelector); iterator.hasNext();)
     {
-      DepthEntry<M> entry = iterator.next();
+      val entry = iterator.next();
 
       if (entry instanceof ProtocolStart)
         formatter.protocolStart();
@@ -266,51 +229,18 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
 
   @Override
   public <R> R format(@NotNull ConfiguredProtocolFormatter<M,R> formatter) {
-    return format(formatter, formatter.getLevel(), formatter.getTags(factory));
+    return format(formatter, formatter.getLevel(), formatter.getTagSelector(factory));
   }
 
 
   int countGroupDepth()
   {
-    int depth = 0;
+    var depth = 0;
 
     for(InternalProtocolEntry<M> entry: entries)
       if (entry instanceof ProtocolGroupImpl)
         depth = Math.max(depth, 1 + ((ProtocolGroupImpl<M>)entry).countGroupDepth());
 
     return depth;
-  }
-
-
-  @Contract(value = "null -> fail", pure = true)
-  @NotNull Tag resolveTagByName(String tagName)
-  {
-    if (tagName == null)
-      throw new NullPointerException("tagName must not be null");
-
-    Tag tag = factory.getTagByName(tagName);
-    if (tag == null)
-      failTag(tagName);
-
-    return tag;
-  }
-
-
-  @Contract(value = "null -> fail", pure = true)
-  @NotNull Tag validateTag(Tag tag)
-  {
-    if (tag == null)
-      throw new NullPointerException("tag must not be null");
-
-    if (!factory.isRegisteredTag(tag))
-      failTag(tag.getName());
-
-    return tag;
-  }
-
-
-  @Contract("_ -> fail")
-  static void failTag(@NotNull String tagName) {
-    throw new IllegalArgumentException("tag with name " + tagName + " is not registered for this protocol");
   }
 }

@@ -21,7 +21,6 @@ import org.junit.Test;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.Set;
 
 import static de.sayayi.lib.protocol.Level.Shared.DEBUG;
@@ -29,14 +28,13 @@ import static de.sayayi.lib.protocol.Level.Shared.ERROR;
 import static de.sayayi.lib.protocol.Level.Shared.INFO;
 import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
 import static de.sayayi.lib.protocol.Level.Shared.WARN;
-import static de.sayayi.lib.protocol.Tag.MatchCondition.AT_LEAST;
-import static de.sayayi.lib.protocol.Tag.MatchCondition.EQUAL;
-import static de.sayayi.lib.protocol.Tag.MatchCondition.NOT_EQUAL;
-import static de.sayayi.lib.protocol.Tag.MatchCondition.UNTIL;
+import static de.sayayi.lib.protocol.TagDef.MatchCondition.AT_LEAST;
+import static de.sayayi.lib.protocol.TagDef.MatchCondition.EQUAL;
+import static de.sayayi.lib.protocol.TagDef.MatchCondition.NOT_EQUAL;
+import static de.sayayi.lib.protocol.TagDef.MatchCondition.UNTIL;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -93,44 +91,7 @@ public class ProtocolFactoryTest
       }
     };
 
-    assertTrue(factory.getDefaultParameterValues().containsKey("factoryid"));
     assertEquals("protocol factory", factory.getDefaultParameterValues().get("name"));
-  }
-
-
-  @Test
-  public void testIsRegisteredTag()
-  {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
-    Tag tag = factory.createTag("tag").getTag();
-
-    assertTrue(factory.isRegisteredTag(tag));
-
-    Tag tagSame = new Tag() {
-      @NotNull @Override public String getName() { return "tag"; }
-      @NotNull @Override public Tag.MatchCondition getMatchCondition() { return AT_LEAST; }
-      @NotNull @Override public Level getMatchLevel() { return LOWEST; }
-      @Override public boolean matches(@NotNull Level level) { return true; }
-      @NotNull @Override public Set<Tag> getImpliedTags() { return Collections.<Tag>singleton(this); }
-    };
-
-    assertFalse(factory.isRegisteredTag(tagSame));
-
-    ProtocolFactory<String> factory2 = new GenericProtocolFactory();
-    Tag tag2 = factory2.createTag("tag").getTag();
-
-    assertTrue(factory2.isRegisteredTag(tag2));
-    assertFalse(factory.isRegisteredTag(tag2));
-    assertFalse(factory2.isRegisteredTag(tag));
-
-    assertFalse(factory2.isRegisteredTag(tagSame));
-
-    try {
-      //noinspection ResultOfMethodCallIgnored
-      factory.isRegisteredTag(null);
-      fail();
-    } catch(NullPointerException ignore) {
-    }
   }
 
 
@@ -139,37 +100,26 @@ public class ProtocolFactoryTest
   {
     GenericProtocolFactory factory = new GenericProtocolFactory();
 
-    Tag tag1 = factory.createTag("tag1").getTag();
-    Tag tagUI = factory.createTag("UI").getTag();
-    Tag tagSummary = factory.createTag("summary").getTag();
+    TagDef tagDef1 = factory.createTag("tag1").getTagDef();
+    TagDef tagDefUI = factory.createTag("UI").getTagDef();
+    TagDef tagDefSummary = factory.createTag("summary").getTagDef();
 
-    Set<Tag> tags = factory.getTags();
+    Set<TagDef> tagDefs = factory.getTagDefs();
 
-    assertEquals(4, tags.size());
+    assertEquals(4, tagDefs.size());
 
-    assertTrue(tags.contains(factory.getDefaultTag()));
-    assertTrue(tags.contains(tag1));
-    assertTrue(tags.contains(tagUI));
-    assertTrue(tags.contains(tagSummary));
+    assertTrue(tagDefs.contains(factory.getDefaultTag()));
+    assertTrue(tagDefs.contains(tagDef1));
+    assertTrue(tagDefs.contains(tagDefUI));
+    assertTrue(tagDefs.contains(tagDefSummary));
 
     assertTrue(factory.hasTag(Constant.DEFAULT_TAG_NAME));
     assertTrue(factory.hasTag("tag1"));
     assertTrue(factory.hasTag("UI"));
     assertTrue(factory.hasTag("summary"));
-
-    try {
-      //noinspection ResultOfMethodCallIgnored
-      factory.hasTag(null);
-      fail();
-    } catch(Exception ignore) {
-    }
-
-    try {
-      // noinspection ResultOfMethodCallIgnored
-      factory.hasTag("");
-      fail();
-    } catch(Exception ignore) {
-    }
+    assertFalse(factory.hasTag(null));
+    assertFalse(factory.hasTag(""));
+    assertFalse(factory.hasTag("(.,"));
   }
 
 
@@ -178,12 +128,12 @@ public class ProtocolFactoryTest
   {
     GenericProtocolFactory factory = new GenericProtocolFactory();
 
-    Tag tag1 = factory.createTag("tag1").getTag();
+    TagDef tagDef1 = factory.createTag("tag1").getTagDef();
 
-    assertEquals("tag1", tag1.getName());
-    assertEquals(tag1, factory.getTagByName("tag1"));
+    assertEquals("tag1", tagDef1.getName());
+    assertEquals(tagDef1, factory.getTagByName("tag1"));
     assertEquals(factory.getDefaultTag(), factory.getTagByName(Constant.DEFAULT_TAG_NAME));
-    assertNull(factory.getTagByName("xyz"));
+    assertNotNull(factory.getTagByName("xyz"));
 
     try {
       //noinspection ResultOfMethodCallIgnored
@@ -206,42 +156,42 @@ public class ProtocolFactoryTest
   {
     GenericProtocolFactory factory = new GenericProtocolFactory();
 
-    Tag tagAtLeastInfo = factory.createTag("tag1").match(AT_LEAST, INFO).getTag();
+    TagDef tagDefAtLeastInfo = factory.createTag("tag1").match(AT_LEAST, INFO).getTagDef();
 
-    assertEquals(INFO, tagAtLeastInfo.getMatchLevel());
-    assertEquals(AT_LEAST, tagAtLeastInfo.getMatchCondition());
+    assertEquals(INFO, tagDefAtLeastInfo.getMatchLevel());
+    assertEquals(AT_LEAST, tagDefAtLeastInfo.getMatchCondition());
 
-    assertTrue(tagAtLeastInfo.matches(INFO));
-    assertTrue(tagAtLeastInfo.matches(ERROR));
-    assertFalse(tagAtLeastInfo.matches(DEBUG));
+    assertTrue(tagDefAtLeastInfo.matches(INFO));
+    assertTrue(tagDefAtLeastInfo.matches(ERROR));
+    assertFalse(tagDefAtLeastInfo.matches(DEBUG));
 
-    Tag tagEqualDebug = factory.createTag("tag2").match(EQUAL, DEBUG).getTag();
+    TagDef tagDefEqualDebug = factory.createTag("tag2").match(EQUAL, DEBUG).getTagDef();
 
-    assertEquals(DEBUG, tagEqualDebug.getMatchLevel());
-    assertEquals(EQUAL, tagEqualDebug.getMatchCondition());
+    assertEquals(DEBUG, tagDefEqualDebug.getMatchLevel());
+    assertEquals(EQUAL, tagDefEqualDebug.getMatchCondition());
 
-    assertTrue(tagEqualDebug.matches(DEBUG));
-    assertFalse(tagEqualDebug.matches(ERROR));
-    assertFalse(tagEqualDebug.matches(LOWEST));
+    assertTrue(tagDefEqualDebug.matches(DEBUG));
+    assertFalse(tagDefEqualDebug.matches(ERROR));
+    assertFalse(tagDefEqualDebug.matches(LOWEST));
 
-    Tag tagNotEqualError = factory.createTag("tag3").match(NOT_EQUAL, ERROR).getTag();
+    TagDef tagDefNotEqualError = factory.createTag("tag3").match(NOT_EQUAL, ERROR).getTagDef();
 
-    assertEquals(ERROR, tagNotEqualError.getMatchLevel());
-    assertEquals(NOT_EQUAL, tagNotEqualError.getMatchCondition());
+    assertEquals(ERROR, tagDefNotEqualError.getMatchLevel());
+    assertEquals(NOT_EQUAL, tagDefNotEqualError.getMatchCondition());
 
-    assertTrue(tagNotEqualError.matches(DEBUG));
-    assertFalse(tagNotEqualError.matches(ERROR));
-    assertTrue(tagNotEqualError.matches(LOWEST));
+    assertTrue(tagDefNotEqualError.matches(DEBUG));
+    assertFalse(tagDefNotEqualError.matches(ERROR));
+    assertTrue(tagDefNotEqualError.matches(LOWEST));
 
-    Tag tagUntilWarn = factory.createTag("tag4").match(UNTIL, WARN).getTag();
+    TagDef tagDefUntilWarn = factory.createTag("tag4").match(UNTIL, WARN).getTagDef();
 
-    assertEquals(WARN, tagUntilWarn.getMatchLevel());
-    assertEquals(UNTIL, tagUntilWarn.getMatchCondition());
+    assertEquals(WARN, tagDefUntilWarn.getMatchLevel());
+    assertEquals(UNTIL, tagDefUntilWarn.getMatchCondition());
 
-    assertTrue(tagUntilWarn.matches(DEBUG));
-    assertTrue(tagUntilWarn.matches(WARN));
-    assertFalse(tagUntilWarn.matches(ERROR));
-    assertTrue(tagUntilWarn.matches(LOWEST));
+    assertTrue(tagDefUntilWarn.matches(DEBUG));
+    assertTrue(tagDefUntilWarn.matches(WARN));
+    assertFalse(tagDefUntilWarn.matches(ERROR));
+    assertTrue(tagDefUntilWarn.matches(LOWEST));
   }
 
 
@@ -253,7 +203,7 @@ public class ProtocolFactoryTest
     };
 
     Protocol<String> protocol = factory.createProtocol().debug().message("msg");
-    ProtocolIterator<String> iterator = protocol.iterator(LOWEST, factory.getDefaultTag());
+    ProtocolIterator<String> iterator = protocol.iterator(LOWEST, Tag.any());
 
     iterator.next();  // protocol start
 

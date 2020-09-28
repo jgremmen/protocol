@@ -18,7 +18,7 @@ package de.sayayi.lib.protocol.spi;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.ProtocolGroup.Visibility;
-import de.sayayi.lib.protocol.Tag;
+import de.sayayi.lib.protocol.TagSelector;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +30,7 @@ import java.util.List;
  * @author Jeroen Gremmen
  */
 @SuppressWarnings("squid:S2176")
-interface InternalProtocolEntry<M> extends ProtocolEntry<M>, InternalProtocolQuery
+interface InternalProtocolEntry<M> extends ProtocolEntry<M>, InternalProtocolQueryable
 {
   interface Message<M> extends ProtocolEntry.Message<M>, InternalProtocolEntry<M> {
   }
@@ -52,19 +52,19 @@ interface InternalProtocolEntry<M> extends ProtocolEntry<M>, InternalProtocolQue
 
     @Contract(pure = true, value = "_, _, _ -> new")
     @NotNull List<ProtocolEntry<M>> getEntries0(@NotNull Level levelLimit, @NotNull Level level,
-                                                @NotNull Tag ... tags);
+                                                @NotNull TagSelector tagSelector);
 
 
     @Contract(pure = true)
-    boolean isHeaderVisible0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag ... tags);
+    boolean isHeaderVisible0(@NotNull Level levelLimit, @NotNull Level level, @NotNull TagSelector tagSelector);
 
 
     @Contract(pure = true)
-    @NotNull Level getHeaderLevel0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag ... tags);
+    @NotNull Level getHeaderLevel0(@NotNull Level levelLimit, @NotNull Level level, @NotNull TagSelector tagSelector);
 
 
     @Contract(pure = true)
     int getVisibleGroupEntryMessageCount0(@NotNull Level levelLimit, @NotNull Level level,
-                                          @NotNull Tag ... tags);
+                                          @NotNull TagSelector tagSelector);
   }
 }

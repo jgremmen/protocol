@@ -20,7 +20,7 @@ import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolIterator;
-import de.sayayi.lib.protocol.Tag;
+import de.sayayi.lib.protocol.TagSelector;
 
 import lombok.EqualsAndHashCode;
 
@@ -69,8 +69,8 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
 
 
   @Override
-  public boolean matches(@NotNull Level level, @NotNull Tag ... tags) {
-    return matches0(HIGHEST, level, tags);
+  public boolean matches(@NotNull Level level, @NotNull TagSelector tagSelector) {
+    return matches0(HIGHEST, level, tagSelector);
   }
 
 
@@ -81,26 +81,20 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
 
 
   @Override
-  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull Tag ... tags) {
-    return getVisibleEntryCount0(HIGHEST, recursive, level, tags);
+  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull TagSelector tagSelector) {
+    return getVisibleEntryCount0(HIGHEST, recursive, level, tagSelector);
   }
 
 
   @Override
-  public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag ... tags) {
-    return new ProtocolStructureIterator.ForProtocol<M>(level, tags, 0, this);
+  public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull TagSelector tagSelector) {
+    return new ProtocolStructureIterator.ForProtocol<M>(level, tagSelector, 0, this);
   }
 
 
   @Override
-  public @NotNull TargetTagBuilder<M> propagate(@NotNull String tagName) {
-    return new PropagationTargetTagBuilder(resolveTagByName(tagName));
-  }
-
-
-  @Override
-  public @NotNull TargetTagBuilder<M> propagate(@NotNull Tag tag) {
-    return new PropagationTargetTagBuilder(validateTag(tag));
+  public @NotNull TargetTagBuilder<M> propagate(@NotNull TagSelector tagSelector) {
+    return new PropagationBuilder(tagSelector);
   }
 
 
@@ -112,8 +106,7 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
 
 
 
-  private class MessageBuilder
-      extends AbstractMessageBuilder<M,ProtocolMessageBuilder<M>,MessageParameterBuilder<M>>
+  private class MessageBuilder extends AbstractMessageBuilder<M,ProtocolMessageBuilder<M>,MessageParameterBuilder<M>>
   {
     MessageBuilder(@NotNull Level level) {
       super(ProtocolImpl.this, level);
@@ -141,11 +134,10 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
 
 
 
-  private class PropagationTargetTagBuilder
-      extends AbstractPropagationTargetTagBuilder<M,ProtocolMessageBuilder<M>>
+  private class PropagationBuilder extends AbstractPropagationBuilder<M,ProtocolMessageBuilder<M>>
   {
-    PropagationTargetTagBuilder(Tag sourceTag) {
-      super(ProtocolImpl.this, sourceTag);
+    PropagationBuilder(TagSelector tagSelector) {
+      super(ProtocolImpl.this, tagSelector);
     }
   }
 }

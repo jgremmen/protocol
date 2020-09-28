@@ -16,9 +16,11 @@
 package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.Level;
-import de.sayayi.lib.protocol.Tag;
+import de.sayayi.lib.protocol.TagSelector;
 
 import lombok.Getter;
+import lombok.val;
+import lombok.var;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -33,17 +35,15 @@ import static de.sayayi.lib.protocol.spi.LevelHelper.min;
 /**
  * @author Jeroen Gremmen
  */
-final class ProtocolMessageEntry<M>
-    extends AbstractGenericMessage<M>
-    implements InternalProtocolEntry.Message<M>
+final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements InternalProtocolEntry.Message<M>
 {
   @Getter private final Level level;
-  private final Set<Tag> tags;
+  private final Set<String> tags;
   @Getter private final Throwable throwable;
 
 
-  ProtocolMessageEntry(@NotNull Level level, @NotNull Set<Tag> tags, Throwable throwable,
-                       @NotNull M message, @NotNull Map<String,Object> defaultParameterValues)
+  ProtocolMessageEntry(@NotNull Level level, @NotNull Set<String> tags, Throwable throwable, @NotNull M message,
+                       @NotNull Map<String,Object> defaultParameterValues)
   {
     super(message, defaultParameterValues);
 
@@ -54,26 +54,20 @@ final class ProtocolMessageEntry<M>
 
 
   @Override
-  public @NotNull Set<Tag> getTags() {
+  public @NotNull Set<String> getTags() {
     return Collections.unmodifiableSet(tags);
   }
 
 
   @Override
-  public boolean matches0(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag... tags)
-  {
-    if (matches0(levelLimit, level))
-      for(Tag tag: tags)
-        if (this.tags.contains(tag))
-          return true;
-
-    return false;
+  public boolean matches0(@NotNull Level levelLimit, @NotNull Level level, @NotNull TagSelector tagSelector) {
+    return matches0(levelLimit, level) && tagSelector.match(tags);
   }
 
 
   @Override
-  public boolean matches(@NotNull Level level, @NotNull Tag ... tags) {
-    return matches0(HIGHEST, level, tags);
+  public boolean matches(@NotNull Level level, @NotNull TagSelector tagSelector) {
+    return matches0(HIGHEST, level, tagSelector);
   }
 
 
@@ -91,31 +85,31 @@ final class ProtocolMessageEntry<M>
 
   @Override
   public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive,
-                                   @NotNull Level level, @NotNull Tag... tags) {
-    return matches0(levelLimit, level, tags) ? 1 : 0;
+                                   @NotNull Level level, @NotNull TagSelector tagSelector) {
+    return matches0(levelLimit, level, tagSelector) ? 1 : 0;
   }
 
 
   @Override
-  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull Tag ... tags) {
-    return getVisibleEntryCount0(HIGHEST, recursive, level, tags);
+  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull TagSelector tagSelector) {
+    return getVisibleEntryCount0(HIGHEST, recursive, level, tagSelector);
   }
 
 
   @Override
   public String toString()
   {
-    StringBuilder s = new StringBuilder("Message[level=").append(level).append(",tags={");
-    boolean first = true;
+    val s = new StringBuilder("Message[level=").append(level).append(",tags={");
+    var first = true;
 
-    for(Tag tag: tags)
+    for(val tag: tags)
     {
       if (first)
         first = false;
       else
         s.append(',');
 
-      s.append(tag.getName());
+      s.append(tag);
     }
 
     s.append("},message=").append(message);

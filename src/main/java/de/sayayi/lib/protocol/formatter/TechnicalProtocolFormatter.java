@@ -20,7 +20,7 @@ import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.Protocol.GenericMessage;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
-import de.sayayi.lib.protocol.Tag;
+import de.sayayi.lib.protocol.TagSelector;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -52,8 +52,9 @@ public class TechnicalProtocolFormatter<M> extends TreeProtocolFormatter<M>
 
 
   @Override
-  public @NotNull Tag[] getTags(@NotNull ProtocolFactory<M> protocolFactory) {
-    return new Tag[] { protocolFactory.getDefaultTag() };
+  public @NotNull
+  TagSelector getTagSelector(@NotNull ProtocolFactory<M> protocolFactory) {
+    return protocolFactory.getDefaultTag().asSelector();
   }
 
 

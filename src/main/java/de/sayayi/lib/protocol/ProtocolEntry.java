@@ -31,7 +31,7 @@ import java.util.Set;
  * @see Group
  */
 @SuppressWarnings({"unused", "squid:S2326"})
-public interface ProtocolEntry<M> extends ProtocolQuery
+public interface ProtocolEntry<M> extends ProtocolQueryable
 {
   /**
    *
@@ -47,7 +47,7 @@ public interface ProtocolEntry<M> extends ProtocolQuery
      */
     @SuppressWarnings("unused")
     @Contract(pure = true, value = "-> new")
-    @NotNull Set<Tag> getTags();
+    @NotNull Set<String> getTags();
   }
 
 
@@ -59,48 +59,49 @@ public interface ProtocolEntry<M> extends ProtocolQuery
   interface Group<M> extends ProtocolEntry<M>, Protocol.Group<M>
   {
     /**
-     * Returns a list of protocol entries provided by this protocol object for the given {@code level} and {@code tags}.
+     * Returns a list of protocol entries provided by this protocol object for the given {@code level} and
+     * {@code tagSelector}.
      *
-     * @param level  requested protocol level, not {@code null}
-     * @param tags   tags to query, not {@code null}
+     * @param level        requested protocol level, not {@code null}
+     * @param tagSelector  tag selector, not {@code null}
      *
      * @return  a list of protocol entries, never {@code null}
      */
     @Contract(pure = true, value = "_, _ -> new")
-    @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull Tag ... tags);
+    @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull TagSelector tagSelector);
 
 
     /**
-     * Tells if, for the given {@code level} and {@code tags}, the group header message is visible.
+     * Tells if, for the given {@code level} and {@code tagSelector}, the group header message is visible.
      *
-     * @param level  protocol level, not {@code null}
-     * @param tags   tags, not {@code null}
+     * @param level        protocol level, not {@code null}
+     * @param tagSelector  tag selector, not {@code null}
      *
      * @return  {@code true} if the group header message is visible, {@code false} otherwise
      */
     @Contract(pure = true)
-    boolean isHeaderVisible(@NotNull Level level, @NotNull Tag ... tags);
+    boolean isHeaderVisible(@NotNull Level level, @NotNull TagSelector tagSelector);
 
 
     /**
      * <p>
-     *   Returns the level of the group header message for the given {@code level} and {@code tags}.
+     *   Returns the level of the group header message for the given {@code level} and {@code tagSelector}.
      * </p>
      * <p>
      *   The group header message level is defined as the highest (= most severe) level of all containing messages
-     *   and sub-groups which are visible for the given {@code level} and {@code tags}.
+     *   and sub-groups which are visible for the given {@code level} and {@code tagSelector}.
      * </p>
      * <p>
      *   If the group does not contain any messages, the returned value will be a level with the lowest possible
      *   severity.
      * </p>
      *
-     * @param level  protocol level, not {@code null}
-     * @param tags   tags, not {@code null}
+     * @param level        protocol level, not {@code null}
+     * @param tagSelector  tag selector, not {@code null}
      *
      * @return  header message level, never {@code null}
      */
     @Contract(pure = true)
-    @NotNull Level getHeaderLevel(@NotNull Level level, @NotNull Tag ... tags);
+    @NotNull Level getHeaderLevel(@NotNull Level level, @NotNull TagSelector tagSelector);
   }
 }

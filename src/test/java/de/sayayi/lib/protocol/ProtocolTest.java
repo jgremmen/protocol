@@ -19,7 +19,7 @@ import org.junit.Test;
 
 import static de.sayayi.lib.protocol.Level.Shared.DEBUG;
 import static de.sayayi.lib.protocol.Level.Shared.INFO;
-import static de.sayayi.lib.protocol.Tag.MatchCondition.AT_LEAST;
+import static de.sayayi.lib.protocol.TagDef.MatchCondition.AT_LEAST;
 
 
 /**
@@ -36,12 +36,10 @@ public class ProtocolTest
     factory.createTag("ui").match(AT_LEAST, INFO)
            .createTag("technical").dependsOn("ui").implies("system");
 
-    Tag ui = factory.getTagByName("ui");
-
     Protocol protocol = factory.createProtocol();
 
     protocol.add(DEBUG).message("Just sayin'")
-            .error(new NullPointerException()).forTags(ui).message("MSG-048");
+            .error(new NullPointerException()).forTags("ui").message("MSG-048");
 
     ProtocolGroup gp = protocol.createGroup().setGroupMessage("Huhu");
 

@@ -26,7 +26,7 @@ import static org.junit.Assert.assertTrue;
  * @author Jeroen Gremmen
  */
 @SuppressWarnings({ "ResultOfMethodCallIgnored", "ConstantConditions" })
-public class TagBuilderTest
+public class TagDefBuilderTest
 {
   @Test(expected = NullPointerException.class)
   public void testMatchNullCondition() {
@@ -36,7 +36,7 @@ public class TagBuilderTest
 
   @Test(expected = NullPointerException.class)
   public void testMatchNullLevel() {
-    new GenericProtocolFactory().createTag("tag").match(Tag.MatchCondition.AT_LEAST, null);
+    new GenericProtocolFactory().createTag("tag").match(TagDef.MatchCondition.AT_LEAST, null);
   }
 
 
@@ -44,14 +44,14 @@ public class TagBuilderTest
   public void testImplies()
   {
     GenericProtocolFactory factory = new GenericProtocolFactory();
-    Tag tagC = factory.createTag("C").getTag();
-    Tag tagB = factory.createTag("B").getTag();
-    Tag tagA = factory.createTag("A").implies("B", "C").getTag();
+    TagDef tagDefC = factory.createTag("C").getTagDef();
+    TagDef tagDefB = factory.createTag("B").getTagDef();
+    TagDef tagDefA = factory.createTag("A").implies("B", "C").getTagDef();
 
-    Set<Tag> impliedTags = tagA.getImpliedTags();
+    Set<TagDef> impliedTagDefs = tagDefA.getImpliedTags();
 
-    assertTrue(impliedTags.contains(tagB));
-    assertTrue(impliedTags.contains(tagC));
+    assertTrue(impliedTagDefs.contains(tagDefB));
+    assertTrue(impliedTagDefs.contains(tagDefC));
   }
 
 
@@ -67,10 +67,9 @@ public class TagBuilderTest
     tag.getDefaultParameterValues();
     tag.getDefaultTag();
     tag.getTagByName("tag");
-    tag.getTags();
+    tag.getTagDefs();
     tag.modifyTag("tag");
     tag.hasTag("xyz");
-    tag.isRegisteredTag(tag.getTag());
     tag.processMessage("Hello");
   }
 
@@ -80,8 +79,8 @@ public class TagBuilderTest
   {
     GenericProtocolFactory factory = new GenericProtocolFactory();
     factory.createTag("tag")
-        .match(Tag.MatchCondition.EQUAL, Level.Shared.INFO)
-        .getTag()
+        .match(TagDef.MatchCondition.EQUAL, Level.Shared.INFO)
+        .getTagDef()
         .matches(null);
   }
 
@@ -93,36 +92,36 @@ public class TagBuilderTest
 
     assertTrue(factory
         .createTag("T1")
-        .match(Tag.MatchCondition.EQUAL, Level.Shared.INFO)
-        .getTag()
+        .match(TagDef.MatchCondition.EQUAL, Level.Shared.INFO)
+        .getTagDef()
         .toString()
         .contains("INFO"));
 
     assertTrue(factory
         .createTag("T2")
-        .match(Tag.MatchCondition.AT_LEAST, Level.Shared.INFO)
-        .getTag()
+        .match(TagDef.MatchCondition.AT_LEAST, Level.Shared.INFO)
+        .getTagDef()
         .toString()
         .contains("(>=)"));
 
     assertTrue(factory
         .createTag("T3")
-        .match(Tag.MatchCondition.NOT_EQUAL, Level.Shared.INFO)
-        .getTag()
+        .match(TagDef.MatchCondition.NOT_EQUAL, Level.Shared.INFO)
+        .getTagDef()
         .toString()
         .contains("(!=)"));
 
     assertTrue(factory
         .createTag("T4")
-        .match(Tag.MatchCondition.UNTIL, Level.Shared.INFO)
-        .getTag()
+        .match(TagDef.MatchCondition.UNTIL, Level.Shared.INFO)
+        .getTagDef()
         .toString()
         .contains("(<=)"));
 
     assertTrue(factory
         .createTag("T5")
         .implies("T4", "T3", "T2", "T1")
-        .getTag()
+        .getTagDef()
         .toString()
         .contains("{T1,T2,T3,T4}"));
   }

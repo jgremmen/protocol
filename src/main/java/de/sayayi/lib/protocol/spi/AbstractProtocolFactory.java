@@ -19,9 +19,13 @@ import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.Tag;
+import de.sayayi.lib.protocol.TagDef;
+import de.sayayi.lib.protocol.TagSelector;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.val;
+import lombok.var;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -33,8 +37,11 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
 
 import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
+import static java.util.regex.Pattern.CASE_INSENSITIVE;
+import static java.util.regex.Pattern.UNICODE_CASE;
 
 
 /**
@@ -44,12 +51,15 @@ import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
  */
 public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 {
+  private static final Pattern TAG_NAME_PATTERN =
+      Pattern.compile("\\p{Alpha}[-_\\p{Alnum}]*", CASE_INSENSITIVE | UNICODE_CASE);
+
   private static final AtomicInteger FACTORY_ID = new AtomicInteger(0);
   private static final AtomicInteger TAG_ID = new AtomicInteger(0);
 
-  private final Map<String,TagImpl> registeredTags = new TreeMap<String,TagImpl>();
+  private final Map<String, TagDefImpl> registeredTags = new TreeMap<String, TagDefImpl>();
   private final int id;
-  @Getter private final Tag defaultTag;
+  @Getter private final TagDef defaultTag;
 
   protected final Map<String,Object> defaultParameterValues;
 
@@ -57,10 +67,9 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
   protected AbstractProtocolFactory()
   {
     id = FACTORY_ID.incrementAndGet();
-    defaultTag = createTag(Constant.DEFAULT_TAG_NAME).getTag();
 
+    defaultTag = createTag(Constant.DEFAULT_TAG_NAME).getTagDef();
     defaultParameterValues = new HashMap<String,Object>();
-    defaultParameterValues.put("factoryid", id);
   }
 
 
@@ -70,27 +79,23 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
   }
 
 
-  @SuppressWarnings({ "SuspiciousMethodCalls", "squid:S2583", "ConstantConditions" })
-  public boolean isRegisteredTag(@NotNull Tag tag)
-  {
-    if (tag == null)
-      throw new NullPointerException("tag must not be null");
-
-    return registeredTags.containsValue(tag);
+  @Override
+  public boolean isValidTagName(String tagName) {
+    return tagName != null && !tagName.isEmpty() && TAG_NAME_PATTERN.matcher(tagName).matches();
   }
 
 
   @Override
-  @SuppressWarnings({ "squid:S2589", "squid:S1192", "ConstantConditions" })
+  @SuppressWarnings({ "squid:S2589", "squid:S1192" })
   public @NotNull TagBuilder<M> createTag(@NotNull String name)
   {
-    if (name == null || name.isEmpty())
-      throw new IllegalArgumentException("name must not be empty");
+    if (!isValidTagName(name))
+      throw new IllegalArgumentException("invalid tag name '" + name + "'");
 
     if (hasTag(name))
       throw new IllegalArgumentException("tag with name " + name + " already exists");
 
-    TagImpl tag = new TagImpl(name);
+    val tag = new TagDefImpl(name);
     registeredTags.put(name, tag);
 
     return new TagBuilderImpl(tag);
@@ -98,13 +103,13 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
 
   @Override
-  @SuppressWarnings({ "squid:S2589", "squid:S1192", "ConstantConditions" })
+  @SuppressWarnings({ "squid:S2589", "squid:S1192" })
   public @NotNull TagBuilder<M> modifyTag(@NotNull String name)
   {
-    if (name == null || name.isEmpty())
-      throw new IllegalArgumentException("name must not be empty");
+    if (!isValidTagName(name))
+      throw new IllegalArgumentException("invalid tag name '" + name + "'");
 
-    TagImpl tag = registeredTags.get(name);
+    val tag = registeredTags.get(name);
     if (tag == null)
       throw new IllegalArgumentException("tag with name " + name + " does not exist");
 
@@ -113,35 +118,41 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
 
   @Override
-  public Tag getTagByName(@NotNull String name) {
+  public @NotNull TagDef getTagByName(@NotNull String name) {
     return getTagByName0(name);
   }
 
 
-  @SuppressWarnings({ "squid:S2589", "ConstantConditions" })
-  private TagImpl getTagByName0(@NotNull String name)
+  @SuppressWarnings({ "squid:S2589", "java:S1121" })
+  private @NotNull TagDefImpl getTagByName0(@NotNull String name)
   {
-    if (name == null || name.isEmpty())
-      throw new IllegalArgumentException("name must not be empty");
+    if (!isValidTagName(name))
+      throw new IllegalArgumentException("invalid tag name '" + name + "'");
 
-    return registeredTags.get(name);
+    var tagDef = registeredTags.get(name);
+    if (tagDef == null)
+      registeredTags.put(name, tagDef = new TagDefImpl(name));
+
+    return tagDef;
   }
 
 
   @Override
-  @SuppressWarnings({ "squid:S2589", "ConstantConditions" })
-  public boolean hasTag(@NotNull String name)
-  {
-    if (name == null || name.isEmpty())
-      throw new IllegalArgumentException("name must not be empty");
-
-    return registeredTags.containsKey(name);
+  @SuppressWarnings({ "squid:S2589" })
+  public boolean hasTag(String name) {
+    return name != null && registeredTags.containsKey(name);
   }
 
 
   @Override
-  public @NotNull Set<Tag> getTags() {
-    return new TreeSet<Tag>(registeredTags.values());
+  public @NotNull Set<String> getTagNames() {
+    return Collections.unmodifiableSet(registeredTags.keySet());
+  }
+
+
+  @Override
+  public @NotNull Set<TagDef> getTagDefs() {
+    return new TreeSet<TagDef>(registeredTags.values());
   }
 
 
@@ -153,7 +164,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
   @Override
   public @NotNull String toString() {
-    return "ProtocolFactory[id=" + id + ",tags=" + registeredTags.keySet() + ']';
+    return "ProtocolFactory[id=" + id + ",tagDefs=" + registeredTags.keySet() + ']';
   }
 
 
@@ -161,56 +172,53 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
   private class TagBuilderImpl implements TagBuilder<M>
   {
-    @Getter private final TagImpl tag;
+    @Getter private final TagDefImpl tagDef;
 
 
-    TagBuilderImpl(@NotNull TagImpl tag) {
-      this.tag = tag;
+    TagBuilderImpl(@NotNull TagDefImpl tagDef) {
+      this.tagDef = tagDef;
     }
 
 
     @SuppressWarnings({"ConstantConditions", "squid:S2583"})
     @Override
-    public @NotNull TagBuilder<M> match(@NotNull Tag.MatchCondition matchCondition,
-                                        @NotNull Level matchLevel)
+    public @NotNull TagBuilder<M> match(@NotNull TagDef.MatchCondition matchCondition, @NotNull Level matchLevel)
     {
       if (matchCondition == null)
         throw new NullPointerException("matchCondition must not be null");
       if (matchLevel == null)
         throw new NullPointerException("matchLevel must not be null");
 
-      tag.matchCondition = matchCondition;
-      tag.matchLevel = matchLevel;
+      tagDef.matchCondition = matchCondition;
+      tagDef.matchLevel = matchLevel;
 
       return this;
     }
 
 
     @Override
-    public @NotNull TagBuilder<M> implies(@NotNull String ... tags)
+    public @NotNull TagBuilder<M> implies(@NotNull String ... tagDefs)
     {
-      for(String tagName: tags)
-      {
-        TagImpl impliedTag = AbstractProtocolFactory.this.getTagByName0(tagName);
-        if (impliedTag != null)
-          tag.implies.add(impliedTag);
-      }
+      for(val tagName: tagDefs)
+        tagDef.implies.add(AbstractProtocolFactory.this.getTagByName0(tagName));
 
       return this;
     }
 
 
     @Override
-    public @NotNull TagBuilder<M> dependsOn(@NotNull String ... tags)
+    public @NotNull TagBuilder<M> dependsOn(@NotNull String ... tagDefs)
     {
-      for(String tagName: tags)
-      {
-        TagImpl dependsOnTag = AbstractProtocolFactory.this.getTagByName0(tagName);
-        if (dependsOnTag != null)
-          dependsOnTag.implies.add(tag);
-      }
+      for(val tagName: tagDefs)
+        AbstractProtocolFactory.this.getTagByName0(tagName).implies.add(tagDef);
 
       return this;
+    }
+
+
+    @Override
+    public boolean isValidTagName(String tagName) {
+      return AbstractProtocolFactory.this.isValidTagName(tagName);
     }
 
 
@@ -233,31 +241,31 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
 
     @Override
-    public Tag getTagByName(@NotNull String name) {
+    public @NotNull TagDef getTagByName(@NotNull String name) {
       return AbstractProtocolFactory.this.getTagByName(name);
     }
 
 
     @Override
-    public boolean hasTag(@NotNull String name) {
+    public boolean hasTag(String name) {
       return AbstractProtocolFactory.this.hasTag(name);
     }
 
 
     @Override
-    public boolean isRegisteredTag(@NotNull Tag tag) {
-      return AbstractProtocolFactory.this.isRegisteredTag(tag);
+    public @NotNull Set<String> getTagNames() {
+      return AbstractProtocolFactory.this.getTagNames();
     }
 
 
     @Override
-    public @NotNull Set<Tag> getTags() {
-      return AbstractProtocolFactory.this.getTags();
+    public @NotNull Set<TagDef> getTagDefs() {
+      return AbstractProtocolFactory.this.getTagDefs();
     }
 
 
     @Override
-    public @NotNull Tag getDefaultTag() {
+    public @NotNull TagDef getDefaultTag() {
       return AbstractProtocolFactory.this.getDefaultTag();
     }
 
@@ -278,7 +286,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
 
   @EqualsAndHashCode(doNotUseGetters = true, onlyExplicitlyIncluded = true)
-  static class TagImpl implements Tag, Comparable<TagImpl>
+  static class TagDefImpl implements TagDef, Comparable<TagDefImpl>
   {
     @EqualsAndHashCode.Include
     private final int id;
@@ -288,10 +296,10 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
     @Getter private MatchCondition matchCondition = MatchCondition.AT_LEAST;
     @Getter private Level matchLevel = LOWEST;
 
-    private final Set<TagImpl> implies = new TreeSet<TagImpl>();
+    private final Set<TagDefImpl> implies = new TreeSet<TagDefImpl>();
 
 
-    TagImpl(@NotNull String name)
+    TagDefImpl(@NotNull String name)
     {
       this.name = name;
       id = TAG_ID.incrementAndGet();
@@ -318,35 +326,42 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
         case UNTIL:
           return level.severity() <= matchLevel.severity();
+
+        default:
+          return false;
       }
-
-      return false;
     }
 
 
     @Override
-    public @NotNull Set<Tag> getImpliedTags()
+    public @NotNull Set<TagDef> getImpliedTags()
     {
-      HashSet<Tag> tags = new HashSet<Tag>();
+      val tagDefs = new HashSet<TagDef>();
 
-      collectImpliedTags(tags);
+      collectImpliedTags(tagDefs);
 
-      return tags;
+      return tagDefs;
     }
 
 
-    private void collectImpliedTags(Set<Tag> tags)
+    private void collectImpliedTags(Set<TagDef> tagDefs)
     {
-      tags.add(this);
+      tagDefs.add(this);
 
-      for(TagImpl tag: implies)
-        if (!tags.contains(tag))
-          tag.collectImpliedTags(tags);
+      for(val tag: implies)
+        if (!tagDefs.contains(tag))
+          tag.collectImpliedTags(tagDefs);
     }
 
 
     @Override
-    public int compareTo(TagImpl o) {
+    public @NotNull TagSelector asSelector() {
+      return Tag.of(name);
+    }
+
+
+    @Override
+    public int compareTo(TagDefImpl o) {
       return id - o.id;
     }
 
@@ -354,21 +369,21 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
     @Override
     public String toString()
     {
-      StringBuilder s = new StringBuilder("Tag[id=").append(id).append(",name=").append(name);
+      val s = new StringBuilder("Tag[id=").append(id).append(",name=").append(name);
 
       if (!implies.isEmpty())
       {
         s.append(",implies={");
-        boolean first = true;
+        var first = true;
 
-        for(Tag tag: implies)
+        for(TagDef tagDef: implies)
         {
           if (first)
             first = false;
           else
             s.append(',');
 
-          s.append(tag.getName());
+          s.append(tagDef.getName());
         }
 
         s.append('}');

@@ -24,7 +24,7 @@ import de.sayayi.lib.protocol.ProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.ProtocolIterator;
-import de.sayayi.lib.protocol.Tag;
+import de.sayayi.lib.protocol.TagSelector;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -53,7 +53,7 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
-  public @NotNull P with(@NotNull Map<String, Object> parameterValues)
+  public @NotNull P with(@NotNull Map<String,Object> parameterValues)
   {
     for(Entry<String,Object> entry: parameterValues.entrySet())
       with(entry.getKey(), entry.getValue());
@@ -92,11 +92,11 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
   }
 
 
-  @SuppressWarnings({ "squid:S2589", "ConstantConditions" })
+  @SuppressWarnings("java:S2589")
   @Override
   public @NotNull P with(@NotNull String parameter, Object value)
   {
-    if (parameter == null || parameter.isEmpty())
+    if (parameter.isEmpty())
       throw new IllegalArgumentException("parameter must not be empty");
 
     message.parameterValues.put(parameter, value);
@@ -160,7 +160,7 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
-  public @NotNull B error(Throwable throwable) {
+  public @NotNull B error(@NotNull Throwable throwable) {
     return protocol.error(throwable);
   }
 
@@ -178,22 +178,15 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
-  public <R> R format(@NotNull ProtocolFormatter<M, R> formatter, @NotNull Level level) {
+  public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level) {
     return protocol.format(formatter, level);
   }
 
 
   @Override
-  public <R> R format(@NotNull ProtocolFormatter<M, R> formatter, @NotNull Level level,
-                      @NotNull String... tagNames) {
-    return protocol.format(formatter, level, tagNames);
-  }
-
-
-  @Override
   public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level,
-                      @NotNull Tag ... tags) {
-    return protocol.format(formatter, level, tags);
+                      @NotNull TagSelector tagSelector) {
+    return protocol.format(formatter, level, tagSelector);
   }
 
 
@@ -204,14 +197,8 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
-  public boolean matches(@NotNull Level level, @NotNull Tag ... tags) {
-    return protocol.matches(level, tags);
-  }
-
-
-  @Override
-  public boolean matches(@NotNull Level level, @NotNull String ... tagNames) {
-    return protocol.matches(level, tagNames);
+  public boolean matches(@NotNull Level level, @NotNull TagSelector tagSelector) {
+    return protocol.matches(level, tagSelector);
   }
 
 
@@ -222,25 +209,19 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
-  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull Tag ... tags) {
-    return protocol.getVisibleEntryCount(recursive, level, tags);
+  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull TagSelector tagSelector) {
+    return protocol.getVisibleEntryCount(recursive, level, tagSelector);
   }
 
 
   @Override
-  public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull Tag ... tags) {
-    return protocol.iterator(level, tags);
+  public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull TagSelector tagSelector) {
+    return protocol.iterator(level, tagSelector);
   }
 
 
   @Override
-  public @NotNull TargetTagBuilder<M> propagate(@NotNull String tagName) {
-    return protocol.propagate(tagName);
-  }
-
-
-  @Override
-  public @NotNull TargetTagBuilder<M> propagate(@NotNull Tag tag) {
-    return protocol.propagate(tag);
+  public @NotNull TargetTagBuilder<M> propagate(@NotNull TagSelector tagSelector) {
+    return protocol.propagate(tagSelector);
   }
 }

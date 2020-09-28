@@ -20,17 +20,17 @@ import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.Protocol.GenericMessage;
 import de.sayayi.lib.protocol.Protocol.MessageWithLevel;
 import de.sayayi.lib.protocol.ProtocolEntry;
-import de.sayayi.lib.protocol.ProtocolGroup.Visibility;
 import de.sayayi.lib.protocol.ProtocolIterator;
-import de.sayayi.lib.protocol.Tag;
+import de.sayayi.lib.protocol.TagSelector;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.val;
+import lombok.var;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +50,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 {
   private final Level levelLimit;
   @Getter private final Level level;
-  @Getter private final Tag[] tags;
+  @Getter private final TagSelector tagSelector;
   @Getter @Setter(PROTECTED) private int depth;
 
   private ForGroup<M> groupIterator;
@@ -67,14 +67,12 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   private int lastEntryIdx;
 
 
-  protected ProtocolStructureIterator(@NotNull Level levelLimit, @NotNull Level level,
-                                      @NotNull Tag[] tags, int depth,
-                                      @NotNull List<ProtocolEntry<M>> protocolEntries,
-                                      boolean rootProtocol)
+  protected ProtocolStructureIterator(@NotNull Level levelLimit, @NotNull Level level, @NotNull TagSelector tagSelector,
+                                      int depth, @NotNull List<ProtocolEntry<M>> protocolEntries, boolean rootProtocol)
   {
     this.levelLimit = levelLimit;
     this.level = level;
-    this.tags = tags;
+    this.tagSelector = tagSelector;
     this.depth = depth;
     this.rootProtocol = rootProtocol;
 
@@ -119,7 +117,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     if (!hasNext())
       throw new NoSuchElementException();
 
-    final DepthEntry<M> entry = nextEntries[firstEntryIdx];
+    val entry = nextEntries[firstEntryIdx];
 
     nextEntries[firstEntryIdx] = null;
     firstEntryIdx = (firstEntryIdx + 1) & 3;
@@ -184,11 +182,11 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
         return;
       }
 
-      final ProtocolEntry<M> protocolEntry = iterator.next();
+      val protocolEntry = iterator.next();
 
       if (protocolEntry instanceof InternalProtocolEntry.Group)
       {
-        groupIterator = new ProtocolStructureIterator.ForGroup<M>(levelLimit, level, tags, depth,
+        groupIterator = new ProtocolStructureIterator.ForGroup<M>(levelLimit, level, tagSelector, depth,
             (InternalProtocolEntry.Group<M>)protocolEntry, hasEntryBefore, iterator.hasNext(),
             false);
         continue;
@@ -205,7 +203,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   public String toString()
   {
     return (this instanceof ForGroup ? "GroupIterator" : "ProtocolIterator") +
-        "[level=" + level + ",tags=" + Arrays.toString(tags) + ",depth=" + depth + ']';
+        "[level=" + level + ",tagSelector=" + tagSelector + ",depth=" + depth + ']';
   }
 
 
@@ -213,11 +211,10 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
   static final class ForProtocol<M> extends ProtocolStructureIterator<M>
   {
-    ForProtocol(@NotNull Level level, @NotNull Tag[] tags, int depth,
-                @NotNull ProtocolImpl<M> protocol)
+    ForProtocol(@NotNull Level level, @NotNull TagSelector tagSelector, int depth, @NotNull ProtocolImpl<M> protocol)
     {
-      super(Level.Shared.HIGHEST, level, tags, depth,
-          protocol.getEntries(Level.Shared.HIGHEST, level, tags), true);
+      super(Level.Shared.HIGHEST, level, tagSelector, depth,
+          protocol.getEntries(Level.Shared.HIGHEST, level, tagSelector), true);
 
       prepareNextEntry(false);
     }
@@ -239,14 +236,14 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
     @SuppressWarnings("squid:S00107")
-    ForGroup(@NotNull Level levelLimit, @NotNull Level level, @NotNull Tag[] tags, int depth,
+    ForGroup(@NotNull Level levelLimit, @NotNull Level level, @NotNull TagSelector tagSelector, int depth,
              @NotNull InternalProtocolEntry.Group<M> protocol, boolean hasEntryBeforeGroup,
              boolean hasEntryAfterGroup, boolean rootProtocol)
     {
-      super(protocol.getHeaderLevel0(levelLimit, level, tags), level, tags, depth,
-          protocol.getEntries0(levelLimit, level, tags), rootProtocol);
+      super(protocol.getHeaderLevel0(levelLimit, level, tagSelector), level, tagSelector, depth,
+          protocol.getEntries0(levelLimit, level, tagSelector), rootProtocol);
 
-      Visibility visibility = protocol.getEffectiveVisibility();
+      var visibility = protocol.getEffectiveVisibility();
 
       // normalize visibility
       if (visibility == SHOW_HEADER_ALWAYS && !hasNextMessageOrGroup())
@@ -260,7 +257,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
           // header + messages, increase depth
           setDepth(depth + 1);
           addNextEntry(new GroupStartEntryImpl<M>(protocol.getGroupMessage(), super.levelLimit,
-              protocol.getVisibleGroupEntryMessageCount0(super.levelLimit, level, tags),
+              protocol.getVisibleGroupEntryMessageCount0(super.levelLimit, level, tagSelector),
               depth + 1, !hasEntryBeforeGroup, !hasEntryAfterGroup));
           groupHeader = true;
           forceFirst = true;
@@ -484,7 +481,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
       while(iterator.hasNext())
       {
         nextEntry = iterator.next();
-        if (nextEntry.getVisibleEntryCount(true, level, tags) > 0)
+        if (nextEntry.getVisibleEntryCount(true, level, tagSelector) > 0)
           return;
       }
 
@@ -504,7 +501,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
       if (!hasNext())
         throw new NoSuchElementException();
 
-      ProtocolEntry<M> entry = nextEntry;
+      val entry = nextEntry;
 
       prepareNextEntry();
 

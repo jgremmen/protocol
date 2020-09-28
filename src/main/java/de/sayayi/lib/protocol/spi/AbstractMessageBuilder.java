@@ -18,13 +18,16 @@ package de.sayayi.lib.protocol.spi;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol.MessageParameterBuilder;
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
-import de.sayayi.lib.protocol.Tag;
+import de.sayayi.lib.protocol.ProtocolFactory;
+
+import lombok.val;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 
 /**
@@ -36,7 +39,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
     implements ProtocolMessageBuilder<M>
 {
   private final Level level;
-  private final Set<Tag> tags;
+  private final Set<String> tags;
 
   private Throwable throwable;
 
@@ -47,8 +50,8 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
 
     this.level = level;
 
-    tags = new HashSet<Tag>();
-    tags.add(protocol.factory.getDefaultTag());
+    tags = new HashSet<String>();
+    tags.add(ProtocolFactory.Constant.DEFAULT_TAG_NAME);
   }
 
 
@@ -57,28 +60,12 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
 
 
   @Override
-  public @NotNull B forTag(@NotNull Tag tag)
+  public @NotNull B forTag(@NotNull String tagName)
   {
-    tag = protocol.validateTag(tag);
+    val tagDef = protocol.factory.getTagByName(tagName);
 
-    if (tag.matches(level))
-      tags.add(tag);
-
-    return (B)this;
-  }
-
-
-  @Override
-  public @NotNull B forTag(@NotNull String tagName) {
-    return forTag(protocol.resolveTagByName(tagName));
-  }
-
-
-  @Override
-  public @NotNull B forTags(@NotNull Tag ... tags)
-  {
-    for(Tag tag: tags)
-      forTag(tag);
+    if (tagDef.matches(level))
+      tags.add(tagName);
 
     return (B)this;
   }
@@ -87,7 +74,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   @Override
   public @NotNull B forTags(@NotNull String ... tagNames)
   {
-    for(String tagName: tagNames)
+    for(val tagName: tagNames)
       forTag(tagName);
 
     return (B)this;
@@ -95,7 +82,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
 
 
   @Override
-  public @NotNull B withThrowable(Throwable throwable)
+  public @NotNull B withThrowable(@NotNull Throwable throwable)
   {
     this.throwable = throwable;
 
@@ -128,15 +115,15 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   @SuppressWarnings("squid:S2583")
   private @NotNull P message0(@NotNull M message)
   {
-    Set<Tag> resolvedTags = new HashSet<Tag>();
+    val resolvedTags = new TreeSet<String>();
 
     // add implied dependencies
-    for(Tag tag: protocol.getPropagatedTags(tags))
-      for(Tag impliedTag: tag.getImpliedTags())
-        if (impliedTag.matches(level))
-          resolvedTags.add(impliedTag);
+    for(val tag: protocol.getPropagatedTags(tags))
+      for(val impliedTagDef: protocol.factory.getTagByName(tag).getImpliedTags())
+        if (impliedTagDef.matches(level))
+          resolvedTags.add(impliedTagDef.getName());
 
-    ProtocolMessageEntry<M> msg = new ProtocolMessageEntry<M>(level, resolvedTags, throwable,
+    val msg = new ProtocolMessageEntry<M>(level, resolvedTags, throwable,
         message, protocol.factory.getDefaultParameterValues());
 
     protocol.entries.add(msg);

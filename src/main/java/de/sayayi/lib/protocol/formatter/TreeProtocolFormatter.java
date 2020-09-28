@@ -20,10 +20,11 @@ import de.sayayi.lib.protocol.Protocol.GenericMessage;
 import de.sayayi.lib.protocol.ProtocolFormatter.InitializableProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
-import de.sayayi.lib.protocol.Tag;
+import de.sayayi.lib.protocol.TagSelector;
 
 import lombok.AccessLevel;
 import lombok.Setter;
+import lombok.val;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -58,7 +59,7 @@ public abstract class TreeProtocolFormatter<M>
 
 
   @Override
-  public void init(@NotNull Level level, @NotNull Tag[] tags, int estimatedGroupDepth)
+  public void init(@NotNull Level level, @NotNull TagSelector tagSelector, int estimatedGroupDepth)
   {
     result.delete(0, result.length());
 
@@ -70,13 +71,13 @@ public abstract class TreeProtocolFormatter<M>
   @Override
   public void message(@NotNull MessageEntry<M> message)
   {
-    int depth = message.getDepth();
+    val depth = message.getDepth();
 
     if (depth == 0 && message.isFirst())
       result.append(GRAPH_ROOT_NODE_PREFIX);
     else
     {
-      String prefix = prefixes[depth];
+      val prefix = prefixes[depth];
 
       result.append(prefix).append(GRAPH_VERTICAL_BAR)
             .append(prefix).append(message.isLast() ? GRAPH_LAST_NODE_PREFIX : GRAPH_MIDDLE_NODE_PREFIX);
@@ -89,8 +90,8 @@ public abstract class TreeProtocolFormatter<M>
   @Override
   public void groupStart(@NotNull GroupStartEntry<M> group)
   {
-    int depth = group.getDepth();
-    String prefix = prefixes[depth - 1];
+    val depth = group.getDepth();
+    val prefix = prefixes[depth - 1];
 
     if (depth == 1 && group.isFirst())
       result.append(GRAPH_ROOT_NODE_PREFIX);
