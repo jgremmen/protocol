@@ -308,7 +308,7 @@ final class ProtocolGroupImpl<M>
   @Override
   @SuppressWarnings("unchecked")
   public @NotNull Protocol<M> getRootProtocol() {
-    return (parent instanceof ProtocolGroup) ? ((ProtocolGroup<M>)parent).getRootProtocol() : parent;
+    return parent instanceof ProtocolGroup ? ((ProtocolGroup<M>)parent).getRootProtocol() : parent;
   }
 
 

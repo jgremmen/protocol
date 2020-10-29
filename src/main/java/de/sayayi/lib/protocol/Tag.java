@@ -90,7 +90,7 @@ public final class Tag
   };
 
 
-  @Contract(pure = true)
+  @Contract(value = "_ -> new", pure = true)
   public static @NotNull Builder parse(@NotNull String selector) {
     return wrap(new TagSelectorParser(selector).parseSelector());
   }
@@ -104,7 +104,7 @@ public final class Tag
    * @return  tag selector for the given {@code tagName}. The returned object allows for constructing a more
    *          complex selector following the builder pattern.
    */
-  @Contract(pure = true)
+  @Contract(value = "_ -> new", pure = true)
   public static @NotNull Builder of(@NotNull String tagName) {
     return new MatchAllOf(tagName);
   }
@@ -116,7 +116,7 @@ public final class Tag
    * @return  tag selector which matches any tag. The returned object allows for constructing a more
    *          complex selector following the builder pattern.
    */
-  @Contract(pure = true)
+  @Contract(value = "-> new", pure = true)
   public static @NotNull Builder any() {
     return new MatchAny();
   }
@@ -130,7 +130,7 @@ public final class Tag
    * @return  tag selector which matches any of the given {@code tagNames}. The returned object allows for
    *          constructing a more complex selector following the builder pattern.
    */
-  @Contract(pure = true)
+  @Contract(value = "_ -> new", pure = true)
   public static @NotNull Builder anyOf(@NotNull String... tagNames)
   {
     if (tagNames.length == 0)
@@ -151,7 +151,7 @@ public final class Tag
    * @return  tag selector which matches all of the given {@code tagNames}. The returned object allows for
    *          constructing a more complex selector following the builder pattern.
    */
-  @Contract(pure = true)
+  @Contract(value = "_ -> new", pure = true)
   public static @NotNull Builder allOf(@NotNull String... tagNames)
   {
     if (tagNames.length == 0)

@@ -150,7 +150,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
     val filteredEntries = new ArrayList<ProtocolEntry<M>>();
 
     if (levelLimit.severity() >= level.severity())
-      for(InternalProtocolEntry<M> entry: entries)
+      for(final InternalProtocolEntry<M> entry: entries)
         if (entry.matches0(levelLimit, level, tagSelector))
         {
           if (entry instanceof InternalProtocolEntry.Group)
@@ -188,15 +188,10 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   {
     ProtocolGroup<M> group = null;
 
-    for(InternalProtocolEntry<M> entry: entries)
-    {
-      if (entry instanceof InternalProtocolEntry.Group)
-      {
-        group = ((InternalProtocolEntry.Group<M>)entry).findGroupWithName(name);
-        if (group != null)
-          break;
-      }
-    }
+    for(final InternalProtocolEntry<M> entry: entries)
+      if (entry instanceof InternalProtocolEntry.Group &&
+          (group = ((InternalProtocolEntry.Group<M>)entry).findGroupWithName(name)) != null)
+        break;
 
     return group;
   }

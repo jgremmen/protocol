@@ -26,10 +26,11 @@ import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.TagSelector;
 
+import lombok.val;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-import java.util.Map.Entry;
 
 
 /**
@@ -55,7 +56,7 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
   @Override
   public @NotNull P with(@NotNull Map<String,Object> parameterValues)
   {
-    for(Entry<String,Object> entry: parameterValues.entrySet())
+    for(val entry: parameterValues.entrySet())
       with(entry.getKey(), entry.getValue());
 
     return (P)this;

@@ -286,7 +286,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
 
   @EqualsAndHashCode(doNotUseGetters = true, onlyExplicitlyIncluded = true)
-  static class TagDefImpl implements TagDef, Comparable<TagDefImpl>
+  static final class TagDefImpl implements TagDef, Comparable<TagDefImpl>
   {
     @EqualsAndHashCode.Include
     private final int id;
