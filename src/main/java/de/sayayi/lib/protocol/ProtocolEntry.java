@@ -103,5 +103,21 @@ public interface ProtocolEntry<M> extends ProtocolQueryable
      */
     @Contract(pure = true)
     @NotNull Level getHeaderLevel(@NotNull Level level, @NotNull TagSelector tagSelector);
+
+
+    /**
+     * <p>
+     *   Find a group with the given unique {@code name}.
+     * </p>
+     * <p>
+     *   The search probes every descendant group starting from this protocol until a matching group is found.
+     * </p>
+     *
+     * @param name  group name, not {@code null}
+     *
+     * @return  protocol group with the name set or {@code null} if no group was found.
+     */
+    @Contract(pure = true)
+    ProtocolGroup<M> findGroupWithName(@NotNull String name);
   }
 }

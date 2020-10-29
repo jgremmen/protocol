@@ -52,7 +52,8 @@ import java.util.TreeSet;
 /**
  * @author Jeroen Gremmen
  */
-abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implements Protocol<M>, InternalProtocolQueryable
+abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
+    implements Protocol<M>, InternalProtocolQueryable
 {
   @Getter final ProtocolFactory<M> factory;
 
@@ -179,6 +180,25 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
         count += entry.getVisibleEntryCount0(levelLimit, recursive, level, tagSelector);
 
     return count;
+  }
+
+
+  @Override
+  public ProtocolGroup<M> findGroupWithName(@NotNull String name)
+  {
+    ProtocolGroup<M> group = null;
+
+    for(InternalProtocolEntry<M> entry: entries)
+    {
+      if (entry instanceof InternalProtocolEntry.Group)
+      {
+        group = ((InternalProtocolEntry.Group<M>)entry).findGroupWithName(name);
+        if (group != null)
+          break;
+      }
+    }
+
+    return group;
   }
 
 

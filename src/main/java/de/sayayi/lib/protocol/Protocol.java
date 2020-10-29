@@ -269,6 +269,24 @@ public interface Protocol<M> extends ProtocolQueryable
 
   /**
    * <p>
+   *   Find a group with the given unique {@code name}.
+   * </p>
+   * <p>
+   *   The search probes every descendant group starting from this protocol until a matching group is found.
+   * </p>
+   *
+   * @param name  group name, not {@code null}
+   *
+   * @return  protocol group with the name set or {@code null} if no group was found.
+   */
+  @Contract(pure = true)
+  ProtocolGroup<M> findGroupWithName(@NotNull String name);
+
+
+
+
+  /**
+   * <p>
    *   Builder pattern for creating a protocol message.
    * </p>
    * <p>
@@ -350,6 +368,8 @@ public interface Protocol<M> extends ProtocolQueryable
     @Contract("_ -> new")
     @NotNull MessageParameterBuilder<M> withMessage(@NotNull M message);
   }
+
+
 
 
   /**
@@ -475,6 +495,8 @@ public interface Protocol<M> extends ProtocolQueryable
   }
 
 
+
+
   /**
    * The most generic representation of a message, providing the internal representation of the message and parameter
    * values to be used for formatting the message.
@@ -521,6 +543,8 @@ public interface Protocol<M> extends ProtocolQueryable
   }
 
 
+
+
   /**
    * A protocol message with level.
    *
@@ -536,6 +560,8 @@ public interface Protocol<M> extends ProtocolQueryable
     @Contract(pure = true)
     @NotNull Level getLevel();
   }
+
+
 
 
   /**
@@ -555,6 +581,8 @@ public interface Protocol<M> extends ProtocolQueryable
   }
 
 
+
+
   /**
    * A protocol group with optional group header message.
    *
@@ -570,6 +598,8 @@ public interface Protocol<M> extends ProtocolQueryable
     @Contract(pure = true)
     GenericMessage<M> getGroupMessage();
   }
+
+
 
 
   interface TargetTagBuilder<M>

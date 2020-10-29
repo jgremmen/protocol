@@ -136,6 +136,32 @@ public interface ProtocolGroup<M> extends Protocol<M>
   @NotNull ProtocolGroup<M> removeGroupMessage();
 
 
+  /**
+   * Returns the unique name for this group. The name can be used to find a group from a parent protocol instance.
+   *
+   * @return  unique name for this group or {@code null} if no name is set.
+   *
+   * @see #setName(String)
+   * @see Protocol#findGroupWithName(String)
+   */
+  @Contract(pure = true)
+  String getName();
+
+
+  /**
+   * Sets a unique name for this group.
+   *
+   * @param name  unique name or {@code null}
+   *
+   * @return  this protocol group instance
+   *
+   * @see #getName()
+   * @see Protocol#findGroupWithName(String)
+   */
+  @Contract(value = "_ -> this")
+  @NotNull ProtocolGroup<M> setName(String name);
+
+
   @Contract(pure = true)
   boolean isHeaderVisible(@NotNull Level level, @NotNull TagSelector tagSelector);
 

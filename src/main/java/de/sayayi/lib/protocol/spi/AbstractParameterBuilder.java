@@ -224,4 +224,10 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
   public @NotNull TargetTagBuilder<M> propagate(@NotNull TagSelector tagSelector) {
     return protocol.propagate(tagSelector);
   }
+
+
+  @Override
+  public ProtocolGroup<M> findGroupWithName(@NotNull String name) {
+    return protocol.findGroupWithName(name);
+  }
 }

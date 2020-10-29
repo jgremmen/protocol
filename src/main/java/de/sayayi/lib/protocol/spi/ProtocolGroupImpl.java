@@ -60,6 +60,7 @@ final class ProtocolGroupImpl<M>
   @Getter private Level levelLimit;
   @Getter private Visibility visibility;
   @Getter private GroupMessage groupMessage;
+  @Getter private String name;
 
 
   ProtocolGroupImpl(@NotNull AbstractProtocol<M,Protocol.ProtocolMessageBuilder<M>> parent)
@@ -271,6 +272,29 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
+  public @NotNull ProtocolGroup<M> setName(String name)
+  {
+    if (name == null)
+      this.name = null;
+    else if (!name.equals(this.name))
+    {
+      if (getRootProtocol().findGroupWithName(name) != null)
+        throw new IllegalArgumentException("group name '" + name + "' must be unique");
+
+      this.name = name;
+    }
+
+    return this;
+  }
+
+
+  @Override
+  public ProtocolGroup<M> findGroupWithName(@NotNull String name) {
+    return name.equals(this.name) ? this : super.findGroupWithName(name);
+  }
+
+
+  @Override
   @SuppressWarnings({ "squid:S2583", "ConstantConditions" })
   public @NotNull ProtocolGroup.ProtocolMessageBuilder<M> add(@NotNull Level level)
   {
@@ -445,6 +469,18 @@ final class ProtocolGroupImpl<M>
     @Override
     public @NotNull ProtocolGroup<M> removeGroupMessage() {
       return ProtocolGroupImpl.this.removeGroupMessage();
+    }
+
+
+    @Override
+    public String getName() {
+      return ProtocolGroupImpl.this.getName();
+    }
+
+
+    @Override
+    public @NotNull ProtocolGroup<M> setName(String uniqueId) {
+      return ProtocolGroupImpl.this.setName(uniqueId);
     }
 
 
