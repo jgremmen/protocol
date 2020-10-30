@@ -149,7 +149,10 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
   /**
-   * Sets a unique name for this group.
+   * <p>
+   *   Sets a unique name for this group. If {@code name} is {@code null} or an empty string the
+   *   group name will be removed.
+   * </p>
    *
    * @param name  unique name or {@code null}
    *

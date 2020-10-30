@@ -113,7 +113,7 @@ public interface ProtocolEntry<M> extends ProtocolQueryable
      *   The search probes every descendant group starting from this protocol until a matching group is found.
      * </p>
      *
-     * @param name  group name, not {@code null}
+     * @param name  group name, not {@code null} or empty
      *
      * @return  protocol group with the name set or {@code null} if no group was found.
      */

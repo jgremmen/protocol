@@ -83,7 +83,7 @@ final class ProtocolGroupImpl<M>
 
   @Override
   public @NotNull Visibility getEffectiveVisibility() {
-    return (groupMessage == null) ? visibility.forAbsentHeader() : visibility;
+    return groupMessage == null ? visibility.forAbsentHeader() : visibility;
   }
 
 
@@ -274,7 +274,7 @@ final class ProtocolGroupImpl<M>
   @Override
   public @NotNull ProtocolGroup<M> setName(String name)
   {
-    if (name == null)
+    if (name == null || name.isEmpty())
       this.name = null;
     else if (!name.equals(this.name))
     {
@@ -289,7 +289,14 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public ProtocolGroup<M> findGroupWithName(@NotNull String name) {
+  @SuppressWarnings({ "java:S2589", "java:S2583", "ConstantConditions" })
+  public ProtocolGroup<M> findGroupWithName(@NotNull String name)
+  {
+    if (name == null)
+      throw new NullPointerException("name must not be null");
+    if (name.isEmpty())
+      throw new IllegalArgumentException("name must not be empty");
+
     return name.equals(this.name) ? this : super.findGroupWithName(name);
   }
 
