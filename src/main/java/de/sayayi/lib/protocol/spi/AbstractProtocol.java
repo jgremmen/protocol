@@ -52,7 +52,6 @@ import java.util.TreeSet;
 /**
  * @author Jeroen Gremmen
  */
-@SuppressWarnings("ConstantConditions")
 abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
     implements Protocol<M>, InternalProtocolQueryable
 {
