@@ -36,6 +36,8 @@ interface InternalProtocolEntry<M> extends ProtocolEntry<M>, InternalProtocolQue
   }
 
 
+
+
   interface Group<M> extends ProtocolEntry.Group<M>, InternalProtocolEntry<M>
   {
     @Contract(pure = true)

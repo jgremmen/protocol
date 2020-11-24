@@ -37,6 +37,7 @@ public final class MatchAny extends AbstractTagSelectorBuilder implements TagRef
   }
 
 
+  @SuppressWarnings("java:S1168")
   @Override
   public String[] getTagNames() {
     return null;
