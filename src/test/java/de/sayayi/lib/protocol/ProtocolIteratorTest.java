@@ -39,7 +39,7 @@ public class ProtocolIteratorTest
   @Test
   public void testDepth()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
+    StringProtocolFactory factory = new StringProtocolFactory();
     Protocol<String> protocol = factory.createProtocol();
 
     ProtocolGroup<String> grp1, grp2;
@@ -117,7 +117,7 @@ public class ProtocolIteratorTest
   @Test
   public void testGroupGroup()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
+    StringProtocolFactory factory = new StringProtocolFactory();
     Protocol<String> protocol = factory.createProtocol();
 
     protocol.createGroup().setGroupMessage("grp #1, header")
@@ -159,7 +159,7 @@ public class ProtocolIteratorTest
   @Test
   public void testNoMessages()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
+    StringProtocolFactory factory = new StringProtocolFactory();
     Protocol<String> protocol = factory.createProtocol().debug().message("msg");
     ProtocolIterator<String> iterator = protocol.iterator(ERROR, Tag.any());
 
@@ -174,7 +174,7 @@ public class ProtocolIteratorTest
   @Test
   public void testSingleMessage()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
+    StringProtocolFactory factory = new StringProtocolFactory();
     Protocol<String> protocol = factory.createProtocol().debug().message("msg #1");
     ProtocolIterator<String> iterator = protocol.iterator(LOWEST, Tag.any());
 
@@ -203,7 +203,7 @@ public class ProtocolIteratorTest
   @Test
   public void testMessagesOnly()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
+    StringProtocolFactory factory = new StringProtocolFactory();
     Protocol<String> protocol = factory.createProtocol();
 
     protocol.debug().message("msg #1")
@@ -259,7 +259,7 @@ public class ProtocolIteratorTest
   @Test
   public void testBug1()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
+    StringProtocolFactory factory = new StringProtocolFactory();
     ProtocolGroup<String> protocol = factory.createProtocol().createGroup();
 
     protocol.setVisibility(SHOW_HEADER_ALWAYS)

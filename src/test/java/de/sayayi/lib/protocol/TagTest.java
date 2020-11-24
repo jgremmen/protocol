@@ -15,6 +15,7 @@
  */
 package de.sayayi.lib.protocol;
 
+import de.sayayi.lib.protocol.exception.ProtocolException;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -53,7 +54,7 @@ public class TagTest
 
 
   @SuppressWarnings("ResultOfMethodCallIgnored")
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = ProtocolException.class)
   public void testAllOfFail() {
     Tag.allOf();
   }
@@ -137,14 +138,14 @@ public class TagTest
 
 
   @SuppressWarnings("ResultOfMethodCallIgnored")
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = ProtocolException.class)
   public void testOrFail() {
     Tag.or();
   }
 
 
   @SuppressWarnings("ResultOfMethodCallIgnored")
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = ProtocolException.class)
   public void testAndFail() {
     Tag.and();
   }

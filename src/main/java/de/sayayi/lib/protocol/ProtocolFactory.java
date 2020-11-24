@@ -27,7 +27,7 @@ import java.util.Set;
 /**
  *
  * @param <M>  Internal message object type. Messages are added by providing a string. The factory converts this
- *             string in the appropriate internal format (see {@link #processMessage(String)}), allowing for various
+ *             string in the appropriate internal format (see {@link MessageProcessor}), allowing for various
  *             message retrieval/formatting libraries to be used.
  *
  * @author Jeroen Gremmen
@@ -44,6 +44,13 @@ public interface ProtocolFactory<M>
      */
     String DEFAULT_TAG_NAME = "default";
   }
+
+
+  @Contract(pure = true)
+  @NotNull MessageProcessor<M> getMessageProcessor();
+
+
+  void setMessageProcessor(@NotNull MessageProcessor<M> messageProcessor);
 
 
   /**
@@ -112,26 +119,6 @@ public interface ProtocolFactory<M>
   @NotNull Map<String,Object> getDefaultParameterValues();
 
 
-  /**
-   * Transforms the given message into its internal representation.
-   * <p>
-   * The simplest implementation would be to return the message as is. However this method provides a way to
-   * integrate more complex message retrieval and/or formatting strategies:
-   *
-   * <ul>
-   *   <li>The {@code message} could be a resource key which is used to lookup the actual message text</li>
-   *   <li>The {@code message} could be a Spring Expression and the returned object would be a compiled expression</li>
-   *   <li>Syntax analysis can be performed on the message</li>
-   * </ul>
-   *
-   * @param message  message, not {@code null}
-   *
-   * @return  internal representation for {@code message}, never {@code null}
-   */
-  @Contract(pure = true)
-  @NotNull M processMessage(@NotNull String message);
-
-
 
 
   /**
@@ -159,5 +146,17 @@ public interface ProtocolFactory<M>
      */
     @Contract(pure = true)
     @NotNull TagDef getTagDef();
+  }
+
+
+
+
+  /**
+   * @param <M>  internal message object type
+   */
+  interface MessageProcessor<M>
+  {
+    @Contract(pure = true)
+    @NotNull M processMessage(@NotNull String message);
   }
 }

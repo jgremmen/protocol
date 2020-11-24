@@ -40,8 +40,8 @@ public class ProtocolGroupTest
   @Test
   public void testIsHeaderVisible()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
-    ProtocolGroup gp = factory.createProtocol().createGroup();
+    StringProtocolFactory factory = new StringProtocolFactory();
+    ProtocolGroup<String> gp = factory.createProtocol().createGroup();
 
     assertFalse(gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).isHeaderVisible(LOWEST, Tag.any()));
     assertFalse(gp.setVisibility(SHOW_HEADER_ALWAYS).isHeaderVisible(LOWEST, Tag.any()));
@@ -98,8 +98,8 @@ public class ProtocolGroupTest
   @Test
   public void testHasVisualEntry()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
-    ProtocolGroup gp = factory.createProtocol().createGroup();
+    StringProtocolFactory factory = new StringProtocolFactory();
+    ProtocolGroup<String> gp = factory.createProtocol().createGroup();
 
     assertEquals(0, gp.getVisibleEntryCount(true, Shared.LOWEST, Tag.any()));
 
@@ -135,8 +135,8 @@ public class ProtocolGroupTest
   @Test
   public void testEffectiveVisibility()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
-    ProtocolGroup gp = factory.createProtocol().createGroup();
+    StringProtocolFactory factory = new StringProtocolFactory();
+    ProtocolGroup<String> gp = factory.createProtocol().createGroup();
 
     // no group header
     assertEquals(HIDDEN, gp.setVisibility(SHOW_HEADER_ONLY).getEffectiveVisibility());

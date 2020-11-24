@@ -30,20 +30,20 @@ public class TagDefBuilderTest
 {
   @Test(expected = NullPointerException.class)
   public void testMatchNullCondition() {
-    new GenericProtocolFactory().createTag("tag").match(null, Level.Shared.INFO);
+    new StringProtocolFactory().createTag("tag").match(null, Level.Shared.INFO);
   }
 
 
   @Test(expected = NullPointerException.class)
   public void testMatchNullLevel() {
-    new GenericProtocolFactory().createTag("tag").match(TagDef.MatchCondition.AT_LEAST, null);
+    new StringProtocolFactory().createTag("tag").match(TagDef.MatchCondition.AT_LEAST, null);
   }
 
 
   @Test
   public void testImplies()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
+    StringProtocolFactory factory = new StringProtocolFactory();
     TagDef tagDefC = factory.createTag("C").getTagDef();
     TagDef tagDefB = factory.createTag("B").getTagDef();
     TagDef tagDefA = factory.createTag("A").implies("B", "C").getTagDef();
@@ -59,7 +59,7 @@ public class TagDefBuilderTest
   @Test
   public void testFactoryDelegate()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
+    StringProtocolFactory factory = new StringProtocolFactory();
     ProtocolFactory.TagBuilder<String> tag = factory.createTag("tag");
 
     tag.createProtocol();
@@ -70,14 +70,14 @@ public class TagDefBuilderTest
     tag.getTagDefs();
     tag.modifyTag("tag");
     tag.hasTag("xyz");
-    tag.processMessage("Hello");
+    tag.getMessageProcessor().processMessage("Hello");
   }
 
 
   @Test(expected = NullPointerException.class)
   public void testTagMatches()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
+    StringProtocolFactory factory = new StringProtocolFactory();
     factory.createTag("tag")
         .match(TagDef.MatchCondition.EQUAL, Level.Shared.INFO)
         .getTagDef()
@@ -88,7 +88,7 @@ public class TagDefBuilderTest
   @Test
   public void testTagToString()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
+    StringProtocolFactory factory = new StringProtocolFactory();
 
     assertTrue(factory
         .createTag("T1")

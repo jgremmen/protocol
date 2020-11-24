@@ -36,7 +36,7 @@ public class GroupLevelLimitTest
   @Test
   public void testLevelLimit1()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
+    StringProtocolFactory factory = new StringProtocolFactory();
     ProtocolGroup<String> gp = factory.createProtocol().createGroup();
 
     gp.setGroupMessage("Test");
@@ -62,7 +62,7 @@ public class GroupLevelLimitTest
   @Test
   public void testLevelLimitPropagation()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
+    StringProtocolFactory factory = new StringProtocolFactory();
     Protocol<String> p = factory.createProtocol();
     ProtocolGroup<String> gp1 = p.createGroup().createGroup();
     ProtocolGroup<String> gp2 = gp1.createGroup().createGroup();

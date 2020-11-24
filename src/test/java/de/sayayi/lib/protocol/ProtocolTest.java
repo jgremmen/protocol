@@ -31,7 +31,7 @@ public class ProtocolTest
   @Test
   public void testBasics()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
+    StringProtocolFactory factory = new StringProtocolFactory();
 
     factory.createTag("ui").match(AT_LEAST, INFO)
            .createTag("technical").dependsOn("ui").implies("system");

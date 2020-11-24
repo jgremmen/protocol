@@ -32,7 +32,7 @@ public class TagPropagationTest
   @Test
   public void testProtocolPropagation()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
+    StringProtocolFactory factory = new StringProtocolFactory();
     TagDef uiTagDef = factory.createTag("ui").match(AT_LEAST, INFO).getTagDef();
 
     Protocol<String> protocol = factory.createProtocol()

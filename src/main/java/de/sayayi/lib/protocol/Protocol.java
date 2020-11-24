@@ -15,12 +15,14 @@
  */
 package de.sayayi.lib.protocol;
 
+import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
 import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -283,6 +285,22 @@ public interface Protocol<M> extends ProtocolQueryable
   ProtocolGroup<M> findGroupWithName(@NotNull String name);
 
 
+  /**
+   * <p>
+   *   Find all groups with names that match the given regular expression {@code regex}.
+   * </p>
+   * <p>
+   *   The search probes every descendant group starting from this protocol for matching groups.
+   * </p>
+   *
+   * @param regex  regular expression for matching group names, not {@code null} or empty
+   *
+   * @return  set of protocol groups with matching names, never {@code null}.
+   */
+  @Contract(pure = true)
+  @NotNull Set<ProtocolGroup<M>> findGroupsByRegex(@NotNull String regex);
+
+
 
 
   /**
@@ -354,7 +372,7 @@ public interface Protocol<M> extends ProtocolQueryable
      * </p>
      * <p>
      *   The {@code message} parameter is converted into an internal representation of type {@code M} using
-     *   factory method {@link ProtocolFactory#processMessage(String)}.
+     *   the {@link MessageProcessor} assigned to the protocol factory.
      * </p>
      *
      * @param message  message text, resource key or any other message identifier, never {@code null}

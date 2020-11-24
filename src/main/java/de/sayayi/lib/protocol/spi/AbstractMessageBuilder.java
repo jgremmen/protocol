@@ -97,7 +97,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
     if (message == null)
       throw new NullPointerException("message must not be null");
 
-    return message0(protocol.factory.processMessage(message));
+    return message0(protocol.factory.getMessageProcessor().processMessage(message));
   }
 
 

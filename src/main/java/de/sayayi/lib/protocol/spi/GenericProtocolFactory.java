@@ -21,9 +21,11 @@ import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.Tag;
 import de.sayayi.lib.protocol.TagDef;
 import de.sayayi.lib.protocol.TagSelector;
+import de.sayayi.lib.protocol.exception.ProtocolException;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.val;
 import lombok.var;
 
@@ -49,7 +51,7 @@ import static java.util.regex.Pattern.UNICODE_CASE;
  *
  * @author Jeroen Gremmen
  */
-public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
+public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 {
   private static final Pattern TAG_NAME_PATTERN =
       Pattern.compile("\\p{Alpha}[-_\\p{Alnum}]*", CASE_INSENSITIVE | UNICODE_CASE);
@@ -61,11 +63,19 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
   private final int id;
   @Getter private final TagDef defaultTag;
 
+  @Getter @Setter private MessageProcessor<M> messageProcessor;
+
   protected final Map<String,Object> defaultParameterValues;
 
 
-  protected AbstractProtocolFactory()
+  @SuppressWarnings({ "java:S2583", "ConstantConditions" })
+  public GenericProtocolFactory(@NotNull MessageProcessor<M> messageProcessor)
   {
+    if (messageProcessor == null)
+      throw new NullPointerException("messageProcessur must not be null");
+
+    setMessageProcessor(messageProcessor);
+
     id = FACTORY_ID.incrementAndGet();
 
     defaultTag = createTag(Constant.DEFAULT_TAG_NAME).getTagDef();
@@ -90,10 +100,10 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
   public @NotNull TagBuilder<M> createTag(@NotNull String name)
   {
     if (!isValidTagName(name))
-      throw new IllegalArgumentException("invalid tag name '" + name + "'");
+      throw new ProtocolException("invalid tag name '" + name + "'");
 
     if (hasTag(name))
-      throw new IllegalArgumentException("tag with name " + name + " already exists");
+      throw new ProtocolException("tag with name " + name + " already exists");
 
     val tag = new TagDefImpl(name);
     registeredTags.put(name, tag);
@@ -107,11 +117,11 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
   public @NotNull TagBuilder<M> modifyTag(@NotNull String name)
   {
     if (!isValidTagName(name))
-      throw new IllegalArgumentException("invalid tag name '" + name + "'");
+      throw new ProtocolException("invalid tag name '" + name + "'");
 
     val tag = registeredTags.get(name);
     if (tag == null)
-      throw new IllegalArgumentException("tag with name " + name + " does not exist");
+      throw new ProtocolException("tag with name " + name + " does not exist");
 
     return new TagBuilderImpl(tag);
   }
@@ -127,7 +137,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
   private @NotNull TagDefImpl getTagByName0(@NotNull String name)
   {
     if (!isValidTagName(name))
-      throw new IllegalArgumentException("invalid tag name '" + name + "'");
+      throw new ProtocolException("invalid tag name '" + name + "'");
 
     var tagDef = registeredTags.get(name);
     if (tagDef == null)
@@ -200,7 +210,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
     public @NotNull TagBuilder<M> implies(@NotNull String ... tagDefs)
     {
       for(val tagName: tagDefs)
-        tagDef.implies.add(AbstractProtocolFactory.this.getTagByName0(tagName));
+        tagDef.implies.add(GenericProtocolFactory.this.getTagByName0(tagName));
 
       return this;
     }
@@ -210,7 +220,7 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
     public @NotNull TagBuilder<M> dependsOn(@NotNull String ... tagDefs)
     {
       for(val tagName: tagDefs)
-        AbstractProtocolFactory.this.getTagByName0(tagName).implies.add(tagDef);
+        GenericProtocolFactory.this.getTagByName0(tagName).implies.add(tagDef);
 
       return this;
     }
@@ -218,67 +228,73 @@ public abstract class AbstractProtocolFactory<M> implements ProtocolFactory<M>
 
     @Override
     public boolean isValidTagName(String tagName) {
-      return AbstractProtocolFactory.this.isValidTagName(tagName);
+      return GenericProtocolFactory.this.isValidTagName(tagName);
     }
 
 
     @Override
     public @NotNull TagBuilder<M> createTag(@NotNull String name) {
-      return AbstractProtocolFactory.this.createTag(name);
+      return GenericProtocolFactory.this.createTag(name);
     }
 
 
     @Override
     public @NotNull TagBuilder<M> modifyTag(@NotNull String name) {
-      return AbstractProtocolFactory.this.modifyTag(name);
+      return GenericProtocolFactory.this.modifyTag(name);
     }
 
 
     @Override
     public @NotNull Protocol<M> createProtocol() {
-      return AbstractProtocolFactory.this.createProtocol();
+      return GenericProtocolFactory.this.createProtocol();
     }
 
 
     @Override
     public @NotNull TagDef getTagByName(@NotNull String name) {
-      return AbstractProtocolFactory.this.getTagByName(name);
+      return GenericProtocolFactory.this.getTagByName(name);
     }
 
 
     @Override
     public boolean hasTag(String name) {
-      return AbstractProtocolFactory.this.hasTag(name);
+      return GenericProtocolFactory.this.hasTag(name);
     }
 
 
     @Override
     public @NotNull Set<String> getTagNames() {
-      return AbstractProtocolFactory.this.getTagNames();
+      return GenericProtocolFactory.this.getTagNames();
     }
 
 
     @Override
     public @NotNull Set<TagDef> getTagDefs() {
-      return AbstractProtocolFactory.this.getTagDefs();
+      return GenericProtocolFactory.this.getTagDefs();
     }
 
 
     @Override
     public @NotNull TagDef getDefaultTag() {
-      return AbstractProtocolFactory.this.getDefaultTag();
+      return GenericProtocolFactory.this.getDefaultTag();
     }
 
 
     @Override
     public @NotNull Map<String,Object> getDefaultParameterValues() {
-      return AbstractProtocolFactory.this.getDefaultParameterValues();
+      return GenericProtocolFactory.this.getDefaultParameterValues();
     }
 
 
     @Override
-    public @NotNull M processMessage(@NotNull String message) {
-      return AbstractProtocolFactory.this.processMessage(message);
+    public @NotNull MessageProcessor<M> getMessageProcessor() {
+      return GenericProtocolFactory.this.getMessageProcessor();
+    }
+
+
+    @Override
+    public void setMessageProcessor(@NotNull MessageProcessor<M> messageProcessor) {
+      GenericProtocolFactory.this.setMessageProcessor(messageProcessor);
     }
   }
 

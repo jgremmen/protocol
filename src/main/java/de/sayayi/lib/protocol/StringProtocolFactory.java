@@ -15,7 +15,7 @@
  */
 package de.sayayi.lib.protocol;
 
-import de.sayayi.lib.protocol.spi.AbstractProtocolFactory;
+import de.sayayi.lib.protocol.spi.GenericProtocolFactory;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -28,10 +28,15 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Jeroen Gremmen
  */
-public class GenericProtocolFactory extends AbstractProtocolFactory<String>
+public class StringProtocolFactory extends GenericProtocolFactory<String>
 {
-  @Override
-  public @NotNull String processMessage(@NotNull String message) {
-    return message;
+  public StringProtocolFactory()
+  {
+    super(new MessageProcessor<String>() {
+      @Override
+      public @NotNull String processMessage(@NotNull String message) {
+        return message;
+      }
+    });
   }
 }

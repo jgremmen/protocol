@@ -16,7 +16,10 @@
 package de.sayayi.lib.protocol;
 
 import de.sayayi.lib.protocol.ProtocolFactory.Constant;
+import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
+import de.sayayi.lib.protocol.exception.ProtocolException;
+import de.sayayi.lib.protocol.spi.GenericProtocolFactory;
 import org.junit.Test;
 
 import org.jetbrains.annotations.NotNull;
@@ -45,37 +48,37 @@ import static org.junit.Assert.fail;
 @SuppressWarnings({ "ConstantConditions", "ResultOfMethodCallIgnored" })
 public class ProtocolFactoryTest
 {
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = ProtocolException.class)
   public void testCreateEmptyTag() {
-    new GenericProtocolFactory().createTag("");
+    new StringProtocolFactory().createTag("");
   }
 
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = ProtocolException.class)
   public void testCreateDuplicateTag()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
+    StringProtocolFactory factory = new StringProtocolFactory();
     factory.createTag("tag");
     factory.createTag("tag");
   }
 
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = ProtocolException.class)
   public void testModifyEmptyTag() {
-    new GenericProtocolFactory().modifyTag("");
+    new StringProtocolFactory().modifyTag("");
   }
 
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = ProtocolException.class)
   public void testModifyUnknownTag() {
-    new GenericProtocolFactory().modifyTag("unknown");
+    new StringProtocolFactory().modifyTag("unknown");
   }
 
 
   @Test
   public void testModifyKnownTag()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
+    StringProtocolFactory factory = new StringProtocolFactory();
     factory.createTag("tag");
 
     assertNotNull(factory.modifyTag("tag"));
@@ -85,7 +88,7 @@ public class ProtocolFactoryTest
   @Test
   public void testDefaultParameters()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory() {
+    StringProtocolFactory factory = new StringProtocolFactory() {
       {
         defaultParameterValues.put("name", "protocol factory");
       }
@@ -98,7 +101,7 @@ public class ProtocolFactoryTest
   @Test
   public void testGetTags()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
+    StringProtocolFactory factory = new StringProtocolFactory();
 
     TagDef tagDef1 = factory.createTag("tag1").getTagDef();
     TagDef tagDefUI = factory.createTag("UI").getTagDef();
@@ -126,7 +129,7 @@ public class ProtocolFactoryTest
   @Test
   public void testTagByName()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
+    StringProtocolFactory factory = new StringProtocolFactory();
 
     TagDef tagDef1 = factory.createTag("tag1").getTagDef();
 
@@ -154,7 +157,7 @@ public class ProtocolFactoryTest
   @Test
   public void testTagMatch()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
+    StringProtocolFactory factory = new StringProtocolFactory();
 
     TagDef tagDefAtLeastInfo = factory.createTag("tag1").match(AT_LEAST, INFO).getTagDef();
 
@@ -198,9 +201,13 @@ public class ProtocolFactoryTest
   @Test
   public void testProcessMessage()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory() {
-      @Override public @NotNull String processMessage(@NotNull String message) { return message + "(ok)"; }
-    };
+    GenericProtocolFactory<String> factory = new GenericProtocolFactory<String>(
+        new MessageProcessor<String>() {
+          @Override
+          public @NotNull String processMessage(@NotNull String message) {
+            return message + "(ok)";
+          }
+        });
 
     Protocol<String> protocol = factory.createProtocol().debug().message("msg");
     ProtocolIterator<String> iterator = protocol.iterator(LOWEST, Tag.any());
@@ -214,7 +221,7 @@ public class ProtocolFactoryTest
   @Test
   public void testToString()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
+    StringProtocolFactory factory = new StringProtocolFactory();
     factory.createTag("XYZ1");
     factory.createTag("XYZ2");
 
