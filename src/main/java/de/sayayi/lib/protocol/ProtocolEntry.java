@@ -119,5 +119,21 @@ public interface ProtocolEntry<M> extends ProtocolQueryable
      */
     @Contract(pure = true)
     ProtocolGroup<M> findGroupWithName(@NotNull String name);
+
+
+    /**
+     * <p>
+     *   Find all groups with names that match the given regular expression {@code regex}.
+     * </p>
+     * <p>
+     *   The search probes every descendant group starting from this protocol for matching groups.
+     * </p>
+     *
+     * @param regex  regular expression for matching group names, not {@code null} or empty
+     *
+     * @return  set of protocol groups with matching names, never {@code null}.
+     */
+    @Contract(pure = true)
+    @NotNull Set<ProtocolGroup<M>> findGroupsByRegex(@NotNull String regex);
   }
 }

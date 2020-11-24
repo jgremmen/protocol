@@ -28,6 +28,7 @@ import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -85,6 +86,12 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
   @Override
   public ProtocolGroup<M> findGroupWithName(@NotNull String name) {
     return group.findGroupWithName(name);
+  }
+
+
+  @Override
+  public @NotNull Set<ProtocolGroup<M>> findGroupsByRegex(@NotNull String regex) {
+    return group.findGroupsByRegex(regex);
   }
 
 

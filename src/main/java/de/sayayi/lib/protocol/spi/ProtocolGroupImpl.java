@@ -22,6 +22,7 @@ import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.ProtocolGroup.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.TagSelector;
+import de.sayayi.lib.protocol.exception.ProtocolException;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -256,7 +257,7 @@ final class ProtocolGroupImpl<M>
     if (message == null)
       throw new NullPointerException("message must not be null");
 
-    groupMessage = new GroupMessage(factory.processMessage(message));
+    groupMessage = new GroupMessage(factory.getMessageProcessor().processMessage(message));
 
     return new ParameterBuilderImpl(groupMessage);
   }
@@ -279,7 +280,7 @@ final class ProtocolGroupImpl<M>
     else if (!name.equals(this.name))
     {
       if (getRootProtocol().findGroupWithName(name) != null)
-        throw new IllegalArgumentException("group name '" + name + "' must be unique");
+        throw new ProtocolException("group name '" + name + "' must be unique");
 
       this.name = name;
     }
@@ -295,9 +296,26 @@ final class ProtocolGroupImpl<M>
     if (name == null)
       throw new NullPointerException("name must not be null");
     if (name.isEmpty())
-      throw new IllegalArgumentException("name must not be empty");
+      throw new ProtocolException("name must not be empty");
 
     return name.equals(this.name) ? this : super.findGroupWithName(name);
+  }
+
+
+  @Override
+  public @NotNull Set<ProtocolGroup<M>> findGroupsByRegex(@NotNull String regex)
+  {
+    if (name == null)
+      throw new NullPointerException("regex must not be null");
+    if (name.isEmpty())
+      throw new ProtocolException("regex must not be empty");
+
+    val groups = super.findGroupsByRegex(regex);
+
+    if (name.matches(regex))
+      groups.add(this);
+
+    return groups;
   }
 
 
@@ -374,6 +392,8 @@ final class ProtocolGroupImpl<M>
 
     if (levelLimit.severity() < HIGHEST.severity())
       s.append(",levelLimit=").append(levelLimit);
+    if (name != null)
+      s.append(",name=").append(name);
 
     return s.append(']').toString();
   }

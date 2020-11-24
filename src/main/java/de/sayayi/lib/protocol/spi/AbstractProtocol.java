@@ -43,6 +43,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -194,6 +195,19 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
         break;
 
     return group;
+  }
+
+
+  @Override
+  public @NotNull Set<ProtocolGroup<M>> findGroupsByRegex(@NotNull String regex)
+  {
+    val groups = new LinkedHashSet<ProtocolGroup<M>>();
+
+    for(final InternalProtocolEntry<M> entry: entries)
+      if (entry instanceof InternalProtocolEntry.Group)
+        groups.addAll(((InternalProtocolEntry.Group<M>)entry).findGroupsByRegex(regex));
+
+    return groups;
   }
 
 
