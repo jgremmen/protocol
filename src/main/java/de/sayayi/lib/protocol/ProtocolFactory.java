@@ -158,10 +158,12 @@ public interface ProtocolFactory<M>
 
   /**
    * A message processor takes care of translating the protocol string message into an internal
-   * representation. The {@link StringProtocolFactory} provides a protocol factory with the simplest
-   * form of a message processor as it leaves the provided message unchanged.
+   * representation.
    *
    * @param <M>  internal message object type
+   *
+   * @see de.sayayi.lib.protocol.processor.StringMessageProcessor
+   * @see de.sayayi.lib.protocol.processor.ResourceBundleMessageProcessor
    */
   interface MessageProcessor<M>
   {
