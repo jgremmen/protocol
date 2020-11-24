@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.sayayi.lib.protocol.selector.parser;
+package de.sayayi.lib.protocol.exception;
 
 import lombok.Getter;
 
@@ -21,13 +21,13 @@ import lombok.Getter;
 /**
  * @author Jeroen Gremmen
  */
-public final class TagSelectorParserException extends RuntimeException
+public final class TagSelectorParserException extends ProtocolException
 {
   @Getter private final int startIndex;
   @Getter private final int endIndex;
 
 
-  TagSelectorParserException(int startIndex, int endIndex, String message)
+  public TagSelectorParserException(int startIndex, int endIndex, String message)
   {
     super(message);
 

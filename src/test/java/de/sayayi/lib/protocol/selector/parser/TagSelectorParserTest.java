@@ -16,6 +16,7 @@
 package de.sayayi.lib.protocol.selector.parser;
 
 import de.sayayi.lib.protocol.TagSelector;
+import de.sayayi.lib.protocol.exception.TagSelectorParserException;
 import org.junit.Test;
 
 import java.util.Arrays;

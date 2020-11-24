@@ -18,6 +18,7 @@ package de.sayayi.lib.protocol;
 import de.sayayi.lib.protocol.TagSelector.Builder;
 import de.sayayi.lib.protocol.TagSelector.SelectorReference;
 import de.sayayi.lib.protocol.TagSelector.TagReference;
+import de.sayayi.lib.protocol.exception.ProtocolException;
 import de.sayayi.lib.protocol.selector.match.MatchAllOf;
 import de.sayayi.lib.protocol.selector.match.MatchAnd;
 import de.sayayi.lib.protocol.selector.match.MatchAny;
@@ -155,7 +156,7 @@ public final class Tag
   public static @NotNull Builder allOf(@NotNull String... tagNames)
   {
     if (tagNames.length == 0)
-      throw new IllegalArgumentException("tag name array must not be empty");
+      throw new ProtocolException("tag name array must not be empty");
 
     return new MatchAllOf(tagNames);
   }
@@ -212,7 +213,7 @@ public final class Tag
     switch(selectors.length)
     {
       case 0:
-        throw new IllegalArgumentException("tag selector array must not be empty");
+        throw new ProtocolException("tag selector array must not be empty");
 
       case 1:
         return wrap(selectors[0]);
@@ -348,7 +349,7 @@ public final class Tag
     switch(selectors.length)
     {
       case 0:
-        throw new IllegalArgumentException("tag selector array must not be empty");
+        throw new ProtocolException("tag selector array must not be empty");
 
       case 1:
         return wrap(selectors[0]);
