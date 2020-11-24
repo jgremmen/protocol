@@ -46,6 +46,11 @@ public interface ProtocolFactory<M>
   }
 
 
+  /**
+   * Returns the message processor associated with this factory.
+   *
+   * @return  message processor, never {@code null}
+   */
   @Contract(pure = true)
   @NotNull MessageProcessor<M> getMessageProcessor();
 
@@ -152,6 +157,10 @@ public interface ProtocolFactory<M>
 
 
   /**
+   * A message processor takes care of translating the protocol string message into an internal
+   * representation. The {@link StringProtocolFactory} provides a protocol factory with the simplest
+   * form of a message processor as it leaves the provided message unchanged.
+   *
    * @param <M>  internal message object type
    */
   interface MessageProcessor<M>

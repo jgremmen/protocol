@@ -29,6 +29,7 @@ dependencies {
   annotationProcessor "org.projectlombok:lombok:"
 
   implementation 'org.unbescape:unbescape:', optional
+  implementation 'de.sayayi.lib:message-format-nodep:', optional
 
   compileOnly 'org.projectlombok:lombok:'
   compileOnly 'org.jetbrains:annotations:'

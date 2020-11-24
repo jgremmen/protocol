@@ -34,6 +34,12 @@ configurations.all {
           case 'annotations': return useVersion('13.0')
         }
         break
+      case 'de.sayayi.lib':
+        switch(requested.name)
+        {
+          case 'message-format-nodep': return useVersion('0.4.2')
+        }
+        break
     }
   }
 }
