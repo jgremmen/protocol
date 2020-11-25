@@ -17,7 +17,7 @@ package de.sayayi.lib.protocol;
 
 import org.junit.Test;
 
-import java.util.Set;
+import lombok.val;
 
 import static org.junit.Assert.assertTrue;
 
@@ -43,12 +43,12 @@ public class TagDefBuilderTest
   @Test
   public void testImplies()
   {
-    StringProtocolFactory factory = new StringProtocolFactory();
-    TagDef tagDefC = factory.createTag("C").getTagDef();
-    TagDef tagDefB = factory.createTag("B").getTagDef();
-    TagDef tagDefA = factory.createTag("A").implies("B", "C").getTagDef();
+    val factory = new StringProtocolFactory();
+    val tagDefC = factory.createTag("C").getTagDef();
+    val tagDefB = factory.createTag("B").getTagDef();
+    val tagDefA = factory.createTag("A").implies("B", "C").getTagDef();
 
-    Set<TagDef> impliedTagDefs = tagDefA.getImpliedTags();
+    val impliedTagDefs = tagDefA.getImpliedTags();
 
     assertTrue(impliedTagDefs.contains(tagDefB));
     assertTrue(impliedTagDefs.contains(tagDefC));
@@ -59,8 +59,8 @@ public class TagDefBuilderTest
   @Test
   public void testFactoryDelegate()
   {
-    StringProtocolFactory factory = new StringProtocolFactory();
-    ProtocolFactory.TagBuilder<String> tag = factory.createTag("tag");
+    val factory = new StringProtocolFactory();
+    val tag = factory.createTag("tag");
 
     tag.createProtocol();
     tag.createTag("tag2");
@@ -77,7 +77,7 @@ public class TagDefBuilderTest
   @Test(expected = NullPointerException.class)
   public void testTagMatches()
   {
-    StringProtocolFactory factory = new StringProtocolFactory();
+    val factory = new StringProtocolFactory();
     factory.createTag("tag")
         .match(TagDef.MatchCondition.EQUAL, Level.Shared.INFO)
         .getTagDef()
@@ -88,7 +88,7 @@ public class TagDefBuilderTest
   @Test
   public void testTagToString()
   {
-    StringProtocolFactory factory = new StringProtocolFactory();
+    val factory = new StringProtocolFactory();
 
     assertTrue(factory
         .createTag("T1")

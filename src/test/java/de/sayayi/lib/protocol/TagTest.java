@@ -18,9 +18,12 @@ package de.sayayi.lib.protocol;
 import de.sayayi.lib.protocol.exception.ProtocolException;
 import org.junit.Test;
 
+import lombok.val;
+
 import java.util.Collections;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -33,11 +36,11 @@ public class TagTest
   @Test
   public void testOf()
   {
-    TagSelector selector = Tag.of("system");
+    val selector = Tag.of("system");
 
-    assertTrue(selector.match(asList("system")));
+    assertTrue(selector.match(singletonList("system")));
     assertTrue(selector.match(asList("default", "system", "test")));
-    assertFalse(selector.match(asList("default")));
+    assertFalse(selector.match(singletonList("default")));
     assertFalse(selector.match(Collections.<String>emptyList()));
   }
 
@@ -45,11 +48,11 @@ public class TagTest
   @Test
   public void testAllOf()
   {
-    TagSelector selector = Tag.allOf("system", "default", "system");
+    val selector = Tag.allOf("system", "default", "system");
 
-    assertFalse(selector.match(asList("system")));
+    assertFalse(selector.match(singletonList("system")));
     assertTrue(selector.match(asList("default", "system", "test")));
-    assertFalse(selector.match(asList("default")));
+    assertFalse(selector.match(singletonList("default")));
   }
 
 
@@ -63,9 +66,9 @@ public class TagTest
   @Test
   public void testAny()
   {
-    TagSelector selector = Tag.any();
+    val selector = Tag.any();
 
-    assertTrue(selector.match(asList("system")));
+    assertTrue(selector.match(singletonList("system")));
     assertTrue(selector.match(asList("default", "system", "test")));
     assertFalse(selector.match(Collections.<String>emptyList()));
   }
@@ -74,22 +77,22 @@ public class TagTest
   @Test
   public void testAnyOf1()
   {
-    TagSelector selector = Tag.anyOf("system");
+    val selector = Tag.anyOf("system");
 
-    assertTrue(selector.match(asList("system")));
+    assertTrue(selector.match(singletonList("system")));
     assertTrue(selector.match(asList("system", "test")));
-    assertFalse(selector.match(asList("default")));
+    assertFalse(selector.match(singletonList("default")));
   }
 
 
   @Test
   public void testAnyOf2()
   {
-    TagSelector selector = Tag.anyOf("test", "default");
+    val selector = Tag.anyOf("test", "default");
 
-    assertFalse(selector.match(asList("system")));
+    assertFalse(selector.match(singletonList("system")));
     assertTrue(selector.match(asList("system", "test")));
-    assertTrue(selector.match(asList("default")));
+    assertTrue(selector.match(singletonList("default")));
   }
 
 
@@ -103,11 +106,11 @@ public class TagTest
   @Test
   public void testNot1()
   {
-    TagSelector selector = Tag.not("system");
+    val selector = Tag.not("system");
 
-    assertFalse(selector.match(asList("system")));
+    assertFalse(selector.match(singletonList("system")));
     assertFalse(selector.match(asList("default", "system", "test")));
-    assertTrue(selector.match(asList("default")));
+    assertTrue(selector.match(singletonList("default")));
     assertTrue(selector.match(Collections.<String>emptyList()));
   }
 
@@ -115,11 +118,11 @@ public class TagTest
   @Test
   public void testNoneOf()
   {
-    TagSelector selector = Tag.noneOf("system", "test");
+    val selector = Tag.noneOf("system", "test");
 
-    assertFalse(selector.match(asList("system")));
+    assertFalse(selector.match(singletonList("system")));
     assertFalse(selector.match(asList("default", "system", "test")));
-    assertTrue(selector.match(asList("default")));
+    assertTrue(selector.match(singletonList("default")));
     assertTrue(selector.match(Collections.<String>emptyList()));
   }
 
@@ -127,12 +130,12 @@ public class TagTest
   @Test
   public void testOrFlatten()
   {
-    TagSelector selector = Tag.of("system").or("default")
+    val selector = Tag.of("system").or("default")
         .or(Tag.anyOf("console", "system"));
 
-    assertTrue(selector.match(asList("system")));
+    assertTrue(selector.match(singletonList("system")));
     assertTrue(selector.match(asList("default", "system", "test")));
-    assertTrue(selector.match(asList("console")));
+    assertTrue(selector.match(singletonList("console")));
     assertFalse(selector.match(Collections.<String>emptyList()));
   }
 
@@ -154,11 +157,11 @@ public class TagTest
   @Test
   public void testComplex1()
   {
-    TagSelector selector = Tag.of("system").and("test").or("console");
+    val selector = Tag.of("system").and("test").or("console");
 
-    assertFalse(selector.match(asList("system")));
+    assertFalse(selector.match(singletonList("system")));
     assertTrue(selector.match(asList("default", "system", "test")));
-    assertTrue(selector.match(asList("console")));
+    assertTrue(selector.match(singletonList("console")));
     assertFalse(selector.match(Collections.<String>emptyList()));
   }
 
@@ -166,11 +169,11 @@ public class TagTest
   @Test
   public void testComplex2()
   {
-    TagSelector selector = Tag.of("system").and(Tag.not("test"));
+    val selector = Tag.of("system").and(Tag.not("test"));
 
-    assertTrue(selector.match(asList("system")));
+    assertTrue(selector.match(singletonList("system")));
     assertFalse(selector.match(asList("default", "system", "test")));
-    assertFalse(selector.match(asList("console")));
+    assertFalse(selector.match(singletonList("console")));
     assertFalse(selector.match(Collections.<String>emptyList()));
   }
 
@@ -178,9 +181,9 @@ public class TagTest
   @Test
   public void testParse()
   {
-    TagSelector selector = Tag.parse("and(system,noneOf(info,test,warning),or(fatal,not(debug)))");
+    val selector = Tag.parse("and(system,noneOf(info,test,warning),or(fatal,not(debug)))");
 
-    assertTrue(selector.match(asList("system")));
+    assertTrue(selector.match(singletonList("system")));
     assertTrue(selector.match(asList("system", "fatal")));
     assertFalse(selector.match(asList("system", "debug")));
     assertFalse(selector.match(asList("system", "info")));

@@ -17,6 +17,8 @@ package de.sayayi.lib.protocol;
 
 import org.junit.Test;
 
+import lombok.val;
+
 import static de.sayayi.lib.protocol.Level.Shared.DEBUG;
 import static de.sayayi.lib.protocol.Level.Shared.ERROR;
 import static de.sayayi.lib.protocol.Level.Shared.INFO;
@@ -32,10 +34,10 @@ public class TagPropagationTest
   @Test
   public void testProtocolPropagation()
   {
-    StringProtocolFactory factory = new StringProtocolFactory();
-    TagDef uiTagDef = factory.createTag("ui").match(AT_LEAST, INFO).getTagDef();
+    val factory = new StringProtocolFactory();
+    val uiTagDef = factory.createTag("ui").match(AT_LEAST, INFO).getTagDef();
 
-    Protocol<String> protocol = factory.createProtocol()
+    val protocol = factory.createProtocol()
         .propagate(factory.getDefaultTag().asSelector()).to("ui");
 
     protocol.debug().message("debug")

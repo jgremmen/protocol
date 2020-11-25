@@ -26,6 +26,7 @@ repositories {
 
 
 dependencies {
+  // java
   annotationProcessor "org.projectlombok:lombok:"
 
   implementation 'org.unbescape:unbescape:', optional
@@ -34,7 +35,11 @@ dependencies {
   compileOnly 'org.projectlombok:lombok:'
   compileOnly 'org.jetbrains:annotations:'
 
+  // test
+  testAnnotationProcessor "org.projectlombok:lombok:"
+
   testImplementation 'junit:junit:'
 
+  testCompileOnly 'org.projectlombok:lombok:'
   testCompileOnly 'org.jetbrains:annotations:'
 }

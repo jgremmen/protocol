@@ -22,9 +22,9 @@ import de.sayayi.lib.protocol.exception.ProtocolException;
 import de.sayayi.lib.protocol.spi.GenericProtocolFactory;
 import org.junit.Test;
 
-import org.jetbrains.annotations.NotNull;
+import lombok.val;
 
-import java.util.Set;
+import org.jetbrains.annotations.NotNull;
 
 import static de.sayayi.lib.protocol.Level.Shared.DEBUG;
 import static de.sayayi.lib.protocol.Level.Shared.ERROR;
@@ -57,7 +57,7 @@ public class ProtocolFactoryTest
   @Test(expected = ProtocolException.class)
   public void testCreateDuplicateTag()
   {
-    StringProtocolFactory factory = new StringProtocolFactory();
+    val factory = new StringProtocolFactory();
     factory.createTag("tag");
     factory.createTag("tag");
   }
@@ -78,7 +78,7 @@ public class ProtocolFactoryTest
   @Test
   public void testModifyKnownTag()
   {
-    StringProtocolFactory factory = new StringProtocolFactory();
+    val factory = new StringProtocolFactory();
     factory.createTag("tag");
 
     assertNotNull(factory.modifyTag("tag"));
@@ -88,8 +88,7 @@ public class ProtocolFactoryTest
   @Test
   public void testDefaultParameters()
   {
-    StringProtocolFactory factory = new StringProtocolFactory() {
-      {
+    val factory = new StringProtocolFactory() {{
         defaultParameterValues.put("name", "protocol factory");
       }
     };
@@ -101,13 +100,13 @@ public class ProtocolFactoryTest
   @Test
   public void testGetTags()
   {
-    StringProtocolFactory factory = new StringProtocolFactory();
+    val factory = new StringProtocolFactory();
 
-    TagDef tagDef1 = factory.createTag("tag1").getTagDef();
-    TagDef tagDefUI = factory.createTag("UI").getTagDef();
-    TagDef tagDefSummary = factory.createTag("summary").getTagDef();
+    val tagDef1 = factory.createTag("tag1").getTagDef();
+    val tagDefUI = factory.createTag("UI").getTagDef();
+    val tagDefSummary = factory.createTag("summary").getTagDef();
 
-    Set<TagDef> tagDefs = factory.getTagDefs();
+    val tagDefs = factory.getTagDefs();
 
     assertEquals(4, tagDefs.size());
 
@@ -129,9 +128,9 @@ public class ProtocolFactoryTest
   @Test
   public void testTagByName()
   {
-    StringProtocolFactory factory = new StringProtocolFactory();
+    val factory = new StringProtocolFactory();
 
-    TagDef tagDef1 = factory.createTag("tag1").getTagDef();
+    val tagDef1 = factory.createTag("tag1").getTagDef();
 
     assertEquals("tag1", tagDef1.getName());
     assertEquals(tagDef1, factory.getTagByName("tag1"));
@@ -157,9 +156,9 @@ public class ProtocolFactoryTest
   @Test
   public void testTagMatch()
   {
-    StringProtocolFactory factory = new StringProtocolFactory();
+    val factory = new StringProtocolFactory();
 
-    TagDef tagDefAtLeastInfo = factory.createTag("tag1").match(AT_LEAST, INFO).getTagDef();
+    val tagDefAtLeastInfo = factory.createTag("tag1").match(AT_LEAST, INFO).getTagDef();
 
     assertEquals(INFO, tagDefAtLeastInfo.getMatchLevel());
     assertEquals(AT_LEAST, tagDefAtLeastInfo.getMatchCondition());
@@ -168,7 +167,7 @@ public class ProtocolFactoryTest
     assertTrue(tagDefAtLeastInfo.matches(ERROR));
     assertFalse(tagDefAtLeastInfo.matches(DEBUG));
 
-    TagDef tagDefEqualDebug = factory.createTag("tag2").match(EQUAL, DEBUG).getTagDef();
+    val tagDefEqualDebug = factory.createTag("tag2").match(EQUAL, DEBUG).getTagDef();
 
     assertEquals(DEBUG, tagDefEqualDebug.getMatchLevel());
     assertEquals(EQUAL, tagDefEqualDebug.getMatchCondition());
@@ -177,7 +176,7 @@ public class ProtocolFactoryTest
     assertFalse(tagDefEqualDebug.matches(ERROR));
     assertFalse(tagDefEqualDebug.matches(LOWEST));
 
-    TagDef tagDefNotEqualError = factory.createTag("tag3").match(NOT_EQUAL, ERROR).getTagDef();
+    val tagDefNotEqualError = factory.createTag("tag3").match(NOT_EQUAL, ERROR).getTagDef();
 
     assertEquals(ERROR, tagDefNotEqualError.getMatchLevel());
     assertEquals(NOT_EQUAL, tagDefNotEqualError.getMatchCondition());
@@ -186,7 +185,7 @@ public class ProtocolFactoryTest
     assertFalse(tagDefNotEqualError.matches(ERROR));
     assertTrue(tagDefNotEqualError.matches(LOWEST));
 
-    TagDef tagDefUntilWarn = factory.createTag("tag4").match(UNTIL, WARN).getTagDef();
+    val tagDefUntilWarn = factory.createTag("tag4").match(UNTIL, WARN).getTagDef();
 
     assertEquals(WARN, tagDefUntilWarn.getMatchLevel());
     assertEquals(UNTIL, tagDefUntilWarn.getMatchCondition());
@@ -201,7 +200,7 @@ public class ProtocolFactoryTest
   @Test
   public void testProcessMessage()
   {
-    GenericProtocolFactory<String> factory = new GenericProtocolFactory<String>(
+    val factory = new GenericProtocolFactory<String>(
         new MessageProcessor<String>() {
           @Override
           public @NotNull String processMessage(@NotNull String message) {
@@ -209,8 +208,8 @@ public class ProtocolFactoryTest
           }
         });
 
-    Protocol<String> protocol = factory.createProtocol().debug().message("msg");
-    ProtocolIterator<String> iterator = protocol.iterator(LOWEST, Tag.any());
+    val protocol = factory.createProtocol().debug().message("msg");
+    val iterator = protocol.iterator(LOWEST, Tag.any());
 
     iterator.next();  // protocol start
 
@@ -221,11 +220,11 @@ public class ProtocolFactoryTest
   @Test
   public void testToString()
   {
-    StringProtocolFactory factory = new StringProtocolFactory();
+    val factory = new StringProtocolFactory();
     factory.createTag("XYZ1");
     factory.createTag("XYZ2");
 
-    String s = factory.toString();
+    val s = factory.toString();
 
     assertTrue(s.contains("XYZ1"));
     assertTrue(s.contains("XYZ2"));
