@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.sayayi.lib.protocol.formatter;
+package de.sayayi.lib.protocol.formatter.structure;
 
 import de.sayayi.lib.protocol.Level;
-import de.sayayi.lib.protocol.Protocol.MessageWithLevel;
 import de.sayayi.lib.protocol.ProtocolFormatter.InitializableProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupEndEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.TagSelector;
+import de.sayayi.lib.protocol.formatter.MessageFormatter;
 
 import lombok.val;
 
@@ -36,18 +36,17 @@ import java.util.Arrays;
  * @author Jeroen Gremmen
  */
 @SuppressWarnings("unused")
-public abstract class HtmlProtocolFormatter<M> implements InitializableProtocolFormatter<M,String>
+public class HtmlProtocolFormatter<M> implements InitializableProtocolFormatter<M,String>
 {
+  private final MessageFormatter<M> messageFormatter;
   private final StringBuilder html;
 
 
-  protected HtmlProtocolFormatter() {
+  public HtmlProtocolFormatter(@NotNull MessageFormatter<M> messageFormatter)
+  {
+    this.messageFormatter = messageFormatter;
     this.html = new StringBuilder();
   }
-
-
-  @SuppressWarnings("WeakerAccess")
-  protected abstract String formatMessage(MessageWithLevel<M> message);
 
 
   @SuppressWarnings("WeakerAccess")
@@ -75,7 +74,7 @@ public abstract class HtmlProtocolFormatter<M> implements InitializableProtocolF
   @Override
   public void message(@NotNull MessageEntry<M> message)
   {
-    val msg = formatMessage(message);
+    val msg = messageFormatter.formatMessage(message);
 
     indent(message.getDepth());
 
@@ -91,7 +90,7 @@ public abstract class HtmlProtocolFormatter<M> implements InitializableProtocolF
   {
     val depth = group.getDepth();
     val message = group.getGroupMessage();
-    val msg = formatMessage(group.getGroupMessage());
+    val msg = messageFormatter.formatMessage(group.getGroupMessage());
 
     indent(depth - 1);
 

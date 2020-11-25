@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.sayayi.lib.protocol.formatter;
+package de.sayayi.lib.protocol.formatter.structure;
 
 import de.sayayi.lib.protocol.Level;
-import de.sayayi.lib.protocol.Protocol.GenericMessage;
 import de.sayayi.lib.protocol.ProtocolFormatter.InitializableProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.TagSelector;
+import de.sayayi.lib.protocol.formatter.AbstractProtocolFormatter;
+import de.sayayi.lib.protocol.formatter.MessageFormatter;
 
-import lombok.AccessLevel;
-import lombok.Setter;
 import lombok.val;
 
 import org.jetbrains.annotations.NotNull;
@@ -45,16 +44,17 @@ public abstract class TreeProtocolFormatter<M>
   private static final String GRAPH_LEVEL_SEPARATOR_BAR = "\u2502  ";
   private static final String GRAPH_LEVEL_SEPARATOR_EMPTY = "   ";
 
+  private final MessageFormatter<M> messageFormatter;
   private final StringBuilder result;
-  private String[] prefixes;
 
-  @Setter(AccessLevel.PROTECTED)
-  private MessageFormatter<M> messageFormatter;
+  private String[] prefixes;
 
 
   @SuppressWarnings("WeakerAccess")
-  protected TreeProtocolFormatter() {
-    result = new StringBuilder();
+  protected TreeProtocolFormatter(@NotNull MessageFormatter<M> messageFormatter)
+  {
+    this.messageFormatter = messageFormatter;
+    this.result = new StringBuilder();
   }
 
 
@@ -83,7 +83,7 @@ public abstract class TreeProtocolFormatter<M>
             .append(prefix).append(message.isLast() ? GRAPH_LAST_NODE_PREFIX : GRAPH_MIDDLE_NODE_PREFIX);
     }
 
-    result.append(messageFormatter.format(message)).append('\n');
+    result.append(messageFormatter.formatMessage(message)).append('\n');
   }
 
 
@@ -101,7 +101,7 @@ public abstract class TreeProtocolFormatter<M>
             .append(prefix).append(group.isLast() ? GRAPH_LAST_NODE_PREFIX : GRAPH_MIDDLE_NODE_PREFIX);
     }
 
-    result.append(messageFormatter.format(group.getGroupMessage())).append('\n');
+    result.append(messageFormatter.formatMessage(group.getGroupMessage())).append('\n');
 
     prefixes[depth] = prefix + (group.isLast() ? GRAPH_LEVEL_SEPARATOR_EMPTY : GRAPH_LEVEL_SEPARATOR_BAR);
   }
@@ -110,11 +110,5 @@ public abstract class TreeProtocolFormatter<M>
   @Override
   public @NotNull String getResult() {
     return result.toString();
-  }
-
-
-  public interface MessageFormatter<M>
-  {
-    String format(@NotNull GenericMessage<M> message);
   }
 }

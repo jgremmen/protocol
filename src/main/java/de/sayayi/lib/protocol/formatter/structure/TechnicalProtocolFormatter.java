@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.sayayi.lib.protocol.formatter;
+package de.sayayi.lib.protocol.formatter.structure;
 
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol;
-import de.sayayi.lib.protocol.Protocol.GenericMessage;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
 import de.sayayi.lib.protocol.TagSelector;
+import de.sayayi.lib.protocol.formatter.MessageFormatter;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -35,13 +35,8 @@ public class TechnicalProtocolFormatter<M> extends TreeProtocolFormatter<M>
     implements ConfiguredProtocolFormatter<M,String>
 {
   @SuppressWarnings("WeakerAccess")
-  public TechnicalProtocolFormatter() {
-    setMessageFormatter(new MessageFormatter<M>() {
-      @Override
-      public String format(@NotNull GenericMessage<M> message) {
-        return message.toString();
-      }
-    });
+  public TechnicalProtocolFormatter(@NotNull MessageFormatter<M> messageFormatter) {
+    super(messageFormatter);
   }
 
 
@@ -58,7 +53,8 @@ public class TechnicalProtocolFormatter<M> extends TreeProtocolFormatter<M>
   }
 
 
-  public static @NotNull <M> String format(@NotNull Protocol<M> protocol) {
-    return protocol.format(new TechnicalProtocolFormatter<M>());
+  public static @NotNull <M> String format(@NotNull Protocol<M> protocol,
+                                           @NotNull MessageFormatter<M> messageFormatter) {
+    return protocol.format(new TechnicalProtocolFormatter<M>(messageFormatter));
   }
 }
