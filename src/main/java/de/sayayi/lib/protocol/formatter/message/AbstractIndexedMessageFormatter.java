@@ -15,7 +15,7 @@
  */
 package de.sayayi.lib.protocol.formatter.message;
 
-import de.sayayi.lib.protocol.Protocol.MessageWithLevel;
+import de.sayayi.lib.protocol.Protocol.GenericMessage;
 import de.sayayi.lib.protocol.formatter.MessageFormatter;
 
 import lombok.val;
@@ -33,7 +33,7 @@ public abstract class AbstractIndexedMessageFormatter<M> implements MessageForma
 {
   @Override
   @SuppressWarnings("java:S108")
-  public final @NotNull String formatMessage(@NotNull MessageWithLevel<M> message)
+  public final @NotNull String formatMessage(@NotNull GenericMessage<M> message)
   {
     val parameters = new ArrayList<Object>();
 
@@ -46,7 +46,7 @@ public abstract class AbstractIndexedMessageFormatter<M> implements MessageForma
       } catch(NumberFormatException ignored) {
       }
 
-      if (i >= 0 && i < 32)
+      if ((i >> 6) == 0)
         parameters.set(i, parametersEntry.getValue());
     }
 
@@ -54,6 +54,6 @@ public abstract class AbstractIndexedMessageFormatter<M> implements MessageForma
   }
 
 
-  protected abstract @NotNull String formatMessage(@NotNull MessageWithLevel<M> message,
+  protected abstract @NotNull String formatMessage(@NotNull GenericMessage<M> message,
                                                    @NotNull Object[] parameters);
 }

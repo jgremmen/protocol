@@ -15,7 +15,7 @@
  */
 package de.sayayi.lib.protocol.formatter.message;
 
-import de.sayayi.lib.protocol.Protocol.MessageWithLevel;
+import de.sayayi.lib.protocol.Protocol.GenericMessage;
 
 import lombok.AllArgsConstructor;
 
@@ -27,6 +27,8 @@ import java.util.Locale;
 
 /**
  * @author Jeroen Gremmen
+ *
+ * @see MessageFormat
  */
 @AllArgsConstructor
 public class JavaMessageFormatFormatter extends AbstractIndexedMessageFormatter<String>
@@ -40,7 +42,7 @@ public class JavaMessageFormatFormatter extends AbstractIndexedMessageFormatter<
 
 
   @Override
-  protected @NotNull String formatMessage(@NotNull MessageWithLevel<String> message,
+  protected @NotNull String formatMessage(@NotNull GenericMessage<String> message,
                                           @NotNull Object[] parameters) {
     return new MessageFormat(message.getMessage(), locale).format(parameters);
   }

@@ -15,7 +15,7 @@
  */
 package de.sayayi.lib.protocol.formatter;
 
-import de.sayayi.lib.protocol.Protocol.MessageWithLevel;
+import de.sayayi.lib.protocol.Protocol.GenericMessage;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -25,5 +25,12 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface MessageFormatter<M>
 {
-  @NotNull String formatMessage(@NotNull MessageWithLevel<M> message);
+  /**
+   * Formats the internal message representation into a {@code String}.
+   *
+   * @param message  Message to format
+   *
+   * @return  formatted message, never {@code null}
+   */
+  @NotNull String formatMessage(@NotNull GenericMessage<M> message);
 }
