@@ -16,6 +16,7 @@
 package de.sayayi.lib.protocol.formatter.structure;
 
 import de.sayayi.lib.protocol.Level;
+import de.sayayi.lib.protocol.Protocol.MessageWithLevel;
 import de.sayayi.lib.protocol.ProtocolFormatter.InitializableProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupEndEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
@@ -27,9 +28,14 @@ import lombok.val;
 
 import org.jetbrains.annotations.NotNull;
 
-import org.unbescape.html.HtmlEscape;
-
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
+import static de.sayayi.lib.protocol.Level.SORT_DESCENDING;
+import static org.unbescape.html.HtmlEscape.escapeHtml5;
 
 
 /**
@@ -81,7 +87,13 @@ public class HtmlProtocolFormatter<M> implements InitializableProtocolFormatter<
     html.append("<li class=\"level-").append(levelToHtmlClass(message.getLevel()))
         .append("\"><span class=\"")
         .append(message.isGroupMessage() ? "group-message " : "").append("message\">")
-        .append(HtmlEscape.escapeHtml5(msg)).append("</span></li>\n");
+        .append(messagePrefixHtml(message)).append(escapeHtml5(msg)).append("</span></li>\n");
+  }
+
+
+  @SuppressWarnings("java:S3400")
+  protected String messagePrefixHtml(@NotNull MessageEntry<M> message) {
+    return "";
   }
 
 
@@ -95,12 +107,18 @@ public class HtmlProtocolFormatter<M> implements InitializableProtocolFormatter<
     indent(depth - 1);
 
     html.append("<li class=\"level-").append(levelToHtmlClass(message.getLevel()))
-        .append("\"><span class=\"group\">").append(HtmlEscape.escapeHtml5(msg))
-        .append("</span></li>\n");
+        .append("\"><span class=\"group\">").append(groupPrefixHtml(group))
+        .append(escapeHtml5(msg)).append("</span></li>\n");
 
     indent(depth - 1);
 
     html.append("<ul class=\"depth-").append(depth).append(" group\">\n");
+  }
+
+
+  @SuppressWarnings("java:S3400")
+  protected String groupPrefixHtml(@NotNull GroupStartEntry<M> group) {
+    return "";
   }
 
 
@@ -131,5 +149,96 @@ public class HtmlProtocolFormatter<M> implements InitializableProtocolFormatter<
     Arrays.fill(spaces, ' ');
 
     html.append(spaces);
+  }
+
+
+
+
+  public static class WithFontAwesome<M> extends HtmlProtocolFormatter<M>
+  {
+    /**
+     * Font Awesome 4 default icons.
+     *
+     * <pre>
+     * </pre>
+     */
+    public static final Map<Level,String> FA4_LEVEL_ICON_CLASSES;
+
+
+    /**
+     * Font Awesome 5 default icons.
+     *
+     * <pre>
+     *   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+     * </pre>
+     */
+    public static final Map<Level,String> FA5_LEVEL_ICON_CLASSES;
+
+
+    static
+    {
+      val fa4LevelIconClassMap = new TreeMap<Level,String>(SORT_DESCENDING);
+      fa4LevelIconClassMap.put(Level.Shared.ERROR, "fa fa-times-circle");
+      fa4LevelIconClassMap.put(Level.Shared.WARN, "fa fa-exclamation-triangle");
+      fa4LevelIconClassMap.put(Level.Shared.INFO, "fa fa-info-circle");
+      fa4LevelIconClassMap.put(Level.Shared.DEBUG, "fa fa-comment-o");
+      fa4LevelIconClassMap.put(Level.Shared.LOWEST, "fa fa-wrench");
+      FA4_LEVEL_ICON_CLASSES = Collections.unmodifiableMap(fa4LevelIconClassMap);
+
+      val fa5LevelIconClassMap = new TreeMap<Level,String>(SORT_DESCENDING);
+      fa5LevelIconClassMap.put(Level.Shared.ERROR, "fas fa-times-circle");
+      fa5LevelIconClassMap.put(Level.Shared.WARN, "fas fa-exclamation-triangle");
+      fa5LevelIconClassMap.put(Level.Shared.INFO, "fas fa-info-circle");
+      fa5LevelIconClassMap.put(Level.Shared.DEBUG, "far fa-comment");
+      fa5LevelIconClassMap.put(Level.Shared.LOWEST, "fas fa-wrench");
+      FA5_LEVEL_ICON_CLASSES = Collections.unmodifiableMap(fa5LevelIconClassMap);
+    }
+
+
+    private final SortedMap<Level,String> levelIconMap;
+
+
+    public WithFontAwesome(@NotNull MessageFormatter<M> messageFormatter, @NotNull Map<Level,String> levelIconMap)
+    {
+      super(messageFormatter);
+
+      this.levelIconMap = new TreeMap<Level,String>(SORT_DESCENDING);
+      this.levelIconMap.putAll(levelIconMap);
+    }
+
+
+    @Override
+    protected String messagePrefixHtml(@NotNull MessageEntry<M> message) {
+      return htmlPart(getIconClassName(message));
+    }
+
+
+    @Override
+    protected String groupPrefixHtml(@NotNull GroupStartEntry<M> group) {
+      return htmlPart(getIconClassName(group.getGroupMessage()));
+    }
+
+
+    protected @NotNull String htmlPart(String iconClassName) {
+      return iconClassName == null ? "<i></i>" : ("<i class=\"" + iconClassName.trim() + "\"></i>");
+    }
+
+
+    protected String getIconClassName(@NotNull MessageWithLevel<M> message)
+    {
+      val level = message.getLevel();
+      val iconClassName = levelIconMap.get(level);
+
+      if (iconClassName != null)
+        return iconClassName;
+
+      val severity = level.severity();
+
+      for(val levelIconClassEntry: levelIconMap.entrySet())
+        if (severity >= levelIconClassEntry.getKey().severity())
+          return levelIconClassEntry.getValue();
+
+      return "";
+    }
   }
 }
