@@ -31,30 +31,43 @@ import java.util.Set;
  *             message retrieval/formatting libraries to be used.
  *
  * @author Jeroen Gremmen
+ * @since 0.1.0
  */
 @SuppressWarnings("squid:S1214")
 public interface ProtocolFactory<M>
 {
-  interface Constant
-  {
-    /**
-     * Name of the default tag.
-     *
-     * @see #getDefaultTag()
-     */
-    String DEFAULT_TAG_NAME = "default";
-  }
+  /**
+   * Name of the default tag.
+   *
+   * @see #getDefaultTag()
+   */
+  String DEFAULT_TAG_NAME = "default";
 
 
   /**
    * Returns the message processor associated with this factory.
    *
    * @return  message processor, never {@code null}
+   *
+   * @since 0.7.0
    */
   @Contract(pure = true)
   @NotNull MessageProcessor<M> getMessageProcessor();
 
 
+  /**
+   * <p>
+   *   Sets the message processor for all protocol instances created from this factory.
+   * </p>
+   * <p>
+   *   The message processor takes effect for all new messages protocolled. Existing messages are not
+   *   affected by changes made to the message processor.
+   * </p>
+   *
+   * @param messageProcessor  message processor, never {@code null}
+   *
+   * @since 0.7.0
+   */
   void setMessageProcessor(@NotNull MessageProcessor<M> messageProcessor);
 
 
@@ -164,6 +177,8 @@ public interface ProtocolFactory<M>
    *
    * @see de.sayayi.lib.protocol.processor.StringMessageProcessor
    * @see de.sayayi.lib.protocol.processor.ResourceBundleMessageProcessor
+   *
+   * @since 0.7.0
    */
   interface MessageProcessor<M>
   {

@@ -32,6 +32,7 @@ import java.util.Set;
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.4.1
  */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>

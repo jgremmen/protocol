@@ -27,6 +27,7 @@ import static de.sayayi.lib.protocol.TagSelector.MatchType.ANY_OF;
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.6.0
  */
 @EqualsAndHashCode(callSuper = true)
 public final class MatchAnyOf extends AbstractTagNameMatch

@@ -51,7 +51,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
     this.level = level;
 
     tags = new HashSet<String>();
-    tags.add(ProtocolFactory.Constant.DEFAULT_TAG_NAME);
+    tags.add(ProtocolFactory.DEFAULT_TAG_NAME);
   }
 
 

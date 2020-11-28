@@ -27,6 +27,7 @@ import java.util.Iterator;
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.1.0
  */
 public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
 {

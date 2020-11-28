@@ -42,6 +42,7 @@ import static de.sayayi.lib.protocol.selector.parser.TagSelectorLexer.TokenType.
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.6.0
  */
 public final class TagSelectorParser
 {

@@ -30,6 +30,7 @@ import java.util.NoSuchElementException;
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.6.0
  */
 public final class TagSelectorLexer implements Iterable<TagSelectorLexer.Token>
 {

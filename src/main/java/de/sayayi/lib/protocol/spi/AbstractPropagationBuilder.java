@@ -31,6 +31,7 @@ import java.util.TreeSet;
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.4.0
  */
 abstract class AbstractPropagationBuilder<M,B extends ProtocolMessageBuilder<M>>
     extends AbstractBuilder<M,B>

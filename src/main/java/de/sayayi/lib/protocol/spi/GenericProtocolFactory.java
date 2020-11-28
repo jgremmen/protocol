@@ -78,7 +78,7 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 
     id = FACTORY_ID.incrementAndGet();
 
-    defaultTag = createTag(Constant.DEFAULT_TAG_NAME).getTagDef();
+    defaultTag = createTag(DEFAULT_TAG_NAME).getTagDef();
     defaultParameterValues = new HashMap<String,Object>();
   }
 

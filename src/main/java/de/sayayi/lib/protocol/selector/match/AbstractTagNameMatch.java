@@ -33,6 +33,7 @@ import static java.util.Arrays.binarySearch;
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.6.0
  */
 @EqualsAndHashCode(callSuper = false)
 abstract class AbstractTagNameMatch extends AbstractTagSelectorBuilder implements TagReference

@@ -34,6 +34,7 @@ import static de.sayayi.lib.protocol.spi.LevelHelper.min;
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.1.0
  */
 final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements InternalProtocolEntry.Message<M>
 {

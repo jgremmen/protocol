@@ -28,6 +28,7 @@ import static de.sayayi.lib.protocol.TagSelector.MatchType.ANY;
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.6.0
  */
 @EqualsAndHashCode(callSuper = false)
 public final class MatchAny extends AbstractTagSelectorBuilder implements TagReference

@@ -57,6 +57,7 @@ import java.util.Set;
  * @param <M>  internal message object type
  *
  * @author Jeroen Gremmen
+ * @since 0.1.0
  */
 public interface Protocol<M> extends ProtocolQueryable
 {
@@ -82,6 +83,8 @@ public interface Protocol<M> extends ProtocolQueryable
    * Returns the id for this protocol. Protocol ids are unique.
    *
    * @return  protocol id
+   *
+   * @since 0.7.0
    */
   @Contract(pure = true)
   int getId();
@@ -289,6 +292,8 @@ public interface Protocol<M> extends ProtocolQueryable
    * @param name  group name, not {@code null} or empty
    *
    * @return  protocol group with the name set or {@code null} if no group was found.
+   *
+   * @since 0.7.0
    */
   @Contract(pure = true)
   ProtocolGroup<M> findGroupWithName(@NotNull String name);
@@ -305,6 +310,8 @@ public interface Protocol<M> extends ProtocolQueryable
    * @param regex  regular expression for matching group names, not {@code null} or empty
    *
    * @return  set of protocol groups with matching names, never {@code null}.
+   *
+   * @since 0.7.0
    */
   @Contract(pure = true)
   @NotNull Set<ProtocolGroup<M>> findGroupsByRegex(@NotNull String regex);
@@ -404,6 +411,8 @@ public interface Protocol<M> extends ProtocolQueryable
      * @param message  internal message instance, never {@code null}
      *
      * @return  parameter builder instance for the newly created message
+     *
+     * @since 0.4.0
      */
     @Contract("_ -> new")
     @NotNull MessageParameterBuilder<M> withMessage(@NotNull M message);
@@ -558,6 +567,8 @@ public interface Protocol<M> extends ProtocolQueryable
      * Returns the message creation time.
      *
      * @return  creation time measured in milliseconds since midnight, January 1, 1970 UTC
+     *
+     * @since 0.6.0
      */
     @Contract(pure = true)
     long getTimeMillis();
@@ -642,6 +653,11 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
 
+  /**
+   * @param <M>  internal message object type
+   *
+   * @since 0.5.0
+   */
   interface TargetTagBuilder<M>
   {
     @NotNull Protocol<M> to(@NotNull String targetTagName);

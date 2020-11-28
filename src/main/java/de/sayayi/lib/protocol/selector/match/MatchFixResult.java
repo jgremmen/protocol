@@ -27,6 +27,7 @@ import static de.sayayi.lib.protocol.TagSelector.MatchType.FIX;
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.6.0
  */
 @EqualsAndHashCode(callSuper = false)
 public final class MatchFixResult extends AbstractTagSelectorBuilder

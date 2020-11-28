@@ -31,6 +31,7 @@ import static de.sayayi.lib.protocol.TagSelector.MatchType.AND;
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.6.0
  */
 public final class MatchAnd extends AbstractTagSelectorBuilder implements SelectorReference
 {

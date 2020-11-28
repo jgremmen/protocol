@@ -46,6 +46,7 @@ import static lombok.AccessLevel.PROTECTED;
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.1.0
  */
 abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 {

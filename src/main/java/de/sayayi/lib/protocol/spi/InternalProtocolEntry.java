@@ -28,6 +28,7 @@ import java.util.List;
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.4.1
  */
 @SuppressWarnings("squid:S2176")
 interface InternalProtocolEntry<M> extends ProtocolEntry<M>, InternalProtocolQueryable

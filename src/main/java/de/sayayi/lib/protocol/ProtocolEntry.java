@@ -26,6 +26,7 @@ import java.util.Set;
  * @param <M>  internal message object type
  *
  * @author Jeroen Gremmen
+ * @since 0.1.0
  *
  * @see Message
  * @see Group

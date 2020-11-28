@@ -30,6 +30,7 @@ import java.util.Collection;
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.6.0
  */
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractTagSelectorBuilder implements TagSelector.Builder

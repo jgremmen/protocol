@@ -38,6 +38,7 @@ import java.util.Map;
  * @param <M>  internal message object type
  *
  * @author Jeroen Gremmen
+ * @since 0.1.0
  */
 public interface ProtocolGroup<M> extends Protocol<M>
 {

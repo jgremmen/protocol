@@ -98,6 +98,8 @@ public interface ProtocolFormatter<M,R>
    *   Implementing classes must make sure, that the formatter is reusable after invoking
    *   {@link #init(Level, TagSelector, int)}. Thread safety however is not a requirement.
    * </p>
+   *
+   * @since 0.1.0
    */
   interface InitializableProtocolFormatter<M,R> extends ProtocolFormatter<M,R>
   {
@@ -121,6 +123,8 @@ public interface ProtocolFormatter<M,R>
 
   /**
    * {@inheritDoc}
+   *
+   * @since 0.1.0
    */
   interface ConfiguredProtocolFormatter<M,R> extends ProtocolFormatter<M,R>
   {
