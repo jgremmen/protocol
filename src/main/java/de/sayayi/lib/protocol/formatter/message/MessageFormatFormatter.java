@@ -13,37 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.sayayi.lib.protocol.formatter;
+package de.sayayi.lib.protocol.formatter.message;
 
-import de.sayayi.lib.protocol.ProtocolFormatter;
-import de.sayayi.lib.protocol.ProtocolIterator;
+import de.sayayi.lib.message.Message;
+import de.sayayi.lib.message.ParameterFactory;
+import de.sayayi.lib.protocol.Protocol.GenericMessage;
+import de.sayayi.lib.protocol.formatter.MessageFormatter;
+
+import lombok.AllArgsConstructor;
 
 import org.jetbrains.annotations.NotNull;
 
 
 /**
  * @author Jeroen Gremmen
- * @since 0.3.0
+ * @since 0.7.0
+ *
+ * @see Message#format(Message.Parameters)
  */
-@Deprecated
-public abstract class AbstractProtocolFormatter<M,R> implements ProtocolFormatter<M,R>
+@AllArgsConstructor
+public final class MessageFormatFormatter implements MessageFormatter<Message>
 {
-  @Override
-  public void protocolStart() {
-  }
+  private final ParameterFactory parameterFactory;
 
 
   @Override
-  public void protocolEnd() {
-  }
-
-
-  @Override
-  public void groupStart(@NotNull ProtocolIterator.GroupStartEntry<M> group) {
-  }
-
-
-  @Override
-  public void groupEnd(@NotNull ProtocolIterator.GroupEndEntry<M> groupEnd) {
+  public @NotNull String formatMessage(@NotNull GenericMessage<Message> message) {
+    return message.getMessage().format(parameterFactory.with(message.getParameterValues()));
   }
 }

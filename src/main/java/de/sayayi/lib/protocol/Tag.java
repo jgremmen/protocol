@@ -54,6 +54,7 @@ import static de.sayayi.lib.protocol.selector.match.AbstractTagSelectorBuilder.w
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.6.0
  */
 @SuppressWarnings({"java:S100", "java:S1121"})
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

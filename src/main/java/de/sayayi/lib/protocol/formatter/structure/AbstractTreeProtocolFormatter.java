@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.1.0
  */
 public abstract class AbstractTreeProtocolFormatter<M>
     extends AbstractProtocolFormatter<M,String>

@@ -28,6 +28,7 @@ import java.util.Map;
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.7.0
  */
 @AllArgsConstructor
 public class MapMessageProcessor<M> implements MessageProcessor<M>

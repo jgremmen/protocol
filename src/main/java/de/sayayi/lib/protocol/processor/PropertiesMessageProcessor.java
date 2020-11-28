@@ -28,6 +28,7 @@ import java.util.Properties;
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.7.0
  */
 @AllArgsConstructor
 public class PropertiesMessageProcessor implements MessageProcessor<String>

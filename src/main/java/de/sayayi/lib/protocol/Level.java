@@ -33,6 +33,7 @@ import java.util.Comparator;
  * </p>
  *
  * @author Jeroen Gremmen
+ * @since 0.1.0
  */
 @SuppressWarnings("java:S1214")
 public interface Level

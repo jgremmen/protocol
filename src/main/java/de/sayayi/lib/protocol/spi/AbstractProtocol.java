@@ -34,6 +34,7 @@ import de.sayayi.lib.protocol.ProtocolIterator.ProtocolStart;
 import de.sayayi.lib.protocol.Tag;
 import de.sayayi.lib.protocol.TagSelector;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.val;
 import lombok.var;
@@ -48,14 +49,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
  * @author Jeroen Gremmen
  */
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, doNotUseGetters = true, callSuper = false)
 abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
     implements Protocol<M>, InternalProtocolQueryable
 {
+  private static final AtomicInteger PROTOCOL_ID = new AtomicInteger(0);
+
+  @EqualsAndHashCode.Include
+  @Getter private final int id;
+
   @Getter final ProtocolFactory<M> factory;
 
   final List<InternalProtocolEntry<M>> entries;
@@ -66,6 +74,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   {
     this.factory = factory;
 
+    id = PROTOCOL_ID.incrementAndGet();
     entries = new ArrayList<InternalProtocolEntry<M>>(8);
     tagPropagationMap = new HashMap<TagSelector,Set<String>>(8);
   }

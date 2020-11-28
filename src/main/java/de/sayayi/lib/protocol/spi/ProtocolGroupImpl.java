@@ -24,7 +24,6 @@ import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.exception.ProtocolException;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.val;
 
@@ -44,15 +43,12 @@ import static de.sayayi.lib.protocol.spi.LevelHelper.min;
 /**
  * @author Jeroen Gremmen
  */
-@EqualsAndHashCode(onlyExplicitlyIncluded = true, doNotUseGetters = true, callSuper = false)
+@SuppressWarnings("java:S2160")
 final class ProtocolGroupImpl<M>
     extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
     implements ProtocolGroup<M>, InternalProtocolEntry.Group<M>
 {
   @Getter private final AbstractProtocol<M,Protocol.ProtocolMessageBuilder<M>> parent;
-
-  @EqualsAndHashCode.Include
-  @Getter private final int id;
 
   @Getter private Level levelLimit;
   @Getter private Visibility visibility;
@@ -66,7 +62,6 @@ final class ProtocolGroupImpl<M>
 
     this.parent = parent;
 
-    id = ProtocolImpl.PROTOCOL_ID.incrementAndGet();
     levelLimit = HIGHEST;
     visibility = SHOW_HEADER_IF_NOT_EMPTY;
   }
@@ -216,10 +211,10 @@ final class ProtocolGroupImpl<M>
           return entryCountWithHeader;
 
         case SHOW_HEADER_IF_NOT_EMPTY:
-          return (recursiveEntryCount == 0) ? 0 : entryCountWithHeader;
+          return recursiveEntryCount == 0 ? 0 : entryCountWithHeader;
 
         case FLATTEN_ON_SINGLE_ENTRY:
-          return (recursiveEntryCount > 1) ? entryCountWithHeader : recursiveEntryCount;
+          return recursiveEntryCount > 1 ? entryCountWithHeader : recursiveEntryCount;
 
         case FLATTEN:
           return recursiveEntryCount;
@@ -384,7 +379,8 @@ final class ProtocolGroupImpl<M>
   @Override
   public String toString()
   {
-    val s = new StringBuilder("ProtocolGroup[id=").append(id).append(",visibility=").append(visibility);
+    val s = new StringBuilder("ProtocolGroup[id=").append(getId())
+        .append(",visibility=").append(visibility);
 
     if (levelLimit.severity() < HIGHEST.severity())
       s.append(",levelLimit=").append(levelLimit);

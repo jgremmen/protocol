@@ -26,6 +26,7 @@ import de.sayayi.lib.protocol.spi.GenericProtocolFactory;
  * </p>
  *
  * @author Jeroen Gremmen
+ * @since 0.1.0
  */
 public class StringProtocolFactory extends GenericProtocolFactory<String>
 {

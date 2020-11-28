@@ -18,6 +18,7 @@ package de.sayayi.lib.protocol.exception;
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.7.0
  */
 public class ProtocolException extends RuntimeException
 {

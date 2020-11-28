@@ -27,7 +27,17 @@ import java.util.ArrayList;
 
 
 /**
+ * <p>
+ *   Abstract class for message formatters that require the parameters to be provided in an {@code Object[]}
+ *   instead of a {@code Map}.
+ * </p>
+ *
+ * @param <M>  internal message object type
+ *
  * @author Jeroen Gremmen
+ * @since 0.7.0
+ *
+ * @see #formatMessage(GenericMessage, Object[])
  */
 public abstract class AbstractIndexedMessageFormatter<M> implements MessageFormatter<M>
 {
@@ -54,6 +64,24 @@ public abstract class AbstractIndexedMessageFormatter<M> implements MessageForma
   }
 
 
+  /**
+   * <p>
+   *   This method replaces {@link #formatMessage(GenericMessage)}.
+   * </p>
+   * <p>
+   *   Message parameters are collected into an {@code Object[]} by using the parameter name as an index in
+   *   the array. The resulting array has a size equal to the largest index number found + 1. In order to
+   *   prevent large numbers leading to allocating huge amounts of memory, the maximum index taken into
+   *   account is {@code 63}.
+   *   <br>
+   *   Missing indices will be initialized as {@code null} in the resulting array.
+   * </p>
+   *
+   * @param message     message to format, never {@code null
+   * @param parameters  indexed message parameters, never {@code null}
+   *
+   * @return  formatted message
+   */
   protected abstract @NotNull String formatMessage(@NotNull GenericMessage<M> message,
                                                    @NotNull Object[] parameters);
 }

@@ -27,6 +27,7 @@ import java.util.ResourceBundle;
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.7.0
  */
 @AllArgsConstructor
 public class ResourceBundleMessageProcessor implements MessageProcessor<String>

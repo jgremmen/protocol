@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
  * @param <R>  formatting result type
  *
  * @author Jeroen Gremmen
+ * @since 0.1.0
  */
 public interface ProtocolFormatter<M,R>
 {

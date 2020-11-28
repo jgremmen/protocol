@@ -41,6 +41,7 @@ import static org.unbescape.html.HtmlEscape.escapeHtml5;
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.2.0
  */
 @SuppressWarnings("unused")
 public class HtmlProtocolFormatter<M> implements InitializableProtocolFormatter<M,String>

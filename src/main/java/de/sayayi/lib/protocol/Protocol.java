@@ -79,6 +79,15 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
   /**
+   * Returns the id for this protocol. Protocol ids are unique.
+   *
+   * @return  protocol id
+   */
+  @Contract(pure = true)
+  int getId();
+
+
+  /**
    * <p>
    *   Prepare a tag propagation definition for this protocol.
    * </p>

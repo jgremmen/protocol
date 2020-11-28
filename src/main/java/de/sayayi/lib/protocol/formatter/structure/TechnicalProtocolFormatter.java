@@ -29,6 +29,7 @@ import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.1.0
  */
 @SuppressWarnings("unused")
 public class TechnicalProtocolFormatter<M> extends AbstractTreeProtocolFormatter<M>

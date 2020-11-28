@@ -20,6 +20,7 @@ import lombok.Getter;
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.6.0
  */
 public final class TagSelectorParserException extends ProtocolException
 {

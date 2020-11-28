@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.7.0
  */
 public enum StringMessageProcessor implements MessageProcessor<String>
 {

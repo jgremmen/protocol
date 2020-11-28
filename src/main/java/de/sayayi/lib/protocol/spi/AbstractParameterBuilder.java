@@ -139,6 +139,12 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
+  public int getId() {
+    return protocol.getId();
+  }
+
+
+  @Override
   public @NotNull B debug() {
     return protocol.debug();
   }

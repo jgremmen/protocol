@@ -27,6 +27,7 @@ import static lombok.AccessLevel.PRIVATE;
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.7.0
  */
 @NoArgsConstructor(access = PRIVATE)
 public final class ToStringMessageFormatter<M> implements MessageFormatter<M>

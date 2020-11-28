@@ -23,6 +23,7 @@ import java.util.Collection;
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.6.0
  */
 public interface TagSelector
 {

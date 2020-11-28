@@ -48,6 +48,8 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
   @NotNull TagSelector getTagSelector();
 
 
+
+
   /**
    * <p>
    *   This class is the basis for every entry produced by the protocol iterator. It provides the group depth
@@ -88,6 +90,8 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
   }
 
 
+
+
   /**
    *
    * @param <M>  internal message object type
@@ -119,6 +123,8 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
   }
 
 
+
+
   /**
    * This entry marks the start of a protocol iteration. It is generated unconditionally.
    *
@@ -128,6 +134,8 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
   }
 
 
+
+
   /**
    * This entry marks the end of a protocol iteration. It is generated unconditionally.
    *
@@ -135,6 +143,8 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
    */
   interface ProtocolEnd<M> extends DepthEntry<M> {
   }
+
+
 
 
   /**
@@ -154,6 +164,8 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
     @Contract(pure = true)
     boolean isGroupMessage();
   }
+
+
 
 
   /**
@@ -186,6 +198,8 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
     @Contract(value = "-> true", pure = true)
     boolean isGroupMessage();
   }
+
+
 
 
   /**
@@ -226,6 +240,8 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
     @Contract(pure = true)
     int getMessageCount();
   }
+
+
 
 
   /**
