@@ -28,7 +28,10 @@ import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
 
 
 /**
+ * @param <M>  internal message object type
+ *
  * @author Jeroen Gremmen
+ * @since 0.1.0
  */
 final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
 {

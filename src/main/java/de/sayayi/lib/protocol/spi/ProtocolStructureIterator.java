@@ -45,6 +45,8 @@ import static lombok.AccessLevel.PROTECTED;
 
 
 /**
+ * @param <M>  internal message object type
+ *
  * @author Jeroen Gremmen
  * @since 0.1.0
  */

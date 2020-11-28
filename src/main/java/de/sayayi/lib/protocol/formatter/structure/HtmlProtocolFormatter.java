@@ -40,6 +40,8 @@ import static org.unbescape.html.HtmlEscape.escapeHtml5;
 
 
 /**
+ * @param <M>  internal message object type
+ *
  * @author Jeroen Gremmen
  * @since 0.2.0
  */

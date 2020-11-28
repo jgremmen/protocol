@@ -28,6 +28,8 @@ import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
 
 
 /**
+ * @param <M>  internal message object type
+ *
  * @author Jeroen Gremmen
  * @since 0.1.0
  */

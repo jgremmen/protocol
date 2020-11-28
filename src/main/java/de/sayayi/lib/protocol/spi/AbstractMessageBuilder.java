@@ -31,7 +31,10 @@ import java.util.TreeSet;
 
 
 /**
+ * @param <M>  internal message object type
+ *
  * @author Jeroen Gremmen
+ * @since 0.1.0
  */
 @SuppressWarnings("unchecked")
 abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P extends MessageParameterBuilder<M>>

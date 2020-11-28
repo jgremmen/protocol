@@ -23,6 +23,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Generic abstract builder class with a reference to the protocol instance that created the builder.
  *
+ * @param <M>  internal message object type
+ *
  * @author Jeroen Gremmen
  */
 abstract class AbstractBuilder<M,B extends ProtocolMessageBuilder<M>>

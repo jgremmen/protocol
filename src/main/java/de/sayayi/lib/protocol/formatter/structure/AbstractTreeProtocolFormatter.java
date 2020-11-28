@@ -29,6 +29,8 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
+ * @param <M>  internal message object type
+ *
  * @author Jeroen Gremmen
  * @since 0.1.0
  */

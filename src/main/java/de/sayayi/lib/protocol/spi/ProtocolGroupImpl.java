@@ -41,6 +41,8 @@ import static de.sayayi.lib.protocol.spi.LevelHelper.min;
 
 
 /**
+ * @param <M>  internal message object type
+ *
  * @author Jeroen Gremmen
  */
 @SuppressWarnings("java:S2160")

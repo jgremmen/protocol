@@ -27,6 +27,8 @@ import java.util.Map;
 
 
 /**
+ * @param <M>  internal message object type
+ *
  * @author Jeroen Gremmen
  * @since 0.7.0
  */

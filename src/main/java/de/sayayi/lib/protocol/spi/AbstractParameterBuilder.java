@@ -36,7 +36,10 @@ import java.util.Set;
 
 
 /**
+ * @param <M>  internal message object type
+ *
  * @author Jeroen Gremmen
+ * @since 0.1.0
  */
 @SuppressWarnings({ "unchecked" })
 abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B extends ProtocolMessageBuilder<M>>

@@ -27,6 +27,8 @@ import java.util.List;
 
 
 /**
+ * @param <M>  internal message object type
+ *
  * @author Jeroen Gremmen
  * @since 0.4.1
  */
