@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Jeroen Gremmen
  */
-public abstract class TreeProtocolFormatter<M>
+public abstract class AbstractTreeProtocolFormatter<M>
     extends AbstractProtocolFormatter<M,String>
     implements InitializableProtocolFormatter<M,String>
 {
@@ -51,7 +51,7 @@ public abstract class TreeProtocolFormatter<M>
 
 
   @SuppressWarnings("WeakerAccess")
-  protected TreeProtocolFormatter(@NotNull MessageFormatter<M> messageFormatter)
+  protected AbstractTreeProtocolFormatter(@NotNull MessageFormatter<M> messageFormatter)
   {
     this.messageFormatter = messageFormatter;
     this.result = new StringBuilder();

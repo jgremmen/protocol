@@ -70,7 +70,7 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
   /**
-   * Returns the parent protocol.
+   * Returns the parent protocol instance.
    *
    * @return  parent protocol or {@code null} if this is the root protocol
    */
@@ -220,8 +220,8 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
   /**
-   * Formats this protocol using the given {@code formatter} iterating over all elements matching {@code level} and at
-   * least one of the {@code tags}.
+   * Formats this protocol using the given {@code formatter} iterating over all elements matching {@code level} and
+   * {@code tagSelector}.
    *
    * @param formatter    protocol formatter to use for formatting this protocol
    * @param level        level to match
@@ -383,6 +383,19 @@ public interface Protocol<M> extends ProtocolQueryable
     @NotNull MessageParameterBuilder<M> message(@NotNull String message);
 
 
+    /**
+     * <p>
+     *   Creates a new protocol message based on the builder settings and adds the message to the protocol.
+     * </p>
+     * <p>
+     *   This method differs from {@link #message(String)} in that it bypasses the {@link MessageProcessor}
+     *   and directly adds the internal message representation to the protocol.
+     * </p>
+     *
+     * @param message  internal message instance, never {@code null}
+     *
+     * @return  parameter builder instance for the newly created message
+     */
     @Contract("_ -> new")
     @NotNull MessageParameterBuilder<M> withMessage(@NotNull M message);
   }

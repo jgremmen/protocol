@@ -15,6 +15,8 @@
  */
 package de.sayayi.lib.protocol;
 
+import de.sayayi.lib.protocol.exception.ProtocolException;
+
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -157,6 +159,8 @@ public interface ProtocolGroup<M> extends Protocol<M>
    * @param name  unique name or {@code null}
    *
    * @return  this protocol group instance
+   *
+   * @throws ProtocolException  if the group name is not unique across the protocol structure
    *
    * @see #getName()
    * @see Protocol#findGroupWithName(String)
@@ -354,7 +358,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
     /**
      * Returns the effective visibility in case a group has no header message.
      *
-     * @return  effective visibility for a group without a header message
+     * @return  effective visibility for a group without a header message, never {@code null}
      */
     public @NotNull Visibility forAbsentHeader()
     {

@@ -31,7 +31,7 @@ import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
  * @author Jeroen Gremmen
  */
 @SuppressWarnings("unused")
-public class TechnicalProtocolFormatter<M> extends TreeProtocolFormatter<M>
+public class TechnicalProtocolFormatter<M> extends AbstractTreeProtocolFormatter<M>
     implements ConfiguredProtocolFormatter<M,String>
 {
   @SuppressWarnings("WeakerAccess")

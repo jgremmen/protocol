@@ -25,6 +25,7 @@ import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.formatter.MessageFormatter;
 
 import lombok.val;
+import lombok.var;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -64,8 +65,20 @@ public class HtmlProtocolFormatter<M> implements InitializableProtocolFormatter<
   @Override
   public void protocolStart()
   {
-    html.append("<div class=\"protocol\">\n")
-        .append("  <ul class=\"depth-0\">\n");
+    val divClasses = new String[] { "protocol", protocolStartDivClass() };
+
+    html.append("<div").append(classFromArray(divClasses)).append(">\n")
+        .append("  <ul").append(classFromArray("depth-0", protocolStartUlClass())).append(">\n");
+  }
+
+
+  protected String protocolStartDivClass() {
+    return null;
+  }
+
+
+  protected String protocolStartUlClass() {
+    return null;
   }
 
 
@@ -84,15 +97,36 @@ public class HtmlProtocolFormatter<M> implements InitializableProtocolFormatter<
 
     indent(message.getDepth());
 
-    html.append("<li class=\"level-").append(levelToHtmlClass(message.getLevel()))
-        .append("\"><span class=\"")
-        .append(message.isGroupMessage() ? "group-message " : "").append("message\">")
-        .append(messagePrefixHtml(message)).append(escapeHtml5(msg)).append("</span></li>\n");
+    val liClasses = new String[] { "level-" + levelToHtmlClass(message.getLevel()), messageLiClass(message) };
+    val liSpanClasses = new String[] {
+        message.isGroupMessage() ? "group-message" : null, "message", messageSpanClass(message)
+    };
+
+    html.append("<li").append(classFromArray(liClasses)).append('>')
+        .append(messagePrefixHtml(message))
+        .append("<span").append(classFromArray(liSpanClasses)).append(">")
+        .append(escapeHtml5(msg)).append("</span>")
+        .append(messageSuffixHtml(message))
+        .append("</li>\n");
   }
 
 
-  @SuppressWarnings("java:S3400")
-  protected String messagePrefixHtml(@NotNull MessageEntry<M> message) {
+  protected String messageLiClass(@NotNull MessageEntry<M> message) {
+    return null;
+  }
+
+
+  protected String messageSpanClass(@NotNull MessageEntry<M> message) {
+    return null;
+  }
+
+
+  protected @NotNull String messagePrefixHtml(@NotNull MessageEntry<M> message) {
+    return "";
+  }
+
+
+  protected @NotNull String messageSuffixHtml(@NotNull MessageEntry<M> message) {
     return "";
   }
 
@@ -106,19 +140,46 @@ public class HtmlProtocolFormatter<M> implements InitializableProtocolFormatter<
 
     indent(depth - 1);
 
-    html.append("<li class=\"level-").append(levelToHtmlClass(message.getLevel()))
-        .append("\"><span class=\"group\">").append(groupPrefixHtml(group))
-        .append(escapeHtml5(msg)).append("</span></li>\n");
+    val liClasses = new String[] { "level-" + levelToHtmlClass(message.getLevel()), groupHeaderLiClass(message) };
+    val liSpanClasses = new String[] { "group", groupHeaderLiSpanClass(message) };
+
+    html.append("<li").append(classFromArray(liClasses)).append('>')
+        .append(groupHeaderPrefixHtml(message))
+        .append("<span").append(classFromArray(liSpanClasses)).append('>')
+        .append(escapeHtml5(msg)).append("</span>")
+        .append(groupHeaderSuffixHtml(message))
+        .append("</li>\n");
 
     indent(depth - 1);
 
-    html.append("<ul class=\"depth-").append(depth).append(" group\">\n");
+    val ulClasses = new String[] { "depth-" + depth, "group", groupStartUlClass(group) };
+
+    html.append("<ul").append(classFromArray(ulClasses)).append(">\n");
   }
 
 
-  @SuppressWarnings("java:S3400")
-  protected String groupPrefixHtml(@NotNull GroupStartEntry<M> group) {
+  protected String groupHeaderLiClass(@NotNull MessageWithLevel<M> message) {
+    return null;
+  }
+
+
+  protected String groupHeaderLiSpanClass(@NotNull MessageWithLevel<M> message) {
+    return null;
+  }
+
+
+  protected @NotNull String groupHeaderPrefixHtml(@NotNull MessageWithLevel<M> message) {
     return "";
+  }
+
+
+  protected @NotNull String groupHeaderSuffixHtml(@NotNull MessageWithLevel<M> message) {
+    return "";
+  }
+
+
+  protected String groupStartUlClass(@NotNull GroupStartEntry<M> group) {
+    return null;
   }
 
 
@@ -143,7 +204,32 @@ public class HtmlProtocolFormatter<M> implements InitializableProtocolFormatter<
   }
 
 
-  private void indent(int depth)
+  protected @NotNull String classFromArray(String ... classNames)
+  {
+    if (classNames != null && classNames.length > 0)
+    {
+      val cls = new StringBuilder(" class=\"");
+      var n = 0;
+
+      for(val className: classNames)
+        if (className != null && !className.trim().isEmpty())
+        {
+          if (n != 0)
+            cls.append(' ');
+
+          cls.append(className.trim());
+          n++;
+        }
+
+      if (n > 0)
+        return cls.append('"').toString();
+    }
+
+    return "";
+  }
+
+
+  protected void indent(int depth)
   {
     val spaces = new char[(depth + 2) * 2];
     Arrays.fill(spaces, ' ');
@@ -157,8 +243,13 @@ public class HtmlProtocolFormatter<M> implements InitializableProtocolFormatter<
   public static class WithFontAwesome<M> extends HtmlProtocolFormatter<M>
   {
     /**
-     * Font Awesome 4 default icons.
-     *
+     * <p>
+     *   Font Awesome 4 default icons.
+     * </p>
+     * <p>
+     *   Add the following link to your html page:
+     * </p>
+     * <br>
      * <pre>
      * </pre>
      */
@@ -166,10 +257,15 @@ public class HtmlProtocolFormatter<M> implements InitializableProtocolFormatter<
 
 
     /**
-     * Font Awesome 5 default icons.
-     *
+     * <p>
+     *   Font Awesome 5 default icons.
+     * </p>
+     * <p>
+     *   Add the following link to your html page:
+     * </p>
+     * <br>
      * <pre>
-     *   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+     *   &lt;link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous"&gt;
      * </pre>
      */
     public static final Map<Level,String> FA5_LEVEL_ICON_CLASSES;
@@ -178,18 +274,18 @@ public class HtmlProtocolFormatter<M> implements InitializableProtocolFormatter<
     static
     {
       val fa4LevelIconClassMap = new TreeMap<Level,String>(SORT_DESCENDING);
-      fa4LevelIconClassMap.put(Level.Shared.ERROR, "fa fa-times-circle");
+      fa4LevelIconClassMap.put(Level.Shared.ERROR, "fa fa-times");
       fa4LevelIconClassMap.put(Level.Shared.WARN, "fa fa-exclamation-triangle");
       fa4LevelIconClassMap.put(Level.Shared.INFO, "fa fa-info-circle");
-      fa4LevelIconClassMap.put(Level.Shared.DEBUG, "fa fa-comment-o");
+      fa4LevelIconClassMap.put(Level.Shared.DEBUG, "fa fa-puzzle-piece");
       fa4LevelIconClassMap.put(Level.Shared.LOWEST, "fa fa-wrench");
       FA4_LEVEL_ICON_CLASSES = Collections.unmodifiableMap(fa4LevelIconClassMap);
 
       val fa5LevelIconClassMap = new TreeMap<Level,String>(SORT_DESCENDING);
-      fa5LevelIconClassMap.put(Level.Shared.ERROR, "fas fa-times-circle");
+      fa5LevelIconClassMap.put(Level.Shared.ERROR, "fas fa-times");
       fa5LevelIconClassMap.put(Level.Shared.WARN, "fas fa-exclamation-triangle");
       fa5LevelIconClassMap.put(Level.Shared.INFO, "fas fa-info-circle");
-      fa5LevelIconClassMap.put(Level.Shared.DEBUG, "far fa-comment");
+      fa5LevelIconClassMap.put(Level.Shared.DEBUG, "fas fa-puzzle-piece");
       fa5LevelIconClassMap.put(Level.Shared.LOWEST, "fas fa-wrench");
       FA5_LEVEL_ICON_CLASSES = Collections.unmodifiableMap(fa5LevelIconClassMap);
     }
@@ -208,19 +304,31 @@ public class HtmlProtocolFormatter<M> implements InitializableProtocolFormatter<
 
 
     @Override
-    protected String messagePrefixHtml(@NotNull MessageEntry<M> message) {
+    protected @NotNull String protocolStartUlClass() {
+      return "fa-ul";
+    }
+
+
+    @Override
+    protected String groupStartUlClass(@NotNull GroupStartEntry<M> group) {
+      return "fa-ul";
+    }
+
+
+    @Override
+    protected @NotNull String messagePrefixHtml(@NotNull MessageEntry<M> message) {
       return htmlPart(getIconClassName(message));
     }
 
 
     @Override
-    protected String groupPrefixHtml(@NotNull GroupStartEntry<M> group) {
-      return htmlPart(getIconClassName(group.getGroupMessage()));
+    protected @NotNull String groupHeaderPrefixHtml(@NotNull MessageWithLevel<M> message) {
+      return htmlPart(getIconClassName(message));
     }
 
 
     protected @NotNull String htmlPart(String iconClassName) {
-      return iconClassName == null ? "<i></i>" : ("<i class=\"" + iconClassName.trim() + "\"></i>");
+      return "<span class=\"fa-li\"><i" + classFromArray(iconClassName) + "></i></span>";
     }
 
 
@@ -238,7 +346,7 @@ public class HtmlProtocolFormatter<M> implements InitializableProtocolFormatter<
         if (severity >= levelIconClassEntry.getKey().severity())
           return levelIconClassEntry.getValue();
 
-      return "";
+      return null;
     }
   }
 }

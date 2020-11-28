@@ -28,17 +28,14 @@ import java.util.Locale;
 /**
  * @author Jeroen Gremmen
  *
- * @see MessageFormat
+ * @see MessageFormat#format(String, Object...)
  */
 @AllArgsConstructor
 public class JavaMessageFormatFormatter extends AbstractIndexedMessageFormatter<String>
 {
+  public static final JavaMessageFormatFormatter INSTANCE = new JavaMessageFormatFormatter(Locale.getDefault());
+
   private final Locale locale;
-
-
-  public JavaMessageFormatFormatter() {
-    this(Locale.getDefault());
-  }
 
 
   @Override

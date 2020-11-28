@@ -32,12 +32,9 @@ import java.util.Locale;
 @AllArgsConstructor
 public class JavaStringFormatFormatter extends AbstractIndexedMessageFormatter<String>
 {
+  public static final JavaStringFormatFormatter INSTANCE = new JavaStringFormatFormatter(Locale.getDefault());
+
   private final Locale locale;
-
-
-  public JavaStringFormatFormatter() {
-    this(Locale.getDefault());
-  }
 
 
   @Override
