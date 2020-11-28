@@ -37,7 +37,7 @@ import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, doNotUseGetters = true, callSuper = false)
 final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
 {
-  private static final AtomicInteger PROTOCOL_ID = new AtomicInteger(0);
+  static final AtomicInteger PROTOCOL_ID = new AtomicInteger(0);
 
   @EqualsAndHashCode.Include
   private final int id;

@@ -33,7 +33,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
 import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
@@ -50,9 +49,6 @@ final class ProtocolGroupImpl<M>
     extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
     implements ProtocolGroup<M>, InternalProtocolEntry.Group<M>
 {
-  private static final AtomicInteger PROTOCOL_GROUP_ID = new AtomicInteger(0);
-
-
   @Getter private final AbstractProtocol<M,Protocol.ProtocolMessageBuilder<M>> parent;
 
   @EqualsAndHashCode.Include
@@ -70,7 +66,7 @@ final class ProtocolGroupImpl<M>
 
     this.parent = parent;
 
-    id = PROTOCOL_GROUP_ID.incrementAndGet();
+    id = ProtocolImpl.PROTOCOL_ID.incrementAndGet();
     levelLimit = HIGHEST;
     visibility = SHOW_HEADER_IF_NOT_EMPTY;
   }
@@ -374,7 +370,7 @@ final class ProtocolGroupImpl<M>
   @Override
   public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull TagSelector tagSelector)
   {
-    return new ProtocolStructureIterator.ForGroup<M>(levelLimit, level, tagSelector, 0,this,
+    return new ProtocolStructureIterator.ForGroup<M>(levelLimit, level, tagSelector, 0, this,
         false, false, true);
   }
 
