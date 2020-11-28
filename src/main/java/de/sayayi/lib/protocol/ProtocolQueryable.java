@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
- * This interface provides methods for querying protocol objects in avariety of ways.
+ * This interface provides methods for querying protocol objects.
  *
  * @author Jeroen Gremmen
  * @since 0.1.0

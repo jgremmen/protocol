@@ -38,6 +38,11 @@ import java.util.Comparator;
 @SuppressWarnings("java:S1214")
 public interface Level
 {
+  /**
+   * Sort levels ascending: {@link Shared#LOWEST LOWEST} -&gt; {@link Shared#HIGHEST HIGHEST}
+   *
+   * @since 0.7.0
+   */
   Comparator<Level> SORT_ASCENDING = new Comparator<Level>() {
     @Override
     @SuppressWarnings("java:S3358")
@@ -51,6 +56,11 @@ public interface Level
   };
 
 
+  /**
+   * Sort levels descending: {@link Shared#HIGHEST HIGHEST} -&gt; {@link Shared#LOWEST LOWEST}
+   *
+   * @since 0.7.0
+   */
   Comparator<Level> SORT_DESCENDING = new Comparator<Level>() {
     @Override
     @SuppressWarnings("java:S3358")
@@ -83,6 +93,8 @@ public interface Level
   /**
    * Level constants for the {@linkplain Protocol#debug() debug()}, {@linkplain Protocol#info() info()},
    * {@linkplain Protocol#warn() warn()} and {@linkplain Protocol#error() error()} protocol methods.
+   *
+   * @since 0.1.0
    */
   enum Shared implements Level
   {

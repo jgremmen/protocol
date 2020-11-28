@@ -27,6 +27,7 @@ import de.sayayi.lib.protocol.formatter.MessageFormatter;
 import lombok.val;
 import lombok.var;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -40,6 +41,12 @@ import static org.unbescape.html.HtmlEscape.escapeHtml5;
 
 
 /**
+ * <p>
+ *   This formatter has a dependency with
+ *   <a href="https://mvnrepository.com/artifact/org.unbescape/unbescape">unbescape</a>
+ *   version &gt;= {@code 0.4}.
+ * </p>
+ *
  * @param <M>  internal message object type
  *
  * @author Jeroen Gremmen
@@ -59,6 +66,7 @@ public class HtmlProtocolFormatter<M> implements InitializableProtocolFormatter<
   }
 
 
+  @Contract(pure = true)
   @SuppressWarnings("WeakerAccess")
   protected String levelToHtmlClass(@NotNull Level level) {
     return level.toString().toLowerCase();
@@ -75,11 +83,13 @@ public class HtmlProtocolFormatter<M> implements InitializableProtocolFormatter<
   }
 
 
+  @Contract(pure = true)
   protected String protocolStartDivClass() {
     return null;
   }
 
 
+  @Contract(pure = true)
   protected String protocolStartUlClass() {
     return null;
   }
@@ -114,21 +124,25 @@ public class HtmlProtocolFormatter<M> implements InitializableProtocolFormatter<
   }
 
 
+  @Contract(pure = true)
   protected String messageLiClass(@NotNull MessageEntry<M> message) {
     return null;
   }
 
 
+  @Contract(pure = true)
   protected String messageSpanClass(@NotNull MessageEntry<M> message) {
     return null;
   }
 
 
+  @Contract(pure = true)
   protected @NotNull String messagePrefixHtml(@NotNull MessageEntry<M> message) {
     return "";
   }
 
 
+  @Contract(pure = true)
   protected @NotNull String messageSuffixHtml(@NotNull MessageEntry<M> message) {
     return "";
   }
@@ -161,26 +175,31 @@ public class HtmlProtocolFormatter<M> implements InitializableProtocolFormatter<
   }
 
 
+  @Contract(pure = true)
   protected String groupHeaderLiClass(@NotNull MessageWithLevel<M> message) {
     return null;
   }
 
 
+  @Contract(pure = true)
   protected String groupHeaderLiSpanClass(@NotNull MessageWithLevel<M> message) {
     return null;
   }
 
 
+  @Contract(pure = true)
   protected @NotNull String groupHeaderPrefixHtml(@NotNull MessageWithLevel<M> message) {
     return "";
   }
 
 
+  @Contract(pure = true)
   protected @NotNull String groupHeaderSuffixHtml(@NotNull MessageWithLevel<M> message) {
     return "";
   }
 
 
+  @Contract(pure = true)
   protected String groupStartUlClass(@NotNull GroupStartEntry<M> group) {
     return null;
   }
@@ -207,6 +226,7 @@ public class HtmlProtocolFormatter<M> implements InitializableProtocolFormatter<
   }
 
 
+  @Contract(pure = true)
   protected @NotNull String classFromArray(String ... classNames)
   {
     if (classNames != null && classNames.length > 0)
@@ -232,6 +252,7 @@ public class HtmlProtocolFormatter<M> implements InitializableProtocolFormatter<
   }
 
 
+  @Contract(pure = true)
   protected void indent(int depth)
   {
     val spaces = new char[(depth + 2) * 2];
@@ -241,8 +262,13 @@ public class HtmlProtocolFormatter<M> implements InitializableProtocolFormatter<
   }
 
 
-
-
+  /**
+   * Html protocol formatter that produces list bullets with font awesome icons.
+   *
+   * @param <M>  internal message object type
+   *
+   * @since 0.7.0
+   */
   public static class WithFontAwesome<M> extends HtmlProtocolFormatter<M>
   {
     /**
@@ -330,11 +356,13 @@ public class HtmlProtocolFormatter<M> implements InitializableProtocolFormatter<
     }
 
 
+    @Contract(pure = true)
     protected @NotNull String htmlPart(String iconClassName) {
       return "<span class=\"fa-li\"><i" + classFromArray(iconClassName) + "></i></span>";
     }
 
 
+    @Contract(pure = true)
     protected String getIconClassName(@NotNull MessageWithLevel<M> message)
     {
       val level = message.getLevel();
