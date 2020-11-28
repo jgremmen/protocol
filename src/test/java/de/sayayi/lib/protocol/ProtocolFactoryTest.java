@@ -15,15 +15,12 @@
  */
 package de.sayayi.lib.protocol;
 
-import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.exception.ProtocolException;
 import de.sayayi.lib.protocol.spi.GenericProtocolFactory;
 import org.junit.Test;
 
 import lombok.val;
-
-import org.jetbrains.annotations.NotNull;
 
 import static de.sayayi.lib.protocol.Level.Shared.DEBUG;
 import static de.sayayi.lib.protocol.Level.Shared.ERROR;
@@ -200,14 +197,7 @@ public class ProtocolFactoryTest
   @Test
   public void testProcessMessage()
   {
-    val factory = new GenericProtocolFactory<String>(
-        new MessageProcessor<String>() {
-          @Override
-          public @NotNull String processMessage(@NotNull String message) {
-            return message + "(ok)";
-          }
-        });
-
+    val factory = new GenericProtocolFactory<String>(message -> message + "(ok)");
     val protocol = factory.createProtocol().debug().message("msg");
     val iterator = protocol.iterator(LOWEST, Tag.any());
 

@@ -48,7 +48,7 @@ public class AbstractGenericMessageTest
   @Test(expected = UnsupportedOperationException.class)
   public void testParametersNotModifyable()
   {
-    val message = new TestMessage("msg", Collections.<String,Object>singletonMap("key", "value123"));
+    val message = new TestMessage("msg", Collections.singletonMap("key", "value123"));
 
     message.getParameterValues().put("key2", "test");
   }
@@ -57,7 +57,7 @@ public class AbstractGenericMessageTest
   @Test
   public void testTime()
   {
-    val message = new TestMessage("msg", Collections.<String,Object>emptyMap());
+    val message = new TestMessage("msg", Collections.emptyMap());
     assertTrue(System.currentTimeMillis() >= message.getTimeMillis());
   }
 
