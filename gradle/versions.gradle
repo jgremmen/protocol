@@ -25,9 +25,9 @@ configurations.all {
 
     switch(requested.group)
     {
-      case 'org.projectlombok': return useVersion('1.18.12')
+      case 'org.projectlombok': return useVersion('1.18.16')
       case 'org.unbescape':     return useVersion('1.1.6.RELEASE')
-      case 'junit':             return useVersion('4.12')
+      case 'junit':             return useVersion('4.13.1')
       case 'org.jetbrains':
         switch(requested.name)
         {
