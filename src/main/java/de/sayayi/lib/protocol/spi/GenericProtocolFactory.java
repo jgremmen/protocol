@@ -59,7 +59,7 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
   private static final AtomicInteger FACTORY_ID = new AtomicInteger(0);
   private static final AtomicInteger TAG_ID = new AtomicInteger(0);
 
-  private final Map<String, TagDefImpl> registeredTags = new TreeMap<String, TagDefImpl>();
+  private final Map<String,TagDefImpl> registeredTags = new TreeMap<String,TagDefImpl>();
   private final int id;
   @Getter private final TagDef defaultTag;
 

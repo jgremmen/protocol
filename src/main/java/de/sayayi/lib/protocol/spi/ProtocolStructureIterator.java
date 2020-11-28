@@ -23,6 +23,7 @@ import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.TagSelector;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
@@ -48,6 +49,17 @@ import static lombok.AccessLevel.PROTECTED;
  */
 abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 {
+  private static final ProtocolStart<?> PROTOCOL_START = new ProtocolStart<Object>() {
+    @Override public int getDepth() { return 0; }
+    @Override public String toString() { return "ProtocolStart"; }
+  };
+
+  private static final ProtocolEnd<?> PROTOCOL_END = new ProtocolEnd<Object>() {
+    @Override public int getDepth() { return 0; }
+    @Override public String toString() { return "ProtocolEnd"; }
+  };
+
+
   private final Level levelLimit;
   @Getter private final Level level;
   @Getter private final TagSelector tagSelector;
@@ -79,7 +91,10 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     iterator = new VisibleEntryIterator(protocolEntries.iterator());
 
     if (rootProtocol)
-      addNextEntry(new ProtocolStartImpl<M>());
+    {
+      //noinspection unchecked
+      addNextEntry((ProtocolStart<M>)PROTOCOL_START);
+    }
   }
 
 
@@ -151,7 +166,10 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   protected void lastEntryEncountered()
   {
     if (rootProtocol)
-      addNextEntry(new ProtocolEndImpl<M>());
+    {
+      //noinspection unchecked
+      addNextEntry((ProtocolEnd<M>)PROTOCOL_END);
+    }
   }
 
 
@@ -303,14 +321,9 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
 
-  abstract static class DepthEntryImpl<M> implements DepthEntry<M>
-  {
+  @AllArgsConstructor(access = PROTECTED)
+  abstract static class DepthEntryImpl<M> implements DepthEntry<M> {
     @Getter final int depth;
-
-
-    protected DepthEntryImpl(int depth) {
-      this.depth = depth;
-    }
   }
 
 
@@ -518,30 +531,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
 
-  private abstract static class RootProtocolEntry<M> implements DepthEntry<M> {
-    @Override public int getDepth() { return 0; }
-  }
-
-
-
-
-  private static class ProtocolStartImpl<M> extends RootProtocolEntry<M>
-      implements ProtocolStart<M> {
-    @Override public String toString() { return "ProtocolStart"; }
-  }
-
-
-
-
-  private static class ProtocolEndImpl<M> extends RootProtocolEntry<M> implements ProtocolEnd<M> {
-    @Override public String toString() { return "ProtocolEnd"; }
-  }
-
-
-
-
-  private static class GroupStartEntryImpl<M> extends RankingDepthEntryImpl<M>
-      implements GroupStartEntry<M>
+  private static class GroupStartEntryImpl<M> extends RankingDepthEntryImpl<M> implements GroupStartEntry<M>
   {
     @Getter private final MessageWithLevel<M> groupMessage;
     @Getter private final int messageCount;
