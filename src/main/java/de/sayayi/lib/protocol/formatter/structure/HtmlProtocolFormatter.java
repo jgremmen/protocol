@@ -278,9 +278,6 @@ public class HtmlProtocolFormatter<M> implements InitializableProtocolFormatter<
      * <p>
      *   Add the following link to your html page:
      * </p>
-     * <br>
-     * <pre>
-     * </pre>
      */
     public static final Map<Level,String> FA4_LEVEL_ICON_CLASSES;
 

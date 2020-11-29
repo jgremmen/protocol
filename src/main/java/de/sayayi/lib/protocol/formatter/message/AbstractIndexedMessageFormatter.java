@@ -36,8 +36,6 @@ import java.util.ArrayList;
  *
  * @author Jeroen Gremmen
  * @since 0.7.0
- *
- * @see #formatMessage(GenericMessage, Object[])
  */
 public abstract class AbstractIndexedMessageFormatter<M> implements MessageFormatter<M>
 {
@@ -66,7 +64,7 @@ public abstract class AbstractIndexedMessageFormatter<M> implements MessageForma
 
   /**
    * <p>
-   *   This method replaces {@link #formatMessage(GenericMessage)}.
+   *   This method replaces {@link MessageFormatter#formatMessage(GenericMessage)}.
    * </p>
    * <p>
    *   Message parameters are collected into an {@code Object[]} by using the parameter name as an index in
@@ -77,7 +75,7 @@ public abstract class AbstractIndexedMessageFormatter<M> implements MessageForma
    *   Missing indices will be initialized as {@code null} in the resulting array.
    * </p>
    *
-   * @param message     message to format, never {@code null
+   * @param message     message to format, never {@code null}
    * @param parameters  indexed message parameters, never {@code null}
    *
    * @return  formatted message
