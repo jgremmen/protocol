@@ -16,7 +16,6 @@
 package de.sayayi.lib.protocol.formatter.structure;
 
 import de.sayayi.lib.protocol.Level;
-import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
 import de.sayayi.lib.protocol.TagSelector;
@@ -26,6 +25,7 @@ import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
 import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
+import static lombok.AccessLevel.PRIVATE;
 
 
 /**
@@ -35,10 +35,13 @@ import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
  * @since 0.1.0
  */
 @SuppressWarnings("unused")
-@AllArgsConstructor
-public class TechnicalProtocolFormatter<M> extends AbstractTreeProtocolFormatter<M>
+@AllArgsConstructor(access = PRIVATE)
+public final class TechnicalProtocolFormatter<M> extends AbstractTreeProtocolFormatter<M>
     implements ConfiguredProtocolFormatter<M,String>
 {
+  private static final ConfiguredProtocolFormatter<?,String> INSTANCE = new TechnicalProtocolFormatter<Object>();
+
+
   @Override
   public @NotNull Level getLevel() {
     return LOWEST;
@@ -46,13 +49,13 @@ public class TechnicalProtocolFormatter<M> extends AbstractTreeProtocolFormatter
 
 
   @Override
-  public @NotNull
-  TagSelector getTagSelector(@NotNull ProtocolFactory<M> protocolFactory) {
+  public @NotNull TagSelector getTagSelector(@NotNull ProtocolFactory<M> protocolFactory) {
     return protocolFactory.getDefaultTag().asSelector();
   }
 
 
-  public static @NotNull <M> String format(@NotNull Protocol<M> protocol) {
-    return protocol.format(new TechnicalProtocolFormatter<M>());
+  @SuppressWarnings("unchecked")
+  public static @NotNull <M> ConfiguredProtocolFormatter<M,String> getInstance() {
+    return (ConfiguredProtocolFormatter<M,String>)INSTANCE;
   }
 }

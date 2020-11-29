@@ -17,6 +17,7 @@ package de.sayayi.lib.protocol;
 
 import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
 import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
+import de.sayayi.lib.protocol.formatter.structure.TechnicalProtocolFormatter;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -325,6 +326,10 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
   /**
+   * Formats this protocol using the {@link TechnicalProtocolFormatter}.
+   *
+   * @return  technical representation of this protocol
+   * 
    * @since 0.7.0
    */
   @NotNull String toStringTree();
