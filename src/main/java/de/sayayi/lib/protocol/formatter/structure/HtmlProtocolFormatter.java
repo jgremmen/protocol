@@ -18,6 +18,7 @@ package de.sayayi.lib.protocol.formatter.structure;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol.MessageWithLevel;
 import de.sayayi.lib.protocol.ProtocolFactory;
+import de.sayayi.lib.protocol.ProtocolFactory.MessageFormatter;
 import de.sayayi.lib.protocol.ProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupEndEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
@@ -56,7 +57,7 @@ import static org.unbescape.html.HtmlEscape.escapeHtml5;
 public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
 {
   private final StringBuilder html;
-  private ProtocolFactory.MessageFormatter<M> messageFormatter;
+  private MessageFormatter<M> messageFormatter;
 
 
   public HtmlProtocolFormatter() {
