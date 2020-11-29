@@ -16,7 +16,7 @@
 package de.sayayi.lib.protocol.formatter.message;
 
 import de.sayayi.lib.protocol.Protocol.GenericMessage;
-import de.sayayi.lib.protocol.formatter.MessageFormatter;
+import de.sayayi.lib.protocol.ProtocolFactory.MessageFormatter;
 
 import lombok.val;
 import lombok.var;

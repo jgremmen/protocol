@@ -18,6 +18,8 @@ package de.sayayi.lib.protocol;
 import de.sayayi.lib.protocol.processor.StringMessageProcessor;
 import de.sayayi.lib.protocol.spi.GenericProtocolFactory;
 
+import org.jetbrains.annotations.NotNull;
+
 
 /**
  * <p>
@@ -30,7 +32,7 @@ import de.sayayi.lib.protocol.spi.GenericProtocolFactory;
  */
 public class StringProtocolFactory extends GenericProtocolFactory<String>
 {
-  public StringProtocolFactory() {
-    super(StringMessageProcessor.INSTANCE);
+  public StringProtocolFactory(@NotNull MessageFormatter<String> messageFormatter) {
+    super(StringMessageProcessor.INSTANCE, messageFormatter);
   }
 }

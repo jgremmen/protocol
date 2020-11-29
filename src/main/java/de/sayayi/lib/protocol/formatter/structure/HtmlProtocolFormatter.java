@@ -17,12 +17,12 @@ package de.sayayi.lib.protocol.formatter.structure;
 
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol.MessageWithLevel;
-import de.sayayi.lib.protocol.ProtocolFormatter.InitializableProtocolFormatter;
+import de.sayayi.lib.protocol.ProtocolFactory;
+import de.sayayi.lib.protocol.ProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupEndEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.TagSelector;
-import de.sayayi.lib.protocol.formatter.MessageFormatter;
 
 import lombok.val;
 import lombok.var;
@@ -53,16 +53,23 @@ import static org.unbescape.html.HtmlEscape.escapeHtml5;
  * @since 0.2.0
  */
 @SuppressWarnings("unused")
-public class HtmlProtocolFormatter<M> implements InitializableProtocolFormatter<M,String>
+public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
 {
-  private final MessageFormatter<M> messageFormatter;
   private final StringBuilder html;
+  private ProtocolFactory.MessageFormatter<M> messageFormatter;
 
 
-  public HtmlProtocolFormatter(@NotNull MessageFormatter<M> messageFormatter)
-  {
-    this.messageFormatter = messageFormatter;
+  public HtmlProtocolFormatter() {
     this.html = new StringBuilder();
+  }
+
+
+  @Override
+  public void init(@NotNull ProtocolFactory<M> factory, @NotNull Level level, @NotNull TagSelector tagSelector,
+                   int estimatedGroupDepth)
+  {
+    messageFormatter = factory.getMessageFormatter();
+    html.delete(0, html.length());
   }
 
 
@@ -220,12 +227,6 @@ public class HtmlProtocolFormatter<M> implements InitializableProtocolFormatter<
   }
 
 
-  @Override
-  public void init(@NotNull Level level, @NotNull TagSelector tagSelector, int estimatedGroupDepth) {
-    html.delete(0, html.length());
-  }
-
-
   @Contract(pure = true)
   protected @NotNull String classFromArray(String ... classNames)
   {
@@ -320,10 +321,8 @@ public class HtmlProtocolFormatter<M> implements InitializableProtocolFormatter<
     private final SortedMap<Level,String> levelIconMap;
 
 
-    public WithFontAwesome(@NotNull MessageFormatter<M> messageFormatter, @NotNull Map<Level,String> levelIconMap)
+    public WithFontAwesome(@NotNull Map<Level,String> levelIconMap)
     {
-      super(messageFormatter);
-
       this.levelIconMap = new TreeMap<Level,String>(SORT_DESCENDING);
       this.levelIconMap.putAll(levelIconMap);
     }

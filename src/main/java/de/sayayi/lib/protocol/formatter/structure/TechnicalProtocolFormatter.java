@@ -20,7 +20,8 @@ import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
 import de.sayayi.lib.protocol.TagSelector;
-import de.sayayi.lib.protocol.formatter.MessageFormatter;
+
+import lombok.AllArgsConstructor;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -34,15 +35,10 @@ import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
  * @since 0.1.0
  */
 @SuppressWarnings("unused")
+@AllArgsConstructor
 public class TechnicalProtocolFormatter<M> extends AbstractTreeProtocolFormatter<M>
     implements ConfiguredProtocolFormatter<M,String>
 {
-  @SuppressWarnings("WeakerAccess")
-  public TechnicalProtocolFormatter(@NotNull MessageFormatter<M> messageFormatter) {
-    super(messageFormatter);
-  }
-
-
   @Override
   public @NotNull Level getLevel() {
     return LOWEST;
@@ -56,8 +52,7 @@ public class TechnicalProtocolFormatter<M> extends AbstractTreeProtocolFormatter
   }
 
 
-  public static @NotNull <M> String format(@NotNull Protocol<M> protocol,
-                                           @NotNull MessageFormatter<M> messageFormatter) {
-    return protocol.format(new TechnicalProtocolFormatter<M>(messageFormatter));
+  public static @NotNull <M> String format(@NotNull Protocol<M> protocol) {
+    return protocol.format(new TechnicalProtocolFormatter<M>());
   }
 }

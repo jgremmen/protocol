@@ -16,6 +16,7 @@
 package de.sayayi.lib.protocol;
 
 import de.sayayi.lib.protocol.Level.Shared;
+import de.sayayi.lib.protocol.formatter.message.ToStringMessageFormatter;
 import org.junit.Test;
 
 import lombok.val;
@@ -38,7 +39,7 @@ public class GroupLevelLimitTest
   @Test
   public void testLevelLimit1()
   {
-    val factory = new StringProtocolFactory();
+    val factory = new StringProtocolFactory(ToStringMessageFormatter.getInstance());
     val gp = factory.createProtocol().createGroup();
 
     gp.setGroupMessage("Test");
@@ -64,7 +65,7 @@ public class GroupLevelLimitTest
   @Test
   public void testLevelLimitPropagation()
   {
-    val factory = new StringProtocolFactory();
+    val factory = new StringProtocolFactory(ToStringMessageFormatter.getInstance());
     val p = factory.createProtocol();
     val gp1 = p.createGroup().createGroup();
     val gp2 = gp1.createGroup().createGroup();

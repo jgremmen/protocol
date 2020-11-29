@@ -25,7 +25,6 @@ import de.sayayi.lib.protocol.exception.ProtocolException;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.val;
 import lombok.var;
 
@@ -62,19 +61,21 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
   private final Map<String,TagDefImpl> registeredTags = new TreeMap<String,TagDefImpl>();
   private final int id;
   @Getter private final TagDef defaultTag;
-
-  @Getter @Setter private MessageProcessor<M> messageProcessor;
+  @Getter private final MessageProcessor<M> messageProcessor;
+  @Getter private final MessageFormatter<M> messageFormatter;
 
   protected final Map<String,Object> defaultParameterValues;
 
 
   @SuppressWarnings({ "java:S2583", "ConstantConditions" })
-  public GenericProtocolFactory(@NotNull MessageProcessor<M> messageProcessor)
+  public GenericProtocolFactory(@NotNull MessageProcessor<M> messageProcessor,
+                                @NotNull MessageFormatter<M> messageFormatter)
   {
     if (messageProcessor == null)
       throw new NullPointerException("messageProcessur must not be null");
 
-    setMessageProcessor(messageProcessor);
+    this.messageProcessor = messageProcessor;
+    this.messageFormatter = messageFormatter;
 
     id = FACTORY_ID.incrementAndGet();
 
@@ -293,8 +294,8 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 
 
     @Override
-    public void setMessageProcessor(@NotNull MessageProcessor<M> messageProcessor) {
-      GenericProtocolFactory.this.setMessageProcessor(messageProcessor);
+    public @NotNull MessageFormatter<M> getMessageFormatter() {
+      return GenericProtocolFactory.this.getMessageFormatter();
     }
   }
 

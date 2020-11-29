@@ -21,6 +21,7 @@ import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -218,6 +219,12 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
   /**
+   * @since 0.7.0
+   */
+  @NotNull Iterator<ProtocolGroup<M>> groupIterator();
+
+
+  /**
    * Formats this protocol using the given {@code formatter} iterating over all elements matching {@code level}.
    *
    * @param formatter  protocol formatter to use for formatting this protocol
@@ -315,6 +322,12 @@ public interface Protocol<M> extends ProtocolQueryable
    */
   @Contract(pure = true)
   @NotNull Set<ProtocolGroup<M>> findGroupsByRegex(@NotNull String regex);
+
+
+  /**
+   * @since 0.7.0
+   */
+  @NotNull String toStringTree();
 
 
 

@@ -15,6 +15,7 @@
  */
 package de.sayayi.lib.protocol;
 
+import de.sayayi.lib.protocol.Protocol.GenericMessage;
 import de.sayayi.lib.protocol.TagDef.MatchCondition;
 
 import org.jetbrains.annotations.Contract;
@@ -56,19 +57,14 @@ public interface ProtocolFactory<M>
 
 
   /**
-   * <p>
-   *   Sets the message processor for all protocol instances created from this factory.
-   * </p>
-   * <p>
-   *   The message processor takes effect for all new messages protocolled. Existing messages are not
-   *   affected by changes made to the message processor.
-   * </p>
+   * Returns the message formatter associated with this factory.
    *
-   * @param messageProcessor  message processor, never {@code null}
+   * @return  message formatter, never {@code null}
    *
    * @since 0.7.0
    */
-  void setMessageProcessor(@NotNull MessageProcessor<M> messageProcessor);
+  @Contract(pure = true)
+  @NotNull MessageFormatter<M> getMessageFormatter();
 
 
   /**
@@ -184,5 +180,28 @@ public interface ProtocolFactory<M>
   {
     @Contract(pure = true)
     @NotNull M processMessage(@NotNull String message);
+  }
+
+
+
+
+  /**
+   * This class formats the internal message representation into a {@code String}.
+   *
+   * @param <M>  internal message object type
+   *
+   * @author Jeroen Gremmen
+   * @since 0.7.0
+   */
+  interface MessageFormatter<M>
+  {
+    /**
+     * Formats the internal message representation into a {@code String}.
+     *
+     * @param message  Message to format
+     *
+     * @return  formatted message, never {@code null}
+     */
+    @NotNull String formatMessage(@NotNull GenericMessage<M> message);
   }
 }

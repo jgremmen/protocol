@@ -16,12 +16,12 @@
 package de.sayayi.lib.protocol.formatter.structure;
 
 import de.sayayi.lib.protocol.Level;
-import de.sayayi.lib.protocol.ProtocolFormatter.InitializableProtocolFormatter;
+import de.sayayi.lib.protocol.ProtocolFactory;
+import de.sayayi.lib.protocol.ProtocolFactory.MessageFormatter;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.formatter.AbstractProtocolFormatter;
-import de.sayayi.lib.protocol.formatter.MessageFormatter;
 
 import lombok.val;
 
@@ -34,9 +34,7 @@ import org.jetbrains.annotations.NotNull;
  * @author Jeroen Gremmen
  * @since 0.1.0
  */
-public abstract class AbstractTreeProtocolFormatter<M>
-    extends AbstractProtocolFormatter<M,String>
-    implements InitializableProtocolFormatter<M,String>
+public abstract class AbstractTreeProtocolFormatter<M> extends AbstractProtocolFormatter<M,String>
 {
   private static final String GRAPH_ROOT_NODE_PREFIX = "\u25a0\u2500\u2500";
   private static final String GRAPH_MIDDLE_NODE_PREFIX = "\u251c\u2500\u2500";
@@ -47,24 +45,25 @@ public abstract class AbstractTreeProtocolFormatter<M>
   private static final String GRAPH_LEVEL_SEPARATOR_BAR = "\u2502  ";
   private static final String GRAPH_LEVEL_SEPARATOR_EMPTY = "   ";
 
-  private final MessageFormatter<M> messageFormatter;
   private final StringBuilder result;
 
+  protected MessageFormatter<M> messageFormatter;
   private String[] prefixes;
 
 
   @SuppressWarnings("WeakerAccess")
-  protected AbstractTreeProtocolFormatter(@NotNull MessageFormatter<M> messageFormatter)
-  {
-    this.messageFormatter = messageFormatter;
+  protected AbstractTreeProtocolFormatter() {
     this.result = new StringBuilder();
   }
 
 
   @Override
-  public void init(@NotNull Level level, @NotNull TagSelector tagSelector, int estimatedGroupDepth)
+  public void init(@NotNull ProtocolFactory<M> factory, @NotNull Level level, @NotNull TagSelector tagSelector,
+                   int estimatedGroupDepth)
   {
     result.delete(0, result.length());
+
+    messageFormatter = factory.getMessageFormatter();
 
     prefixes = new String[estimatedGroupDepth + 1];
     prefixes[0] = "";

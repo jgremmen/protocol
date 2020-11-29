@@ -15,6 +15,7 @@
  */
 package de.sayayi.lib.protocol;
 
+import de.sayayi.lib.protocol.formatter.message.ToStringMessageFormatter;
 import org.junit.Test;
 
 import lombok.val;
@@ -33,7 +34,7 @@ public class ProtocolTest
   @Test
   public void testBasics()
   {
-    val factory = new StringProtocolFactory();
+    val factory = new StringProtocolFactory(ToStringMessageFormatter.getInstance());
 
     factory.createTag("ui").match(AT_LEAST, INFO)
            .createTag("technical").dependsOn("ui").implies("system");

@@ -17,6 +17,7 @@ package de.sayayi.lib.protocol;
 
 import de.sayayi.lib.protocol.Level.Shared;
 import de.sayayi.lib.protocol.exception.ProtocolException;
+import de.sayayi.lib.protocol.formatter.message.ToStringMessageFormatter;
 import org.junit.Test;
 
 import lombok.val;
@@ -43,7 +44,7 @@ public class ProtocolGroupTest
   @Test
   public void testIsHeaderVisible()
   {
-    val factory = new StringProtocolFactory();
+    val factory = new StringProtocolFactory(ToStringMessageFormatter.getInstance());
     val gp = factory.createProtocol().createGroup();
 
     assertFalse(gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).isHeaderVisible(LOWEST, Tag.any()));
@@ -101,7 +102,7 @@ public class ProtocolGroupTest
   @Test
   public void testHasVisualEntry()
   {
-    val factory = new StringProtocolFactory();
+    val factory = new StringProtocolFactory(ToStringMessageFormatter.getInstance());
     val gp = factory.createProtocol().createGroup();
 
     assertEquals(0, gp.getVisibleEntryCount(true, Shared.LOWEST, Tag.any()));
@@ -138,7 +139,7 @@ public class ProtocolGroupTest
   @Test
   public void testEffectiveVisibility()
   {
-    val factory = new StringProtocolFactory();
+    val factory = new StringProtocolFactory(ToStringMessageFormatter.getInstance());
     val gp = factory.createProtocol().createGroup();
 
     // no group header
@@ -164,7 +165,7 @@ public class ProtocolGroupTest
   @Test
   public void testFindGroupByName()
   {
-    val factory = new StringProtocolFactory();
+    val factory = new StringProtocolFactory(ToStringMessageFormatter.getInstance());
     val protocol = factory.createProtocol();
     protocol.createGroup().setName("group-1");
     val gp2 = protocol.createGroup().setName("group-2");
@@ -180,7 +181,7 @@ public class ProtocolGroupTest
   @Test
   public void testFindGroupByRegex()
   {
-    val factory = new StringProtocolFactory();
+    val factory = new StringProtocolFactory(ToStringMessageFormatter.getInstance());
     val protocol = factory.createProtocol();
     protocol.createGroup().setName("group-1");
     val gp2 = protocol.createGroup().setName("group-2");
@@ -200,7 +201,8 @@ public class ProtocolGroupTest
   public void testSetVisibiityNull()
   {
     //noinspection ConstantConditions
-    new StringProtocolFactory().createProtocol().createGroup().setVisibility(null);
+    new StringProtocolFactory(ToStringMessageFormatter.getInstance())
+        .createProtocol().createGroup().setVisibility(null);
   }
 
 
@@ -208,14 +210,15 @@ public class ProtocolGroupTest
   public void testLevelLimitNull()
   {
     //noinspection ConstantConditions
-    new StringProtocolFactory().createProtocol().createGroup().setLevelLimit(null);
+    new StringProtocolFactory(ToStringMessageFormatter.getInstance())
+        .createProtocol().createGroup().setLevelLimit(null);
   }
 
 
   @Test(expected = ProtocolException.class)
   public void testDuplicateGroupName()
   {
-    val factory = new StringProtocolFactory();
+    val factory = new StringProtocolFactory(ToStringMessageFormatter.getInstance());
     val protocol = factory.createProtocol();
     protocol.createGroup().setName("group-1");
     val gp2 = protocol.createGroup().setName("group-2");

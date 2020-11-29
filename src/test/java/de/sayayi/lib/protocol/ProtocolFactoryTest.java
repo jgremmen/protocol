@@ -17,6 +17,7 @@ package de.sayayi.lib.protocol;
 
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.exception.ProtocolException;
+import de.sayayi.lib.protocol.formatter.message.ToStringMessageFormatter;
 import de.sayayi.lib.protocol.spi.GenericProtocolFactory;
 import org.junit.Test;
 
@@ -47,14 +48,14 @@ public class ProtocolFactoryTest
 {
   @Test(expected = ProtocolException.class)
   public void testCreateEmptyTag() {
-    new StringProtocolFactory().createTag("");
+    new StringProtocolFactory(ToStringMessageFormatter.getInstance()).createTag("");
   }
 
 
   @Test(expected = ProtocolException.class)
   public void testCreateDuplicateTag()
   {
-    val factory = new StringProtocolFactory();
+    val factory = new StringProtocolFactory(ToStringMessageFormatter.getInstance());
     factory.createTag("tag");
     factory.createTag("tag");
   }
@@ -62,20 +63,20 @@ public class ProtocolFactoryTest
 
   @Test(expected = ProtocolException.class)
   public void testModifyEmptyTag() {
-    new StringProtocolFactory().modifyTag("");
+    new StringProtocolFactory(ToStringMessageFormatter.getInstance()).modifyTag("");
   }
 
 
   @Test(expected = ProtocolException.class)
   public void testModifyUnknownTag() {
-    new StringProtocolFactory().modifyTag("unknown");
+    new StringProtocolFactory(ToStringMessageFormatter.getInstance()).modifyTag("unknown");
   }
 
 
   @Test
   public void testModifyKnownTag()
   {
-    val factory = new StringProtocolFactory();
+    val factory = new StringProtocolFactory(ToStringMessageFormatter.getInstance());
     factory.createTag("tag");
 
     assertNotNull(factory.modifyTag("tag"));
@@ -85,7 +86,7 @@ public class ProtocolFactoryTest
   @Test
   public void testDefaultParameters()
   {
-    val factory = new StringProtocolFactory() {{
+    val factory = new StringProtocolFactory(ToStringMessageFormatter.getInstance()) {{
         defaultParameterValues.put("name", "protocol factory");
       }
     };
@@ -97,7 +98,7 @@ public class ProtocolFactoryTest
   @Test
   public void testGetTags()
   {
-    val factory = new StringProtocolFactory();
+    val factory = new StringProtocolFactory(ToStringMessageFormatter.getInstance());
 
     val tagDef1 = factory.createTag("tag1").getTagDef();
     val tagDefUI = factory.createTag("UI").getTagDef();
@@ -125,7 +126,7 @@ public class ProtocolFactoryTest
   @Test
   public void testTagByName()
   {
-    val factory = new StringProtocolFactory();
+    val factory = new StringProtocolFactory(ToStringMessageFormatter.getInstance());
 
     val tagDef1 = factory.createTag("tag1").getTagDef();
 
@@ -153,7 +154,7 @@ public class ProtocolFactoryTest
   @Test
   public void testTagMatch()
   {
-    val factory = new StringProtocolFactory();
+    val factory = new StringProtocolFactory(ToStringMessageFormatter.getInstance());
 
     val tagDefAtLeastInfo = factory.createTag("tag1").match(AT_LEAST, INFO).getTagDef();
 
@@ -197,7 +198,7 @@ public class ProtocolFactoryTest
   @Test
   public void testProcessMessage()
   {
-    val factory = new GenericProtocolFactory<String>(message -> message + "(ok)");
+    val factory = new GenericProtocolFactory<>(message -> message + "(ok)", ToStringMessageFormatter.getInstance());
     val protocol = factory.createProtocol().debug().message("msg");
     val iterator = protocol.iterator(LOWEST, Tag.any());
 
@@ -210,7 +211,7 @@ public class ProtocolFactoryTest
   @Test
   public void testToString()
   {
-    val factory = new StringProtocolFactory();
+    val factory = new StringProtocolFactory(ToStringMessageFormatter.getInstance());
     factory.createTag("XYZ1");
     factory.createTag("XYZ2");
 

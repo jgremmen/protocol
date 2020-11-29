@@ -31,6 +31,7 @@ import lombok.val;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -190,6 +191,12 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
+  public @NotNull Iterator<ProtocolGroup<M>> groupIterator() {
+    return protocol.groupIterator();
+  }
+
+
+  @Override
   public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level) {
     return protocol.format(formatter, level);
   }
@@ -247,5 +254,11 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
   @Override
   public @NotNull Set<ProtocolGroup<M>> findGroupsByRegex(@NotNull String regex) {
     return protocol.findGroupsByRegex(regex);
+  }
+
+
+  @Override
+  public @NotNull String toStringTree() {
+    return protocol.toStringTree();
   }
 }
