@@ -291,7 +291,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
 
   @Override
   public @NotNull String toStringTree() {
-    return TechnicalProtocolFormatter.format(this);
+    return format(TechnicalProtocolFormatter.<M>getInstance());
   }
 
 
@@ -345,6 +345,12 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
       findNext();
 
       return nextGroup;
+    }
+
+
+    @Override
+    public void remove() {
+      throw new UnsupportedOperationException();
     }
   }
 }

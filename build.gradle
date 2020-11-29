@@ -55,13 +55,13 @@ dependencies {
 }
 
 
-java {
+compileJava {
   sourceCompatibility = JavaVersion.VERSION_1_6
   targetCompatibility = JavaVersion.VERSION_1_6
 }
 
 
-test {
+compileTestJava {
   sourceCompatibility = JavaVersion.VERSION_1_8
   targetCompatibility = JavaVersion.VERSION_1_8
 }
