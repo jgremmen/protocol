@@ -1,6 +1,6 @@
 plugins {
-  id 'idea'
   id 'java-library'
+  id 'idea'
   id 'maven-publish'
   id 'nebula.optional-base' version '5.0.3'
   id 'jacoco'
