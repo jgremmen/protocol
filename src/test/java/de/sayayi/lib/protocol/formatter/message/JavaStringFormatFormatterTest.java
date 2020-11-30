@@ -63,11 +63,11 @@ public class JavaStringFormatFormatterTest
 
     val parameters = new HashMap<String,Object>();
     parameters.put("0", 3.141592);
-    parameters.put("dummy", "lorem ipsum");
+    parameters.put("dummy", "lorem ipsum");  // this parameter should be ignored properly
     parameters.put("3", "pi");
 
     when(message.getParameterValues()).thenReturn(parameters);
 
-    assertEquals("pi = 3.1415", formatter.formatMessage(message));
+    assertEquals("pi = 3.1416", formatter.formatMessage(message));
   }
 }
