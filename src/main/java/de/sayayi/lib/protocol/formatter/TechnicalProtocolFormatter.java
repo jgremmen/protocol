@@ -16,11 +16,14 @@
 package de.sayayi.lib.protocol.formatter;
 
 import de.sayayi.lib.protocol.Level;
+import de.sayayi.lib.protocol.Protocol.Message;
+import de.sayayi.lib.protocol.Protocol.MessageWithLevel;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
 import de.sayayi.lib.protocol.TagSelector;
 
 import lombok.AllArgsConstructor;
+import lombok.val;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -51,6 +54,18 @@ public final class TechnicalProtocolFormatter<M> extends AbstractTreeProtocolFor
   @Override
   public @NotNull TagSelector getTagSelector(@NotNull ProtocolFactory<M> protocolFactory) {
     return protocolFactory.getDefaultTag().asSelector();
+  }
+
+
+  @Override
+  protected String format(@NotNull MessageWithLevel<M> message)
+  {
+    val s = new StringBuilder(super.format(message)).append("  {level=").append(message.getLevel());
+
+    if (message instanceof Message)
+      s.append(",tags=").append(((Message<M>)message).getTagNames().toString().replace(", ", ","));
+
+    return s.append('}').toString();
   }
 
 
