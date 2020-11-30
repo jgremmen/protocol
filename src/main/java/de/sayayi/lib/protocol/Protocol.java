@@ -17,7 +17,7 @@ package de.sayayi.lib.protocol;
 
 import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
 import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
-import de.sayayi.lib.protocol.message.structure.TechnicalProtocolFormatter;
+import de.sayayi.lib.protocol.formatter.TechnicalProtocolFormatter;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
