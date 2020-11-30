@@ -41,8 +41,8 @@ dependencies {
   implementation "org.unbescape:unbescape:${unbescapeVersion}", optional
   implementation "de.sayayi.lib:message-format-nodep:${messageFormatVersion}", optional
 
-  compileOnly "org.projectlombok:lombok:${lombokVersion}"
-  compileOnly "org.jetbrains:annotations:${jetbrainsAnnotationsVersion}"
+  compileOnlyApi "org.projectlombok:lombok:${lombokVersion}"
+  compileOnlyApi "org.jetbrains:annotations:${jetbrainsAnnotationsVersion}"
 
   // test
   testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
