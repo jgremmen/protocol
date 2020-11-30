@@ -634,7 +634,7 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
   /**
-   * A protocol message with level and optional throwable.
+   * A protocol message with level, optional throwable and tags.
    *
    * @param <M>  internal message object type
    */
