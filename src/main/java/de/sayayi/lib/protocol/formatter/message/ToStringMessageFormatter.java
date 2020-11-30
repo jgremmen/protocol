@@ -37,6 +37,17 @@ public final class ToStringMessageFormatter<M> implements MessageFormatter<M>
   private static final MessageFormatter<Object> INSTANCE = new ToStringMessageFormatter<Object>();
 
 
+  /**
+   * This formatter returns the internal string message as is.
+   */
+  public static final MessageFormatter<String> IDENTITY = new MessageFormatter<String>() {
+    @Override
+    public @NotNull String formatMessage(@NotNull GenericMessage<String> message) {
+      return message.getMessage();
+    }
+  };
+
+
   @Override
   public @NotNull String formatMessage(@NotNull GenericMessage<M> message) {
     return message.getMessage().toString();

@@ -23,7 +23,7 @@ import lombok.var;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
+import static java.util.Arrays.copyOf;
 
 
 /**
@@ -43,7 +43,7 @@ public abstract class AbstractIndexedMessageFormatter<M> implements MessageForma
   @SuppressWarnings("java:S108")
   public final @NotNull String formatMessage(@NotNull GenericMessage<M> message)
   {
-    val parameters = new ArrayList<Object>();
+    var parameters = new Object[0];
 
     for(val parametersEntry: message.getParameterValues().entrySet())
     {
@@ -55,10 +55,15 @@ public abstract class AbstractIndexedMessageFormatter<M> implements MessageForma
       }
 
       if ((i >> 6) == 0)
-        parameters.set(i, parametersEntry.getValue());
+      {
+        if (i >= parameters.length)
+          parameters = copyOf(parameters, i + 1);
+
+        parameters[i] = parametersEntry.getValue();
+      }
     }
 
-    return formatMessage(message, parameters.toArray());
+    return formatMessage(message, parameters);
   }
 
 
