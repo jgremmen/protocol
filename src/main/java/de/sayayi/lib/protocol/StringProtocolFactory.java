@@ -15,10 +15,10 @@
  */
 package de.sayayi.lib.protocol;
 
-import de.sayayi.lib.protocol.formatter.message.JavaMessageFormatFormatter;
-import de.sayayi.lib.protocol.formatter.message.JavaStringFormatFormatter;
-import de.sayayi.lib.protocol.formatter.message.ToStringMessageFormatter;
-import de.sayayi.lib.protocol.processor.StringMessageProcessor;
+import de.sayayi.lib.protocol.message.formatter.JavaMessageFormatFormatter;
+import de.sayayi.lib.protocol.message.formatter.JavaStringFormatFormatter;
+import de.sayayi.lib.protocol.message.formatter.ToStringMessageFormatter;
+import de.sayayi.lib.protocol.message.processor.StringMessageProcessor;
 import de.sayayi.lib.protocol.spi.GenericProtocolFactory;
 
 import org.jetbrains.annotations.NotNull;

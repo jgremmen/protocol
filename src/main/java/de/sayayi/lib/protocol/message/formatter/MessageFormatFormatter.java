@@ -13,34 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.sayayi.lib.protocol.formatter.message;
+package de.sayayi.lib.protocol.message.formatter;
 
+import de.sayayi.lib.message.Message;
+import de.sayayi.lib.message.ParameterFactory;
 import de.sayayi.lib.protocol.Protocol.GenericMessage;
+import de.sayayi.lib.protocol.ProtocolFactory.MessageFormatter;
 
 import lombok.AllArgsConstructor;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Locale;
 
 
 /**
  * @author Jeroen Gremmen
  * @since 0.7.0
  *
- * @see String#format(Locale, String, Object...)
+ * @see Message#format(Message.Parameters)
  */
 @AllArgsConstructor
-public final class JavaStringFormatFormatter extends AbstractIndexedMessageFormatter<String>
+public final class MessageFormatFormatter implements MessageFormatter<Message>
 {
-  public static final JavaStringFormatFormatter INSTANCE = new JavaStringFormatFormatter(Locale.getDefault());
-
-  private final Locale locale;
+  private final ParameterFactory parameterFactory;
 
 
   @Override
-  protected @NotNull String formatMessage(@NotNull GenericMessage<String> message,
-                                          @NotNull Object[] parameters) {
-    return String.format(locale, message.getMessage(), parameters);
+  public @NotNull String formatMessage(@NotNull GenericMessage<Message> message) {
+    return message.getMessage().format(parameterFactory.with(message.getParameterValues()));
   }
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.sayayi.lib.protocol.processor;
+package de.sayayi.lib.protocol.message.processor;
 
 import de.sayayi.lib.message.Message;
 import de.sayayi.lib.message.MessageBundle;

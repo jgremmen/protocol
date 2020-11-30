@@ -32,7 +32,7 @@ import de.sayayi.lib.protocol.ProtocolIterator.ProtocolEnd;
 import de.sayayi.lib.protocol.ProtocolIterator.ProtocolStart;
 import de.sayayi.lib.protocol.Tag;
 import de.sayayi.lib.protocol.TagSelector;
-import de.sayayi.lib.protocol.formatter.structure.TechnicalProtocolFormatter;
+import de.sayayi.lib.protocol.message.structure.TechnicalProtocolFormatter;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

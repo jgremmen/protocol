@@ -17,6 +17,8 @@ package de.sayayi.lib.protocol;
 
 import de.sayayi.lib.protocol.Protocol.GenericMessage;
 import de.sayayi.lib.protocol.TagDef.MatchCondition;
+import de.sayayi.lib.protocol.message.processor.ResourceBundleMessageProcessor;
+import de.sayayi.lib.protocol.message.processor.StringMessageProcessor;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -171,8 +173,8 @@ public interface ProtocolFactory<M>
    *
    * @param <M>  internal message object type
    *
-   * @see de.sayayi.lib.protocol.processor.StringMessageProcessor
-   * @see de.sayayi.lib.protocol.processor.ResourceBundleMessageProcessor
+   * @see StringMessageProcessor
+   * @see ResourceBundleMessageProcessor
    *
    * @since 0.7.0
    */

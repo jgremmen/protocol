@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.sayayi.lib.protocol.formatter.message;
+package de.sayayi.lib.protocol.message.processor;
 
 import de.sayayi.lib.message.Message;
-import de.sayayi.lib.message.ParameterFactory;
-import de.sayayi.lib.protocol.Protocol.GenericMessage;
-import de.sayayi.lib.protocol.ProtocolFactory.MessageFormatter;
-
-import lombok.AllArgsConstructor;
+import de.sayayi.lib.message.MessageFactory;
+import de.sayayi.lib.message.exception.MessageParserException;
+import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
+import de.sayayi.lib.protocol.exception.ProtocolException;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -29,16 +28,20 @@ import org.jetbrains.annotations.NotNull;
  * @author Jeroen Gremmen
  * @since 0.7.0
  *
- * @see Message#format(Message.Parameters)
+ * @see MessageBundleMessageProcessor
  */
-@AllArgsConstructor
-public final class MessageFormatFormatter implements MessageFormatter<Message>
+public enum MessageFormatMessageProcessor implements MessageProcessor<Message>
 {
-  private final ParameterFactory parameterFactory;
+  INSTANCE;
 
 
   @Override
-  public @NotNull String formatMessage(@NotNull GenericMessage<Message> message) {
-    return message.getMessage().format(parameterFactory.with(message.getParameterValues()));
+  public @NotNull Message processMessage(@NotNull String messageFormat)
+  {
+    try {
+      return MessageFactory.parse(messageFormat);
+    } catch(MessageParserException ex) {
+      throw new ProtocolException("failed to process message: " + ex.getMessage(), ex);
+    }
   }
 }

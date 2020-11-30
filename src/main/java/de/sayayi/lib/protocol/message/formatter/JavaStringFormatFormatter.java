@@ -13,36 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.sayayi.lib.protocol.processor;
+package de.sayayi.lib.protocol.message.formatter;
 
-import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
-import de.sayayi.lib.protocol.exception.ProtocolException;
+import de.sayayi.lib.protocol.Protocol.GenericMessage;
 
 import lombok.AllArgsConstructor;
-import lombok.val;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Properties;
+import java.util.Locale;
 
 
 /**
  * @author Jeroen Gremmen
  * @since 0.7.0
+ *
+ * @see String#format(Locale, String, Object...)
  */
 @AllArgsConstructor
-public class PropertiesMessageProcessor implements MessageProcessor<String>
+public final class JavaStringFormatFormatter extends AbstractIndexedMessageFormatter<String>
 {
-  private final Properties properties;
+  public static final JavaStringFormatFormatter INSTANCE = new JavaStringFormatFormatter(Locale.getDefault());
+
+  private final Locale locale;
 
 
   @Override
-  public @NotNull String processMessage(@NotNull String key)
-  {
-    val message = properties.getProperty(key);
-    if (message == null)
-      throw new ProtocolException("missing property message for key '" + key + "'");
-
-    return message;
+  protected @NotNull String formatMessage(@NotNull GenericMessage<String> message,
+                                          @NotNull Object[] parameters) {
+    return String.format(locale, message.getMessage(), parameters);
   }
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.sayayi.lib.protocol.formatter.message;
+package de.sayayi.lib.protocol.message.formatter;
 
 import de.sayayi.lib.protocol.Protocol.GenericMessage;
 import org.junit.Test;
@@ -33,16 +33,16 @@ import static org.mockito.Mockito.when;
  * @author Jeroen Gremmen
  * @since 0.7.0
  */
-public class JavaStringFormatFormatterTest
+public class JavaMessageFormatFormatterTest
 {
   @Test
   public void testFormatMessageSimple()
   {
-    val formatter = new JavaStringFormatFormatter(ROOT);
+    val formatter = new JavaMessageFormatFormatter(ROOT);
 
     @SuppressWarnings("unchecked")
     val message = (GenericMessage<String>)mock(GenericMessage.class);
-    when(message.getMessage()).thenReturn("this is a %s");
+    when(message.getMessage()).thenReturn("this is a {0}");
 
     assertEquals("this is a message", formatter.formatMessage(message, new Object[] { "message" }));
 
@@ -55,11 +55,11 @@ public class JavaStringFormatFormatterTest
   @Test
   public void testFormatMessageComplex()
   {
-    val formatter = new JavaStringFormatFormatter(ROOT);
+    val formatter = new JavaMessageFormatFormatter(ROOT);
 
     @SuppressWarnings("unchecked")
     val message = (GenericMessage<String>)mock(GenericMessage.class);
-    when(message.getMessage()).thenReturn("%4$s = %1$6.4f");
+    when(message.getMessage()).thenReturn("{3} = {0,number,#.####}");
 
     val parameters = new HashMap<String,Object>();
     parameters.put("0", 3.141592);

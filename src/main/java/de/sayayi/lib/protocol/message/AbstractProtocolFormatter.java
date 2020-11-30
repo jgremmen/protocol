@@ -13,24 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.sayayi.lib.protocol.processor;
+package de.sayayi.lib.protocol.message;
 
-import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
+import de.sayayi.lib.protocol.ProtocolFormatter;
+import de.sayayi.lib.protocol.ProtocolIterator;
 
 import org.jetbrains.annotations.NotNull;
 
 
 /**
  * @author Jeroen Gremmen
- * @since 0.7.0
+ * @since 0.3.0
  */
-public enum StringMessageProcessor implements MessageProcessor<String>
+@Deprecated
+public abstract class AbstractProtocolFormatter<M,R> implements ProtocolFormatter<M,R>
 {
-  INSTANCE;
+  @Override
+  public void protocolStart() {
+  }
 
 
   @Override
-  public @NotNull String processMessage(@NotNull String message) {
-    return message;
+  public void protocolEnd() {
+  }
+
+
+  @Override
+  public void groupStart(@NotNull ProtocolIterator.GroupStartEntry<M> group) {
+  }
+
+
+  @Override
+  public void groupEnd(@NotNull ProtocolIterator.GroupEndEntry<M> groupEnd) {
   }
 }

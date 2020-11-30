@@ -17,7 +17,7 @@ package de.sayayi.lib.protocol;
 
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.exception.ProtocolException;
-import de.sayayi.lib.protocol.formatter.message.ToStringMessageFormatter;
+import de.sayayi.lib.protocol.message.formatter.ToStringMessageFormatter;
 import de.sayayi.lib.protocol.spi.GenericProtocolFactory;
 import org.junit.Test;
 

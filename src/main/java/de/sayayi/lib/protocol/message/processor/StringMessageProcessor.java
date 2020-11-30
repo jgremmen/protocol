@@ -13,13 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.sayayi.lib.protocol.processor;
+package de.sayayi.lib.protocol.message.processor;
 
-import de.sayayi.lib.message.Message;
-import de.sayayi.lib.message.MessageFactory;
-import de.sayayi.lib.message.exception.MessageParserException;
 import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
-import de.sayayi.lib.protocol.exception.ProtocolException;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -27,21 +23,14 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Jeroen Gremmen
  * @since 0.7.0
- *
- * @see MessageBundleMessageProcessor
  */
-public enum MessageFormatMessageProcessor implements MessageProcessor<Message>
+public enum StringMessageProcessor implements MessageProcessor<String>
 {
   INSTANCE;
 
 
   @Override
-  public @NotNull Message processMessage(@NotNull String messageFormat)
-  {
-    try {
-      return MessageFactory.parse(messageFormat);
-    } catch(MessageParserException ex) {
-      throw new ProtocolException("failed to process message: " + ex.getMessage(), ex);
-    }
+  public @NotNull String processMessage(@NotNull String message) {
+    return message;
   }
 }

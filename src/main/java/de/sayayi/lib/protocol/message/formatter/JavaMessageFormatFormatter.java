@@ -13,35 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.sayayi.lib.protocol.processor;
+package de.sayayi.lib.protocol.message.formatter;
 
-import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
-import de.sayayi.lib.protocol.exception.ProtocolException;
+import de.sayayi.lib.protocol.Protocol.GenericMessage;
 
 import lombok.AllArgsConstructor;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ResourceBundle;
+import java.text.MessageFormat;
+import java.util.Locale;
 
 
 /**
  * @author Jeroen Gremmen
  * @since 0.7.0
+ *
+ * @see MessageFormat#format(String, Object...)
  */
 @AllArgsConstructor
-public class ResourceBundleMessageProcessor implements MessageProcessor<String>
+public final class JavaMessageFormatFormatter extends AbstractIndexedMessageFormatter<String>
 {
-  private final ResourceBundle resourceBundle;
+  public static final JavaMessageFormatFormatter INSTANCE = new JavaMessageFormatFormatter(Locale.getDefault());
+
+  private final Locale locale;
 
 
   @Override
-  public @NotNull String processMessage(@NotNull String key)
-  {
-    try {
-      return resourceBundle.getString(key);
-    } catch(Exception ex) {
-      throw new ProtocolException("cannot process resource with key '" + key + "'", ex);
-    }
+  protected @NotNull String formatMessage(@NotNull GenericMessage<String> message,
+                                          @NotNull Object[] parameters) {
+    return new MessageFormat(message.getMessage(), locale).format(parameters);
   }
 }

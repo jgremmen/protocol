@@ -15,7 +15,7 @@
  */
 package de.sayayi.lib.protocol;
 
-import de.sayayi.lib.protocol.formatter.message.ToStringMessageFormatter;
+import de.sayayi.lib.protocol.message.formatter.ToStringMessageFormatter;
 import org.junit.Test;
 
 import lombok.val;

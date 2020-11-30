@@ -13,37 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.sayayi.lib.protocol.formatter;
+package de.sayayi.lib.protocol.message.processor;
 
-import de.sayayi.lib.protocol.ProtocolFormatter;
-import de.sayayi.lib.protocol.ProtocolIterator;
+import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
+import de.sayayi.lib.protocol.exception.ProtocolException;
+
+import lombok.AllArgsConstructor;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ResourceBundle;
 
 
 /**
  * @author Jeroen Gremmen
- * @since 0.3.0
+ * @since 0.7.0
  */
-@Deprecated
-public abstract class AbstractProtocolFormatter<M,R> implements ProtocolFormatter<M,R>
+@AllArgsConstructor
+public class ResourceBundleMessageProcessor implements MessageProcessor<String>
 {
-  @Override
-  public void protocolStart() {
-  }
+  private final ResourceBundle resourceBundle;
 
 
   @Override
-  public void protocolEnd() {
-  }
-
-
-  @Override
-  public void groupStart(@NotNull ProtocolIterator.GroupStartEntry<M> group) {
-  }
-
-
-  @Override
-  public void groupEnd(@NotNull ProtocolIterator.GroupEndEntry<M> groupEnd) {
+  public @NotNull String processMessage(@NotNull String key)
+  {
+    try {
+      return resourceBundle.getString(key);
+    } catch(Exception ex) {
+      throw new ProtocolException("cannot process resource with key '" + key + "'", ex);
+    }
   }
 }

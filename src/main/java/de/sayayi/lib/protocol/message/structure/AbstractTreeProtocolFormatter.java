@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.sayayi.lib.protocol.formatter.structure;
+package de.sayayi.lib.protocol.message.structure;
 
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.ProtocolFactory;
@@ -21,7 +21,7 @@ import de.sayayi.lib.protocol.ProtocolFactory.MessageFormatter;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.TagSelector;
-import de.sayayi.lib.protocol.formatter.AbstractProtocolFormatter;
+import de.sayayi.lib.protocol.message.AbstractProtocolFormatter;
 
 import lombok.val;
 
