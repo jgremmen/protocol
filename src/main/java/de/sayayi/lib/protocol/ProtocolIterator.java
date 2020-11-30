@@ -15,7 +15,7 @@
  */
 package de.sayayi.lib.protocol;
 
-import de.sayayi.lib.protocol.Protocol.MessageWithLevel;
+import de.sayayi.lib.protocol.Protocol.GenericMessageWithLevel;
 import de.sayayi.lib.protocol.ProtocolGroup.Visibility;
 import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
 
@@ -228,7 +228,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
      */
     @Override
     @Contract(pure = true)
-    @NotNull MessageWithLevel<M> getGroupMessage();
+    @NotNull GenericMessageWithLevel<M> getGroupMessage();
 
 
     /**

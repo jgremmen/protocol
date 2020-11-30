@@ -619,7 +619,7 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @param <M>  internal message object type
    */
-  interface MessageWithLevel<M> extends GenericMessage<M>
+  interface GenericMessageWithLevel<M> extends GenericMessage<M>
   {
     /**
      * Returns the level for this message.
@@ -638,7 +638,7 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @param <M>  internal message object type
    */
-  interface Message<M> extends MessageWithLevel<M>
+  interface Message<M> extends GenericMessageWithLevel<M>
   {
     /**
      * Returns the throwable associated with the message.

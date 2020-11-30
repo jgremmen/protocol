@@ -16,7 +16,7 @@
 package de.sayayi.lib.protocol.formatter;
 
 import de.sayayi.lib.protocol.Level;
-import de.sayayi.lib.protocol.Protocol.MessageWithLevel;
+import de.sayayi.lib.protocol.Protocol.GenericMessageWithLevel;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolFactory.MessageFormatter;
 import de.sayayi.lib.protocol.ProtocolFormatter;
@@ -184,25 +184,25 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
 
 
   @Contract(pure = true)
-  protected String groupHeaderLiClass(@NotNull MessageWithLevel<M> message) {
+  protected String groupHeaderLiClass(@NotNull GenericMessageWithLevel<M> message) {
     return null;
   }
 
 
   @Contract(pure = true)
-  protected String groupHeaderLiSpanClass(@NotNull MessageWithLevel<M> message) {
+  protected String groupHeaderLiSpanClass(@NotNull GenericMessageWithLevel<M> message) {
     return null;
   }
 
 
   @Contract(pure = true)
-  protected @NotNull String groupHeaderPrefixHtml(@NotNull MessageWithLevel<M> message) {
+  protected @NotNull String groupHeaderPrefixHtml(@NotNull GenericMessageWithLevel<M> message) {
     return "";
   }
 
 
   @Contract(pure = true)
-  protected @NotNull String groupHeaderSuffixHtml(@NotNull MessageWithLevel<M> message) {
+  protected @NotNull String groupHeaderSuffixHtml(@NotNull GenericMessageWithLevel<M> message) {
     return "";
   }
 
@@ -348,7 +348,7 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
 
 
     @Override
-    protected @NotNull String groupHeaderPrefixHtml(@NotNull MessageWithLevel<M> message) {
+    protected @NotNull String groupHeaderPrefixHtml(@NotNull GenericMessageWithLevel<M> message) {
       return htmlPart(getIconClassName(message));
     }
 
@@ -360,7 +360,7 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
 
 
     @Contract(pure = true)
-    protected String getIconClassName(@NotNull MessageWithLevel<M> message)
+    protected String getIconClassName(@NotNull GenericMessageWithLevel<M> message)
     {
       val level = message.getLevel();
       val iconClassName = levelIconMap.get(level);

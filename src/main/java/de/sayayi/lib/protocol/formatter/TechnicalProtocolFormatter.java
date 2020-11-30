@@ -16,8 +16,8 @@
 package de.sayayi.lib.protocol.formatter;
 
 import de.sayayi.lib.protocol.Level;
+import de.sayayi.lib.protocol.Protocol.GenericMessageWithLevel;
 import de.sayayi.lib.protocol.Protocol.Message;
-import de.sayayi.lib.protocol.Protocol.MessageWithLevel;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
 import de.sayayi.lib.protocol.TagSelector;
@@ -58,7 +58,7 @@ public final class TechnicalProtocolFormatter<M> extends AbstractTreeProtocolFor
 
 
   @Override
-  protected String format(@NotNull MessageWithLevel<M> message)
+  protected String format(@NotNull GenericMessageWithLevel<M> message)
   {
     val s = new StringBuilder(super.format(message)).append("  {level=").append(message.getLevel());
 

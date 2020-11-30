@@ -18,7 +18,7 @@ package de.sayayi.lib.protocol.spi;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.Protocol.GenericMessage;
-import de.sayayi.lib.protocol.Protocol.MessageWithLevel;
+import de.sayayi.lib.protocol.Protocol.GenericMessageWithLevel;
 import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.TagSelector;
@@ -548,7 +548,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
   private static class GroupStartEntryImpl<M> extends RankingDepthEntryImpl<M> implements GroupStartEntry<M>
   {
-    @Getter private final MessageWithLevel<M> groupMessage;
+    @Getter private final GenericMessageWithLevel<M> groupMessage;
     @Getter private final int messageCount;
 
 
@@ -557,7 +557,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     {
       super(depth, first, last);
 
-      this.groupMessage = new MessageWithLevel<M>() {
+      this.groupMessage = new GenericMessageWithLevel<M>() {
         @Override public @NotNull Level getLevel() { return level; }
         @Override public @NotNull M getMessage() { return groupMessage.getMessage(); }
         @Override public @NotNull Map<String,Object> getParameterValues() { return groupMessage.getParameterValues(); }
