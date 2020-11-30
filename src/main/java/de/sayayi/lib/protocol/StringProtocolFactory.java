@@ -15,10 +15,15 @@
  */
 package de.sayayi.lib.protocol;
 
+import de.sayayi.lib.protocol.formatter.message.JavaMessageFormatFormatter;
+import de.sayayi.lib.protocol.formatter.message.JavaStringFormatFormatter;
+import de.sayayi.lib.protocol.formatter.message.ToStringMessageFormatter;
 import de.sayayi.lib.protocol.processor.StringMessageProcessor;
 import de.sayayi.lib.protocol.spi.GenericProtocolFactory;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.text.MessageFormat;
 
 
 /**
@@ -34,5 +39,41 @@ public class StringProtocolFactory extends GenericProtocolFactory<String>
 {
   public StringProtocolFactory(@NotNull MessageFormatter<String> messageFormatter) {
     super(StringMessageProcessor.INSTANCE, messageFormatter);
+  }
+
+
+  /**
+   * <p>
+   *   This string protocol factory formats messages as is without parameter substitution.
+   * </p>
+   *
+   * @since 0.7.0
+   */
+  public static StringProtocolFactory createPlainTextFactory() {
+    return new StringProtocolFactory(ToStringMessageFormatter.IDENTITY);
+  }
+
+
+  /**
+   * <p>
+   *   This string protocol factory formats messages using {@link MessageFormat#format(String, Object...)}.
+   * </p>
+   *
+   * @since 0.7.0
+   */
+  public static StringProtocolFactory createJavaMessageFormatFactory() {
+    return new StringProtocolFactory(JavaMessageFormatFormatter.INSTANCE);
+  }
+
+
+  /**
+   * <p>
+   *   This string protocol factory formats messages using {@link String#format(String, Object...)}.
+   * </p>
+   *
+   * @since 0.7.0
+   */
+  public static StringProtocolFactory createJavaStringFormatFactory() {
+    return new StringProtocolFactory(JavaStringFormatFormatter.INSTANCE);
   }
 }

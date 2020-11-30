@@ -32,7 +32,7 @@ public class TagDefBuilderTest
   @Test(expected = NullPointerException.class)
   public void testMatchNullCondition()
   {
-    new StringProtocolFactory(ToStringMessageFormatter.getInstance())
+    new StringProtocolFactory(ToStringMessageFormatter.IDENTITY)
         .createTag("tag").match(null, Level.Shared.INFO);
   }
 
@@ -40,7 +40,7 @@ public class TagDefBuilderTest
   @Test(expected = NullPointerException.class)
   public void testMatchNullLevel()
   {
-    new StringProtocolFactory(ToStringMessageFormatter.getInstance())
+    new StringProtocolFactory(ToStringMessageFormatter.IDENTITY)
         .createTag("tag").match(TagDef.MatchCondition.AT_LEAST, null);
   }
 
@@ -48,7 +48,7 @@ public class TagDefBuilderTest
   @Test
   public void testImplies()
   {
-    val factory = new StringProtocolFactory(ToStringMessageFormatter.getInstance());
+    val factory = new StringProtocolFactory(ToStringMessageFormatter.IDENTITY);
     val tagDefC = factory.createTag("C").getTagDef();
     val tagDefB = factory.createTag("B").getTagDef();
     val tagDefA = factory.createTag("A").implies("B", "C").getTagDef();
@@ -64,7 +64,7 @@ public class TagDefBuilderTest
   @Test
   public void testFactoryDelegate()
   {
-    val factory = new StringProtocolFactory(ToStringMessageFormatter.getInstance());
+    val factory = new StringProtocolFactory(ToStringMessageFormatter.IDENTITY);
     val tag = factory.createTag("tag");
 
     tag.createProtocol();
@@ -82,7 +82,7 @@ public class TagDefBuilderTest
   @Test(expected = NullPointerException.class)
   public void testTagMatches()
   {
-    val factory = new StringProtocolFactory(ToStringMessageFormatter.getInstance());
+    val factory = new StringProtocolFactory(ToStringMessageFormatter.IDENTITY);
     factory.createTag("tag")
         .match(TagDef.MatchCondition.EQUAL, Level.Shared.INFO)
         .getTagDef()
@@ -93,7 +93,7 @@ public class TagDefBuilderTest
   @Test
   public void testTagToString()
   {
-    val factory = new StringProtocolFactory(ToStringMessageFormatter.getInstance());
+    val factory = new StringProtocolFactory(ToStringMessageFormatter.IDENTITY);
 
     assertTrue(factory
         .createTag("T1")

@@ -18,7 +18,6 @@ package de.sayayi.lib.protocol;
 import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
-import de.sayayi.lib.protocol.formatter.message.ToStringMessageFormatter;
 import org.junit.Test;
 
 import lombok.val;
@@ -42,7 +41,7 @@ public class ProtocolIteratorTest
   @Test
   public void testDepth()
   {
-    val factory = new StringProtocolFactory(ToStringMessageFormatter.getInstance());
+    val factory = StringProtocolFactory.createPlainTextFactory();
     val protocol = factory.createProtocol();
 
     ProtocolGroup<String> grp1, grp2;
@@ -120,7 +119,7 @@ public class ProtocolIteratorTest
   @Test
   public void testGroupGroup()
   {
-    val factory = new StringProtocolFactory(ToStringMessageFormatter.getInstance());
+    val factory = StringProtocolFactory.createPlainTextFactory();
     val protocol = factory.createProtocol();
 
     protocol.createGroup().setGroupMessage("grp #1, header")
@@ -162,7 +161,7 @@ public class ProtocolIteratorTest
   @Test
   public void testNoMessages()
   {
-    val factory = new StringProtocolFactory(ToStringMessageFormatter.getInstance());
+    val factory = StringProtocolFactory.createPlainTextFactory();
     val protocol = factory.createProtocol().debug().message("msg");
     val iterator = protocol.iterator(ERROR, Tag.any());
 
@@ -177,7 +176,7 @@ public class ProtocolIteratorTest
   @Test
   public void testSingleMessage()
   {
-    val factory = new StringProtocolFactory(ToStringMessageFormatter.getInstance());
+    val factory = StringProtocolFactory.createPlainTextFactory();
     val protocol = factory.createProtocol().debug().message("msg #1");
     val iterator = protocol.iterator(LOWEST, Tag.any());
 
@@ -206,7 +205,7 @@ public class ProtocolIteratorTest
   @Test
   public void testMessagesOnly()
   {
-    val factory = new StringProtocolFactory(ToStringMessageFormatter.getInstance());
+    val factory = StringProtocolFactory.createPlainTextFactory();
     val protocol = factory.createProtocol();
 
     protocol.debug().message("msg #1")
@@ -262,7 +261,7 @@ public class ProtocolIteratorTest
   @Test
   public void testBug1()
   {
-    val factory = new StringProtocolFactory(ToStringMessageFormatter.getInstance());
+    val factory = StringProtocolFactory.createPlainTextFactory();
     val protocol = factory.createProtocol().createGroup();
 
     protocol.setVisibility(SHOW_HEADER_ALWAYS)

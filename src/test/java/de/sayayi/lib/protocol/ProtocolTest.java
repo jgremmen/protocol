@@ -34,7 +34,7 @@ public class ProtocolTest
   @Test
   public void testBasics()
   {
-    val factory = new StringProtocolFactory(ToStringMessageFormatter.getInstance());
+    val factory = new StringProtocolFactory(ToStringMessageFormatter.IDENTITY);
 
     factory.createTag("ui").match(AT_LEAST, INFO)
            .createTag("technical").dependsOn("ui").implies("system");
