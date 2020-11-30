@@ -647,6 +647,17 @@ public interface Protocol<M> extends ProtocolQueryable
      */
     @Contract(pure = true)
     Throwable getThrowable();
+
+
+    /**
+     * Returns a set containing all tag names defined for this message.
+     *
+     * @return  set containing all tag names, never {@code null}
+     *
+     * @since 0.7.0
+     */
+    @Contract(pure = true, value = "-> new")
+    @NotNull Set<String> getTagNames();
   }
 
 

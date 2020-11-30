@@ -38,17 +38,7 @@ public interface ProtocolEntry<M> extends ProtocolQueryable
    *
    * @param <M>  internal message object type
    */
-  @SuppressWarnings("squid:S2176")
-  interface Message<M> extends ProtocolEntry<M>, Protocol.Message<M>
-  {
-    /**
-     * Returns a set containing all tags defined for this message.
-     *
-     * @return  set containing all tags, never {@code null}
-     */
-    @SuppressWarnings("unused")
-    @Contract(pure = true, value = "-> new")
-    @NotNull Set<String> getTags();
+  interface Message<M> extends ProtocolEntry<M>, Protocol.Message<M> {
   }
 
 

@@ -32,10 +32,12 @@ import lombok.var;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.FLATTEN;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ALWAYS;
@@ -351,8 +353,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
 
-  private static class MessageEntryImpl<M> extends RankingDepthEntryImpl<M>
-      implements MessageEntry<M>
+  private static class MessageEntryImpl<M> extends RankingDepthEntryImpl<M> implements MessageEntry<M>
   {
     final Protocol.Message<M> message;
 
@@ -375,6 +376,12 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     @Override
     public Throwable getThrowable() {
       return message.getThrowable();
+    }
+
+
+    @Override
+    public @NotNull Set<String> getTagNames() {
+      return message.getTagNames();
     }
 
 
@@ -412,8 +419,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
 
-  private static class GroupMessageEntryImpl<M> extends RankingDepthEntryImpl<M>
-      implements GroupMessageEntry<M>
+  private static class GroupMessageEntryImpl<M> extends RankingDepthEntryImpl<M> implements GroupMessageEntry<M>
   {
     final Level level;
     final GenericMessage<M> groupMessage;
@@ -451,6 +457,12 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     @Contract(value = "-> null", pure = true)
     public Throwable getThrowable() {
       return null;
+    }
+
+
+    @Override
+    public @NotNull Set<String> getTagNames() {
+      return Collections.emptySet();
     }
 
 

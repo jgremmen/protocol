@@ -57,7 +57,7 @@ final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements
 
 
   @Override
-  public @NotNull Set<String> getTags() {
+  public @NotNull Set<String> getTagNames() {
     return Collections.unmodifiableSet(tags);
   }
 

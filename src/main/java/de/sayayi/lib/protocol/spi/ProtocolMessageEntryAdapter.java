@@ -44,12 +44,6 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
 
 
   @Override
-  public @NotNull Set<String> getTags() {
-    return message.getTags();
-  }
-
-
-  @Override
   public @NotNull M getMessage() {
     return message.getMessage();
   }
@@ -80,6 +74,12 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
 
 
   @Override
+  public @NotNull Set<String> getTagNames() {
+    return message.getTagNames();
+  }
+
+
+  @Override
   public boolean matches(@NotNull Level level, @NotNull TagSelector tagSelector) {
     return message.matches0(levelLimit, level, tagSelector);
   }
@@ -103,7 +103,7 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
     val s = new StringBuilder("Message[level=").append(levelLimit).append(",tags={");
     var first = true;
 
-    for(val tag: getTags())
+    for(val tag: getTagNames())
     {
       if (first)
         first = false;
