@@ -16,6 +16,7 @@
 package de.sayayi.lib.protocol.formatter;
 
 import de.sayayi.lib.protocol.Level;
+import de.sayayi.lib.protocol.Protocol.MessageWithLevel;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolFactory.MessageFormatter;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
@@ -46,7 +47,7 @@ public abstract class AbstractTreeProtocolFormatter<M> extends AbstractProtocolF
 
   private final StringBuilder result;
 
-  protected MessageFormatter<M> messageFormatter;
+  private MessageFormatter<M> messageFormatter;
   private String[] prefixes;
 
 
@@ -69,6 +70,11 @@ public abstract class AbstractTreeProtocolFormatter<M> extends AbstractProtocolF
   }
 
 
+  protected String format(@NotNull MessageWithLevel<M> message) {
+    return messageFormatter.formatMessage(message);
+  }
+
+
   @Override
   public void message(@NotNull MessageEntry<M> message)
   {
@@ -84,7 +90,7 @@ public abstract class AbstractTreeProtocolFormatter<M> extends AbstractProtocolF
             .append(prefix).append(message.isLast() ? GRAPH_LAST_NODE_PREFIX : GRAPH_MIDDLE_NODE_PREFIX);
     }
 
-    result.append(messageFormatter.formatMessage(message)).append('\n');
+    result.append(format(message)).append('\n');
   }
 
 
@@ -102,7 +108,7 @@ public abstract class AbstractTreeProtocolFormatter<M> extends AbstractProtocolF
             .append(prefix).append(group.isLast() ? GRAPH_LAST_NODE_PREFIX : GRAPH_MIDDLE_NODE_PREFIX);
     }
 
-    result.append(messageFormatter.formatMessage(group.getGroupMessage())).append('\n');
+    result.append(format(group.getGroupMessage())).append('\n');
 
     prefixes[depth] = prefix + (group.isLast() ? GRAPH_LEVEL_SEPARATOR_EMPTY : GRAPH_LEVEL_SEPARATOR_BAR);
   }
