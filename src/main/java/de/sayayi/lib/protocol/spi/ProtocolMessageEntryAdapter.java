@@ -31,19 +31,16 @@ import java.util.Set;
 
 
 /**
+ * @param <M>  internal message object type
+ *
  * @author Jeroen Gremmen
+ * @since 0.4.1
  */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
 {
   private final Level levelLimit;
   private final InternalProtocolEntry.Message<M> message;
-
-
-  @Override
-  public @NotNull Set<String> getTags() {
-    return message.getTags();
-  }
 
 
   @Override
@@ -77,6 +74,12 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
 
 
   @Override
+  public @NotNull Set<String> getTagNames() {
+    return message.getTagNames();
+  }
+
+
+  @Override
   public boolean matches(@NotNull Level level, @NotNull TagSelector tagSelector) {
     return message.matches0(levelLimit, level, tagSelector);
   }
@@ -100,7 +103,7 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
     val s = new StringBuilder("Message[level=").append(levelLimit).append(",tags={");
     var first = true;
 
-    for(val tag: getTags())
+    for(val tag: getTagNames())
     {
       if (first)
         first = false;

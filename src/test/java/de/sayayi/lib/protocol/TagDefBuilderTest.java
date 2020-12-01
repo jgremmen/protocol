@@ -15,9 +15,10 @@
  */
 package de.sayayi.lib.protocol;
 
+import de.sayayi.lib.protocol.message.formatter.ToStringMessageFormatter;
 import org.junit.Test;
 
-import java.util.Set;
+import lombok.val;
 
 import static org.junit.Assert.assertTrue;
 
@@ -29,26 +30,30 @@ import static org.junit.Assert.assertTrue;
 public class TagDefBuilderTest
 {
   @Test(expected = NullPointerException.class)
-  public void testMatchNullCondition() {
-    new GenericProtocolFactory().createTag("tag").match(null, Level.Shared.INFO);
+  public void testMatchNullCondition()
+  {
+    new StringProtocolFactory(ToStringMessageFormatter.IDENTITY)
+        .createTag("tag").match(null, Level.Shared.INFO);
   }
 
 
   @Test(expected = NullPointerException.class)
-  public void testMatchNullLevel() {
-    new GenericProtocolFactory().createTag("tag").match(TagDef.MatchCondition.AT_LEAST, null);
+  public void testMatchNullLevel()
+  {
+    new StringProtocolFactory(ToStringMessageFormatter.IDENTITY)
+        .createTag("tag").match(TagDef.MatchCondition.AT_LEAST, null);
   }
 
 
   @Test
   public void testImplies()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
-    TagDef tagDefC = factory.createTag("C").getTagDef();
-    TagDef tagDefB = factory.createTag("B").getTagDef();
-    TagDef tagDefA = factory.createTag("A").implies("B", "C").getTagDef();
+    val factory = new StringProtocolFactory(ToStringMessageFormatter.IDENTITY);
+    val tagDefC = factory.createTag("C").getTagDef();
+    val tagDefB = factory.createTag("B").getTagDef();
+    val tagDefA = factory.createTag("A").implies("B", "C").getTagDef();
 
-    Set<TagDef> impliedTagDefs = tagDefA.getImpliedTags();
+    val impliedTagDefs = tagDefA.getImpliedTags();
 
     assertTrue(impliedTagDefs.contains(tagDefB));
     assertTrue(impliedTagDefs.contains(tagDefC));
@@ -59,8 +64,8 @@ public class TagDefBuilderTest
   @Test
   public void testFactoryDelegate()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
-    ProtocolFactory.TagBuilder<String> tag = factory.createTag("tag");
+    val factory = new StringProtocolFactory(ToStringMessageFormatter.IDENTITY);
+    val tag = factory.createTag("tag");
 
     tag.createProtocol();
     tag.createTag("tag2");
@@ -70,14 +75,14 @@ public class TagDefBuilderTest
     tag.getTagDefs();
     tag.modifyTag("tag");
     tag.hasTag("xyz");
-    tag.processMessage("Hello");
+    tag.getMessageProcessor().processMessage("Hello");
   }
 
 
   @Test(expected = NullPointerException.class)
   public void testTagMatches()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
+    val factory = new StringProtocolFactory(ToStringMessageFormatter.IDENTITY);
     factory.createTag("tag")
         .match(TagDef.MatchCondition.EQUAL, Level.Shared.INFO)
         .getTagDef()
@@ -88,7 +93,7 @@ public class TagDefBuilderTest
   @Test
   public void testTagToString()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
+    val factory = new StringProtocolFactory(ToStringMessageFormatter.IDENTITY);
 
     assertTrue(factory
         .createTag("T1")

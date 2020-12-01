@@ -15,12 +15,16 @@
  */
 package de.sayayi.lib.protocol;
 
+import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
 import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
+import de.sayayi.lib.protocol.formatter.TechnicalProtocolFormatter;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -55,6 +59,7 @@ import java.util.Map;
  * @param <M>  internal message object type
  *
  * @author Jeroen Gremmen
+ * @since 0.1.0
  */
 public interface Protocol<M> extends ProtocolQueryable
 {
@@ -68,12 +73,23 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
   /**
-   * Returns the parent protocol.
+   * Returns the parent protocol instance.
    *
    * @return  parent protocol or {@code null} if this is the root protocol
    */
   @Contract(pure = true)
   Protocol<M> getParent();
+
+
+  /**
+   * Returns the id for this protocol. Protocol ids are unique.
+   *
+   * @return  protocol id
+   *
+   * @since 0.7.0
+   */
+  @Contract(pure = true)
+  int getId();
 
 
   /**
@@ -204,6 +220,12 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
   /**
+   * @since 0.7.0
+   */
+  @NotNull Iterator<ProtocolGroup<M>> groupIterator();
+
+
+  /**
    * Formats this protocol using the given {@code formatter} iterating over all elements matching {@code level}.
    *
    * @param formatter  protocol formatter to use for formatting this protocol
@@ -218,8 +240,8 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
   /**
-   * Formats this protocol using the given {@code formatter} iterating over all elements matching {@code level} and at
-   * least one of the {@code tags}.
+   * Formats this protocol using the given {@code formatter} iterating over all elements matching {@code level} and
+   * {@code tagSelector}.
    *
    * @param formatter    protocol formatter to use for formatting this protocol
    * @param level        level to match
@@ -265,6 +287,54 @@ public interface Protocol<M> extends ProtocolQueryable
    */
   @Contract(pure = true)
   boolean matches(@NotNull Level level, @NotNull TagSelector tagSelector);
+
+
+  /**
+   * <p>
+   *   Find a group with the given unique {@code name}.
+   * </p>
+   * <p>
+   *   The search probes every descendant group starting from this protocol until a matching group is found.
+   * </p>
+   *
+   * @param name  group name, not {@code null} or empty
+   *
+   * @return  protocol group with the name set or {@code null} if no group was found.
+   *
+   * @since 0.7.0
+   */
+  @Contract(pure = true)
+  ProtocolGroup<M> findGroupWithName(@NotNull String name);
+
+
+  /**
+   * <p>
+   *   Find all groups with names that match the given regular expression {@code regex}.
+   * </p>
+   * <p>
+   *   The search probes every descendant group starting from this protocol for matching groups.
+   * </p>
+   *
+   * @param regex  regular expression for matching group names, not {@code null} or empty
+   *
+   * @return  set of protocol groups with matching names, never {@code null}.
+   *
+   * @since 0.7.0
+   */
+  @Contract(pure = true)
+  @NotNull Set<ProtocolGroup<M>> findGroupsByRegex(@NotNull String regex);
+
+
+  /**
+   * Formats this protocol using the {@link TechnicalProtocolFormatter}.
+   *
+   * @return  technical representation of this protocol
+   *
+   * @since 0.7.0
+   */
+  @NotNull String toStringTree();
+
+
 
 
   /**
@@ -336,7 +406,7 @@ public interface Protocol<M> extends ProtocolQueryable
      * </p>
      * <p>
      *   The {@code message} parameter is converted into an internal representation of type {@code M} using
-     *   factory method {@link ProtocolFactory#processMessage(String)}.
+     *   the {@link MessageProcessor} assigned to the protocol factory.
      * </p>
      *
      * @param message  message text, resource key or any other message identifier, never {@code null}
@@ -347,9 +417,26 @@ public interface Protocol<M> extends ProtocolQueryable
     @NotNull MessageParameterBuilder<M> message(@NotNull String message);
 
 
+    /**
+     * <p>
+     *   Creates a new protocol message based on the builder settings and adds the message to the protocol.
+     * </p>
+     * <p>
+     *   This method differs from {@link #message(String)} in that it bypasses the {@link MessageProcessor}
+     *   and directly adds the internal message representation to the protocol.
+     * </p>
+     *
+     * @param message  internal message instance, never {@code null}
+     *
+     * @return  parameter builder instance for the newly created message
+     *
+     * @since 0.4.0
+     */
     @Contract("_ -> new")
     @NotNull MessageParameterBuilder<M> withMessage(@NotNull M message);
   }
+
+
 
 
   /**
@@ -475,6 +562,8 @@ public interface Protocol<M> extends ProtocolQueryable
   }
 
 
+
+
   /**
    * The most generic representation of a message, providing the internal representation of the message and parameter
    * values to be used for formatting the message.
@@ -496,6 +585,8 @@ public interface Protocol<M> extends ProtocolQueryable
      * Returns the message creation time.
      *
      * @return  creation time measured in milliseconds since midnight, January 1, 1970 UTC
+     *
+     * @since 0.6.0
      */
     @Contract(pure = true)
     long getTimeMillis();
@@ -521,12 +612,14 @@ public interface Protocol<M> extends ProtocolQueryable
   }
 
 
+
+
   /**
    * A protocol message with level.
    *
    * @param <M>  internal message object type
    */
-  interface MessageWithLevel<M> extends GenericMessage<M>
+  interface GenericMessageWithLevel<M> extends GenericMessage<M>
   {
     /**
      * Returns the level for this message.
@@ -538,12 +631,14 @@ public interface Protocol<M> extends ProtocolQueryable
   }
 
 
+
+
   /**
-   * A protocol message with level and optional throwable.
+   * A protocol message with level, optional throwable and tags.
    *
    * @param <M>  internal message object type
    */
-  interface Message<M> extends MessageWithLevel<M>
+  interface Message<M> extends GenericMessageWithLevel<M>
   {
     /**
      * Returns the throwable associated with the message.
@@ -552,7 +647,20 @@ public interface Protocol<M> extends ProtocolQueryable
      */
     @Contract(pure = true)
     Throwable getThrowable();
+
+
+    /**
+     * Returns a set containing all tag names defined for this message.
+     *
+     * @return  set containing all tag names, never {@code null}
+     *
+     * @since 0.7.0
+     */
+    @Contract(pure = true, value = "-> new")
+    @NotNull Set<String> getTagNames();
   }
+
+
 
 
   /**
@@ -572,6 +680,13 @@ public interface Protocol<M> extends ProtocolQueryable
   }
 
 
+
+
+  /**
+   * @param <M>  internal message object type
+   *
+   * @since 0.5.0
+   */
   interface TargetTagBuilder<M>
   {
     @NotNull Protocol<M> to(@NotNull String targetTagName);

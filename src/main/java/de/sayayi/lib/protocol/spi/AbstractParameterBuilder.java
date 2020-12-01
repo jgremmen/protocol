@@ -25,15 +25,22 @@ import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.TagSelector;
+import de.sayayi.lib.protocol.exception.ProtocolException;
+
+import lombok.val;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 
 
 /**
+ * @param <M>  internal message object type
+ *
  * @author Jeroen Gremmen
+ * @since 0.1.0
  */
 @SuppressWarnings({ "unchecked" })
 abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B extends ProtocolMessageBuilder<M>>
@@ -55,7 +62,7 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
   @Override
   public @NotNull P with(@NotNull Map<String,Object> parameterValues)
   {
-    for(Entry<String,Object> entry: parameterValues.entrySet())
+    for(val entry: parameterValues.entrySet())
       with(entry.getKey(), entry.getValue());
 
     return (P)this;
@@ -97,7 +104,7 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
   public @NotNull P with(@NotNull String parameter, Object value)
   {
     if (parameter.isEmpty())
-      throw new IllegalArgumentException("parameter must not be empty");
+      throw new ProtocolException("parameter must not be empty");
 
     message.parameterValues.put(parameter, value);
 
@@ -132,6 +139,12 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
   @Override
   public Protocol<M> getParent() {
     return protocol.getParent();
+  }
+
+
+  @Override
+  public int getId() {
+    return protocol.getId();
   }
 
 
@@ -174,6 +187,12 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
   @Override
   public @NotNull ProtocolGroup<M> createGroup() {
     return protocol.createGroup();
+  }
+
+
+  @Override
+  public @NotNull Iterator<ProtocolGroup<M>> groupIterator() {
+    return protocol.groupIterator();
   }
 
 
@@ -223,5 +242,23 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
   @Override
   public @NotNull TargetTagBuilder<M> propagate(@NotNull TagSelector tagSelector) {
     return protocol.propagate(tagSelector);
+  }
+
+
+  @Override
+  public ProtocolGroup<M> findGroupWithName(@NotNull String name) {
+    return protocol.findGroupWithName(name);
+  }
+
+
+  @Override
+  public @NotNull Set<ProtocolGroup<M>> findGroupsByRegex(@NotNull String regex) {
+    return protocol.findGroupsByRegex(regex);
+  }
+
+
+  @Override
+  public @NotNull String toStringTree() {
+    return protocol.toStringTree();
   }
 }

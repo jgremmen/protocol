@@ -15,7 +15,11 @@
  */
 package de.sayayi.lib.protocol;
 
+import lombok.val;
+
 import org.jetbrains.annotations.Contract;
+
+import java.util.Comparator;
 
 
 /**
@@ -29,9 +33,47 @@ import org.jetbrains.annotations.Contract;
  * </p>
  *
  * @author Jeroen Gremmen
+ * @since 0.1.0
  */
+@SuppressWarnings("java:S1214")
 public interface Level
 {
+  /**
+   * Sort levels ascending: {@link Shared#LOWEST LOWEST} -&gt; {@link Shared#HIGHEST HIGHEST}
+   *
+   * @since 0.7.0
+   */
+  Comparator<Level> SORT_ASCENDING = new Comparator<Level>() {
+    @Override
+    @SuppressWarnings("java:S3358")
+    public int compare(Level o1, Level o2)
+    {
+      val s1 = o1.severity();
+      val s2 = o2.severity();
+
+      return s1 < s2 ? -1 : (s1 == s2 ? 0 : 1);
+    }
+  };
+
+
+  /**
+   * Sort levels descending: {@link Shared#HIGHEST HIGHEST} -&gt; {@link Shared#LOWEST LOWEST}
+   *
+   * @since 0.7.0
+   */
+  Comparator<Level> SORT_DESCENDING = new Comparator<Level>() {
+    @Override
+    @SuppressWarnings("java:S3358")
+    public int compare(Level o1, Level o2)
+    {
+      val s1 = o1.severity();
+      val s2 = o2.severity();
+
+      return s1 < s2 ? 1 : (s1 == s2 ? 0 : -1);
+    }
+  };
+
+
   /**
    * <p>
    *   Returns the severity for this level.
@@ -51,6 +93,8 @@ public interface Level
   /**
    * Level constants for the {@linkplain Protocol#debug() debug()}, {@linkplain Protocol#info() info()},
    * {@linkplain Protocol#warn() warn()} and {@linkplain Protocol#error() error()} protocol methods.
+   *
+   * @since 0.1.0
    */
   enum Shared implements Level
   {

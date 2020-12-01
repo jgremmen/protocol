@@ -20,9 +20,10 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
- * This interface provides methods for querying protocol objects in a quantitative matter.
+ * This interface provides methods for querying protocol objects.
  *
  * @author Jeroen Gremmen
+ * @since 0.1.0
  */
 public interface ProtocolQueryable
 {

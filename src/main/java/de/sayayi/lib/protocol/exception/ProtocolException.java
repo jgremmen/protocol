@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Jeroen Gremmen
+ * Copyright 2020 Jeroen Gremmen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,27 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package de.sayayi.lib.protocol.exception;
 
 
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
+/**
+ * @author Jeroen Gremmen
+ * @since 0.7.0
+ */
+public class ProtocolException extends RuntimeException
+{
+  public ProtocolException(String message) {
+    super(message);
+  }
 
 
-configurations.all {
-  resolutionStrategy.eachDependency {
-    DependencyResolveDetails details ->
-
-    switch(requested.group)
-    {
-      case 'org.projectlombok': return useVersion('1.18.12')
-      case 'org.unbescape':     return useVersion('1.1.6.RELEASE')
-      case 'junit':             return useVersion('4.12')
-      case 'org.jetbrains':
-        switch(requested.name)
-        {
-          case 'annotations': return useVersion('13.0')
-        }
-        break
-    }
+  public ProtocolException(String message, Throwable cause) {
+    super(message, cause);
   }
 }

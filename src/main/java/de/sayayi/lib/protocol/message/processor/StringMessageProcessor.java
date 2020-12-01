@@ -13,25 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.sayayi.lib.protocol.selector.parser;
+package de.sayayi.lib.protocol.message.processor;
 
-import lombok.Getter;
+import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
+
+import org.jetbrains.annotations.NotNull;
 
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.7.0
  */
-public final class TagSelectorParserException extends RuntimeException
+public enum StringMessageProcessor implements MessageProcessor<String>
 {
-  @Getter private final int startIndex;
-  @Getter private final int endIndex;
+  INSTANCE;
 
 
-  TagSelectorParserException(int startIndex, int endIndex, String message)
-  {
-    super(message);
-
-    this.startIndex = startIndex;
-    this.endIndex = endIndex;
+  @Override
+  public @NotNull String processMessage(@NotNull String message) {
+    return message;
   }
 }

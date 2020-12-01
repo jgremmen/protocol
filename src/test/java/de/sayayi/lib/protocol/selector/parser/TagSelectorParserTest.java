@@ -16,6 +16,7 @@
 package de.sayayi.lib.protocol.selector.parser;
 
 import de.sayayi.lib.protocol.TagSelector;
+import de.sayayi.lib.protocol.exception.TagSelectorParserException;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -47,7 +48,7 @@ public class TagSelectorParserTest
 
     assertTrue(selector.match(Arrays.asList("system", "default")));
     assertTrue(selector.match(Collections.singletonList("default")));
-    assertFalse(selector.match(Collections.<String>emptyList()));
+    assertFalse(selector.match(Collections.emptyList()));
   }
 
 
@@ -60,7 +61,7 @@ public class TagSelectorParserTest
     assertTrue(selector.match(Arrays.asList("default", "hello")));
     assertTrue(selector.match(Collections.singletonList("test")));
     assertFalse(selector.match(Collections.singletonList("default")));
-    assertFalse(selector.match(Collections.<String>emptyList()));
+    assertFalse(selector.match(Collections.emptyList()));
   }
 
 
@@ -73,7 +74,7 @@ public class TagSelectorParserTest
     assertTrue(selector.match(Arrays.asList("default", "hello")));
     assertTrue(selector.match(Collections.singletonList("test")));
     assertFalse(selector.match(Collections.singletonList("default")));
-    assertFalse(selector.match(Collections.<String>emptyList()));
+    assertFalse(selector.match(Collections.emptyList()));
   }
 
 
@@ -86,7 +87,7 @@ public class TagSelectorParserTest
     assertFalse(selector.match(Arrays.asList("default", "hello")));
     assertFalse(selector.match(Collections.singletonList("test")));
     assertTrue(selector.match(Collections.singletonList("default")));
-    assertTrue(selector.match(Collections.<String>emptyList()));
+    assertTrue(selector.match(Collections.emptyList()));
   }
 
 

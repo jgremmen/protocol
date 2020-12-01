@@ -16,7 +16,10 @@
 package de.sayayi.lib.protocol;
 
 import de.sayayi.lib.protocol.Level.Shared;
+import de.sayayi.lib.protocol.exception.ProtocolException;
 import org.junit.Test;
+
+import lombok.val;
 
 import static de.sayayi.lib.protocol.Level.Shared.DEBUG;
 import static de.sayayi.lib.protocol.Level.Shared.INFO;
@@ -40,8 +43,8 @@ public class ProtocolGroupTest
   @Test
   public void testIsHeaderVisible()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
-    ProtocolGroup gp = factory.createProtocol().createGroup();
+    val factory = StringProtocolFactory.createPlainTextFactory();
+    val gp = factory.createProtocol().createGroup();
 
     assertFalse(gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).isHeaderVisible(LOWEST, Tag.any()));
     assertFalse(gp.setVisibility(SHOW_HEADER_ALWAYS).isHeaderVisible(LOWEST, Tag.any()));
@@ -98,8 +101,8 @@ public class ProtocolGroupTest
   @Test
   public void testHasVisualEntry()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
-    ProtocolGroup gp = factory.createProtocol().createGroup();
+    val factory = StringProtocolFactory.createPlainTextFactory();
+    val gp = factory.createProtocol().createGroup();
 
     assertEquals(0, gp.getVisibleEntryCount(true, Shared.LOWEST, Tag.any()));
 
@@ -135,8 +138,8 @@ public class ProtocolGroupTest
   @Test
   public void testEffectiveVisibility()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
-    ProtocolGroup gp = factory.createProtocol().createGroup();
+    val factory = StringProtocolFactory.createPlainTextFactory();
+    val gp = factory.createProtocol().createGroup();
 
     // no group header
     assertEquals(HIDDEN, gp.setVisibility(SHOW_HEADER_ONLY).getEffectiveVisibility());
@@ -155,5 +158,70 @@ public class ProtocolGroupTest
     assertEquals(FLATTEN_ON_SINGLE_ENTRY, gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).getEffectiveVisibility());
     assertEquals(HIDDEN, gp.setVisibility(HIDDEN).getEffectiveVisibility());
     assertEquals(FLATTEN, gp.setVisibility(FLATTEN).getEffectiveVisibility());
+  }
+
+
+  @Test
+  public void testFindGroupByName()
+  {
+    val factory = StringProtocolFactory.createPlainTextFactory();
+    val protocol = factory.createProtocol();
+    protocol.createGroup().setName("group-1");
+    val gp2 = protocol.createGroup().setName("group-2");
+    protocol.createGroup().setName("group-3");
+
+    gp2.createGroup().setName("group-2-1");
+    val gp2_2 = gp2.createGroup().setName("group-2-2");
+
+    assertEquals(gp2_2, protocol.findGroupWithName("group-2-2"));
+  }
+
+
+  @Test
+  public void testFindGroupByRegex()
+  {
+    val factory = StringProtocolFactory.createPlainTextFactory();
+    val protocol = factory.createProtocol();
+    protocol.createGroup().setName("group-1");
+    val gp2 = protocol.createGroup().setName("group-2");
+    protocol.createGroup().setName("group-3");
+
+    gp2.createGroup().setName("group-2-1");
+    val gp2_2 = gp2.createGroup().setName("group-2-2");
+
+    val protocolGroups = protocol.findGroupsByRegex("group.*-2");
+    assertEquals(2, protocolGroups.size());
+    assertTrue(protocolGroups.contains(gp2));
+    assertTrue(protocolGroups.contains(gp2_2));
+  }
+
+
+  @Test(expected = NullPointerException.class)
+  public void testSetVisibiityNull()
+  {
+    //noinspection ConstantConditions
+    StringProtocolFactory.createPlainTextFactory().createProtocol().createGroup().setVisibility(null);
+  }
+
+
+  @Test(expected = NullPointerException.class)
+  public void testLevelLimitNull()
+  {
+    //noinspection ConstantConditions
+    StringProtocolFactory.createPlainTextFactory().createProtocol().createGroup().setLevelLimit(null);
+  }
+
+
+  @Test(expected = ProtocolException.class)
+  public void testDuplicateGroupName()
+  {
+    val factory = StringProtocolFactory.createPlainTextFactory();
+    val protocol = factory.createProtocol();
+    protocol.createGroup().setName("group-1");
+    val gp2 = protocol.createGroup().setName("group-2");
+    protocol.createGroup().setName("group-3");
+
+    gp2.createGroup().setName("group-2-1");
+    gp2.createGroup().setName("group-3");
   }
 }

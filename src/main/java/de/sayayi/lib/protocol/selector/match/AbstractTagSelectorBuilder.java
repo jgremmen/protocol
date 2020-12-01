@@ -17,6 +17,7 @@ package de.sayayi.lib.protocol.selector.match;
 
 import de.sayayi.lib.protocol.Tag;
 import de.sayayi.lib.protocol.TagSelector;
+import de.sayayi.lib.protocol.exception.ProtocolException;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -29,6 +30,7 @@ import java.util.Collection;
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.6.0
  */
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractTagSelectorBuilder implements TagSelector.Builder
@@ -75,7 +77,7 @@ public abstract class AbstractTagSelectorBuilder implements TagSelector.Builder
     if (tagSelector instanceof SelectorReference)
       return new SelectorReferenceBuilder(tagSelector);
 
-    throw new IllegalArgumentException("malformed tag selector: " + tagSelector);
+    throw new ProtocolException("malformed tag selector: " + tagSelector);
   }
 
 

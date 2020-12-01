@@ -18,6 +18,8 @@ package de.sayayi.lib.protocol;
 import de.sayayi.lib.protocol.Level.Shared;
 import org.junit.Test;
 
+import lombok.val;
+
 import static de.sayayi.lib.protocol.Level.Shared.ERROR;
 import static de.sayayi.lib.protocol.Level.Shared.INFO;
 import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
@@ -36,8 +38,8 @@ public class GroupLevelLimitTest
   @Test
   public void testLevelLimit1()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
-    ProtocolGroup<String> gp = factory.createProtocol().createGroup();
+    val factory = StringProtocolFactory.createPlainTextFactory();
+    val gp = factory.createProtocol().createGroup();
 
     gp.setGroupMessage("Test");
     gp.debug().message("Msg #1");
@@ -48,7 +50,7 @@ public class GroupLevelLimitTest
 
     assertFalse(gp.matches(Shared.ERROR));
 
-    ProtocolIterator<String> iterator = gp.iterator(INFO, Tag.any());
+    val iterator = gp.iterator(INFO, Tag.any());
 
     assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolStart);
     assertTrue(iterator.next() instanceof ProtocolIterator.GroupStartEntry);
@@ -62,15 +64,15 @@ public class GroupLevelLimitTest
   @Test
   public void testLevelLimitPropagation()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
-    Protocol<String> p = factory.createProtocol();
-    ProtocolGroup<String> gp1 = p.createGroup().createGroup();
-    ProtocolGroup<String> gp2 = gp1.createGroup().createGroup();
+    val factory = StringProtocolFactory.createPlainTextFactory();
+    val p = factory.createProtocol();
+    val gp1 = p.createGroup().createGroup();
+    val gp2 = gp1.createGroup().createGroup();
 
     gp2.setVisibility(FLATTEN_ON_SINGLE_ENTRY).error().message("msg").setLevelLimit(ERROR);
     gp1.setLevelLimit(WARN);
 
-    ProtocolIterator<String> iterator = p.iterator(LOWEST, Tag.any());
+    val iterator = p.iterator(LOWEST, Tag.any());
 
     assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolStart);
     assertMessageWithLevel(iterator.next(), WARN, true, true);
@@ -82,7 +84,7 @@ public class GroupLevelLimitTest
   {
     assertTrue(entry instanceof ProtocolIterator.MessageEntry);
 
-    final ProtocolIterator.MessageEntry<M> message = (ProtocolIterator.MessageEntry<M>)entry;
+    val message = (ProtocolIterator.MessageEntry<M>)entry;
 
     assertEquals(level, message.getLevel());
     assertEquals(first, message.isFirst());

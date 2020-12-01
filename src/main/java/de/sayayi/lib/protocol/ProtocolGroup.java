@@ -15,6 +15,8 @@
  */
 package de.sayayi.lib.protocol;
 
+import de.sayayi.lib.protocol.exception.ProtocolException;
+
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,6 +38,7 @@ import java.util.Map;
  * @param <M>  internal message object type
  *
  * @author Jeroen Gremmen
+ * @since 0.1.0
  */
 public interface ProtocolGroup<M> extends Protocol<M>
 {
@@ -134,6 +137,37 @@ public interface ProtocolGroup<M> extends Protocol<M>
    */
   @Contract("-> this")
   @NotNull ProtocolGroup<M> removeGroupMessage();
+
+
+  /**
+   * Returns the unique name for this group. The name can be used to find a group from a parent protocol instance.
+   *
+   * @return  unique name for this group or {@code null} if no name is set.
+   *
+   * @see #setName(String)
+   * @see Protocol#findGroupWithName(String)
+   */
+  @Contract(pure = true)
+  String getName();
+
+
+  /**
+   * <p>
+   *   Sets a unique name for this group. If {@code name} is {@code null} or an empty string the
+   *   group name will be removed.
+   * </p>
+   *
+   * @param name  unique name or {@code null}
+   *
+   * @return  this protocol group instance
+   *
+   * @throws ProtocolException  if the group name is not unique across the protocol structure
+   *
+   * @see #getName()
+   * @see Protocol#findGroupWithName(String)
+   */
+  @Contract(value = "_ -> this")
+  @NotNull ProtocolGroup<M> setName(String name);
 
 
   @Contract(pure = true)
@@ -325,7 +359,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
     /**
      * Returns the effective visibility in case a group has no header message.
      *
-     * @return  effective visibility for a group without a header message
+     * @return  effective visibility for a group without a header message, never {@code null}
      */
     public @NotNull Visibility forAbsentHeader()
     {

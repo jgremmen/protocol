@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Jeroen Gremmen
+ * Copyright 2020 Jeroen Gremmen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,25 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.sayayi.lib.protocol;
+package de.sayayi.lib.protocol.exception;
 
-import de.sayayi.lib.protocol.spi.AbstractProtocolFactory;
-
-import org.jetbrains.annotations.NotNull;
+import lombok.Getter;
 
 
 /**
- * <p>
- *   Generic protocol factory for text messages where the messages are stored internally as
- *   {@code String} objects.
- * </p>
- *
  * @author Jeroen Gremmen
+ * @since 0.6.0
  */
-public class GenericProtocolFactory extends AbstractProtocolFactory<String>
+public final class TagSelectorParserException extends ProtocolException
 {
-  @Override
-  public @NotNull String processMessage(@NotNull String message) {
-    return message;
+  @Getter private final int startIndex;
+  @Getter private final int endIndex;
+
+
+  public TagSelectorParserException(int startIndex, int endIndex, String message)
+  {
+    super(message);
+
+    this.startIndex = startIndex;
+    this.endIndex = endIndex;
   }
 }

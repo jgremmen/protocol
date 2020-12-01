@@ -17,9 +17,9 @@ package de.sayayi.lib.protocol.selector.parser;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.ToString;
 import lombok.val;
 
 import java.util.EnumMap;
@@ -30,6 +30,7 @@ import java.util.NoSuchElementException;
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.6.0
  */
 public final class TagSelectorLexer implements Iterable<TagSelectorLexer.Token>
 {
@@ -103,6 +104,9 @@ public final class TagSelectorLexer implements Iterable<TagSelectorLexer.Token>
         case ',':
           data.pos++;
           return new Token(start, start, TokenType.COMMA, ",");
+
+        default:
+          break;
       }
 
       val tagBuilder = new StringBuilder();
@@ -156,16 +160,20 @@ public final class TagSelectorLexer implements Iterable<TagSelectorLexer.Token>
   }
 
 
-  @ToString
-  @EqualsAndHashCode(doNotUseGetters=true)
+
+
+  @Data
+  @EqualsAndHashCode(doNotUseGetters = true)
   @AllArgsConstructor(access = AccessLevel.PACKAGE)
   static final class Token
   {
-    @Getter int start;
-    @Getter int end;
-    @Getter TokenType type;
-    @Getter String text;
+    final int start;
+    final int end;
+    final TokenType type;
+    final String text;
   }
+
+
 
 
   enum TokenType

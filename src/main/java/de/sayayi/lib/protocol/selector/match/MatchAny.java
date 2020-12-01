@@ -28,6 +28,7 @@ import static de.sayayi.lib.protocol.TagSelector.MatchType.ANY;
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.6.0
  */
 @EqualsAndHashCode(callSuper = false)
 public final class MatchAny extends AbstractTagSelectorBuilder implements TagReference
@@ -37,6 +38,7 @@ public final class MatchAny extends AbstractTagSelectorBuilder implements TagRef
   }
 
 
+  @SuppressWarnings("java:S1168")
   @Override
   public String[] getTagNames() {
     return null;

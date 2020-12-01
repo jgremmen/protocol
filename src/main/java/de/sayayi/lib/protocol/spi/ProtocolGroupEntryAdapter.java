@@ -28,10 +28,14 @@ import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Set;
 
 
 /**
+ * @param <M>  internal message object type
+ *
  * @author Jeroen Gremmen
+ * @since 0.4.1
  */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<M>
@@ -79,6 +83,18 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
   @Override
   public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull TagSelector tagSelector) {
     return group.getVisibleEntryCount0(levelLimit, recursive, level, tagSelector);
+  }
+
+
+  @Override
+  public ProtocolGroup<M> findGroupWithName(@NotNull String name) {
+    return group.findGroupWithName(name);
+  }
+
+
+  @Override
+  public @NotNull Set<ProtocolGroup<M>> findGroupsByRegex(@NotNull String regex) {
+    return group.findGroupsByRegex(regex);
   }
 
 

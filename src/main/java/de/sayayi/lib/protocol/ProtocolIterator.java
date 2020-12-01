@@ -15,7 +15,7 @@
  */
 package de.sayayi.lib.protocol;
 
-import de.sayayi.lib.protocol.Protocol.MessageWithLevel;
+import de.sayayi.lib.protocol.Protocol.GenericMessageWithLevel;
 import de.sayayi.lib.protocol.ProtocolGroup.Visibility;
 import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
 
@@ -26,7 +26,10 @@ import java.util.Iterator;
 
 
 /**
+ * @param <M>  internal message object type
+ *
  * @author Jeroen Gremmen
+ * @since 0.1.0
  */
 public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
 {
@@ -46,6 +49,8 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
    */
   @Contract(pure = true)
   @NotNull TagSelector getTagSelector();
+
+
 
 
   /**
@@ -88,6 +93,8 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
   }
 
 
+
+
   /**
    *
    * @param <M>  internal message object type
@@ -119,6 +126,8 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
   }
 
 
+
+
   /**
    * This entry marks the start of a protocol iteration. It is generated unconditionally.
    *
@@ -128,6 +137,8 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
   }
 
 
+
+
   /**
    * This entry marks the end of a protocol iteration. It is generated unconditionally.
    *
@@ -135,6 +146,8 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
    */
   interface ProtocolEnd<M> extends DepthEntry<M> {
   }
+
+
 
 
   /**
@@ -154,6 +167,8 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
     @Contract(pure = true)
     boolean isGroupMessage();
   }
+
+
 
 
   /**
@@ -188,6 +203,8 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
   }
 
 
+
+
   /**
    * <p>
    *   Marks the beginning of a protocol group.
@@ -211,7 +228,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
      */
     @Override
     @Contract(pure = true)
-    @NotNull MessageWithLevel<M> getGroupMessage();
+    @NotNull GenericMessageWithLevel<M> getGroupMessage();
 
 
     /**
@@ -226,6 +243,8 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
     @Contract(pure = true)
     int getMessageCount();
   }
+
+
 
 
   /**

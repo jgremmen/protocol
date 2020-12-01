@@ -24,6 +24,7 @@ import static lombok.AccessLevel.PRIVATE;
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.1.0
  */
 @NoArgsConstructor(access = PRIVATE)
 abstract class LevelHelper

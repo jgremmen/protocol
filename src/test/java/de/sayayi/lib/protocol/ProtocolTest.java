@@ -15,7 +15,10 @@
  */
 package de.sayayi.lib.protocol;
 
+import de.sayayi.lib.protocol.message.formatter.ToStringMessageFormatter;
 import org.junit.Test;
+
+import lombok.val;
 
 import static de.sayayi.lib.protocol.Level.Shared.DEBUG;
 import static de.sayayi.lib.protocol.Level.Shared.INFO;
@@ -31,17 +34,17 @@ public class ProtocolTest
   @Test
   public void testBasics()
   {
-    GenericProtocolFactory factory = new GenericProtocolFactory();
+    val factory = new StringProtocolFactory(ToStringMessageFormatter.IDENTITY);
 
     factory.createTag("ui").match(AT_LEAST, INFO)
            .createTag("technical").dependsOn("ui").implies("system");
 
-    Protocol protocol = factory.createProtocol();
+    val protocol = factory.createProtocol();
 
     protocol.add(DEBUG).message("Just sayin'")
             .error(new NullPointerException()).forTags("ui").message("MSG-048");
 
-    ProtocolGroup gp = protocol.createGroup().setGroupMessage("Huhu");
+    val gp = protocol.createGroup().setGroupMessage("Huhu");
 
     gp.error().message("MSG-104").with("test", true)
       .setGroupMessage("GRP-771").with("idx", 45);

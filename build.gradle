@@ -1,6 +1,6 @@
 plugins {
-  id 'idea'
   id 'java-library'
+  id 'idea'
   id 'maven-publish'
   id 'nebula.optional-base' version '5.0.3'
   id 'jacoco'
@@ -11,10 +11,19 @@ plugins {
 
 description 'Protocol Library'
 group 'de.sayayi.lib'
-version '0.6.0'
+version '0.7.0'
 
 
-apply from: file('gradle/versions.gradle')
+ext {
+  jetbrainsAnnotationsVersion = "13.0"
+  junitVersion = "4.13.1"
+  lombokVersion = "1.18.16"
+  messageFormatVersion = "0.4.2"
+  mockitoVersion = "3.6.28"
+  unbescapeVersion = "1.1.6.RELEASE"
+}
+
+
 apply from: file('gradle/javadoc.gradle')
 apply from: file('gradle/quality.gradle')
 apply from: file('gradle/publishing.gradle')
@@ -26,14 +35,33 @@ repositories {
 
 
 dependencies {
-  annotationProcessor "org.projectlombok:lombok:"
+  // java
+  annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
-  implementation 'org.unbescape:unbescape:', optional
+  implementation "org.unbescape:unbescape:${unbescapeVersion}", optional
+  implementation "de.sayayi.lib:message-format-nodep:${messageFormatVersion}", optional
 
-  compileOnly 'org.projectlombok:lombok:'
-  compileOnly 'org.jetbrains:annotations:'
+  compileOnlyApi "org.projectlombok:lombok:${lombokVersion}"
+  compileOnlyApi "org.jetbrains:annotations:${jetbrainsAnnotationsVersion}"
 
-  testImplementation 'junit:junit:'
+  // test
+  testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
-  testCompileOnly 'org.jetbrains:annotations:'
+  testImplementation "junit:junit:${junitVersion}"
+  testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+
+  testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+  testCompileOnly "org.jetbrains:annotations:${jetbrainsAnnotationsVersion}"
+}
+
+
+compileJava {
+  sourceCompatibility = JavaVersion.VERSION_1_6
+  targetCompatibility = JavaVersion.VERSION_1_6
+}
+
+
+compileTestJava {
+  sourceCompatibility = JavaVersion.VERSION_1_8
+  targetCompatibility = JavaVersion.VERSION_1_8
 }

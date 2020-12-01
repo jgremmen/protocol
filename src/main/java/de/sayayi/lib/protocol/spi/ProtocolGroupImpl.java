@@ -22,8 +22,8 @@ import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.ProtocolGroup.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.TagSelector;
+import de.sayayi.lib.protocol.exception.ProtocolException;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.val;
 
@@ -32,7 +32,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
 import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
@@ -42,24 +41,21 @@ import static de.sayayi.lib.protocol.spi.LevelHelper.min;
 
 
 /**
+ * @param <M>  internal message object type
+ *
  * @author Jeroen Gremmen
  */
-@EqualsAndHashCode(onlyExplicitlyIncluded = true, doNotUseGetters = true, callSuper = false)
+@SuppressWarnings("java:S2160")
 final class ProtocolGroupImpl<M>
     extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
     implements ProtocolGroup<M>, InternalProtocolEntry.Group<M>
 {
-  private static final AtomicInteger PROTOCOL_GROUP_ID = new AtomicInteger(0);
-
-
   @Getter private final AbstractProtocol<M,Protocol.ProtocolMessageBuilder<M>> parent;
-
-  @EqualsAndHashCode.Include
-  @Getter private final int id;
 
   @Getter private Level levelLimit;
   @Getter private Visibility visibility;
   @Getter private GroupMessage groupMessage;
+  @Getter private String name;
 
 
   ProtocolGroupImpl(@NotNull AbstractProtocol<M,Protocol.ProtocolMessageBuilder<M>> parent)
@@ -68,7 +64,6 @@ final class ProtocolGroupImpl<M>
 
     this.parent = parent;
 
-    id = PROTOCOL_GROUP_ID.incrementAndGet();
     levelLimit = HIGHEST;
     visibility = SHOW_HEADER_IF_NOT_EMPTY;
   }
@@ -82,7 +77,7 @@ final class ProtocolGroupImpl<M>
 
   @Override
   public @NotNull Visibility getEffectiveVisibility() {
-    return (groupMessage == null) ? visibility.forAbsentHeader() : visibility;
+    return groupMessage == null ? visibility.forAbsentHeader() : visibility;
   }
 
 
@@ -218,10 +213,10 @@ final class ProtocolGroupImpl<M>
           return entryCountWithHeader;
 
         case SHOW_HEADER_IF_NOT_EMPTY:
-          return (recursiveEntryCount == 0) ? 0 : entryCountWithHeader;
+          return recursiveEntryCount == 0 ? 0 : entryCountWithHeader;
 
         case FLATTEN_ON_SINGLE_ENTRY:
-          return (recursiveEntryCount > 1) ? entryCountWithHeader : recursiveEntryCount;
+          return recursiveEntryCount > 1 ? entryCountWithHeader : recursiveEntryCount;
 
         case FLATTEN:
           return recursiveEntryCount;
@@ -255,7 +250,7 @@ final class ProtocolGroupImpl<M>
     if (message == null)
       throw new NullPointerException("message must not be null");
 
-    groupMessage = new GroupMessage(factory.processMessage(message));
+    groupMessage = new GroupMessage(factory.getMessageProcessor().processMessage(message));
 
     return new ParameterBuilderImpl(groupMessage);
   }
@@ -267,6 +262,53 @@ final class ProtocolGroupImpl<M>
     groupMessage = null;
 
     return this;
+  }
+
+
+  @Override
+  public @NotNull ProtocolGroup<M> setName(String name)
+  {
+    if (name == null || name.isEmpty())
+      this.name = null;
+    else if (!name.equals(this.name))
+    {
+      if (getRootProtocol().findGroupWithName(name) != null)
+        throw new ProtocolException("group name '" + name + "' must be unique");
+
+      this.name = name;
+    }
+
+    return this;
+  }
+
+
+  @Override
+  @SuppressWarnings({ "java:S2589", "java:S2583", "ConstantConditions" })
+  public ProtocolGroup<M> findGroupWithName(@NotNull String name)
+  {
+    if (name == null)
+      throw new NullPointerException("name must not be null");
+    if (name.isEmpty())
+      throw new ProtocolException("name must not be empty");
+
+    return name.equals(this.name) ? this : super.findGroupWithName(name);
+  }
+
+
+  @Override
+  public @NotNull Set<ProtocolGroup<M>> findGroupsByRegex(@NotNull String regex)
+  {
+    if (name == null)
+      throw new NullPointerException("regex must not be null");
+    if (name.isEmpty())
+      throw new ProtocolException("regex must not be empty");
+
+    val groups = super.findGroupsByRegex(regex);
+
+    if (name.matches(regex))
+      groups.add(this);
+
+    return groups;
   }
 
 
@@ -284,7 +326,7 @@ final class ProtocolGroupImpl<M>
   @Override
   @SuppressWarnings("unchecked")
   public @NotNull Protocol<M> getRootProtocol() {
-    return (parent instanceof ProtocolGroup) ? ((ProtocolGroup<M>)parent).getRootProtocol() : parent;
+    return parent instanceof ProtocolGroup ? ((ProtocolGroup<M>)parent).getRootProtocol() : parent;
   }
 
 
@@ -325,7 +367,7 @@ final class ProtocolGroupImpl<M>
   @Override
   public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull TagSelector tagSelector)
   {
-    return new ProtocolStructureIterator.ForGroup<M>(levelLimit, level, tagSelector, 0,this,
+    return new ProtocolStructureIterator.ForGroup<M>(levelLimit, level, tagSelector, 0, this,
         false, false, true);
   }
 
@@ -339,10 +381,13 @@ final class ProtocolGroupImpl<M>
   @Override
   public String toString()
   {
-    val s = new StringBuilder("ProtocolGroup[id=").append(id).append(",visibility=").append(visibility);
+    val s = new StringBuilder("ProtocolGroup[id=").append(getId())
+        .append(",visibility=").append(visibility);
 
     if (levelLimit.severity() < HIGHEST.severity())
       s.append(",levelLimit=").append(levelLimit);
+    if (name != null)
+      s.append(",name=").append(name);
 
     return s.append(']').toString();
   }
@@ -445,6 +490,18 @@ final class ProtocolGroupImpl<M>
     @Override
     public @NotNull ProtocolGroup<M> removeGroupMessage() {
       return ProtocolGroupImpl.this.removeGroupMessage();
+    }
+
+
+    @Override
+    public String getName() {
+      return ProtocolGroupImpl.this.getName();
+    }
+
+
+    @Override
+    public @NotNull ProtocolGroup<M> setName(String uniqueId) {
+      return ProtocolGroupImpl.this.setName(uniqueId);
     }
 
 

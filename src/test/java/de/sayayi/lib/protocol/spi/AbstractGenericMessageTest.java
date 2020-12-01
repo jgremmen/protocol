@@ -17,6 +17,8 @@ package de.sayayi.lib.protocol.spi;
 
 import org.junit.Test;
 
+import lombok.val;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -35,8 +37,8 @@ public class AbstractGenericMessageTest
   @Test
   public void testDefaultParameters()
   {
-    Map<String,Object> parameters = Collections.<String,Object>singletonMap("key", "value123");
-    TestMessage message = new TestMessage("msg", parameters);
+    val parameters = Collections.<String,Object>singletonMap("key", "value123");
+    val message = new TestMessage("msg", parameters);
 
     assertNotSame(parameters, message.getParameterValues());
     assertEquals("value123", message.getParameterValues().get("key"));
@@ -46,8 +48,7 @@ public class AbstractGenericMessageTest
   @Test(expected = UnsupportedOperationException.class)
   public void testParametersNotModifyable()
   {
-    TestMessage message = new TestMessage("msg",
-        Collections.<String,Object>singletonMap("key", "value123"));
+    val message = new TestMessage("msg", Collections.singletonMap("key", "value123"));
 
     message.getParameterValues().put("key2", "test");
   }
@@ -56,7 +57,7 @@ public class AbstractGenericMessageTest
   @Test
   public void testTime()
   {
-    TestMessage message = new TestMessage("msg", Collections.<String,Object>emptyMap());
+    val message = new TestMessage("msg", Collections.emptyMap());
     assertTrue(System.currentTimeMillis() >= message.getTimeMillis());
   }
 

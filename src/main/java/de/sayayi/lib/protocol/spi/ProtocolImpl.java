@@ -22,32 +22,21 @@ import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.TagSelector;
 
-import lombok.EqualsAndHashCode;
-
 import org.jetbrains.annotations.NotNull;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
 
 
 /**
+ * @param <M>  internal message object type
+ *
  * @author Jeroen Gremmen
+ * @since 0.1.0
  */
-@EqualsAndHashCode(onlyExplicitlyIncluded = true, doNotUseGetters = true, callSuper = false)
 final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
 {
-  private static final AtomicInteger PROTOCOL_ID = new AtomicInteger(0);
-
-  @EqualsAndHashCode.Include
-  private final int id;
-
-
-  ProtocolImpl(@NotNull ProtocolFactory<M> factory)
-  {
+  ProtocolImpl(@NotNull ProtocolFactory<M> factory) {
     super(factory);
-
-    id = PROTOCOL_ID.incrementAndGet();
   }
 
 
@@ -100,7 +89,7 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
 
   @Override
   public String toString() {
-    return "Protocol[id=" + id + ']';
+    return "Protocol[id=" + getId() + ']';
   }
 
 

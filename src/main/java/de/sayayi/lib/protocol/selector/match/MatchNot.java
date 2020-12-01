@@ -29,6 +29,7 @@ import static de.sayayi.lib.protocol.TagSelector.MatchType.NOT;
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.6.0
  */
 @EqualsAndHashCode(callSuper = false)
 public final class MatchNot extends AbstractTagSelectorBuilder implements SelectorReference

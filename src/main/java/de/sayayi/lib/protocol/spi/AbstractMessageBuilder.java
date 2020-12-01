@@ -31,7 +31,10 @@ import java.util.TreeSet;
 
 
 /**
+ * @param <M>  internal message object type
+ *
  * @author Jeroen Gremmen
+ * @since 0.1.0
  */
 @SuppressWarnings("unchecked")
 abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P extends MessageParameterBuilder<M>>
@@ -51,7 +54,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
     this.level = level;
 
     tags = new HashSet<String>();
-    tags.add(ProtocolFactory.Constant.DEFAULT_TAG_NAME);
+    tags.add(ProtocolFactory.DEFAULT_TAG_NAME);
   }
 
 
@@ -97,7 +100,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
     if (message == null)
       throw new NullPointerException("message must not be null");
 
-    return message0(protocol.factory.processMessage(message));
+    return message0(protocol.factory.getMessageProcessor().processMessage(message));
   }
 
 

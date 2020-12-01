@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.4.1
  */
 interface InternalProtocolQueryable extends ProtocolQueryable
 {

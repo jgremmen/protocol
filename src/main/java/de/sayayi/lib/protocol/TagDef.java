@@ -35,6 +35,7 @@ import java.util.Set;
  * </p>
  *
  * @author Jeroen Gremmen
+ * @since 0.6.0
  *
  * @see ProtocolFactory#createTag(String)
  */

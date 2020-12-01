@@ -18,6 +18,7 @@ package de.sayayi.lib.protocol;
 import de.sayayi.lib.protocol.TagSelector.Builder;
 import de.sayayi.lib.protocol.TagSelector.SelectorReference;
 import de.sayayi.lib.protocol.TagSelector.TagReference;
+import de.sayayi.lib.protocol.exception.ProtocolException;
 import de.sayayi.lib.protocol.selector.match.MatchAllOf;
 import de.sayayi.lib.protocol.selector.match.MatchAnd;
 import de.sayayi.lib.protocol.selector.match.MatchAny;
@@ -53,6 +54,7 @@ import static de.sayayi.lib.protocol.selector.match.AbstractTagSelectorBuilder.w
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.6.0
  */
 @SuppressWarnings({"java:S100", "java:S1121"})
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -90,7 +92,7 @@ public final class Tag
   };
 
 
-  @Contract(pure = true)
+  @Contract(value = "_ -> new", pure = true)
   public static @NotNull Builder parse(@NotNull String selector) {
     return wrap(new TagSelectorParser(selector).parseSelector());
   }
@@ -104,7 +106,7 @@ public final class Tag
    * @return  tag selector for the given {@code tagName}. The returned object allows for constructing a more
    *          complex selector following the builder pattern.
    */
-  @Contract(pure = true)
+  @Contract(value = "_ -> new", pure = true)
   public static @NotNull Builder of(@NotNull String tagName) {
     return new MatchAllOf(tagName);
   }
@@ -116,7 +118,7 @@ public final class Tag
    * @return  tag selector which matches any tag. The returned object allows for constructing a more
    *          complex selector following the builder pattern.
    */
-  @Contract(pure = true)
+  @Contract(value = "-> new", pure = true)
   public static @NotNull Builder any() {
     return new MatchAny();
   }
@@ -130,7 +132,7 @@ public final class Tag
    * @return  tag selector which matches any of the given {@code tagNames}. The returned object allows for
    *          constructing a more complex selector following the builder pattern.
    */
-  @Contract(pure = true)
+  @Contract(value = "_ -> new", pure = true)
   public static @NotNull Builder anyOf(@NotNull String... tagNames)
   {
     if (tagNames.length == 0)
@@ -151,11 +153,11 @@ public final class Tag
    * @return  tag selector which matches all of the given {@code tagNames}. The returned object allows for
    *          constructing a more complex selector following the builder pattern.
    */
-  @Contract(pure = true)
+  @Contract(value = "_ -> new", pure = true)
   public static @NotNull Builder allOf(@NotNull String... tagNames)
   {
     if (tagNames.length == 0)
-      throw new IllegalArgumentException("tag name array must not be empty");
+      throw new ProtocolException("tag name array must not be empty");
 
     return new MatchAllOf(tagNames);
   }
@@ -212,7 +214,7 @@ public final class Tag
     switch(selectors.length)
     {
       case 0:
-        throw new IllegalArgumentException("tag selector array must not be empty");
+        throw new ProtocolException("tag selector array must not be empty");
 
       case 1:
         return wrap(selectors[0]);
@@ -348,7 +350,7 @@ public final class Tag
     switch(selectors.length)
     {
       case 0:
-        throw new IllegalArgumentException("tag selector array must not be empty");
+        throw new ProtocolException("tag selector array must not be empty");
 
       case 1:
         return wrap(selectors[0]);

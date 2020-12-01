@@ -23,7 +23,9 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.3.0
  */
+@Deprecated
 public abstract class AbstractProtocolFormatter<M,R> implements ProtocolFormatter<M,R>
 {
   @Override

@@ -19,6 +19,7 @@ import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.Protocol.TargetTagBuilder;
 import de.sayayi.lib.protocol.TagSelector;
+import de.sayayi.lib.protocol.exception.ProtocolException;
 
 import lombok.val;
 import lombok.var;
@@ -30,6 +31,7 @@ import java.util.TreeSet;
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.5.0
  */
 abstract class AbstractPropagationBuilder<M,B extends ProtocolMessageBuilder<M>>
     extends AbstractBuilder<M,B>
@@ -70,7 +72,7 @@ abstract class AbstractPropagationBuilder<M,B extends ProtocolMessageBuilder<M>>
   public @NotNull Protocol<M> to(@NotNull String... targetTagNames)
   {
     if (targetTagNames == null || targetTagNames.length == 0)
-      throw new IllegalArgumentException("targetTagNames must not be empty");
+      throw new ProtocolException("targetTagNames must not be empty");
 
     for(val targetTagName: targetTagNames)
       to(targetTagName);

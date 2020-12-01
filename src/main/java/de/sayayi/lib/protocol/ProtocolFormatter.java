@@ -29,9 +29,26 @@ import org.jetbrains.annotations.NotNull;
  * @param <R>  formatting result type
  *
  * @author Jeroen Gremmen
+ * @since 0.1.0
  */
 public interface ProtocolFormatter<M,R>
 {
+  /**
+   * This method is invoked before any other formatting methods are invoked and must initialize the formatter in
+   * such way that it can be reused.
+   *
+   * @param level  matching protocol level
+   * @param tagSelector  tag selector
+   * @param estimatedGroupDepth  the estimated depth of nested protocol groups ({@code 0} means the protocol contains
+   *                             no groups). The real depth depends on {@code level}, {@code tags} and group
+   *                             visibility settings but is never greater than the estimated depth.
+   *
+   * @see Protocol#format(ProtocolFormatter, Level, TagSelector)
+   */
+  void init(@NotNull ProtocolFactory<M> factory, @NotNull Level level, @NotNull TagSelector tagSelector,
+            int estimatedGroupDepth);
+
+
   /**
    * <p>
    *   This method is invoked when the formatting process starts.
@@ -89,37 +106,7 @@ public interface ProtocolFormatter<M,R>
   /**
    * {@inheritDoc}
    *
-   * <p>
-   *   A formatter of this type is automatically initialized by
-   *   {@link Protocol#format(ProtocolFormatter, Level, TagSelector)}.
-   * </p>
-   * <p>
-   *   Implementing classes must make sure, that the formatter is reusable after invoking
-   *   {@link #init(Level, TagSelector, int)}. Thread safety however is not a requirement.
-   * </p>
-   */
-  interface InitializableProtocolFormatter<M,R> extends ProtocolFormatter<M,R>
-  {
-    /**
-     * This method is invoked before any other formatting methods are invoked and must initialize the formatter in
-     * such way that it can be reused.
-     *
-     * @param level  matching protocol level
-     * @param tagSelector  tag selector
-     * @param estimatedGroupDepth  the estimated depth of nested protocol groups ({@code 0} means the protocol contains
-     *                             no groups). The real depth depends on {@code level}, {@code tags} and group
-     *                             visibility settings but is never greater than the estimated depth.
-     *
-     * @see Protocol#format(ProtocolFormatter, Level, TagSelector)
-     */
-    void init(@NotNull Level level, @NotNull TagSelector tagSelector, int estimatedGroupDepth);
-  }
-
-
-
-
-  /**
-   * {@inheritDoc}
+   * @since 0.1.0
    */
   interface ConfiguredProtocolFormatter<M,R> extends ProtocolFormatter<M,R>
   {

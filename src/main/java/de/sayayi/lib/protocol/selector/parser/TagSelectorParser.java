@@ -17,6 +17,7 @@ package de.sayayi.lib.protocol.selector.parser;
 
 import de.sayayi.lib.protocol.Tag;
 import de.sayayi.lib.protocol.TagSelector;
+import de.sayayi.lib.protocol.exception.TagSelectorParserException;
 import de.sayayi.lib.protocol.selector.match.MatchAny;
 import de.sayayi.lib.protocol.selector.match.MatchFixResult;
 import de.sayayi.lib.protocol.selector.parser.TagSelectorLexer.Token;
@@ -41,6 +42,7 @@ import static de.sayayi.lib.protocol.selector.parser.TagSelectorLexer.TokenType.
 
 /**
  * @author Jeroen Gremmen
+ * @since 0.6.0
  */
 public final class TagSelectorParser
 {
@@ -62,14 +64,14 @@ public final class TagSelectorParser
     while(idx >= tokens.size() && tokenIterator.hasNext())
       tokens.add(tokenIterator.next());
 
-    return (idx < tokens.size()) ? tokens.get(idx) : null;
+    return idx < tokens.size() ? tokens.get(idx) : null;
   }
 
 
   private TokenType getTypeAt(int idx)
   {
     val token = getTokenAt(idx);
-    return (token == null) ? null : token.getType();
+    return token == null ? null : token.getType();
   }
 
 
@@ -85,7 +87,7 @@ public final class TagSelectorParser
   }
 
 
-  ParsedRule<TagSelector> parseSelector(int t)
+  @NotNull ParsedRule<TagSelector> parseSelector(int t)
   {
     val t0 = getTokenAt(t);
     if (t0 == null)
@@ -124,7 +126,7 @@ public final class TagSelectorParser
   }
 
 
-  private ParsedRule<TagSelector> parseAndOr(int t, boolean and)
+  private @NotNull ParsedRule<TagSelector> parseAndOr(int t, boolean and)
   {
     // t0=and t1=<parameters>
     // t0=or t1=<parameters>
@@ -136,7 +138,7 @@ public final class TagSelectorParser
   }
 
 
-  private ParsedRule<TagSelector> parseXXXOf(int t, TokenType type)
+  private @NotNull ParsedRule<TagSelector> parseXXXOf(int t, @NotNull TokenType type)
   {
     expect(t + 1, L_PAREN);
 
@@ -166,7 +168,7 @@ public final class TagSelectorParser
   }
 
 
-  private ParsedRule<TagSelector> parseNoArgsFunction(int t, @NotNull TokenType type)
+  private @NotNull ParsedRule<TagSelector> parseNoArgsFunction(int t, @NotNull TokenType type)
   {
     assert getTypeAt(t) == type;
 
@@ -188,7 +190,7 @@ public final class TagSelectorParser
   }
 
 
-  private ParsedRule<TagSelector> parseNot(int t)
+  private @NotNull ParsedRule<TagSelector> parseNot(int t)
   {
     expect(t + 1, L_PAREN);
 
@@ -201,7 +203,7 @@ public final class TagSelectorParser
   }
 
 
-  private ParsedRule<List<TagSelector>> parseParameters(int t)
+  private @NotNull ParsedRule<List<TagSelector>> parseParameters(int t)
   {
     assert getTypeAt(t) == L_PAREN;
 
@@ -225,7 +227,7 @@ public final class TagSelectorParser
   }
 
 
-  private ParsedRule<List<String>> parseTagList(int t)
+  private @NotNull ParsedRule<List<String>> parseTagList(int t)
   {
     assert getTypeAt(t) == L_PAREN;
 
@@ -246,7 +248,7 @@ public final class TagSelectorParser
   }
 
 
-  private Token expect(int t, TokenType type)
+  private @NotNull Token expect(int t, @NotNull TokenType type)
   {
     val token = getTokenAt(t);
 

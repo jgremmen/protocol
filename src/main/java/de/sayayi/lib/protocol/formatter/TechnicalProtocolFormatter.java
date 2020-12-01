@@ -16,33 +16,33 @@
 package de.sayayi.lib.protocol.formatter;
 
 import de.sayayi.lib.protocol.Level;
-import de.sayayi.lib.protocol.Protocol;
-import de.sayayi.lib.protocol.Protocol.GenericMessage;
+import de.sayayi.lib.protocol.Protocol.GenericMessageWithLevel;
+import de.sayayi.lib.protocol.Protocol.Message;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
 import de.sayayi.lib.protocol.TagSelector;
 
+import lombok.AllArgsConstructor;
+import lombok.val;
+
 import org.jetbrains.annotations.NotNull;
 
 import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
+import static lombok.AccessLevel.PRIVATE;
 
 
 /**
+ * @param <M>  internal message object type
+ *
  * @author Jeroen Gremmen
+ * @since 0.1.0
  */
 @SuppressWarnings("unused")
-public class TechnicalProtocolFormatter<M> extends TreeProtocolFormatter<M>
+@AllArgsConstructor(access = PRIVATE)
+public final class TechnicalProtocolFormatter<M> extends AbstractTreeProtocolFormatter<M>
     implements ConfiguredProtocolFormatter<M,String>
 {
-  @SuppressWarnings("WeakerAccess")
-  public TechnicalProtocolFormatter() {
-    setMessageFormatter(new MessageFormatter<M>() {
-      @Override
-      public String format(@NotNull GenericMessage<M> message) {
-        return message.toString();
-      }
-    });
-  }
+  private static final ConfiguredProtocolFormatter<?,String> INSTANCE = new TechnicalProtocolFormatter<Object>();
 
 
   @Override
@@ -52,13 +52,25 @@ public class TechnicalProtocolFormatter<M> extends TreeProtocolFormatter<M>
 
 
   @Override
-  public @NotNull
-  TagSelector getTagSelector(@NotNull ProtocolFactory<M> protocolFactory) {
+  public @NotNull TagSelector getTagSelector(@NotNull ProtocolFactory<M> protocolFactory) {
     return protocolFactory.getDefaultTag().asSelector();
   }
 
 
-  public static @NotNull <M> String format(@NotNull Protocol<M> protocol) {
-    return protocol.format(new TechnicalProtocolFormatter<M>());
+  @Override
+  protected String format(@NotNull GenericMessageWithLevel<M> message)
+  {
+    val s = new StringBuilder(super.format(message)).append("  {level=").append(message.getLevel());
+
+    if (message instanceof Message)
+      s.append(",tags=").append(((Message<M>)message).getTagNames().toString().replace(", ", ","));
+
+    return s.append('}').toString();
+  }
+
+
+  @SuppressWarnings("unchecked")
+  public static @NotNull <M> ConfiguredProtocolFormatter<M,String> getInstance() {
+    return (ConfiguredProtocolFormatter<M,String>)INSTANCE;
   }
 }
