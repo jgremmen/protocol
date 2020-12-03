@@ -36,7 +36,7 @@ import java.util.TreeSet;
  * @author Jeroen Gremmen
  * @since 0.1.0
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "java:S100"})
 abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P extends MessageParameterBuilder<M>>
     extends AbstractBuilder<M,B>
     implements ProtocolMessageBuilder<M>
@@ -118,19 +118,24 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   @SuppressWarnings("squid:S2583")
   private @NotNull P message0(@NotNull M message)
   {
-    val resolvedTags = new TreeSet<String>();
-
-    // add implied dependencies
-    for(val tag: protocol.getPropagatedTags(tags))
-      for(val impliedTagDef: protocol.factory.getTagByName(tag).getImpliedTags())
-        if (impliedTagDef.matches(level))
-          resolvedTags.add(impliedTagDef.getName());
-
-    val msg = new ProtocolMessageEntry<M>(level, resolvedTags, throwable,
+    val msg = new ProtocolMessageEntry<M>(level, message0_resolveTagNames(), throwable,
         message, protocol.factory.getDefaultParameterValues());
 
     protocol.entries.add(msg);
 
     return createMessageParameterBuilder(msg);
+  }
+
+
+  private Set<String> message0_resolveTagNames()
+  {
+    val resolvedTags = new TreeSet<String>();
+
+    for(val tag: protocol.getPropagatedTags(tags))
+      for(val impliedTagDef: protocol.factory.getTagByName(tag).getImpliedTags())
+        if (impliedTagDef.matches(level))
+          resolvedTags.add(impliedTagDef.getName());
+
+    return resolvedTags;
   }
 }

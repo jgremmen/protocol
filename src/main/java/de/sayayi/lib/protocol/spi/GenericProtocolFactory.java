@@ -50,6 +50,7 @@ import static java.util.regex.Pattern.UNICODE_CASE;
  *
  * @author Jeroen Gremmen
  */
+@SuppressWarnings("java:S100")
 public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 {
   private static final Pattern TAG_NAME_PATTERN =
@@ -197,6 +198,7 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
     {
       if (matchCondition == null)
         throw new NullPointerException("matchCondition must not be null");
+
       if (matchLevel == null)
         throw new NullPointerException("matchLevel must not be null");
 
@@ -384,49 +386,49 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 
 
     @Override
-    public String toString()
+    public String toString() {
+      return "Tag[id=" + id + ",name=" + name + toString_implies() + ',' + matchLevel + toString_matchCondition() + ']';
+    }
+
+
+    private @NotNull String toString_implies()
     {
-      val s = new StringBuilder("Tag[id=").append(id).append(",name=").append(name);
+      if (implies.isEmpty())
+        return "";
 
-      if (!implies.isEmpty())
+      val s = new StringBuilder(",implies={");
+      var first = true;
+
+      for(val tagDef: implies)
       {
-        s.append(",implies={");
-        var first = true;
+        if (first)
+          first = false;
+        else
+          s.append(',');
 
-        for(TagDef tagDef: implies)
-        {
-          if (first)
-            first = false;
-          else
-            s.append(',');
-
-          s.append(tagDef.getName());
-        }
-
-        s.append('}');
+        s.append(tagDef.getName());
       }
 
-      s.append(',').append(matchLevel);
+      return s.append('}').toString();
+    }
 
+
+    private @NotNull String toString_matchCondition()
+    {
       switch(matchCondition)
       {
         case AT_LEAST:
-          s.append("(>=)");
-          break;
+          return "(>=)";
 
         case NOT_EQUAL:
-          s.append("(!=)");
-          break;
+          return "(!=)";
 
         case UNTIL:
-          s.append("(<=)");
-          break;
+          return "(<=)";
 
         default:
-          break;
+          return "";
       }
-
-      return s.append(']').toString();
     }
   }
 }

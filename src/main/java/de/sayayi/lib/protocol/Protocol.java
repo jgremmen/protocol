@@ -220,6 +220,15 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
   /**
+   * <p>
+   *   Returns a group iterator for this protocol.
+   * </p>
+   * <p>
+   *   The protocol groups returned by the iterator are direct descendants of this protocol.
+   * </p>
+   *
+   * @return  group iterator for this protocol, never {@code null}
+   *
    * @since 0.7.0
    */
   @NotNull Iterator<ProtocolGroup<M>> groupIterator();

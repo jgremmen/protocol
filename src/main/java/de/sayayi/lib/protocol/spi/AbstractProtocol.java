@@ -315,15 +315,16 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
 
     private void findNext()
     {
-      InternalProtocolEntry<M> entry;
-
       while(iterator.hasNext())
-        if ((entry = iterator.next()) instanceof ProtocolGroup)
+      {
+        val entry = iterator.next();
+        if (entry instanceof ProtocolGroup)
         {
           //noinspection unchecked
           next = (ProtocolGroup<M>)entry;
           return;
         }
+      }
 
       next = null;
     }
