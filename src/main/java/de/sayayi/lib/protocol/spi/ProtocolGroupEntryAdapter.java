@@ -31,6 +31,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
+import static de.sayayi.lib.protocol.Level.compare;
+
 
 /**
  * @param <M>  internal message object type
@@ -175,7 +178,7 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
     val s = new StringBuilder("ProtocolGroup[id=").append(group.getId())
         .append(",visibility=").append(group.getVisibility());
 
-    if (levelLimit.severity() < Level.Shared.HIGHEST.severity())
+    if (compare(levelLimit, HIGHEST) < 0)
       s.append(",levelLimit=").append(levelLimit);
 
     return s.append(']').toString();

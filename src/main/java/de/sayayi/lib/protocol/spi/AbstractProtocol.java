@@ -50,6 +50,8 @@ import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
+import static de.sayayi.lib.protocol.Level.compare;
+
 
 /**
  * @param <M>  internal message object type
@@ -103,7 +105,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   @Override
   public boolean matches0(@NotNull Level levelLimit, @NotNull Level level, @NotNull TagSelector tagSelector)
   {
-    if (levelLimit.severity() >= level.severity())
+    if (compare(levelLimit, level) >= 0)
       for(val entry: entries)
         if (entry.matches0(levelLimit, level, tagSelector))
           return true;
@@ -115,7 +117,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   @Override
   public boolean matches0(@NotNull Level levelLimit, @NotNull Level level)
   {
-    if (levelLimit.severity() >= level.severity())
+    if (compare(levelLimit, level) >= 0)
       for(val entry: entries)
         if (entry.matches0(levelLimit, level))
           return true;
@@ -129,7 +131,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   {
     val filteredEntries = new ArrayList<ProtocolEntry<M>>();
 
-    if (levelLimit.severity() >= level.severity())
+    if (compare(levelLimit, level) >= 0)
       for(final InternalProtocolEntry<M> entry: entries)
         if (entry.matches0(levelLimit, level, tagSelector))
         {
@@ -155,7 +157,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   {
     var count = 0;
 
-    if (levelLimit.severity() >= level.severity())
+    if (compare(levelLimit, level) >= 0)
       for(val entry: entries)
         count += entry.getVisibleEntryCount0(levelLimit, recursive, level, tagSelector);
 

@@ -38,6 +38,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import static de.sayayi.lib.protocol.Level.SORT_DESCENDING;
+import static de.sayayi.lib.protocol.Level.compare;
 import static org.unbescape.html.HtmlEscape.escapeHtml5;
 
 
@@ -56,13 +57,8 @@ import static org.unbescape.html.HtmlEscape.escapeHtml5;
 @SuppressWarnings("unused")
 public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
 {
-  private final StringBuilder html;
+  private final StringBuilder html = new StringBuilder();
   private MessageFormatter<M> messageFormatter;
-
-
-  public HtmlProtocolFormatter() {
-    this.html = new StringBuilder();
-  }
 
 
   @Override
@@ -368,10 +364,8 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
       if (iconClassName != null)
         return iconClassName;
 
-      val severity = level.severity();
-
       for(val levelIconClassEntry: levelIconMap.entrySet())
-        if (severity >= levelIconClassEntry.getKey().severity())
+        if (compare(level, levelIconClassEntry.getKey()) >= 0)
           return levelIconClassEntry.getValue();
 
       return null;

@@ -29,6 +29,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.Set;
 
+import static de.sayayi.lib.protocol.Level.compare;
+
 
 /**
  * @param <M>  internal message object type
@@ -126,7 +128,7 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
   static <M> ProtocolEntry.Message<M> from(@NotNull Level levelLimit,
                                            @NotNull InternalProtocolEntry.Message<M> messageEntry)
   {
-    return levelLimit.severity() < messageEntry.getLevel().severity()
+    return compare(levelLimit, messageEntry.getLevel()) < 0
         ? new ProtocolMessageEntryAdapter<>(levelLimit, messageEntry) : messageEntry;
   }
 }

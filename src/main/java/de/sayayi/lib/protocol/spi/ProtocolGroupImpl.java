@@ -36,9 +36,11 @@ import java.util.function.Consumer;
 
 import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
 import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
+import static de.sayayi.lib.protocol.Level.compare;
+import static de.sayayi.lib.protocol.Level.max;
+import static de.sayayi.lib.protocol.Level.min;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_IF_NOT_EMPTY;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ONLY;
-import static de.sayayi.lib.protocol.spi.LevelHelper.min;
 import static java.util.Objects.requireNonNull;
 
 
@@ -159,9 +161,9 @@ final class ProtocolGroupImpl<M>
       else
         continue;
 
-      headerLevel = LevelHelper.max(headerLevel, protocolEntryLevel);
+      headerLevel = max(headerLevel, protocolEntryLevel);
 
-      if (headerLevel.severity() > levelLimit.severity())
+      if (compare(headerLevel, levelLimit) > 0)
         return levelLimit;
     }
 
@@ -181,7 +183,7 @@ final class ProtocolGroupImpl<M>
   {
     levelLimit = min(this.levelLimit, levelLimit);
 
-    return levelLimit.severity() >= level.severity() && getEffectiveVisibility().isShowEntries()
+    return compare(levelLimit, level) >= 0 && getEffectiveVisibility().isShowEntries()
         ? super.getEntries(levelLimit, level, tagSelector) : Collections.emptyList();
   }
 
@@ -199,7 +201,7 @@ final class ProtocolGroupImpl<M>
   {
     levelLimit = min(this.levelLimit, levelLimit);
 
-    if (levelLimit.severity() >= level.severity())
+    if (compare(levelLimit, level) >= 0)
     {
       val effectiveVisibility = getEffectiveVisibility();
 
@@ -345,7 +347,7 @@ final class ProtocolGroupImpl<M>
   {
     levelLimit = min(this.levelLimit, levelLimit);
 
-    return levelLimit.severity() >= level.severity() &&
+    return compare(levelLimit, level) >= 0 &&
            getEffectiveVisibility().isShowEntries() &&
            super.matches0(levelLimit, level, tagSelector);
   }
@@ -362,7 +364,7 @@ final class ProtocolGroupImpl<M>
   {
     levelLimit = min(this.levelLimit, levelLimit);
 
-    return levelLimit.severity() >= level.severity() &&
+    return compare(levelLimit, level) >= 0 &&
            getEffectiveVisibility().isShowEntries() &&
            super.matches0(levelLimit, level);
   }
@@ -394,7 +396,7 @@ final class ProtocolGroupImpl<M>
     val s = new StringBuilder("ProtocolGroup[id=").append(getId())
         .append(",visibility=").append(visibility);
 
-    if (levelLimit.severity() < HIGHEST.severity())
+    if (compare(levelLimit, HIGHEST) < 0)
       s.append(",levelLimit=").append(levelLimit);
     if (name != null)
       s.append(",name=").append(name);

@@ -29,7 +29,8 @@ import java.util.Map;
 import java.util.Set;
 
 import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
-import static de.sayayi.lib.protocol.spi.LevelHelper.min;
+import static de.sayayi.lib.protocol.Level.compare;
+import static de.sayayi.lib.protocol.Level.min;
 
 
 /**
@@ -76,13 +77,13 @@ final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements
 
   @Override
   public boolean matches0(@NotNull Level levelLimit, @NotNull Level level) {
-    return min(this.level, levelLimit).severity() >= level.severity();
+    return compare(min(this.level, levelLimit), level) >= 0;
   }
 
 
   @Override
   public boolean matches(@NotNull Level level) {
-    return this.level.severity() >= level.severity();
+    return compare(this.level, level) >= 0;
   }
 
 

@@ -16,6 +16,7 @@
 package de.sayayi.lib.protocol;
 
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
 
@@ -66,6 +67,26 @@ public interface Level
    */
   @Contract(pure = true)
   int severity();
+
+
+  @Contract(pure = true)
+  static @NotNull Level max(@NotNull Level l1, @NotNull Level l2) {
+    return l1.severity() >= l2.severity() ? l1 : l2;
+  }
+
+
+  @Contract(pure = true)
+  static @NotNull Level min(@NotNull Level l1, @NotNull Level l2) {
+    return l1.severity() <= l2.severity() ? l1 : l2;
+  }
+
+
+  @Contract(pure = true)
+  static int compare(@NotNull Level l1, @NotNull Level l2) {
+    return Integer.compare(l1.severity(), l2.severity());
+  }
+
+
 
 
   /**
