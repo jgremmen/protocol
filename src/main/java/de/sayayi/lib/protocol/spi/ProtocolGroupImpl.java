@@ -32,12 +32,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
 import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_IF_NOT_EMPTY;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ONLY;
 import static de.sayayi.lib.protocol.spi.LevelHelper.min;
+import static java.util.Objects.requireNonNull;
 
 
 /**
@@ -180,7 +182,7 @@ final class ProtocolGroupImpl<M>
     levelLimit = min(this.levelLimit, levelLimit);
 
     return levelLimit.severity() >= level.severity() && getEffectiveVisibility().isShowEntries()
-        ? super.getEntries(levelLimit, level, tagSelector) : Collections.<ProtocolEntry<M>>emptyList();
+        ? super.getEntries(levelLimit, level, tagSelector) : Collections.emptyList();
   }
 
 
@@ -313,13 +315,21 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  @SuppressWarnings({ "squid:S2583", "ConstantConditions" })
-  public @NotNull ProtocolGroup.ProtocolMessageBuilder<M> add(@NotNull Level level)
+  public void forEachGroupByRegex(@NotNull String regex, @NotNull Consumer<ProtocolGroup<M>> action)
   {
-    if (level == null)
-      throw new NullPointerException("level must not be null");
+    if (requireNonNull(name, "regex must not be null").isEmpty())
+      throw new ProtocolException("regex must not be empty");
 
-    return new MessageBuilder(level);
+    super.forEachGroupByRegex(regex, action);
+
+    if (name.matches(regex))
+      action.accept(this);
+  }
+
+
+  @Override
+  public @NotNull ProtocolGroup.ProtocolMessageBuilder<M> add(@NotNull Level level) {
+    return new MessageBuilder(requireNonNull(level, "level must not be null"));
   }
 
 
@@ -367,7 +377,7 @@ final class ProtocolGroupImpl<M>
   @Override
   public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull TagSelector tagSelector)
   {
-    return new ProtocolStructureIterator.ForGroup<M>(levelLimit, level, tagSelector, 0, this,
+    return new ProtocolStructureIterator.ForGroup<>(levelLimit, level, tagSelector, 0, this,
         false, false, true);
   }
 

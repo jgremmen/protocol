@@ -21,7 +21,6 @@ import de.sayayi.lib.protocol.Protocol.MessageParameterBuilder;
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolFormatter;
-import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.TagSelector;
@@ -34,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 
 /**
@@ -66,36 +66,6 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
       with(entry.getKey(), entry.getValue());
 
     return (P)this;
-  }
-
-
-  @Override
-  public @NotNull P with(@NotNull String parameter, boolean value) {
-    return with(parameter, Boolean.valueOf(value));
-  }
-
-
-  @Override
-  public @NotNull P with(@NotNull String parameter, int value) {
-    return with(parameter, Integer.valueOf(value));
-  }
-
-
-  @Override
-  public @NotNull P with(@NotNull String parameter, long value) {
-    return with(parameter, Long.valueOf(value));
-  }
-
-
-  @Override
-  public @NotNull P with(@NotNull String parameter, float value) {
-    return with(parameter, Float.valueOf(value));
-  }
-
-
-  @Override
-  public @NotNull P with(@NotNull String parameter, double value) {
-    return with(parameter, Double.valueOf(value));
   }
 
 
@@ -149,36 +119,6 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
-  public @NotNull B debug() {
-    return protocol.debug();
-  }
-
-
-  @Override
-  public @NotNull B info() {
-    return protocol.info();
-  }
-
-
-  @Override
-  public @NotNull B warn() {
-    return protocol.warn();
-  }
-
-
-  @Override
-  public @NotNull B error() {
-    return protocol.error();
-  }
-
-
-  @Override
-  public @NotNull B error(@NotNull Throwable throwable) {
-    return protocol.error(throwable);
-  }
-
-
-  @Override
   public @NotNull B add(@NotNull Level level) {
     return protocol.add(level);
   }
@@ -197,21 +137,9 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
-  public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level) {
-    return protocol.format(formatter, level);
-  }
-
-
-  @Override
   public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level,
                       @NotNull TagSelector tagSelector) {
     return protocol.format(formatter, level, tagSelector);
-  }
-
-
-  @Override
-  public <R> R format(@NotNull ConfiguredProtocolFormatter<M,R> formatter) {
-    return protocol.format(formatter);
   }
 
 
@@ -254,6 +182,12 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
   @Override
   public @NotNull Set<ProtocolGroup<M>> findGroupsByRegex(@NotNull String regex) {
     return protocol.findGroupsByRegex(regex);
+  }
+
+
+  @Override
+  public void forEachGroupByRegex(@NotNull String regex, @NotNull Consumer<ProtocolGroup<M>> action) {
+    protocol.forEachGroupByRegex(regex, action);
   }
 
 

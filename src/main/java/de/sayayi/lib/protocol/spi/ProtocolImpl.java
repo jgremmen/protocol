@@ -25,6 +25,7 @@ import de.sayayi.lib.protocol.TagSelector;
 import org.jetbrains.annotations.NotNull;
 
 import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
+import static java.util.Objects.requireNonNull;
 
 
 /**
@@ -46,14 +47,9 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
   }
 
 
-  @SuppressWarnings({ "squid:S2583", "ConstantConditions" })
   @Override
-  public @NotNull ProtocolMessageBuilder<M> add(@NotNull Level level)
-  {
-    if (level == null)
-      throw new NullPointerException("level must not be null");
-
-    return new MessageBuilder(level);
+  public @NotNull ProtocolMessageBuilder<M> add(@NotNull Level level) {
+    return new MessageBuilder(requireNonNull(level, "level must not be null"));
   }
 
 
@@ -77,7 +73,7 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
 
   @Override
   public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull TagSelector tagSelector) {
-    return new ProtocolStructureIterator.ForProtocol<M>(level, tagSelector, 0, this);
+    return new ProtocolStructureIterator.ForProtocol<>(level, tagSelector, 0, this);
   }
 
 

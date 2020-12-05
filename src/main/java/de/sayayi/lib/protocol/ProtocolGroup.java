@@ -176,22 +176,37 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
   @Override
   @Contract(pure = true, value = "-> new")
-  @NotNull ProtocolMessageBuilder<M> debug();
+  default @NotNull ProtocolMessageBuilder<M> debug() {
+    return add(Level.Shared.DEBUG);
+  }
 
 
   @Override
   @Contract(pure = true, value = "-> new")
-  @NotNull ProtocolMessageBuilder<M> info();
+  default @NotNull ProtocolMessageBuilder<M> info() {
+    return add(Level.Shared.INFO);
+  }
 
 
   @Override
   @Contract(pure = true, value = "-> new")
-  @NotNull ProtocolMessageBuilder<M> warn();
+  default @NotNull ProtocolMessageBuilder<M> warn() {
+    return add(Level.Shared.WARN);
+  }
 
 
   @Override
   @Contract(pure = true, value = "-> new")
-  @NotNull ProtocolMessageBuilder<M> error();
+  default @NotNull ProtocolMessageBuilder<M> error() {
+    return add(Level.Shared.ERROR);
+  }
+
+
+  @Override
+  @Contract(pure = true, value = "_ -> new")
+  default @NotNull ProtocolMessageBuilder<M> error(@NotNull Throwable throwable) {
+    return add(Level.Shared.ERROR).withThrowable(throwable);
+  }
 
 
   @Override
@@ -257,27 +272,37 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
     @Override
     @Contract("_, _ -> this")
-    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, boolean value);
+    default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, boolean value) {
+      return with(parameter, Boolean.valueOf(value));
+    }
 
 
     @Override
     @Contract("_, _ -> this")
-    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, int value);
+    default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, int value) {
+      return with(parameter, Integer.valueOf(value));
+    }
 
 
     @Override
     @Contract("_, _ -> this")
-    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, long value);
+    default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, long value) {
+      return with(parameter, Long.valueOf(value));
+    }
 
 
     @Override
     @Contract("_, _ -> this")
-    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, float value);
+    default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, float value) {
+      return with(parameter, Float.valueOf(value));
+    }
 
 
     @Override
     @Contract("_, _ -> this")
-    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, double value);
+    default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, double value) {
+      return with(parameter, Double.valueOf(value));
+    }
 
 
     @Override

@@ -324,7 +324,7 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
 
     public WithFontAwesome(@NotNull Map<Level,String> levelIconMap)
     {
-      this.levelIconMap = new TreeMap<Level,String>(SORT_DESCENDING);
+      this.levelIconMap = new TreeMap<>(SORT_DESCENDING);
       this.levelIconMap.putAll(levelIconMap);
     }
 

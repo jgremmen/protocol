@@ -127,6 +127,6 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
                                            @NotNull InternalProtocolEntry.Message<M> messageEntry)
   {
     return levelLimit.severity() < messageEntry.getLevel().severity()
-        ? new ProtocolMessageEntryAdapter<M>(levelLimit, messageEntry) : messageEntry;
+        ? new ProtocolMessageEntryAdapter<>(levelLimit, messageEntry) : messageEntry;
   }
 }

@@ -16,13 +16,11 @@
 package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.Level;
-import de.sayayi.lib.protocol.Level.Shared;
 import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolFormatter;
-import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupEndEntry;
@@ -30,7 +28,6 @@ import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.ProtocolEnd;
 import de.sayayi.lib.protocol.ProtocolIterator.ProtocolStart;
-import de.sayayi.lib.protocol.Tag;
 import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.formatter.TechnicalProtocolFormatter;
 
@@ -51,6 +48,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 
 /**
@@ -78,8 +76,8 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
     this.factory = factory;
 
     id = PROTOCOL_ID.incrementAndGet();
-    entries = new ArrayList<InternalProtocolEntry<M>>(8);
-    tagPropagationMap = new HashMap<TagSelector,Set<String>>(8);
+    entries = new ArrayList<>(8);
+    tagPropagationMap = new HashMap<>(8);
   }
 
 
@@ -88,44 +86,13 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
     if (tagPropagationMap.isEmpty())
       return tags;
 
-    val collectedPropagatedTagDefs = new TreeSet<String>(tags);
+    val collectedPropagatedTagDefs = new TreeSet<>(tags);
 
     for(val tagPropagation: tagPropagationMap.entrySet())
       if (tagPropagation.getKey().match(collectedPropagatedTagDefs))
         collectedPropagatedTagDefs.addAll(tagPropagation.getValue());
 
     return collectedPropagatedTagDefs;
-  }
-
-
-  @Override
-  public @NotNull B debug() {
-    return add(Shared.DEBUG);
-  }
-
-
-  @Override
-  public @NotNull B info() {
-    return add(Shared.INFO);
-  }
-
-
-  @Override
-  public @NotNull B warn() {
-    return add(Shared.WARN);
-  }
-
-
-  @Override
-  public @NotNull B error() {
-    return add(Shared.ERROR);
-  }
-
-
-  @SuppressWarnings("unchecked")
-  @Override
-  public @NotNull B error(@NotNull Throwable throwable) {
-    return (B)add(Shared.ERROR).withThrowable(throwable);
   }
 
 
@@ -214,10 +181,15 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   {
     val groups = new LinkedHashSet<ProtocolGroup<M>>();
 
-    for(final Iterator<ProtocolGroup<M>> groupIterator = groupIterator(); groupIterator.hasNext();)
-      groups.addAll(groupIterator.next().findGroupsByRegex(regex));
+    groupIterator().forEachRemaining(group -> groups.addAll(group.findGroupsByRegex(regex)));
 
     return groups;
+  }
+
+
+  @Override
+  public void forEachGroupByRegex(@NotNull String regex, @NotNull Consumer<ProtocolGroup<M>> action) {
+    groupIterator().forEachRemaining(group -> group.forEachGroupByRegex(regex, action));
   }
 
 
@@ -225,7 +197,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   public @NotNull ProtocolGroup<M> createGroup()
   {
     @SuppressWarnings("unchecked")
-    val group = new ProtocolGroupImpl<M>((AbstractProtocol<M,ProtocolMessageBuilder<M>>)this);
+    val group = new ProtocolGroupImpl<>((AbstractProtocol<M, ProtocolMessageBuilder<M>>)this);
 
     entries.add(group);
 
@@ -236,12 +208,6 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   @Override
   public @NotNull Iterator<ProtocolGroup<M>> groupIterator() {
     return new GroupIterator();
-  }
-
-
-  @Override
-  public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level) {
-    return format(formatter, level, Tag.any());
   }
 
 
@@ -271,12 +237,6 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   }
 
 
-  @Override
-  public <R> R format(@NotNull ConfiguredProtocolFormatter<M,R> formatter) {
-    return format(formatter, formatter.getLevel(), formatter.getTagSelector(factory));
-  }
-
-
   int countGroupDepth()
   {
     var depth = 0;
@@ -291,7 +251,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
 
   @Override
   public @NotNull String toStringTree() {
-    return format(TechnicalProtocolFormatter.<M>getInstance());
+    return format(TechnicalProtocolFormatter.getInstance());
   }
 
 

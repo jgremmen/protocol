@@ -55,7 +55,7 @@ public final class TagSelectorParser
   {
     lexer = new TagSelectorLexer(selector);
     tokenIterator = lexer.iterator();
-    tokens = new ArrayList<Token>();
+    tokens = new ArrayList<>();
   }
 
 
@@ -101,7 +101,7 @@ public final class TagSelectorParser
     switch(type)
     {
       case TAG:
-        return new ParsedRule<TagSelector>(t, t, Tag.of(t0.getText()));
+        return new ParsedRule<>(t, t, Tag.of(t0.getText()));
 
       case ALL_OF:
       case ANY_OF:
@@ -132,7 +132,7 @@ public final class TagSelectorParser
     // t0=or t1=<parameters>
     val parameters = parseParameters(t + 1);
 
-    return new ParsedRule<TagSelector>(t, parameters.tokenLast, and
+    return new ParsedRule<>(t, parameters.tokenLast, and
         ? Tag.and(parameters.result.toArray(new TagSelector[0]))
         : Tag.or(parameters.result.toArray(new TagSelector[0])));
   }
@@ -164,7 +164,7 @@ public final class TagSelectorParser
         throw new IllegalStateException("Unexpected value: " + type);
     }
 
-    return new ParsedRule<TagSelector>(t, tagList.tokenLast, selector);
+    return new ParsedRule<>(t, tagList.tokenLast, selector);
   }
 
 
@@ -178,11 +178,11 @@ public final class TagSelectorParser
     switch(type)
     {
       case ANY:
-        return new ParsedRule<TagSelector>(t, t + 2, new MatchAny());
+        return new ParsedRule<>(t, t + 2, new MatchAny());
 
       case TRUE:
       case FALSE:
-        return new ParsedRule<TagSelector>(t, t + 2, MatchFixResult.valueOf(type == TRUE));
+        return new ParsedRule<>(t, t + 2, MatchFixResult.valueOf(type == TRUE));
 
       default:
         throw new IllegalStateException("Unexpected value: " + type);
@@ -199,7 +199,7 @@ public final class TagSelectorParser
 
     expect(lastIdx, R_PAREN);
 
-    return new ParsedRule<TagSelector>(t, lastIdx, Tag.not(selector.result));
+    return new ParsedRule<>(t, lastIdx, Tag.not(selector.result));
   }
 
 
@@ -223,7 +223,7 @@ public final class TagSelectorParser
 
     expect(t, R_PAREN);
 
-    return new ParsedRule<List<TagSelector>>(tokenStart, t, parameters);
+    return new ParsedRule<>(tokenStart, t, parameters);
   }
 
 
@@ -244,7 +244,7 @@ public final class TagSelectorParser
 
     expect(t, R_PAREN);
 
-    return new ParsedRule<List<String>>(tokenStart, t, parameters);
+    return new ParsedRule<>(tokenStart, t, parameters);
   }
 
 

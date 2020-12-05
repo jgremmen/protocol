@@ -56,7 +56,8 @@ public interface ProtocolFormatter<M,R>
    *
    * @see #protocolEnd()
    */
-  void protocolStart();
+  default void protocolStart() {
+  }
 
 
   /**
@@ -67,7 +68,8 @@ public interface ProtocolFormatter<M,R>
    * @see #protocolStart()
    * @see #getResult()
    */
-  void protocolEnd();
+  default void protocolEnd() {
+  }
 
 
   /**
@@ -86,10 +88,12 @@ public interface ProtocolFormatter<M,R>
   void message(@NotNull MessageEntry<M> message);
 
 
-  void groupStart(@NotNull GroupStartEntry<M> group);
+  default void groupStart(@NotNull GroupStartEntry<M> group) {
+  }
 
 
-  void groupEnd(@NotNull GroupEndEntry<M> groupEnd);
+  default void groupEnd(@NotNull GroupEndEntry<M> groupEnd) {
+  }
 
 
   /**

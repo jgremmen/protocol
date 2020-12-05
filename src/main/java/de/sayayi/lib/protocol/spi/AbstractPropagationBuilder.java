@@ -54,12 +54,8 @@ abstract class AbstractPropagationBuilder<M,B extends ProtocolMessageBuilder<M>>
     if (!protocol.factory.isValidTagName(targetTagName))
       throw new IllegalArgumentException("invalid target tag name '" + targetTagName + "'");
 
-    var propagationSet = protocol.tagPropagationMap.get(tagSelector);
-    if (propagationSet == null)
-    {
-      propagationSet = new TreeSet<String>();
-      protocol.tagPropagationMap.put(tagSelector, propagationSet);
-    }
+    var propagationSet = protocol.tagPropagationMap.computeIfAbsent(tagSelector,
+        k -> new TreeSet<>());
 
     propagationSet.add(targetTagName);
 
@@ -68,7 +64,7 @@ abstract class AbstractPropagationBuilder<M,B extends ProtocolMessageBuilder<M>>
 
 
   @Override
-  @SuppressWarnings({ "java:S2583", "java:S2589", "ConstantConditions" })
+  @SuppressWarnings({ "java:S2583", "java:S2589" })
   public @NotNull Protocol<M> to(@NotNull String... targetTagNames)
   {
     if (targetTagNames == null || targetTagNames.length == 0)

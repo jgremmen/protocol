@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 
 /**
@@ -126,5 +127,11 @@ public interface ProtocolEntry<M> extends ProtocolQueryable
      */
     @Contract(pure = true)
     @NotNull Set<ProtocolGroup<M>> findGroupsByRegex(@NotNull String regex);
+
+
+    /**
+     * @since 1.0.0
+     */
+    void forEachGroupByRegex(@NotNull String regex, @NotNull Consumer<ProtocolGroup<M>> action);
   }
 }
