@@ -152,12 +152,6 @@ public final class TagSelectorLexer implements Iterable<TagSelectorLexer.Token>
 
       return returnToken;
     }
-
-
-    @Override
-    public void remove() {
-      throw new UnsupportedOperationException();
-    }
   }
 
 

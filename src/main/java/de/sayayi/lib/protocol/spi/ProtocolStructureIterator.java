@@ -152,13 +152,6 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   }
 
 
-  @Override
-  @Contract("-> fail")
-  public void remove() {
-    throw new UnsupportedOperationException();
-  }
-
-
   @Contract(pure = true)
   protected boolean hasPreviousVisibleEntry() {
     return previousVisibleEntry != null;
@@ -532,12 +525,6 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
       prepareNextEntry();
 
       return entry;
-    }
-
-
-    @Override
-    public void remove() {
-      throw new UnsupportedOperationException();
     }
   }
 

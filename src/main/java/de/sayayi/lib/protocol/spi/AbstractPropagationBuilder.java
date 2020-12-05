@@ -64,10 +64,9 @@ abstract class AbstractPropagationBuilder<M,B extends ProtocolMessageBuilder<M>>
 
 
   @Override
-  @SuppressWarnings({ "java:S2583", "java:S2589" })
   public @NotNull Protocol<M> to(@NotNull String... targetTagNames)
   {
-    if (targetTagNames == null || targetTagNames.length == 0)
+    if (targetTagNames.length == 0)
       throw new ProtocolException("targetTagNames must not be empty");
 
     for(val targetTagName: targetTagNames)

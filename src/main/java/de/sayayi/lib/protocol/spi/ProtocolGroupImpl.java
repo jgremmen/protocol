@@ -86,27 +86,17 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  @SuppressWarnings({ "squid:S2583", "ConstantConditions" })
   public @NotNull ProtocolGroup<M> setVisibility(@NotNull Visibility visibility)
   {
-    if (visibility == null)
-      throw new NullPointerException("visibility must not be null");
-
-    this.visibility = visibility;
-
+    this.visibility = requireNonNull(visibility, "visibility must not be null");
     return this;
   }
 
 
   @Override
-  @SuppressWarnings({ "squid:S2583", "ConstantConditions" })
   public @NotNull ProtocolGroup<M> setLevelLimit(@NotNull Level level)
   {
-    if (level == null)
-      throw new NullPointerException("level must not be null");
-
-    levelLimit = level;
-
+    levelLimit = requireNonNull(level, "level must not be null");
     return this;
   }
 
@@ -195,7 +185,6 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  @SuppressWarnings("squid:SwitchLastCaseIsDefaultCheck")
   public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive,
                                    @NotNull Level level, @NotNull TagSelector tagSelector)
   {
@@ -224,6 +213,9 @@ final class ProtocolGroupImpl<M>
 
         case FLATTEN:
           return recursiveEntryCount;
+
+        default:
+          break;
       }
     }
 
@@ -242,19 +234,15 @@ final class ProtocolGroupImpl<M>
                                                @NotNull TagSelector tagSelector)
   {
     return getEffectiveVisibility().isShowEntries()
-        ? super.getVisibleEntryCount0(min(this.levelLimit, levelLimit), false, level, tagSelector)
-        : 0;
+        ? super.getVisibleEntryCount0(min(this.levelLimit, levelLimit), false, level, tagSelector) : 0;
   }
 
 
   @Override
-  @SuppressWarnings({ "squid:S2583", "ConstantConditions" })
   public @NotNull ProtocolGroup.MessageParameterBuilder<M> setGroupMessage(@NotNull String message)
   {
-    if (message == null)
-      throw new NullPointerException("message must not be null");
-
-    groupMessage = new GroupMessage(factory.getMessageProcessor().processMessage(message));
+    groupMessage = new GroupMessage(factory.getMessageProcessor()
+        .processMessage(requireNonNull(message, "message must not be null")));
 
     return new ParameterBuilderImpl(groupMessage);
   }
@@ -276,8 +264,8 @@ final class ProtocolGroupImpl<M>
       this.name = null;
     else if (!name.equals(this.name))
     {
-      if (getRootProtocol().findGroupWithName(name) != null)
-        throw new ProtocolException("group name '" + name + "' must be unique");
+      getRootProtocol().forGroupWithName(name,
+          group -> { throw new ProtocolException("group name '" + name + "' must be unique"); });
 
       this.name = name;
     }
@@ -287,11 +275,8 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  @SuppressWarnings({ "java:S2589", "java:S2583", "ConstantConditions" })
   public ProtocolGroup<M> findGroupWithName(@NotNull String name)
   {
-    if (name == null)
-      throw new NullPointerException("name must not be null");
     if (name.isEmpty())
       throw new ProtocolException("name must not be empty");
 
@@ -300,10 +285,21 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
+  public boolean forGroupWithName(@NotNull String name, @NotNull Consumer<ProtocolGroup<M>> action)
+  {
+    if (name.equals(this.name))
+    {
+      action.accept(this);
+      return true;
+    }
+
+    return super.forGroupWithName(name, action);
+  }
+
+
+  @Override
   public @NotNull Set<ProtocolGroup<M>> findGroupsByRegex(@NotNull String regex)
   {
-    if (name == null)
-      throw new NullPointerException("regex must not be null");
     if (name.isEmpty())
       throw new ProtocolException("regex must not be empty");
 
@@ -319,7 +315,7 @@ final class ProtocolGroupImpl<M>
   @Override
   public void forEachGroupByRegex(@NotNull String regex, @NotNull Consumer<ProtocolGroup<M>> action)
   {
-    if (requireNonNull(name, "regex must not be null").isEmpty())
+    if (name.isEmpty())
       throw new ProtocolException("regex must not be empty");
 
     super.forEachGroupByRegex(regex, action);

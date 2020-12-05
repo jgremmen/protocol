@@ -176,7 +176,7 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 
 
 
-  private class TagBuilderImpl implements TagBuilder<M>
+  private final class TagBuilderImpl implements TagBuilder<M>
   {
     @Getter private final TagDefImpl tagDef;
 

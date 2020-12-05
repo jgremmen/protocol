@@ -24,9 +24,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.function.Consumer;
+
+import static java.util.Spliterator.DISTINCT;
+import static java.util.Spliterator.NONNULL;
+import static java.util.Spliterator.ORDERED;
 
 
 /**
@@ -247,6 +252,12 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
   /**
+   * @since 1.0.0
+   */
+  @NotNull Spliterator<ProtocolGroup<M>> groupSpliterator();
+
+
+  /**
    * Formats this protocol using the given {@code formatter} iterating over all elements matching {@code level}.
    *
    * @param formatter  protocol formatter to use for formatting this protocol
@@ -300,6 +311,15 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
   /**
+   * @since 1.0.0
+   */
+  @Contract(pure = true, value = "_, _ -> new")
+  default @NotNull Spliterator<ProtocolIterator.DepthEntry<M>> spliterator(@NotNull Level level, @NotNull TagSelector tagSelector) {
+    return Spliterators.spliteratorUnknownSize(iterator(level, tagSelector), ORDERED | DISTINCT | NONNULL);
+  }
+
+
+  /**
    * Tells if any entry in this protocol matches the given {@code level} and {@code tagSelector}.
    *
    * @param level        requested protocol level, not {@code null}
@@ -328,6 +348,7 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @since 0.7.0
    */
+  @Deprecated
   @Contract(pure = true)
   ProtocolGroup<M> findGroupWithName(@NotNull String name);
 
@@ -335,9 +356,7 @@ public interface Protocol<M> extends ProtocolQueryable
   /**
    * @since 1.0.0
    */
-  default void forGroupWithName(@NotNull String name, @NotNull Consumer<ProtocolGroup<M>> action) {
-    Optional.ofNullable(findGroupWithName(name)).ifPresent(action);
-  }
+  boolean forGroupWithName(@NotNull String name, @NotNull Consumer<ProtocolGroup<M>> action);
 
 
   /**
@@ -354,6 +373,7 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @since 0.7.0
    */
+  @Deprecated
   @Contract(pure = true)
   @NotNull Set<ProtocolGroup<M>> findGroupsByRegex(@NotNull String regex);
 
@@ -371,7 +391,10 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @since 0.7.0
    */
-  @NotNull String toStringTree();
+  @Contract(pure = true)
+  default @NotNull String toStringTree() {
+    return format(TechnicalProtocolFormatter.getInstance());
+  }
 
 
 

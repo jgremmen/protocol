@@ -29,7 +29,6 @@ import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.ProtocolEnd;
 import de.sayayi.lib.protocol.ProtocolIterator.ProtocolStart;
 import de.sayayi.lib.protocol.TagSelector;
-import de.sayayi.lib.protocol.formatter.TechnicalProtocolFormatter;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -38,19 +37,15 @@ import lombok.var;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import static de.sayayi.lib.protocol.Level.compare;
+import static java.util.Spliterator.DISTINCT;
+import static java.util.Spliterator.NONNULL;
+import static java.util.Spliterator.ORDERED;
+import static java.util.Spliterator.SORTED;
 
 
 /**
@@ -166,6 +161,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
 
 
   @Override
+  @SuppressWarnings("deprecation")
   public ProtocolGroup<M> findGroupWithName(@NotNull String name)
   {
     ProtocolGroup<M> group = null;
@@ -179,6 +175,18 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
 
 
   @Override
+  public boolean forGroupWithName(@NotNull String name, @NotNull Consumer<ProtocolGroup<M>> action)
+  {
+    for(final Iterator<ProtocolGroup<M>> groupIterator = groupIterator(); groupIterator.hasNext();)
+      if (groupIterator.next().forGroupWithName(name, action))
+        return true;
+
+    return false;
+  }
+
+
+  @Override
+  @SuppressWarnings("deprecation")
   public @NotNull Set<ProtocolGroup<M>> findGroupsByRegex(@NotNull String regex)
   {
     val groups = new LinkedHashSet<ProtocolGroup<M>>();
@@ -214,12 +222,18 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
 
 
   @Override
+  public @NotNull Spliterator<ProtocolGroup<M>> groupSpliterator() {
+    return Spliterators.spliterator(groupIterator(), entries.size(), DISTINCT | ORDERED | SORTED | NONNULL);
+  }
+
+
+  @Override
   public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level, @NotNull TagSelector tagSelector)
   {
     // initialize formatter
     formatter.init(factory, level, tagSelector, countGroupDepth());
 
-    for(Iterator<DepthEntry<M>> iterator = iterator(level, tagSelector); iterator.hasNext();)
+    for(final Iterator<DepthEntry<M>> iterator = iterator(level, tagSelector); iterator.hasNext();)
     {
       val entry = iterator.next();
 
@@ -243,17 +257,11 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   {
     var depth = 0;
 
-    for(InternalProtocolEntry<M> entry: entries)
+    for(final InternalProtocolEntry<M> entry: entries)
       if (entry instanceof ProtocolGroupImpl)
         depth = Math.max(depth, 1 + ((ProtocolGroupImpl<M>)entry).countGroupDepth());
 
     return depth;
-  }
-
-
-  @Override
-  public @NotNull String toStringTree() {
-    return format(TechnicalProtocolFormatter.getInstance());
   }
 
 
@@ -308,12 +316,6 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
       findNext();
 
       return nextGroup;
-    }
-
-
-    @Override
-    public void remove() {
-      throw new UnsupportedOperationException();
     }
   }
 }

@@ -33,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.Spliterator;
 import java.util.function.Consumer;
 
 
@@ -137,6 +138,12 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
+  public @NotNull Spliterator<ProtocolGroup<M>> groupSpliterator() {
+    return protocol.groupSpliterator();
+  }
+
+
+  @Override
   public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level,
                       @NotNull TagSelector tagSelector) {
     return protocol.format(formatter, level, tagSelector);
@@ -180,6 +187,12 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
+  public boolean forGroupWithName(@NotNull String name, @NotNull Consumer<ProtocolGroup<M>> action) {
+    return protocol.forGroupWithName(name, action);
+  }
+
+
+  @Override
   public @NotNull Set<ProtocolGroup<M>> findGroupsByRegex(@NotNull String regex) {
     return protocol.findGroupsByRegex(regex);
   }
@@ -188,11 +201,5 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
   @Override
   public void forEachGroupByRegex(@NotNull String regex, @NotNull Consumer<ProtocolGroup<M>> action) {
     protocol.forEachGroupByRegex(regex, action);
-  }
-
-
-  @Override
-  public @NotNull String toStringTree() {
-    return protocol.toStringTree();
   }
 }

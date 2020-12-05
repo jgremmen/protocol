@@ -17,7 +17,8 @@ package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 
-import org.jetbrains.annotations.NotNull;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 
 
 /**
@@ -27,12 +28,8 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Jeroen Gremmen
  */
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 abstract class AbstractBuilder<M,B extends ProtocolMessageBuilder<M>>
 {
   protected final AbstractProtocol<M,B> protocol;
-
-
-  protected AbstractBuilder(@NotNull AbstractProtocol<M,B> protocol) {
-    this.protocol = protocol;
-  }
 }
