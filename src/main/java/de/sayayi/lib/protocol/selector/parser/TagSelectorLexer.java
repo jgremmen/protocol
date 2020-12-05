@@ -34,8 +34,7 @@ import java.util.NoSuchElementException;
  */
 public final class TagSelectorLexer implements Iterable<TagSelectorLexer.Token>
 {
-  private static final Map<TokenType,String> TOKEN_NAME_MAP =
-      new EnumMap<TokenType,String>(TokenType.class);
+  private static final Map<TokenType,String> TOKEN_NAME_MAP = new EnumMap<>(TokenType.class);
 
   @Getter private final String message;
   @Getter private final int length;
@@ -55,8 +54,10 @@ public final class TagSelectorLexer implements Iterable<TagSelectorLexer.Token>
   }
 
 
-  TagSelectorLexer(String message) {
-    length = (this.message = message).length();
+  TagSelectorLexer(String message)
+  {
+    this.message = message;
+    length = message.length();
   }
 
 

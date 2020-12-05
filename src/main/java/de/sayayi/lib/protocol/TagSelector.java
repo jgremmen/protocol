@@ -37,22 +37,25 @@ public interface TagSelector
 
 
 
+  /**
+   * Builder for constructing complex tag selectors.
+   */
   interface Builder extends TagSelector
   {
     @Contract(pure = true)
-    @NotNull TagSelector.Builder and(@NotNull TagSelector tagSelector);
+    @NotNull Builder and(@NotNull TagSelector tagSelector);
 
 
     @Contract(pure = true)
-    @NotNull TagSelector.Builder and(@NotNull String tagName);
+    @NotNull Builder and(@NotNull String tagName);
 
 
     @Contract(pure = true)
-    @NotNull TagSelector.Builder or(@NotNull TagSelector tagSelector);
+    @NotNull Builder or(@NotNull TagSelector tagSelector);
 
 
     @Contract(pure = true)
-    @NotNull TagSelector.Builder or(@NotNull String tagName);
+    @NotNull Builder or(@NotNull String tagName);
   }
 
 
@@ -82,6 +85,7 @@ public interface TagSelector
     @Contract(pure = true)
     @NotNull TagSelector[] getSelectors();
   }
+
 
 
 

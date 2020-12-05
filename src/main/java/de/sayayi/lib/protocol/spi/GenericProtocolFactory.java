@@ -20,6 +20,7 @@ import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.Tag;
 import de.sayayi.lib.protocol.TagDef;
+import de.sayayi.lib.protocol.TagDef.MatchCondition;
 import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.exception.ProtocolException;
 
@@ -41,6 +42,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
 import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
+import static java.util.Objects.requireNonNull;
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 import static java.util.regex.Pattern.UNICODE_CASE;
 
@@ -59,7 +61,7 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
   private static final AtomicInteger FACTORY_ID = new AtomicInteger(0);
   private static final AtomicInteger TAG_ID = new AtomicInteger(0);
 
-  private final Map<String,TagDefImpl> registeredTags = new TreeMap<String,TagDefImpl>();
+  private final Map<String,TagDefImpl> registeredTags = new TreeMap<>();
   private final int id;
   @Getter private final TagDef defaultTag;
   @Getter private final MessageProcessor<M> messageProcessor;
@@ -68,26 +70,22 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
   protected final Map<String,Object> defaultParameterValues;
 
 
-  @SuppressWarnings({ "java:S2583", "ConstantConditions" })
   public GenericProtocolFactory(@NotNull MessageProcessor<M> messageProcessor,
                                 @NotNull MessageFormatter<M> messageFormatter)
   {
-    if (messageProcessor == null)
-      throw new NullPointerException("messageProcessur must not be null");
-
-    this.messageProcessor = messageProcessor;
-    this.messageFormatter = messageFormatter;
+    this.messageProcessor = requireNonNull(messageProcessor, "messageProcessur must not be null");
+    this.messageFormatter = requireNonNull(messageFormatter, "messageFormatter must not be null");
 
     id = FACTORY_ID.incrementAndGet();
 
     defaultTag = createTag(DEFAULT_TAG_NAME).getTagDef();
-    defaultParameterValues = new HashMap<String,Object>();
+    defaultParameterValues = new HashMap<>();
   }
 
 
   @Override
   public @NotNull Protocol<M> createProtocol() {
-    return new ProtocolImpl<M>(this);
+    return new ProtocolImpl<>(this);
   }
 
 
@@ -141,11 +139,7 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
     if (!isValidTagName(name))
       throw new ProtocolException("invalid tag name '" + name + "'");
 
-    var tagDef = registeredTags.get(name);
-    if (tagDef == null)
-      registeredTags.put(name, tagDef = new TagDefImpl(name));
-
-    return tagDef;
+    return registeredTags.computeIfAbsent(name, TagDefImpl::new);
   }
 
 
@@ -164,7 +158,7 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 
   @Override
   public @NotNull Set<TagDef> getTagDefs() {
-    return new TreeSet<TagDef>(registeredTags.values());
+    return new TreeSet<>(registeredTags.values());
   }
 
 
@@ -192,18 +186,11 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
     }
 
 
-    @SuppressWarnings({"ConstantConditions", "squid:S2583"})
     @Override
-    public @NotNull TagBuilder<M> match(@NotNull TagDef.MatchCondition matchCondition, @NotNull Level matchLevel)
+    public @NotNull TagBuilder<M> match(@NotNull MatchCondition matchCondition, @NotNull Level matchLevel)
     {
-      if (matchCondition == null)
-        throw new NullPointerException("matchCondition must not be null");
-
-      if (matchLevel == null)
-        throw new NullPointerException("matchLevel must not be null");
-
-      tagDef.matchCondition = matchCondition;
-      tagDef.matchLevel = matchLevel;
+      tagDef.matchCondition = requireNonNull(matchCondition, "matchCondition must not be null");
+      tagDef.matchLevel = requireNonNull(matchLevel, "matchLevel must not be null");
 
       return this;
     }
@@ -315,7 +302,7 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
     @Getter private MatchCondition matchCondition = MatchCondition.AT_LEAST;
     @Getter private Level matchLevel = LOWEST;
 
-    private final Set<TagDefImpl> implies = new TreeSet<TagDefImpl>();
+    private final Set<TagDefImpl> implies = new TreeSet<>();
 
 
     TagDefImpl(@NotNull String name)
@@ -326,11 +313,9 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 
 
     @Override
-    @SuppressWarnings({ "squid:S2583", "ConstantConditions" })
     public boolean matches(@NotNull Level level)
     {
-      if (level == null)
-        throw new NullPointerException("level must not be null");
+      requireNonNull(level, "level must not be null");
 
       switch(matchCondition)
       {

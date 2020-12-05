@@ -53,7 +53,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
 
     this.level = level;
 
-    tags = new HashSet<String>();
+    tags = new HashSet<>();
     tags.add(ProtocolFactory.DEFAULT_TAG_NAME);
   }
 
@@ -118,7 +118,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   @SuppressWarnings("squid:S2583")
   private @NotNull P message0(@NotNull M message)
   {
-    val msg = new ProtocolMessageEntry<M>(level, message0_resolveTagNames(), throwable,
+    val msg = new ProtocolMessageEntry<>(level, message0_resolveTagNames(), throwable,
         message, protocol.factory.getDefaultParameterValues());
 
     protocol.entries.add(msg);

@@ -15,8 +15,6 @@
  */
 package de.sayayi.lib.protocol;
 
-import lombok.val;
-
 import org.jetbrains.annotations.Contract;
 
 import java.util.Comparator;
@@ -43,17 +41,7 @@ public interface Level
    *
    * @since 0.7.0
    */
-  Comparator<Level> SORT_ASCENDING = new Comparator<Level>() {
-    @Override
-    @SuppressWarnings("java:S3358")
-    public int compare(Level o1, Level o2)
-    {
-      val s1 = o1.severity();
-      val s2 = o2.severity();
-
-      return s1 < s2 ? -1 : (s1 == s2 ? 0 : 1);
-    }
-  };
+  Comparator<Level> SORT_ASCENDING = Comparator.comparingInt(Level::severity);
 
 
   /**
@@ -61,17 +49,7 @@ public interface Level
    *
    * @since 0.7.0
    */
-  Comparator<Level> SORT_DESCENDING = new Comparator<Level>() {
-    @Override
-    @SuppressWarnings("java:S3358")
-    public int compare(Level o1, Level o2)
-    {
-      val s1 = o1.severity();
-      val s2 = o2.severity();
-
-      return s1 < s2 ? 1 : (s1 == s2 ? 0 : -1);
-    }
-  };
+  Comparator<Level> SORT_DESCENDING = SORT_ASCENDING.reversed();
 
 
   /**

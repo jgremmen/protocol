@@ -34,18 +34,13 @@ import static lombok.AccessLevel.PRIVATE;
 @NoArgsConstructor(access = PRIVATE)
 public final class ToStringMessageFormatter<M> implements MessageFormatter<M>
 {
-  private static final MessageFormatter<Object> INSTANCE = new ToStringMessageFormatter<Object>();
+  private static final MessageFormatter<Object> INSTANCE = new ToStringMessageFormatter<>();
 
 
   /**
    * This formatter returns the internal string message as is.
    */
-  public static final MessageFormatter<String> IDENTITY = new MessageFormatter<String>() {
-    @Override
-    public @NotNull String formatMessage(@NotNull GenericMessage<String> message) {
-      return message.getMessage();
-    }
-  };
+  public static final MessageFormatter<String> IDENTITY = GenericMessage::getMessage;
 
 
   @Override

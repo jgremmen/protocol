@@ -11,17 +11,21 @@ plugins {
 
 description 'Protocol Library'
 group 'de.sayayi.lib'
-version '0.7.0'
+version '1.0.0'
 
 
 ext {
-  jetbrainsAnnotationsVersion = "13.0"
+  jetbrainsAnnotationsVersion = "15.0"
   junitVersion = "4.13.1"
   lombokVersion = "1.18.16"
   messageFormatVersion = "0.4.2"
   mockitoVersion = "3.6.28"
   unbescapeVersion = "1.1.6.RELEASE"
 }
+
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 
 apply from: file('gradle/javadoc.gradle')
@@ -52,16 +56,4 @@ dependencies {
 
   testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
   testCompileOnly "org.jetbrains:annotations:${jetbrainsAnnotationsVersion}"
-}
-
-
-compileJava {
-  sourceCompatibility = JavaVersion.VERSION_1_6
-  targetCompatibility = JavaVersion.VERSION_1_6
-}
-
-
-compileTestJava {
-  sourceCompatibility = JavaVersion.VERSION_1_8
-  targetCompatibility = JavaVersion.VERSION_1_8
 }

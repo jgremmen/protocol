@@ -28,7 +28,6 @@ import de.sayayi.lib.protocol.selector.match.MatchNot;
 import de.sayayi.lib.protocol.selector.match.MatchOr;
 import de.sayayi.lib.protocol.selector.parser.TagSelectorParser;
 
-import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.val;
 import lombok.var;
@@ -50,6 +49,9 @@ import static de.sayayi.lib.protocol.TagSelector.MatchType.FIX;
 import static de.sayayi.lib.protocol.TagSelector.MatchType.NOT;
 import static de.sayayi.lib.protocol.TagSelector.MatchType.OR;
 import static de.sayayi.lib.protocol.selector.match.AbstractTagSelectorBuilder.wrap;
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.comparingInt;
+import static lombok.AccessLevel.PRIVATE;
 
 
 /**
@@ -57,39 +59,13 @@ import static de.sayayi.lib.protocol.selector.match.AbstractTagSelectorBuilder.w
  * @since 0.6.0
  */
 @SuppressWarnings({"java:S100", "java:S1121"})
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = PRIVATE)
 public final class Tag
 {
-  private static final Comparator<TagSelector> CMP_TYPE = new Comparator<TagSelector>() {
-    @Override
-    public int compare(TagSelector o1, TagSelector o2) {
-      return o1.getType().compareTo(o2.getType());
-    }
-  };
-
-
-  private static final Comparator<TagSelector> CMP_NOT_FIRST = new Comparator<TagSelector>() {
-    @Override
-    public int compare(TagSelector o1, TagSelector o2) {
-      return (o1.getType() == NOT ? 0 : 1) - (o2.getType() == NOT ? 0 : 1);
-    }
-  };
-
-
-  private static final Comparator<TagSelector> CMP_ALL_OF_FIRST = new Comparator<TagSelector>() {
-    @Override
-    public int compare(TagSelector o1, TagSelector o2) {
-      return (o1.getType() == ALL_OF ? 0 : 1) - (o2.getType() == ALL_OF ? 0 : 1);
-    }
-  };
-
-
-  private static final Comparator<TagSelector> CMP_ANY_OF_FIRST = new Comparator<TagSelector>() {
-    @Override
-    public int compare(TagSelector o1, TagSelector o2) {
-      return (isAnyOfMatcher(o1) ? 0 : 1) - (isAnyOfMatcher(o2) ? 0 : 1);
-    }
-  };
+  private static final Comparator<TagSelector> CMP_TYPE = comparing(TagSelector::getType);
+  private static final Comparator<TagSelector> CMP_NOT_FIRST = comparingInt(o -> (o.getType() == NOT ? 0 : 1));
+  private static final Comparator<TagSelector> CMP_ALL_OF_FIRST = comparingInt(o -> (o.getType() == ALL_OF ? 0 : 1));
+  private static final Comparator<TagSelector> CMP_ANY_OF_FIRST = comparingInt(o -> (isAnyOfMatcher(o) ? 0 : 1));
 
 
   @Contract(value = "_ -> new", pure = true)
@@ -200,7 +176,7 @@ public final class Tag
         return wrap(((SelectorReference)selector).getSelectors()[0]);
 
       case FIX:
-        return MatchFixResult.valueOf(!selector.match(Collections.<String>emptyList()));
+        return MatchFixResult.valueOf(!selector.match(Collections.emptyList()));
 
       default:
         return new MatchNot(selector);
@@ -245,7 +221,7 @@ public final class Tag
     if (selectors.size() == 1)
       return wrap(selectors.get(0));
 
-    Collections.sort(selectors, CMP_TYPE);
+    selectors.sort(CMP_TYPE);
 
     return new MatchAnd(selectors.toArray(new TagSelector[0]));
   }
@@ -263,9 +239,7 @@ public final class Tag
       }
 
     if (hasOf)
-      for(Iterator<TagSelector> selectorIterator = selectors.iterator(); selectorIterator.hasNext();)
-        if (selectorIterator.next().getType() == ANY)
-          selectorIterator.remove();
+      selectors.removeIf(tagSelector -> tagSelector.getType() == ANY);
   }
 
 
@@ -276,7 +250,7 @@ public final class Tag
     for(Iterator<TagSelector> selectorIterator = selectors.iterator(); selectorIterator.hasNext();)
       if ((selector = selectorIterator.next()).getType() == FIX)
       {
-        if (selector.match(Collections.<String>emptyList()))
+        if (selector.match(Collections.emptyList()))
           selectorIterator.remove();
         else
         {
@@ -307,7 +281,7 @@ public final class Tag
 
   private static void and_bundleNot(List<TagSelector> selectors)
   {
-    Collections.sort(selectors, CMP_NOT_FIRST);
+    selectors.sort(CMP_NOT_FIRST);
 
     while(selectors.size() >= 2)
     {
@@ -327,7 +301,7 @@ public final class Tag
 
   private static void and_bundleAllOf(List<TagSelector> selectors)
   {
-    Collections.sort(selectors, CMP_ALL_OF_FIRST);
+    selectors.sort(CMP_ALL_OF_FIRST);
 
     while(selectors.size() >= 2)
     {
@@ -381,7 +355,7 @@ public final class Tag
     if (selectors.size() == 1)
       return wrap(selectors.get(0));
 
-    Collections.sort(selectors, CMP_TYPE);
+    selectors.sort(CMP_TYPE);
 
     return new MatchOr(selectors.toArray(new TagSelector[0]));
   }
@@ -395,7 +369,7 @@ public final class Tag
     for(Iterator<TagSelector> selectorIterator = selectors.iterator(); selectorIterator.hasNext();)
       if ((selector = selectorIterator.next()).getType() == FIX)
       {
-        if (selector.match(Collections.<String>emptyList()))
+        if (selector.match(Collections.emptyList()))
         {
           selectors.clear();
           selectors.add(selector);
@@ -426,7 +400,7 @@ public final class Tag
 
   private static void or_bundleAnyOf(List<TagSelector> selectors)
   {
-    Collections.sort(selectors, CMP_ANY_OF_FIRST);
+    selectors.sort(CMP_ANY_OF_FIRST);
 
     while(selectors.size() >= 2)
     {
@@ -445,7 +419,7 @@ public final class Tag
 
   private static void or_bundleNot(List<TagSelector> selectors)
   {
-    Collections.sort(selectors, CMP_NOT_FIRST);
+    selectors.sort(CMP_NOT_FIRST);
 
     while(selectors.size() >= 2)
     {

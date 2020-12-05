@@ -19,6 +19,7 @@ import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol.GenericMessageWithLevel;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolFactory.MessageFormatter;
+import de.sayayi.lib.protocol.ProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.TagSelector;
@@ -34,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
  * @author Jeroen Gremmen
  * @since 0.1.0
  */
-public abstract class AbstractTreeProtocolFormatter<M> extends AbstractProtocolFormatter<M,String>
+public abstract class AbstractTreeProtocolFormatter<M> implements ProtocolFormatter<M,String>
 {
   private static final String GRAPH_ROOT_NODE_PREFIX = "\u25a0\u2500\u2500";
   private static final String GRAPH_MIDDLE_NODE_PREFIX = "\u251c\u2500\u2500";

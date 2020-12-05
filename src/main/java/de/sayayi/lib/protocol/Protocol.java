@@ -24,7 +24,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 
 
 /**
@@ -127,7 +129,9 @@ public interface Protocol<M> extends ProtocolQueryable
    * @see Level.Shared#DEBUG DEBUG
    */
   @Contract(pure = true, value = "-> new")
-  @NotNull ProtocolMessageBuilder<M> debug();
+  default @NotNull ProtocolMessageBuilder<M> debug() {
+    return add(Level.Shared.DEBUG);
+  }
 
 
   /**
@@ -143,7 +147,9 @@ public interface Protocol<M> extends ProtocolQueryable
    * @see Level.Shared#INFO INFO
    */
   @Contract(pure = true, value = "-> new")
-  @NotNull ProtocolMessageBuilder<M> info();
+  default @NotNull ProtocolMessageBuilder<M> info() {
+    return add(Level.Shared.INFO);
+  }
 
 
   /**
@@ -159,7 +165,9 @@ public interface Protocol<M> extends ProtocolQueryable
    * @see Level.Shared#WARN WARN
    */
   @Contract(pure = true, value = "-> new")
-  @NotNull ProtocolMessageBuilder<M> warn();
+  default @NotNull ProtocolMessageBuilder<M> warn() {
+    return add(Level.Shared.WARN);
+  }
 
 
   /**
@@ -175,7 +183,9 @@ public interface Protocol<M> extends ProtocolQueryable
    * @see Level.Shared#ERROR ERROR
    */
   @Contract(pure = true, value = "-> new")
-  @NotNull ProtocolMessageBuilder<M> error();
+  default @NotNull ProtocolMessageBuilder<M> error() {
+    return add(Level.Shared.ERROR);
+  }
 
 
   /**
@@ -194,7 +204,9 @@ public interface Protocol<M> extends ProtocolQueryable
    * @see Level.Shared#ERROR ERROR
    */
   @Contract(pure = true, value = "_ -> new")
-  @NotNull ProtocolMessageBuilder<M> error(@NotNull Throwable throwable);
+  default @NotNull ProtocolMessageBuilder<M> error(@NotNull Throwable throwable) {
+    return add(Level.Shared.ERROR).withThrowable(throwable);
+  }
 
 
   /**
@@ -245,7 +257,9 @@ public interface Protocol<M> extends ProtocolQueryable
    */
   @SuppressWarnings("unused")
   @Contract(pure = true)
-  <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level);
+  default <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level) {
+    return format(formatter, level, Tag.any());
+  }
 
 
   /**
@@ -276,7 +290,9 @@ public interface Protocol<M> extends ProtocolQueryable
    * @see #format(ProtocolFormatter, Level, TagSelector)
    */
   @Contract(pure = true)
-  <R> R format(@NotNull ConfiguredProtocolFormatter<M,R> formatter);
+  default <R> R format(@NotNull ConfiguredProtocolFormatter<M,R> formatter) {
+    return format(formatter, formatter.getLevel(), formatter.getTagSelector(getFactory()));
+  }
 
 
   @Contract(pure = true, value = "_, _ -> new")
@@ -317,6 +333,14 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
   /**
+   * @since 1.0.0
+   */
+  default void forGroupWithName(@NotNull String name, @NotNull Consumer<ProtocolGroup<M>> action) {
+    Optional.ofNullable(findGroupWithName(name)).ifPresent(action);
+  }
+
+
+  /**
    * <p>
    *   Find all groups with names that match the given regular expression {@code regex}.
    * </p>
@@ -332,6 +356,12 @@ public interface Protocol<M> extends ProtocolQueryable
    */
   @Contract(pure = true)
   @NotNull Set<ProtocolGroup<M>> findGroupsByRegex(@NotNull String regex);
+
+
+  /**
+   * @since 1.0.0
+   */
+  void forEachGroupByRegex(@NotNull String regex, @NotNull Consumer<ProtocolGroup<M>> action);
 
 
   /**
@@ -487,7 +517,9 @@ public interface Protocol<M> extends ProtocolQueryable
      * @return  paramter builder instance for the current message
      */
     @Contract("_, _ -> this")
-    @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, boolean value);
+    default @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, boolean value) {
+      return with(parameter, Boolean.valueOf(value));
+    }
 
 
     /**
@@ -503,7 +535,9 @@ public interface Protocol<M> extends ProtocolQueryable
      * @return  paramter builder instance for the current message
      */
     @Contract("_, _ -> this")
-    @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, int value);
+    default @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, int value) {
+      return with(parameter, Integer.valueOf(value));
+    }
 
 
     /**
@@ -519,7 +553,9 @@ public interface Protocol<M> extends ProtocolQueryable
      * @return  paramter builder instance for the current message
      */
     @Contract("_, _ -> this")
-    @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, long value);
+    default @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, long value) {
+      return with(parameter, Long.valueOf(value));
+    }
 
 
     /**
@@ -535,7 +571,9 @@ public interface Protocol<M> extends ProtocolQueryable
      * @return  paramter builder instance for the current message
      */
     @Contract("_, _ -> this")
-    @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, float value);
+    default @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, float value) {
+      return with(parameter, Float.valueOf(value));
+    }
 
 
     /**
@@ -551,7 +589,9 @@ public interface Protocol<M> extends ProtocolQueryable
      * @return  paramter builder instance for the current message
      */
     @Contract("_, _ -> this")
-    @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, double value);
+    default @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, double value) {
+      return with(parameter, Double.valueOf(value));
+    }
 
 
     /**

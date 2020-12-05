@@ -42,7 +42,7 @@ import static lombok.AccessLevel.PRIVATE;
 public final class TechnicalProtocolFormatter<M> extends AbstractTreeProtocolFormatter<M>
     implements ConfiguredProtocolFormatter<M,String>
 {
-  private static final ConfiguredProtocolFormatter<?,String> INSTANCE = new TechnicalProtocolFormatter<Object>();
+  private static final ConfiguredProtocolFormatter<?,String> INSTANCE = new TechnicalProtocolFormatter<>();
 
 
   @Override

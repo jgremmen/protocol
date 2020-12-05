@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 
 /**
@@ -95,6 +96,12 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
   @Override
   public @NotNull Set<ProtocolGroup<M>> findGroupsByRegex(@NotNull String regex) {
     return group.findGroupsByRegex(regex);
+  }
+
+
+  @Override
+  public void forEachGroupByRegex(@NotNull String regex, @NotNull Consumer<ProtocolGroup<M>> action) {
+    group.forEachGroupByRegex(regex, action);
   }
 
 
@@ -177,6 +184,6 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
 
   static <M> ProtocolEntry.Group<M> from(@NotNull Level levelLimit,
                                          @NotNull InternalProtocolEntry.Group<M> groupEntry) {
-    return new ProtocolGroupEntryAdapter<M>(levelLimit, groupEntry);
+    return new ProtocolGroupEntryAdapter<>(levelLimit, groupEntry);
   }
 }
