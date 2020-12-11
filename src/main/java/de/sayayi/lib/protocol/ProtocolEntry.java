@@ -19,8 +19,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Set;
-import java.util.function.Consumer;
 
 
 /**
@@ -95,43 +93,5 @@ public interface ProtocolEntry<M> extends ProtocolQueryable
      */
     @Contract(pure = true)
     @NotNull Level getHeaderLevel(@NotNull Level level, @NotNull TagSelector tagSelector);
-
-
-    /**
-     * <p>
-     *   Find a group with the given unique {@code name}.
-     * </p>
-     * <p>
-     *   The search probes every descendant group starting from this protocol until a matching group is found.
-     * </p>
-     *
-     * @param name  group name, not {@code null} or empty
-     *
-     * @return  protocol group with the name set or {@code null} if no group was found.
-     */
-    @Contract(pure = true)
-    ProtocolGroup<M> findGroupWithName(@NotNull String name);
-
-
-    /**
-     * <p>
-     *   Find all groups with names that match the given regular expression {@code regex}.
-     * </p>
-     * <p>
-     *   The search probes every descendant group starting from this protocol for matching groups.
-     * </p>
-     *
-     * @param regex  regular expression for matching group names, not {@code null} or empty
-     *
-     * @return  set of protocol groups with matching names, never {@code null}.
-     */
-    @Contract(pure = true)
-    @NotNull Set<ProtocolGroup<M>> findGroupsByRegex(@NotNull String regex);
-
-
-    /**
-     * @since 1.0.0
-     */
-    void forEachGroupByRegex(@NotNull String regex, @NotNull Consumer<ProtocolGroup<M>> action);
   }
 }

@@ -28,8 +28,6 @@ import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Set;
-import java.util.function.Consumer;
 
 import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
 import static de.sayayi.lib.protocol.Level.compare;
@@ -87,24 +85,6 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
   @Override
   public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull TagSelector tagSelector) {
     return group.getVisibleEntryCount0(levelLimit, recursive, level, tagSelector);
-  }
-
-
-  @Override
-  public ProtocolGroup<M> findGroupWithName(@NotNull String name) {
-    return group.findGroupWithName(name);
-  }
-
-
-  @Override
-  public @NotNull Set<ProtocolGroup<M>> findGroupsByRegex(@NotNull String regex) {
-    return group.findGroupsByRegex(regex);
-  }
-
-
-  @Override
-  public void forEachGroupByRegex(@NotNull String regex, @NotNull Consumer<ProtocolGroup<M>> action) {
-    group.forEachGroupByRegex(regex, action);
   }
 
 

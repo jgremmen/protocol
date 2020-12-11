@@ -19,6 +19,14 @@ import lombok.Getter;
 
 
 /**
+ * <p>
+ *   Tag selector parser related exception.
+ * </p>
+ * <p>
+ *   Methods {@link #getStartIndex()} and {@link #getEndIndex()} provide information on which part of
+ *   the tag selector has a syntactical problem.
+ * </p>
+ *
  * @author Jeroen Gremmen
  * @since 0.6.0
  */

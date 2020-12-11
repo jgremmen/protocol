@@ -275,16 +275,6 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public ProtocolGroup<M> findGroupWithName(@NotNull String name)
-  {
-    if (name.isEmpty())
-      throw new ProtocolException("name must not be empty");
-
-    return name.equals(this.name) ? this : super.findGroupWithName(name);
-  }
-
-
-  @Override
   public boolean forGroupWithName(@NotNull String name, @NotNull Consumer<ProtocolGroup<M>> action)
   {
     if (name.equals(this.name))
@@ -294,21 +284,6 @@ final class ProtocolGroupImpl<M>
     }
 
     return super.forGroupWithName(name, action);
-  }
-
-
-  @Override
-  public @NotNull Set<ProtocolGroup<M>> findGroupsByRegex(@NotNull String regex)
-  {
-    if (name.isEmpty())
-      throw new ProtocolException("regex must not be empty");
-
-    val groups = super.findGroupsByRegex(regex);
-
-    if (name.matches(regex))
-      groups.add(this);
-
-    return groups;
   }
 
 

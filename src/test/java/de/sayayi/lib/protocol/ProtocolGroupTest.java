@@ -21,6 +21,8 @@ import org.junit.Test;
 
 import lombok.val;
 
+import java.util.LinkedHashSet;
+
 import static de.sayayi.lib.protocol.Level.Shared.DEBUG;
 import static de.sayayi.lib.protocol.Level.Shared.INFO;
 import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
@@ -162,7 +164,7 @@ public class ProtocolGroupTest
 
 
   @Test
-  public void testFindGroupByName()
+  public void testForGroupWithName()
   {
     val factory = StringProtocolFactory.createPlainTextFactory();
     val protocol = factory.createProtocol();
@@ -173,7 +175,7 @@ public class ProtocolGroupTest
     gp2.createGroup().setName("group-2-1");
     val gp2_2 = gp2.createGroup().setName("group-2-2");
 
-    assertEquals(gp2_2, protocol.findGroupWithName("group-2-2"));
+    assertTrue(protocol.forGroupWithName("group-2-2", group -> { assertEquals(gp2_2, group); }));
   }
 
 
@@ -189,7 +191,9 @@ public class ProtocolGroupTest
     gp2.createGroup().setName("group-2-1");
     val gp2_2 = gp2.createGroup().setName("group-2-2");
 
-    val protocolGroups = protocol.findGroupsByRegex("group.*-2");
+    val protocolGroups = new LinkedHashSet<ProtocolGroup<String>>();
+    protocol.forEachGroupByRegex("group.*-2", protocolGroups::add);
+
     assertEquals(2, protocolGroups.size());
     assertTrue(protocolGroups.contains(gp2));
     assertTrue(protocolGroups.contains(gp2_2));

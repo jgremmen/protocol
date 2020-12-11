@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static de.sayayi.lib.protocol.selector.parser.TagSelectorLexer.TokenType.AND;
 import static de.sayayi.lib.protocol.selector.parser.TagSelectorLexer.TokenType.COMMA;
 import static de.sayayi.lib.protocol.selector.parser.TagSelectorLexer.TokenType.L_PAREN;
 import static de.sayayi.lib.protocol.selector.parser.TagSelectorLexer.TokenType.R_PAREN;
@@ -89,19 +88,19 @@ public final class TagSelectorParser
 
   @NotNull ParsedRule<TagSelector> parseSelector(int t)
   {
-    val t0 = getTokenAt(t);
-    if (t0 == null)
+    val token = getTokenAt(t);
+    if (token == null)
     {
       val idx = lexer.getLength() + 1;
       throw new TagSelectorParserException(idx, idx, "missing selector");
     }
 
-    val type = t0.getType();
+    val type = token.getType();
 
     switch(type)
     {
       case TAG:
-        return new ParsedRule<>(t, t, Tag.of(t0.getText()));
+        return new ParsedRule<>(t, t, Tag.of(token.getText()));
 
       case ALL_OF:
       case ANY_OF:
@@ -109,8 +108,10 @@ public final class TagSelectorParser
         return parseXXXOf(t, type);
 
       case AND:
+        return parseAnd(t);
+
       case OR:
-        return parseAndOr(t, type == AND);
+        return parseOr(t);
 
       case ANY:
       case TRUE:
@@ -121,20 +122,27 @@ public final class TagSelectorParser
         return parseNot(t);
 
       default:
-        throw new TagSelectorParserException(t0.getStart(), t0.getEnd(), "unexpected token '" + t0.getText() + "'");
+        throw new TagSelectorParserException(token.getStart(), token.getEnd(),
+            "unexpected token '" + token.getText() + "'");
     }
   }
 
 
-  private @NotNull ParsedRule<TagSelector> parseAndOr(int t, boolean and)
+  private @NotNull ParsedRule<TagSelector> parseAnd(int t)
   {
     // t0=and t1=<parameters>
+    val parameters = parseParameters(t + 1);
+
+    return new ParsedRule<>(t, parameters.tokenLast, Tag.and(parameters.result.toArray(new TagSelector[0])));
+  }
+
+
+  private @NotNull ParsedRule<TagSelector> parseOr(int t)
+  {
     // t0=or t1=<parameters>
     val parameters = parseParameters(t + 1);
 
-    return new ParsedRule<>(t, parameters.tokenLast, and
-        ? Tag.and(parameters.result.toArray(new TagSelector[0]))
-        : Tag.or(parameters.result.toArray(new TagSelector[0])));
+    return new ParsedRule<>(t, parameters.tokenLast, Tag.or(parameters.result.toArray(new TagSelector[0])));
   }
 
 

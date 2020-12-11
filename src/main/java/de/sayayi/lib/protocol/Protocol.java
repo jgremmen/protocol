@@ -26,12 +26,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.function.Consumer;
 
 import static java.util.Spliterator.DISTINCT;
 import static java.util.Spliterator.NONNULL;
 import static java.util.Spliterator.ORDERED;
+import static java.util.Spliterators.spliteratorUnknownSize;
 
 
 /**
@@ -314,8 +314,9 @@ public interface Protocol<M> extends ProtocolQueryable
    * @since 1.0.0
    */
   @Contract(pure = true, value = "_, _ -> new")
-  default @NotNull Spliterator<ProtocolIterator.DepthEntry<M>> spliterator(@NotNull Level level, @NotNull TagSelector tagSelector) {
-    return Spliterators.spliteratorUnknownSize(iterator(level, tagSelector), ORDERED | DISTINCT | NONNULL);
+  default @NotNull Spliterator<ProtocolIterator.DepthEntry<M>> spliterator(@NotNull Level level,
+                                                                           @NotNull TagSelector tagSelector) {
+    return spliteratorUnknownSize(iterator(level, tagSelector), ORDERED | DISTINCT | NONNULL);
   }
 
 
@@ -336,24 +337,17 @@ public interface Protocol<M> extends ProtocolQueryable
 
   /**
    * <p>
-   *   Find a group with the given unique {@code name}.
+   *   Performs {@code action} on a group with the given unique {@code name}.
    * </p>
    * <p>
    *   The search probes every descendant group starting from this protocol until a matching group is found.
    * </p>
    *
-   * @param name  group name, not {@code null} or empty
+   * @param name  group name to perform the action on, not {@code null}
+   * @param action  action to perform on the group, not {@code null}
    *
-   * @return  protocol group with the name set or {@code null} if no group was found.
+   * @return  {@code true} if a group with the name has been found, {@code false} otherwise
    *
-   * @since 0.7.0
-   */
-  @Deprecated
-  @Contract(pure = true)
-  ProtocolGroup<M> findGroupWithName(@NotNull String name);
-
-
-  /**
    * @since 1.0.0
    */
   boolean forGroupWithName(@NotNull String name, @NotNull Consumer<ProtocolGroup<M>> action);
@@ -361,24 +355,15 @@ public interface Protocol<M> extends ProtocolQueryable
 
   /**
    * <p>
-   *   Find all groups with names that match the given regular expression {@code regex}.
+   *   Performs {@code action} on all groups with names that match the given regular expression {@code regex}.
    * </p>
    * <p>
    *   The search probes every descendant group starting from this protocol for matching groups.
    * </p>
    *
    * @param regex  regular expression for matching group names, not {@code null} or empty
+   * @param action  action to perform on matching groups, not {@code null}
    *
-   * @return  set of protocol groups with matching names, never {@code null}.
-   *
-   * @since 0.7.0
-   */
-  @Deprecated
-  @Contract(pure = true)
-  @NotNull Set<ProtocolGroup<M>> findGroupsByRegex(@NotNull String regex);
-
-
-  /**
    * @since 1.0.0
    */
   void forEachGroupByRegex(@NotNull String regex, @NotNull Consumer<ProtocolGroup<M>> action);

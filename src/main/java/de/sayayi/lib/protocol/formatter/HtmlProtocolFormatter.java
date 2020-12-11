@@ -276,6 +276,13 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
      * <p>
      *   Add the following link to your html page:
      * </p>
+     * <br>
+     * <pre>
+     *   &lt;link rel="stylesheet"
+     *         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+     *         integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0="
+     *         crossorigin="anonymous"/&gt;
+     * </pre>
      */
     public static final Map<Level,String> FA4_LEVEL_ICON_CLASSES;
 
@@ -289,7 +296,10 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
      * </p>
      * <br>
      * <pre>
-     *   &lt;link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous"&gt;
+     *   &lt;link rel="stylesheet"
+     *         href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+     *         integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
+     *         crossorigin="anonymous"&gt;
      * </pre>
      */
     public static final Map<Level,String> FA5_LEVEL_ICON_CLASSES;

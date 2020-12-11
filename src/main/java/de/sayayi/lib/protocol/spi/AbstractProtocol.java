@@ -161,20 +161,6 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
 
 
   @Override
-  @SuppressWarnings("deprecation")
-  public ProtocolGroup<M> findGroupWithName(@NotNull String name)
-  {
-    ProtocolGroup<M> group = null;
-
-    for(final Iterator<ProtocolGroup<M>> groupIterator = groupIterator(); groupIterator.hasNext();)
-      if ((group = groupIterator.next().findGroupWithName(name)) != null)
-        break;
-
-    return group;
-  }
-
-
-  @Override
   public boolean forGroupWithName(@NotNull String name, @NotNull Consumer<ProtocolGroup<M>> action)
   {
     for(final Iterator<ProtocolGroup<M>> groupIterator = groupIterator(); groupIterator.hasNext();)
@@ -182,18 +168,6 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
         return true;
 
     return false;
-  }
-
-
-  @Override
-  @SuppressWarnings("deprecation")
-  public @NotNull Set<ProtocolGroup<M>> findGroupsByRegex(@NotNull String regex)
-  {
-    val groups = new LinkedHashSet<ProtocolGroup<M>>();
-
-    groupIterator().forEachRemaining(group -> groups.addAll(group.findGroupsByRegex(regex)));
-
-    return groups;
   }
 
 
