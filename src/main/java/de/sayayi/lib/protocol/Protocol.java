@@ -17,6 +17,7 @@ package de.sayayi.lib.protocol;
 
 import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
 import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
+import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
 import de.sayayi.lib.protocol.formatter.TechnicalProtocolFormatter;
 
 import org.jetbrains.annotations.Contract;
@@ -314,8 +315,7 @@ public interface Protocol<M> extends ProtocolQueryable
    * @since 1.0.0
    */
   @Contract(pure = true, value = "_, _ -> new")
-  default @NotNull Spliterator<ProtocolIterator.DepthEntry<M>> spliterator(@NotNull Level level,
-                                                                           @NotNull TagSelector tagSelector) {
+  default @NotNull Spliterator<DepthEntry<M>> spliterator(@NotNull Level level, @NotNull TagSelector tagSelector) {
     return spliteratorUnknownSize(iterator(level, tagSelector), ORDERED | DISTINCT | NONNULL);
   }
 

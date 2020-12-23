@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.function.Consumer;
 
 
 /**
@@ -145,7 +146,8 @@ public interface ProtocolGroup<M> extends Protocol<M>
    * @return  unique name for this group or {@code null} if no name is set.
    *
    * @see #setName(String)
-   * @see Protocol#findGroupWithName(String)
+   * @see Protocol#forGroupWithName(String, Consumer)
+   * @see Protocol#forEachGroupByRegex(String, Consumer)
    */
   @Contract(pure = true)
   String getName();
@@ -164,7 +166,8 @@ public interface ProtocolGroup<M> extends Protocol<M>
    * @throws ProtocolException  if the group name is not unique across the protocol structure
    *
    * @see #getName()
-   * @see Protocol#findGroupWithName(String)
+   * @see Protocol#forGroupWithName(String, Consumer)
+   * @see Protocol#forEachGroupByRegex(String, Consumer)
    */
   @Contract(value = "_ -> this")
   @NotNull ProtocolGroup<M> setName(String name);
