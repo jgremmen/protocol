@@ -407,8 +407,6 @@ public interface Protocol<M> extends ProtocolQueryable
      *
      * @return  this instance
      *
-     * @throws IllegalArgumentException  if {@code tagName} is not registered by the same protocol factory
-     *
      * @see ProtocolFactory#getTagByName(String)
      */
     @Contract("_ -> this")
@@ -423,8 +421,6 @@ public interface Protocol<M> extends ProtocolQueryable
      * @param tagNames  names of the tags to associate with the new message, never {@code null}
      *
      * @return  this instance
-     *
-     * @throws IllegalArgumentException  if at least one tagName is not registered by the protocol factory
      *
      * @see ProtocolFactory#getTagByName(String)
      */
