@@ -25,6 +25,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
+import static java.util.Objects.requireNonNull;
+
 
 /**
  * @param <M>  internal message object type
@@ -33,7 +35,7 @@ import java.util.Map;
  * @since 0.7.0
  */
 @AllArgsConstructor
-public class MapMessageProcessor<M> implements MessageProcessor<M>
+public final class MapMessageProcessor<M> implements MessageProcessor<M>
 {
   private final Map<String,M> map;
 
@@ -41,7 +43,7 @@ public class MapMessageProcessor<M> implements MessageProcessor<M>
   @Override
   public @NotNull M processMessage(@NotNull String key)
   {
-    val message = map.get(key);
+    val message = map.get(requireNonNull(key, "key must not be null"));
     if (message == null)
       throw new ProtocolException("missing mapped message for key '" + key + "'");
 

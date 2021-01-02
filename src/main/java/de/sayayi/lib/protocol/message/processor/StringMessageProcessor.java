@@ -19,6 +19,8 @@ import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
 
 import org.jetbrains.annotations.NotNull;
 
+import static java.util.Objects.requireNonNull;
+
 
 /**
  * @author Jeroen Gremmen
@@ -31,6 +33,6 @@ public enum StringMessageProcessor implements MessageProcessor<String>
 
   @Override
   public @NotNull String processMessage(@NotNull String message) {
-    return message;
+    return requireNonNull(message, "message must not be null");
   }
 }

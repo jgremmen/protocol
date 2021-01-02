@@ -25,13 +25,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Properties;
 
+import static java.util.Objects.requireNonNull;
+
 
 /**
  * @author Jeroen Gremmen
  * @since 0.7.0
  */
 @AllArgsConstructor
-public class PropertiesMessageProcessor implements MessageProcessor<String>
+public final class PropertiesMessageProcessor implements MessageProcessor<String>
 {
   private final Properties properties;
 
@@ -39,7 +41,7 @@ public class PropertiesMessageProcessor implements MessageProcessor<String>
   @Override
   public @NotNull String processMessage(@NotNull String key)
   {
-    val message = properties.getProperty(key);
+    val message = properties.getProperty(requireNonNull(key, "key must not be null"));
     if (message == null)
       throw new ProtocolException("missing property message for key '" + key + "'");
 

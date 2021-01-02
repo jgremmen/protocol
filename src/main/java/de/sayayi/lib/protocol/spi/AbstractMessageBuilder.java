@@ -29,6 +29,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static java.util.Objects.requireNonNull;
+
 
 /**
  * @param <M>  internal message object type
@@ -94,24 +96,16 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
 
 
   @Override
-  @SuppressWarnings({ "squid:S2583", "ConstantConditions" })
   public @NotNull P message(@NotNull String message)
   {
-    if (message == null)
-      throw new NullPointerException("message must not be null");
-
-    return message0(protocol.factory.getMessageProcessor().processMessage(message));
+    return message0(protocol.factory.getMessageProcessor()
+        .processMessage(requireNonNull(message, "message must not be null")));
   }
 
 
   @Override
-  @SuppressWarnings({ "squid:S2583", "ConstantConditions" })
-  public @NotNull P withMessage(@NotNull M message)
-  {
-    if (message == null)
-      throw new NullPointerException("message must not be null");
-
-    return message0(message);
+  public @NotNull P withMessage(@NotNull M message) {
+    return message0(requireNonNull(message, "message must not be null"));
   }
 
 

@@ -27,7 +27,6 @@ import de.sayayi.lib.protocol.exception.ProtocolException;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.val;
-import lombok.var;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -45,6 +44,7 @@ import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
 import static java.util.Objects.requireNonNull;
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 import static java.util.regex.Pattern.UNICODE_CASE;
+import static java.util.stream.Collectors.joining;
 
 
 /**
@@ -73,7 +73,7 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
   public GenericProtocolFactory(@NotNull MessageProcessor<M> messageProcessor,
                                 @NotNull MessageFormatter<M> messageFormatter)
   {
-    this.messageProcessor = requireNonNull(messageProcessor, "messageProcessur must not be null");
+    this.messageProcessor = requireNonNull(messageProcessor, "messageProcessor must not be null");
     this.messageFormatter = requireNonNull(messageFormatter, "messageFormatter must not be null");
 
     id = FACTORY_ID.incrementAndGet();
@@ -378,23 +378,9 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 
     private @NotNull String toString_implies()
     {
-      if (implies.isEmpty())
-        return "";
-
-      val s = new StringBuilder(",implies={");
-      var first = true;
-
-      for(val tagDef: implies)
-      {
-        if (first)
-          first = false;
-        else
-          s.append(',');
-
-        s.append(tagDef.getName());
-      }
-
-      return s.append('}').toString();
+      return implies.isEmpty()
+          ? ""
+          : (",implies={" + implies.stream().map(TagDef::getName).collect(joining(",")) + '}');
     }
 
 

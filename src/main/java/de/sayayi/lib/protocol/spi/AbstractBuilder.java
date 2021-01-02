@@ -17,8 +17,9 @@ package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+
+import static lombok.AccessLevel.PROTECTED;
 
 
 /**
@@ -28,8 +29,11 @@ import lombok.RequiredArgsConstructor;
  *
  * @author Jeroen Gremmen
  */
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@RequiredArgsConstructor(access = PROTECTED)
 abstract class AbstractBuilder<M,B extends ProtocolMessageBuilder<M>>
 {
+  /**
+   * Reference of the protocol this builder is associated with.
+   */
   protected final AbstractProtocol<M,B> protocol;
 }

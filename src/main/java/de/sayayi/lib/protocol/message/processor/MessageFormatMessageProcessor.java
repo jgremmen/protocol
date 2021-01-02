@@ -16,12 +16,14 @@
 package de.sayayi.lib.protocol.message.processor;
 
 import de.sayayi.lib.message.Message;
-import de.sayayi.lib.message.MessageFactory;
 import de.sayayi.lib.message.exception.MessageParserException;
 import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
 import de.sayayi.lib.protocol.exception.ProtocolException;
 
 import org.jetbrains.annotations.NotNull;
+
+import static de.sayayi.lib.message.MessageFactory.parse;
+import static java.util.Objects.requireNonNull;
 
 
 /**
@@ -39,7 +41,7 @@ public enum MessageFormatMessageProcessor implements MessageProcessor<Message>
   public @NotNull Message processMessage(@NotNull String messageFormat)
   {
     try {
-      return MessageFactory.parse(messageFormat);
+      return parse(requireNonNull(messageFormat, "messageFormat must not be null"));
     } catch(MessageParserException ex) {
       throw new ProtocolException("failed to process message: " + ex.getMessage(), ex);
     }

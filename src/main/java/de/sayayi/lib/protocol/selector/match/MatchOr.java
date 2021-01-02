@@ -19,14 +19,14 @@ import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.TagSelector.SelectorReference;
 
 import lombok.Getter;
-import lombok.val;
-import lombok.var;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import static de.sayayi.lib.protocol.TagSelector.MatchType.OR;
+import static java.util.stream.Collectors.joining;
 
 
 /**
@@ -59,22 +59,8 @@ public final class MatchOr extends AbstractTagSelectorBuilder implements Selecto
   @Override
   public String toString()
   {
-    if (selectors.length == 1)
-      return selectors[0].toString();
-
-    val s = new StringBuilder("or(");
-    var first = true;
-
-    for(val selector: selectors)
-    {
-      if (first)
-        first = false;
-      else
-        s.append(',');
-
-      s.append(selector);
-    }
-
-    return s.append(')').toString();
+    return selectors.length == 1
+        ? selectors[0].toString()
+        : "or(" + Arrays.stream(selectors).map(TagSelector::toString).collect(joining(",")) + ')';
   }
 }

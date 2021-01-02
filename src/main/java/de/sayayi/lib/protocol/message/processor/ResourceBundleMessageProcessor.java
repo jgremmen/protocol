@@ -24,13 +24,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ResourceBundle;
 
+import static java.util.Objects.requireNonNull;
+
 
 /**
  * @author Jeroen Gremmen
  * @since 0.7.0
  */
 @AllArgsConstructor
-public class ResourceBundleMessageProcessor implements MessageProcessor<String>
+public final class ResourceBundleMessageProcessor implements MessageProcessor<String>
 {
   private final ResourceBundle resourceBundle;
 
@@ -38,6 +40,8 @@ public class ResourceBundleMessageProcessor implements MessageProcessor<String>
   @Override
   public @NotNull String processMessage(@NotNull String key)
   {
+    requireNonNull(key, "key must not be null");
+
     try {
       return resourceBundle.getString(key);
     } catch(Exception ex) {
