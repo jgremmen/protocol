@@ -222,6 +222,9 @@ public interface ProtocolGroup<M> extends Protocol<M>
   @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull TagSelector tagSelector);
 
 
+  /**
+   * @since 1.0.0
+   */
   @Override
   @Contract("_, _ -> this")
   default @NotNull ProtocolGroup<M> set(@NotNull String parameter, boolean b) {
@@ -229,6 +232,9 @@ public interface ProtocolGroup<M> extends Protocol<M>
   }
 
 
+  /**
+   * @since 1.0.0
+   */
   @Override
   @Contract("_, _ -> this")
   default @NotNull ProtocolGroup<M> set(@NotNull String parameter, int i) {
@@ -236,6 +242,9 @@ public interface ProtocolGroup<M> extends Protocol<M>
   }
 
 
+  /**
+   * @since 1.0.0
+   */
   @Override
   @Contract("_, _ -> this")
   default @NotNull ProtocolGroup<M> set(@NotNull String parameter, long l) {
@@ -243,6 +252,9 @@ public interface ProtocolGroup<M> extends Protocol<M>
   }
 
 
+  /**
+   * @since 1.0.0
+   */
   @Override
   @Contract("_, _ -> this")
   default @NotNull ProtocolGroup<M> set(@NotNull String parameter, float f) {
@@ -250,6 +262,9 @@ public interface ProtocolGroup<M> extends Protocol<M>
   }
 
 
+  /**
+   * @since 1.0.0
+   */
   @Override
   @Contract("_, _ -> this")
   default @NotNull ProtocolGroup<M> set(@NotNull String parameter, double d) {
@@ -257,6 +272,9 @@ public interface ProtocolGroup<M> extends Protocol<M>
   }
 
 
+  /**
+   * @since 1.0.0
+   */
   @Override
   @Contract("_, _ -> this")
   @NotNull ProtocolGroup<M> set(@NotNull String parameter, Object value);

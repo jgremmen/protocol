@@ -97,9 +97,11 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
         else
         {
           if (!Objects.equals(entry.value, value))
+          {
             modCount++;
+            entry.value = value;
+          }
 
-          entry.value = value;
           return;
         }
       }
@@ -199,12 +201,13 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
   @Override
   public String toString()
   {
-    if (entries == null)
+    val iterator = iterator();
+    if (!iterator.hasNext())
       return "[]";
 
     val s = new StringJoiner(",", "[", "]");
 
-    iterator().forEachRemaining(e -> s.add(e.toString()));
+    iterator.forEachRemaining(e -> s.add(e.toString()));
 
     return s.toString();
   }
@@ -377,7 +380,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
     public boolean containsAll(Collection<?> c)
     {
-      for(Object e : c)
+      for(val e: c)
         if (!contains(e))
           return false;
 
@@ -387,13 +390,13 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
     public String toString()
     {
-      val it = this.iterator();
-      if (!it.hasNext())
+      val iterator = this.iterator();
+      if (!iterator.hasNext())
         return "[]";
 
       val s = new StringJoiner(", ", "[", "]");
 
-      it.forEachRemaining(e -> s.add(e.toString()));
+      iterator.forEachRemaining(e -> s.add(e.toString()));
 
       return s.toString();
     }

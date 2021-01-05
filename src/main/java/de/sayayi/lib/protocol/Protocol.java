@@ -122,36 +122,54 @@ public interface Protocol<M> extends ProtocolQueryable
   @NotNull TargetTagBuilder<M> propagate(@NotNull TagSelector tagSelector);
 
 
+  /**
+   * @since 1.0.0
+   */
   @Contract("_, _ -> this")
   default @NotNull Protocol<M> set(@NotNull String parameter, boolean b) {
     return set(parameter, Boolean.valueOf(b));
   }
 
 
+  /**
+   * @since 1.0.0
+   */
   @Contract("_, _ -> this")
   default @NotNull Protocol<M> set(@NotNull String parameter, int i) {
     return set(parameter, Integer.valueOf(i));
   }
 
 
+  /**
+   * @since 1.0.0
+   */
   @Contract("_, _ -> this")
   default @NotNull Protocol<M> set(@NotNull String parameter, long l) {
     return set(parameter, Long.valueOf(l));
   }
 
 
+  /**
+   * @since 1.0.0
+   */
   @Contract("_, _ -> this")
   default @NotNull Protocol<M> set(@NotNull String parameter, float f) {
     return set(parameter, Float.valueOf(f));
   }
 
 
+  /**
+   * @since 1.0.0
+   */
   @Contract("_, _ -> this")
   default @NotNull Protocol<M> set(@NotNull String parameter, double d) {
     return set(parameter, Double.valueOf(d));
   }
 
 
+  /**
+   * @since 1.0.0
+   */
   @Contract("_, _ -> this")
   @NotNull Protocol<M> set(@NotNull String parameter, Object value);
 
