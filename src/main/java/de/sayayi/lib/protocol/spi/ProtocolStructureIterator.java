@@ -216,10 +216,8 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
   @Override
-  public String toString()
-  {
-    return (this instanceof ForGroup ? "GroupIterator" : "ProtocolIterator") +
-        "[level=" + level + ",tagSelector=" + tagSelector + ",depth=" + depth + ']';
+  public String toString() {
+    return "Iterator[level=" + level + ",tagSelector=" + tagSelector + ",depth=" + depth + ']';
   }
 
 
@@ -239,6 +237,12 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     @Override
     protected void prepareNextEntry() {
       prepareNextEntry(hasPreviousVisibleEntry());
+    }
+
+
+    @Override
+    public String toString() {
+      return "Protocol" + super.toString();
     }
   }
 
@@ -313,6 +317,12 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     {
       prepareNextEntry(hasPreviousVisibleEntry() && !forceFirst);
       forceFirst = false;
+    }
+
+
+    @Override
+    public String toString() {
+      return "Group" + super.toString();
     }
   }
 
