@@ -123,6 +123,18 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
   /**
+   * <p>
+   *   Set a parameter value.
+   * </p>
+   * <p>
+   *   Parameter values set for this protocol are available for both messages and groups added to this protocol.
+   * </p>
+   *
+   * @param parameter  name of the parameter to set, never {@code null}
+   * @param b          parameter value
+   *
+   * @return  current protocol instance
+   *
    * @since 1.0.0
    */
   @Contract("_, _ -> this")
@@ -132,6 +144,18 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
   /**
+   * <p>
+   *   Set a parameter value.
+   * </p>
+   * <p>
+   *   Parameter values set for this protocol are available for both messages and groups added to this protocol.
+   * </p>
+   *
+   * @param parameter  name of the parameter to set, never {@code null}
+   * @param i          parameter value
+   *
+   * @return  current protocol instance
+   *
    * @since 1.0.0
    */
   @Contract("_, _ -> this")
@@ -141,6 +165,18 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
   /**
+   * <p>
+   *   Set a parameter value.
+   * </p>
+   * <p>
+   *   Parameter values set for this protocol are available for both messages and groups added to this protocol.
+   * </p>
+   *
+   * @param parameter  name of the parameter to set, never {@code null}
+   * @param l          parameter value
+   *
+   * @return  current protocol instance
+   *
    * @since 1.0.0
    */
   @Contract("_, _ -> this")
@@ -150,6 +186,18 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
   /**
+   * <p>
+   *   Set a parameter value.
+   * </p>
+   * <p>
+   *   Parameter values set for this protocol are available for both messages and groups added to this protocol.
+   * </p>
+   *
+   * @param parameter  name of the parameter to set, never {@code null}
+   * @param f          parameter value
+   *
+   * @return  current protocol instance
+   *
    * @since 1.0.0
    */
   @Contract("_, _ -> this")
@@ -159,6 +207,18 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
   /**
+   * <p>
+   *   Set a parameter value.
+   * </p>
+   * <p>
+   *   Parameter values set for this protocol are available for both messages and groups added to this protocol.
+   * </p>
+   *
+   * @param parameter  name of the parameter to set, never {@code null}
+   * @param d          parameter value
+   *
+   * @return  current protocol instance
+   *
    * @since 1.0.0
    */
   @Contract("_, _ -> this")
@@ -168,6 +228,18 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
   /**
+   * <p>
+   *   Set a parameter value.
+   * </p>
+   * <p>
+   *   Parameter values set for this protocol are available for both messages and groups added to this protocol.
+   * </p>
+   *
+   * @param parameter  name of the parameter to set, never {@code null}
+   * @param value      parameter value
+   *
+   * @return  current protocol instance
+   *
    * @since 1.0.0
    */
   @Contract("_, _ -> this")

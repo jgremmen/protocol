@@ -55,13 +55,13 @@ public class MessageBundleMessageProcessor implements MessageProcessor<Message>
    *   codes from being parsed (only if {@link #parserFallback} is set to {@code true}).
    * </p>
    *
-   * @param codeOrMessageFormat  code or message to check
+   * @param codeOrMessageFormat  code or message to check, never {@code null}
    *
    * @return  {@code true} if the given code or message format is not a message code, {@code false} otherwise
    *
    * @since 1.0.0
    */
-  protected boolean isNoValidMessageCode(@SuppressWarnings("java:S1172") @NotNull String codeOrMessageFormat) {
+  protected boolean isNoValidMessageCode(@SuppressWarnings("unused") @NotNull String codeOrMessageFormat) {
     return false;
   }
 
