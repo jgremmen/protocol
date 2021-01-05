@@ -113,7 +113,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   private @NotNull P message0(@NotNull M message)
   {
     val msg = new ProtocolMessageEntry<>(level, message0_resolveTagNames(), throwable,
-        message, protocol.factory.getDefaultParameterValues());
+        message, protocol.parameterMap);
 
     protocol.entries.add(msg);
 

@@ -69,7 +69,6 @@ public class TagDefBuilderTest
 
     tag.createProtocol();
     tag.createTag("tag2");
-    tag.getDefaultParameterValues();
     tag.getDefaultTag();
     tag.getTagByName("tag");
     tag.getTagDefs();

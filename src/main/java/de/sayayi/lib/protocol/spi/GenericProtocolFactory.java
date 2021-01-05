@@ -31,7 +31,6 @@ import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -67,8 +66,6 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
   @Getter private final MessageProcessor<M> messageProcessor;
   @Getter private final MessageFormatter<M> messageFormatter;
 
-  protected final Map<String,Object> defaultParameterValues;
-
 
   public GenericProtocolFactory(@NotNull MessageProcessor<M> messageProcessor,
                                 @NotNull MessageFormatter<M> messageFormatter)
@@ -79,7 +76,6 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
     id = FACTORY_ID.incrementAndGet();
 
     defaultTag = createTag(DEFAULT_TAG_NAME).getTagDef();
-    defaultParameterValues = new HashMap<>();
   }
 
 
@@ -159,12 +155,6 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
   @Override
   public @NotNull Set<TagDef> getTagDefs() {
     return new TreeSet<>(registeredTags.values());
-  }
-
-
-  @Override
-  public @NotNull Map<String,Object> getDefaultParameterValues() {
-    return Collections.unmodifiableMap(defaultParameterValues);
   }
 
 
@@ -267,12 +257,6 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
     @Override
     public @NotNull TagDef getDefaultTag() {
       return GenericProtocolFactory.this.getDefaultTag();
-    }
-
-
-    @Override
-    public @NotNull Map<String,Object> getDefaultParameterValues() {
-      return GenericProtocolFactory.this.getDefaultParameterValues();
     }
 
 

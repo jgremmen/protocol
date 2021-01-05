@@ -222,6 +222,46 @@ public interface ProtocolGroup<M> extends Protocol<M>
   @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull TagSelector tagSelector);
 
 
+  @Override
+  @Contract("_, _ -> this")
+  default @NotNull ProtocolGroup<M> set(@NotNull String parameter, boolean b) {
+    return set(parameter, Boolean.valueOf(b));
+  }
+
+
+  @Override
+  @Contract("_, _ -> this")
+  default @NotNull ProtocolGroup<M> set(@NotNull String parameter, int i) {
+    return set(parameter, Integer.valueOf(i));
+  }
+
+
+  @Override
+  @Contract("_, _ -> this")
+  default @NotNull ProtocolGroup<M> set(@NotNull String parameter, long l) {
+    return set(parameter, Long.valueOf(l));
+  }
+
+
+  @Override
+  @Contract("_, _ -> this")
+  default @NotNull ProtocolGroup<M> set(@NotNull String parameter, float f) {
+    return set(parameter, Float.valueOf(f));
+  }
+
+
+  @Override
+  @Contract("_, _ -> this")
+  default @NotNull ProtocolGroup<M> set(@NotNull String parameter, double d) {
+    return set(parameter, Double.valueOf(d));
+  }
+
+
+  @Override
+  @Contract("_, _ -> this")
+  @NotNull ProtocolGroup<M> set(@NotNull String parameter, Object value);
+
+
   /**
    * Returns the protocol instance this protocol group belongs to.
    *

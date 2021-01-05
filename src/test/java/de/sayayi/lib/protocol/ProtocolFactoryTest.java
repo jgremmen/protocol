@@ -84,18 +84,6 @@ public class ProtocolFactoryTest
 
 
   @Test
-  public void testDefaultParameters()
-  {
-    val factory = new StringProtocolFactory(ToStringMessageFormatter.IDENTITY) {{
-        defaultParameterValues.put("name", "protocol factory");
-      }
-    };
-
-    assertEquals("protocol factory", factory.getDefaultParameterValues().get("name"));
-  }
-
-
-  @Test
   public void testGetTags()
   {
     val factory = new StringProtocolFactory(ToStringMessageFormatter.IDENTITY);

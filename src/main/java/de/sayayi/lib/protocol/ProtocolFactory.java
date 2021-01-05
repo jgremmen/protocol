@@ -23,7 +23,6 @@ import de.sayayi.lib.protocol.message.processor.StringMessageProcessor;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
 import java.util.Set;
 
 
@@ -123,16 +122,6 @@ public interface ProtocolFactory<M>
    */
   @Contract(pure = true)
   @NotNull TagDef getDefaultTag();
-
-
-  /**
-   * returns a map with parameter name/value entries which will be available to every message created by protocol
-   * instances belonging directly or indirectly to this factory.
-   *
-   * @return  map with default name/value entries, never {@code null}
-   */
-  @Contract(pure = true)
-  @NotNull Map<String,Object> getDefaultParameterValues();
 
 
 

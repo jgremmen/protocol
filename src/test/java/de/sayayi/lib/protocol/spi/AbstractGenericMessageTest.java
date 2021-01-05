@@ -21,11 +21,7 @@ import lombok.val;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.Map;
-
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
 
@@ -35,12 +31,13 @@ import static org.junit.Assert.assertTrue;
 public class AbstractGenericMessageTest
 {
   @Test
-  public void testDefaultParameters()
+  public void testParentParameters()
   {
-    val parameters = Collections.<String,Object>singletonMap("key", "value123");
+    val parameters = new ParameterMap();
+    parameters.put("key", "value123");
+
     val message = new TestMessage("msg", parameters);
 
-    assertNotSame(parameters, message.getParameterValues());
     assertEquals("value123", message.getParameterValues().get("key"));
   }
 
@@ -48,24 +45,25 @@ public class AbstractGenericMessageTest
   @Test(expected = UnsupportedOperationException.class)
   public void testParametersNotModifyable()
   {
-    val message = new TestMessage("msg", Collections.singletonMap("key", "value123"));
+    val parameters = new ParameterMap();
+    parameters.put("key", "value123");
 
-    message.getParameterValues().put("key2", "test");
+    new TestMessage("msg", parameters).getParameterValues().put("key2", "test");
   }
 
 
   @Test
   public void testTime()
   {
-    val message = new TestMessage("msg", Collections.emptyMap());
+    val message = new TestMessage("msg", null);
     assertTrue(System.currentTimeMillis() >= message.getTimeMillis());
   }
 
 
   static final class TestMessage extends AbstractGenericMessage<String>
   {
-    TestMessage(@NotNull String message, @NotNull Map<String, Object> defaultParameterValues) {
-      super(message, defaultParameterValues);
+    TestMessage(@NotNull String message, ParameterMap parentParameterMap) {
+      super(message, parentParameterMap);
     }
   }
 }

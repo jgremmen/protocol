@@ -24,12 +24,13 @@ import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
 import static de.sayayi.lib.protocol.Level.compare;
 import static de.sayayi.lib.protocol.Level.min;
+import static java.util.stream.Collectors.joining;
 
 
 /**
@@ -46,9 +47,9 @@ final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements
 
 
   ProtocolMessageEntry(@NotNull Level level, @NotNull Set<String> tags, Throwable throwable, @NotNull M message,
-                       @NotNull Map<String,Object> defaultParameterValues)
+                       @NotNull ParameterMap parentParameterMap)
   {
-    super(message, defaultParameterValues);
+    super(message, parentParameterMap);
 
     this.level = level;
     this.tags = tags;
@@ -105,8 +106,11 @@ final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements
     val s = new StringBuilder("Message[level=").append(level).append(",tags={")
         .append(String.join(",", tags)).append("},message=").append(message);
 
-    if (!parameterValues.isEmpty())
-      s.append(",params=").append(parameterValues);
+    if (!parameterMap.isEmpty())
+    {
+      s.append(",params=").append(parameterMap.stream().map(Entry::toString)
+          .collect(joining(",", "{", "}")));
+    }
 
     return s.append(']').toString();
   }

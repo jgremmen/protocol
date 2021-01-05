@@ -76,7 +76,7 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
     if (parameter.isEmpty())
       throw new ProtocolException("parameter must not be empty");
 
-    message.parameterValues.put(parameter, value);
+    message.parameterMap.put(parameter, value);
 
     return (P)this;
   }

@@ -21,8 +21,6 @@ import lombok.Getter;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 
@@ -36,19 +34,19 @@ abstract class AbstractGenericMessage<M> implements GenericMessage<M>
   @Getter final M message;
   @Getter final long timeMillis;
 
-  protected final Map<String,Object> parameterValues;
+  protected final ParameterMap parameterMap;
 
 
-  protected AbstractGenericMessage(@NotNull M message, @NotNull Map<String,Object> defaultParameterValues)
+  protected AbstractGenericMessage(@NotNull M message, @NotNull ParameterMap parentParameterMap)
   {
     this.message = message;
     this.timeMillis = System.currentTimeMillis();
-    this.parameterValues = new HashMap<>(defaultParameterValues);
+    this.parameterMap = new ParameterMap(parentParameterMap);
   }
 
 
   @Override
   public @NotNull Map<String,Object> getParameterValues() {
-    return Collections.unmodifiableMap(parameterValues);
+    return parameterMap.unmodifyableMap();
   }
 }

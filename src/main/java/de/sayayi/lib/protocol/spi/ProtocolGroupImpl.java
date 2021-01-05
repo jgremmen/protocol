@@ -31,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -42,6 +43,7 @@ import static de.sayayi.lib.protocol.Level.min;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_IF_NOT_EMPTY;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ONLY;
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.joining;
 
 
 /**
@@ -64,7 +66,7 @@ final class ProtocolGroupImpl<M>
 
   ProtocolGroupImpl(@NotNull AbstractProtocol<M,Protocol.ProtocolMessageBuilder<M>> parent)
   {
-    super(parent.getFactory());
+    super(parent.getFactory(), parent.parameterMap);
 
     this.parent = parent;
 
@@ -362,6 +364,14 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
+  public @NotNull ProtocolGroup<M> set(@NotNull String parameter, Object value)
+  {
+    parameterMap.put(parameter, value);
+    return this;
+  }
+
+
+  @Override
   public String toString()
   {
     val s = new StringBuilder("ProtocolGroup[id=").append(getId())
@@ -400,7 +410,7 @@ final class ProtocolGroupImpl<M>
   private class GroupMessage extends AbstractGenericMessage<M>
   {
     private GroupMessage(@NotNull M message) {
-      super(message, factory.getDefaultParameterValues());
+      super(message, ProtocolGroupImpl.this.parameterMap);
     }
 
 
@@ -409,8 +419,11 @@ final class ProtocolGroupImpl<M>
     {
       val s = new StringBuilder("GroupMessage[message=").append(message);
 
-      if (!parameterValues.isEmpty())
-        s.append(",params=").append(parameterValues);
+      if (!parameterMap.isEmpty())
+      {
+        s.append(",params=").append(parameterMap.stream().map(Entry::toString)
+            .collect(joining(",", "{", "}")));
+      }
 
       return s.append(']').toString();
     }
@@ -503,6 +516,14 @@ final class ProtocolGroupImpl<M>
     @Override
     public @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull TagSelector tagSelector) {
       return (ProtocolGroup.TargetTagBuilder<M>)super.propagate(tagSelector);
+    }
+
+
+    @Override
+    public @NotNull ProtocolGroup<M> set(@NotNull String parameter, Object value)
+    {
+      parameterMap.put(parameter, value);
+      return this;
     }
   }
 

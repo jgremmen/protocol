@@ -26,9 +26,11 @@ import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import static de.sayayi.lib.protocol.Level.compare;
+import static java.util.stream.Collectors.joining;
 
 
 /**
@@ -106,7 +108,10 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
 
     val parameterValues = getParameterValues();
     if (!parameterValues.isEmpty())
-      s.append(",params=").append(parameterValues);
+    {
+      s.append(",params=").append(parameterValues.entrySet().stream().map(Entry::toString)
+          .collect(joining(",", "{", "}")));
+    }
 
     return s.append(']').toString();
   }

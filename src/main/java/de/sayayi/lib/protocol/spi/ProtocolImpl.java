@@ -37,7 +37,7 @@ import static java.util.Objects.requireNonNull;
 final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
 {
   ProtocolImpl(@NotNull ProtocolFactory<M> factory) {
-    super(factory);
+    super(factory, null);
   }
 
 
@@ -84,6 +84,14 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
 
 
   @Override
+  public @NotNull Protocol<M> set(@NotNull String parameter, Object value)
+  {
+    parameterMap.put(parameter, value);
+    return this;
+  }
+
+
+  @Override
   public String toString() {
     return "Protocol[id=" + getId() + ']';
   }
@@ -113,6 +121,14 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
   {
     ParameterBuilder(ProtocolMessageEntry<M> message) {
       super(ProtocolImpl.this, message);
+    }
+
+
+    @Override
+    public @NotNull Protocol<M> set(@NotNull String parameter, Object value)
+    {
+      parameterMap.put(parameter, value);
+      return this;
     }
   }
 

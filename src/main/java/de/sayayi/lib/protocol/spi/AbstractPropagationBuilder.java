@@ -54,8 +54,7 @@ abstract class AbstractPropagationBuilder<M,B extends ProtocolMessageBuilder<M>>
     if (!protocol.factory.isValidTagName(targetTagName))
       throw new IllegalArgumentException("invalid target tag name '" + targetTagName + "'");
 
-    var propagationSet = protocol.tagPropagationMap.computeIfAbsent(tagSelector,
-        k -> new TreeSet<>());
+    var propagationSet = protocol.tagPropagationMap.computeIfAbsent(tagSelector, k -> new TreeSet<>());
 
     propagationSet.add(targetTagName);
 

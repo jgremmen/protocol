@@ -64,13 +64,15 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
 
   @Getter final ProtocolFactory<M> factory;
 
+  final ParameterMap parameterMap;
   final List<InternalProtocolEntry<M>> entries;
   final Map<TagSelector,Set<String>> tagPropagationMap;
 
 
-  protected AbstractProtocol(@NotNull ProtocolFactory<M> factory)
+  protected AbstractProtocol(@NotNull ProtocolFactory<M> factory, ParameterMap parentParameterMap)
   {
     this.factory = factory;
+    this.parameterMap = new ParameterMap(parentParameterMap);
 
     id = PROTOCOL_ID.incrementAndGet();
     entries = new ArrayList<>(8);
@@ -131,15 +133,9 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
         if (entry.matches0(levelLimit, level, tagSelector))
         {
           if (entry instanceof InternalProtocolEntry.Group)
-          {
-            filteredEntries.add(ProtocolGroupEntryAdapter.from(levelLimit,
-                (InternalProtocolEntry.Group<M>)entry));
-          }
+            filteredEntries.add(ProtocolGroupEntryAdapter.from(levelLimit, (InternalProtocolEntry.Group<M>)entry));
           else
-          {
-            filteredEntries.add(ProtocolMessageEntryAdapter.from(levelLimit,
-                (InternalProtocolEntry.Message<M>)entry));
-          }
+            filteredEntries.add(ProtocolMessageEntryAdapter.from(levelLimit, (InternalProtocolEntry.Message<M>)entry));
         }
 
     return filteredEntries;
