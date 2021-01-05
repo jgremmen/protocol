@@ -72,9 +72,9 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   protected AbstractProtocol(@NotNull ProtocolFactory<M> factory, ParameterMap parentParameterMap)
   {
     this.factory = factory;
-    this.parameterMap = new ParameterMap(parentParameterMap);
 
     id = PROTOCOL_ID.incrementAndGet();
+    parameterMap = new ParameterMap(parentParameterMap);
     entries = new ArrayList<>(8);
     tagPropagationMap = new HashMap<>(8);
   }
@@ -95,7 +95,6 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   }
 
 
-  @SuppressWarnings("squid:S3038")
   public abstract @NotNull B add(@NotNull Level level);
 
 
@@ -177,7 +176,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   public @NotNull ProtocolGroup<M> createGroup()
   {
     @SuppressWarnings("unchecked")
-    val group = new ProtocolGroupImpl<>((AbstractProtocol<M, ProtocolMessageBuilder<M>>)this);
+    val group = new ProtocolGroupImpl<>((AbstractProtocol<M,ProtocolMessageBuilder<M>>)this);
 
     entries.add(group);
 

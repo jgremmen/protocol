@@ -85,6 +85,5 @@ public abstract class AbstractIndexedMessageFormatter<M> implements MessageForma
    *
    * @return  formatted message
    */
-  protected abstract @NotNull String formatMessage(@NotNull GenericMessage<M> message,
-                                                   @NotNull Object[] parameters);
+  protected abstract @NotNull String formatMessage(@NotNull GenericMessage<M> message, @NotNull Object[] parameters);
 }

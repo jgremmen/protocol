@@ -40,8 +40,9 @@ abstract class AbstractGenericMessage<M> implements GenericMessage<M>
   protected AbstractGenericMessage(@NotNull M message, @NotNull ParameterMap parentParameterMap)
   {
     this.message = message;
-    this.timeMillis = System.currentTimeMillis();
-    this.parameterMap = new ParameterMap(parentParameterMap);
+
+    timeMillis = System.currentTimeMillis();
+    parameterMap = new ParameterMap(parentParameterMap);
   }
 
 

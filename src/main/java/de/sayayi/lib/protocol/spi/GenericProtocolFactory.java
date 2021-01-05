@@ -51,7 +51,6 @@ import static java.util.stream.Collectors.joining;
  *
  * @author Jeroen Gremmen
  */
-@SuppressWarnings("java:S100")
 public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 {
   private static final Pattern TAG_NAME_PATTERN =
@@ -140,7 +139,6 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 
 
   @Override
-  @SuppressWarnings({ "squid:S2589" })
   public boolean hasTag(String name) {
     return name != null && registeredTags.containsKey(name);
   }
@@ -275,6 +273,7 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 
 
 
+  @SuppressWarnings("java:S100")
   @EqualsAndHashCode(doNotUseGetters = true, onlyExplicitlyIncluded = true)
   static final class TagDefImpl implements TagDef, Comparable<TagDefImpl>
   {

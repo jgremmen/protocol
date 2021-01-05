@@ -21,7 +21,6 @@ import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.TagSelector;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.val;
 
@@ -31,6 +30,7 @@ import java.util.List;
 
 import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
 import static de.sayayi.lib.protocol.Level.compare;
+import static lombok.AccessLevel.PRIVATE;
 
 
 /**
@@ -39,7 +39,7 @@ import static de.sayayi.lib.protocol.Level.compare;
  * @author Jeroen Gremmen
  * @since 0.4.1
  */
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = PRIVATE)
 final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<M>
 {
   private final Level levelLimit;

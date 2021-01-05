@@ -42,30 +42,30 @@ import static java.util.stream.Collectors.joining;
 final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements InternalProtocolEntry.Message<M>
 {
   @Getter private final Level level;
-  private final Set<String> tags;
+  private final Set<String> tagNames;
   @Getter private final Throwable throwable;
 
 
-  ProtocolMessageEntry(@NotNull Level level, @NotNull Set<String> tags, Throwable throwable, @NotNull M message,
+  ProtocolMessageEntry(@NotNull Level level, @NotNull Set<String> tagNames, Throwable throwable, @NotNull M message,
                        @NotNull ParameterMap parentParameterMap)
   {
     super(message, parentParameterMap);
 
     this.level = level;
-    this.tags = tags;
+    this.tagNames = tagNames;
     this.throwable = throwable;
   }
 
 
   @Override
   public @NotNull Set<String> getTagNames() {
-    return Collections.unmodifiableSet(tags);
+    return Collections.unmodifiableSet(tagNames);
   }
 
 
   @Override
   public boolean matches0(@NotNull Level levelLimit, @NotNull Level level, @NotNull TagSelector tagSelector) {
-    return matches0(levelLimit, level) && tagSelector.match(tags);
+    return matches0(levelLimit, level) && tagSelector.match(tagNames);
   }
 
 
@@ -104,7 +104,7 @@ final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements
   public String toString()
   {
     val s = new StringBuilder("Message[level=").append(level).append(",tags={")
-        .append(String.join(",", tags)).append("},message=").append(message);
+        .append(String.join(",", tagNames)).append("},message=").append(message);
 
     if (!parameterMap.isEmpty())
     {

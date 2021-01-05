@@ -112,8 +112,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   @SuppressWarnings("squid:S2583")
   private @NotNull P message0(@NotNull M message)
   {
-    val msg = new ProtocolMessageEntry<>(level, message0_resolveTagNames(), throwable,
-        message, protocol.parameterMap);
+    val msg = new ProtocolMessageEntry<>(level, message0_resolveTagNames(), throwable, message, protocol.parameterMap);
 
     protocol.entries.add(msg);
 
