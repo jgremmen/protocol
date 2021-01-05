@@ -381,6 +381,11 @@ final class ProtocolGroupImpl<M>
       s.append(",levelLimit=").append(levelLimit);
     if (name != null)
       s.append(",name=").append(name);
+    if (!parameterMap.isEmpty())
+    {
+      s.append(",params=").append(parameterMap.stream().map(Entry::toString)
+          .collect(joining(",", "{", "}")));
+    }
 
     return s.append(']').toString();
   }

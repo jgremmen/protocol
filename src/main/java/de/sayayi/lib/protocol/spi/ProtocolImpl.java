@@ -22,10 +22,15 @@ import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.TagSelector;
 
+import lombok.val;
+
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map.Entry;
 
 import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.joining;
 
 
 /**
@@ -92,8 +97,17 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
 
 
   @Override
-  public String toString() {
-    return "Protocol[id=" + getId() + ']';
+  public String toString()
+  {
+    val s = new StringBuilder("Protocol[id=").append(getId());
+
+    if (!parameterMap.isEmpty())
+    {
+      s.append(",params=").append(parameterMap.stream().map(Entry::toString)
+          .collect(joining(",", "{", "}")));
+    }
+
+    return s.append(']').toString();
   }
 
 
