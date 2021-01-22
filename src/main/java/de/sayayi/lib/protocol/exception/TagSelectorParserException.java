@@ -30,10 +30,11 @@ import lombok.Getter;
  * @author Jeroen Gremmen
  * @since 0.6.0
  */
+@Getter
 public final class TagSelectorParserException extends ProtocolException
 {
-  @Getter private final int startIndex;
-  @Getter private final int endIndex;
+  private final int startIndex;
+  private final int endIndex;
 
 
   public TagSelectorParserException(int startIndex, int endIndex, String message)

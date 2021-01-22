@@ -260,6 +260,8 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
   }
 
 
+
+
   /**
    * Html protocol formatter that produces list bullets with font awesome icons.
    *

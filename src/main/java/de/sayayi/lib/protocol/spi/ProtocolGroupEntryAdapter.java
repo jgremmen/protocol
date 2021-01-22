@@ -24,6 +24,7 @@ import de.sayayi.lib.protocol.TagSelector;
 import lombok.AllArgsConstructor;
 import lombok.val;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -165,8 +166,9 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
   }
 
 
-  static <M> ProtocolEntry.Group<M> from(@NotNull Level levelLimit,
-                                         @NotNull InternalProtocolEntry.Group<M> groupEntry) {
+  @Contract(value = "_, _ -> new", pure = true)
+  static @NotNull <M> ProtocolEntry.Group<M> from(@NotNull Level levelLimit,
+                                                  @NotNull InternalProtocolEntry.Group<M> groupEntry) {
     return new ProtocolGroupEntryAdapter<>(levelLimit, groupEntry);
   }
 }

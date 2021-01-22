@@ -41,6 +41,8 @@ public interface ProtocolEntry<M> extends ProtocolQueryable
   }
 
 
+
+
   /**
    *
    * @param <M>  internal message object type

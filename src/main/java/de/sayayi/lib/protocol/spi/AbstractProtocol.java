@@ -54,8 +54,7 @@ import static java.util.Spliterator.SORTED;
  * @author Jeroen Gremmen
  */
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, doNotUseGetters = true, callSuper = false)
-abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
-    implements Protocol<M>, InternalProtocolQueryable
+abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implements Protocol<M>, InternalProtocolQueryable
 {
   private static final AtomicInteger PROTOCOL_ID = new AtomicInteger(0);
 

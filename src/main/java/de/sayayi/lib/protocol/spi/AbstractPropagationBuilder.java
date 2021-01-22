@@ -22,7 +22,6 @@ import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.exception.ProtocolException;
 
 import lombok.val;
-import lombok.var;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -54,9 +53,7 @@ abstract class AbstractPropagationBuilder<M,B extends ProtocolMessageBuilder<M>>
     if (!protocol.factory.isValidTagName(targetTagName))
       throw new IllegalArgumentException("invalid target tag name '" + targetTagName + "'");
 
-    var propagationSet = protocol.tagPropagationMap.computeIfAbsent(tagSelector, k -> new TreeSet<>());
-
-    propagationSet.add(targetTagName);
+    protocol.tagPropagationMap.computeIfAbsent(tagSelector, k -> new TreeSet<>()).add(targetTagName);
 
     return protocol;
   }
