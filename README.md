@@ -28,3 +28,8 @@ The protocol library provides the following features:
 * Searching the protocol for messages by severity level and tags.
 * Full customization for protocol formatting. There are several pre-defined, yet customizable, formatters. One of which is a html formatter with font awesome icons.
 * Message formatting libraries can be easily integrated. The library provides a couple of default implementations. Eg.: `String.format(...)` and `java.text.MessageFormat`.
+
+## Requirements
+
+* at least Java 8
+* [unbescape](https://mvnrepository.com/artifact/org.unbescape/unbescape) for the `HtmlProtocolFormatter`
