@@ -21,7 +21,7 @@ This example shows that various parts of the business operation can lead to a nu
 
 The protocol library provides the following features:
 
-* Messages can have different severity levels. Similar to logging libraries, the protocol library provides the standard levels `debug`,`info`,`warn`,`error`. If required, custom levels can be implemented as a replacement or in addition to the standard levels.
+* Each message has a severity level. Similar to logging libraries, the protocol library provides the standard levels `debug`,`info`,`warn`,`error`. If required, custom levels can be implemented as a replacement or in addition to the standard levels.
 * Messages can be tagged with labels. It provides a way to specify the target audience for the message. Eg. `user`, `sales-team`, `admin`.
 * Messages can be grouped. It provides a way of structuring messages like files (= messages) in directories (= groups),
 * Each message group can have a header message.
