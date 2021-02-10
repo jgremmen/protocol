@@ -40,6 +40,19 @@ public interface ProtocolQueryable
 
 
   /**
+   * Tells if this protocol object matches the given {@code tagSelector}.
+   *
+   * @param tagSelector  tag selector, not {@code null}
+   *
+   * @return  {@code true} if the protocol object matches, {@code false} otherwise
+   */
+  @Contract(pure = true)
+  default boolean matches(@NotNull TagSelector tagSelector) {
+    return matches(Level.Shared.LOWEST, tagSelector);
+  }
+
+
+  /**
    * Tells if this protocol object matches the given {@code level}.
    *
    * @param level  requested protocol level, not {@code null}
