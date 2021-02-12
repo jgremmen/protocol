@@ -83,8 +83,14 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
+  public @NotNull String getMessageId() {
+    return message.getMessageId();
+  }
+
+
+  @Override
   public @NotNull M getMessage() {
-    return message.message;
+    return message.getMessage();
   }
 
 

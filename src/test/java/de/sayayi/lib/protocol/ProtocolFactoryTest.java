@@ -18,6 +18,7 @@ package de.sayayi.lib.protocol;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.exception.ProtocolException;
 import de.sayayi.lib.protocol.message.formatter.ToStringMessageFormatter;
+import de.sayayi.lib.protocol.spi.GenericMessageWithId;
 import de.sayayi.lib.protocol.spi.GenericProtocolFactory;
 import org.junit.Test;
 
@@ -186,7 +187,8 @@ public class ProtocolFactoryTest
   @Test
   public void testProcessMessage()
   {
-    val factory = new GenericProtocolFactory<>(message -> message + "(ok)", ToStringMessageFormatter.IDENTITY);
+    val factory = new GenericProtocolFactory<>(message -> new GenericMessageWithId<>(message + "(ok)"),
+        ToStringMessageFormatter.IDENTITY);
     val protocol = factory.createProtocol().debug().message("msg");
     val iterator = protocol.iterator(LOWEST, Tag.any());
 

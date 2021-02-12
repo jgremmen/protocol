@@ -387,6 +387,12 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
     @Override
+    public @NotNull String getMessageId() {
+      return message.getMessageId();
+    }
+
+
+    @Override
     public @NotNull M getMessage() {
       return message.getMessage();
     }
@@ -433,6 +439,12 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
       this.level = level;
       this.groupMessage = groupMessage;
+    }
+
+
+    @Override
+    public @NotNull String getMessageId() {
+      return groupMessage.getMessageId();
     }
 
 
@@ -554,6 +566,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
       this.groupMessage = new GenericMessageWithLevel<M>() {
         @Override public @NotNull Level getLevel() { return level; }
+        @Override public @NotNull String getMessageId() { return groupMessage.getMessageId(); }
         @Override public @NotNull M getMessage() { return groupMessage.getMessage(); }
         @Override public @NotNull Map<String,Object> getParameterValues() { return groupMessage.getParameterValues(); }
         @Override public long getTimeMillis() { return groupMessage.getTimeMillis(); }

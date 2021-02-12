@@ -63,7 +63,7 @@ public class AbstractGenericMessageTest
   static final class TestMessage extends AbstractGenericMessage<String>
   {
     TestMessage(@NotNull String message, ParameterMap parentParameterMap) {
-      super(message, parentParameterMap);
+      super(new GenericMessageWithId<>(message), parentParameterMap);
     }
   }
 }

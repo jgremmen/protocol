@@ -750,6 +750,17 @@ public interface Protocol<M> extends ProtocolQueryable
   interface GenericMessage<M>
   {
     /**
+     * Returns the id for this message. The id must not be unique.
+     *
+     * @return  id for this message, never {@code null}
+     *
+     * @since 1.0.0
+     */
+    @Contract(pure = true)
+    @NotNull String getMessageId();
+
+
+    /**
      * Returns the internal representation of the message.
      *
      * @return  message, never {@code null}

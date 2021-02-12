@@ -18,6 +18,7 @@ package de.sayayi.lib.protocol.spi;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolEntry;
+import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor.MessageWithId;
 import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.ProtocolGroup.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.ProtocolIterator;
@@ -412,17 +413,18 @@ final class ProtocolGroupImpl<M>
 
 
 
-  private class GroupMessage extends AbstractGenericMessage<M>
+  private final class GroupMessage extends AbstractGenericMessage<M>
   {
-    private GroupMessage(@NotNull M message) {
-      super(message, ProtocolGroupImpl.this.parameterMap);
+    private GroupMessage(@NotNull MessageWithId<M> messageWithId) {
+      super(messageWithId, ProtocolGroupImpl.this.parameterMap);
     }
 
 
     @Override
     public String toString()
     {
-      val s = new StringBuilder("GroupMessage[message=").append(message);
+      val s = new StringBuilder("GroupMessage[id=").append(getMessageId())
+          .append(",message=").append(getMessage());
 
       if (!parameterMap.isEmpty())
       {

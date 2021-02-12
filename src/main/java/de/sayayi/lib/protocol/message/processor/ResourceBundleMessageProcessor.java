@@ -17,6 +17,7 @@ package de.sayayi.lib.protocol.message.processor;
 
 import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
 import de.sayayi.lib.protocol.exception.ProtocolException;
+import de.sayayi.lib.protocol.spi.GenericMessageWithId;
 
 import lombok.AllArgsConstructor;
 
@@ -38,12 +39,12 @@ public final class ResourceBundleMessageProcessor implements MessageProcessor<St
 
 
   @Override
-  public @NotNull String processMessage(@NotNull String key)
+  public @NotNull MessageWithId<String> processMessage(@NotNull String key)
   {
     requireNonNull(key, "key must not be null");
 
     try {
-      return resourceBundle.getString(key);
+      return new GenericMessageWithId<>(key, resourceBundle.getString(key));
     } catch(Exception ex) {
       throw new ProtocolException("cannot process resource with key '" + key + "'", ex);
     }

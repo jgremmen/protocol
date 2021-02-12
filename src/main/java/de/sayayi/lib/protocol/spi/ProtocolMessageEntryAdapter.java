@@ -47,6 +47,12 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
 
 
   @Override
+  public @NotNull String getMessageId() {
+    return message.getMessageId();
+  }
+
+
+  @Override
   public @NotNull M getMessage() {
     return message.getMessage();
   }
@@ -104,13 +110,14 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
   public String toString()
   {
     val s = new StringBuilder("Message[level=").append(levelLimit).append(",tags={")
-        .append(String.join(",", getTagNames())).append("},message=").append(message.getMessage());
+        .append(String.join(",", getTagNames())).append("},id=").append(getMessageId())
+        .append(",message=").append(message.getMessage());
 
     val parameterValues = getParameterValues();
     if (!parameterValues.isEmpty())
     {
-      s.append(",params=").append(parameterValues.entrySet().stream().map(Entry::toString)
-          .collect(joining(",", "{", "}")));
+      s.append(parameterValues.entrySet().stream().map(Entry::toString).collect(
+          joining(",", ",params={", "}")));
     }
 
     return s.append(']').toString();

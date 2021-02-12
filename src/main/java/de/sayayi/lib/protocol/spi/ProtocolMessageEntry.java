@@ -16,6 +16,7 @@
 package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.Level;
+import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor.MessageWithId;
 import de.sayayi.lib.protocol.TagSelector;
 
 import lombok.Getter;
@@ -46,10 +47,10 @@ final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements
   @Getter private final Throwable throwable;
 
 
-  ProtocolMessageEntry(@NotNull Level level, @NotNull Set<String> tagNames, Throwable throwable, @NotNull M message,
-                       @NotNull ParameterMap parentParameterMap)
+  ProtocolMessageEntry(@NotNull Level level, @NotNull Set<String> tagNames, Throwable throwable,
+                       @NotNull MessageWithId<M> messageWithId, @NotNull ParameterMap parentParameterMap)
   {
-    super(message, parentParameterMap);
+    super(messageWithId, parentParameterMap);
 
     this.level = level;
     this.tagNames = tagNames;
@@ -104,12 +105,13 @@ final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements
   public String toString()
   {
     val s = new StringBuilder("Message[level=").append(level).append(",tags={")
-        .append(String.join(",", tagNames)).append("},message=").append(message);
+        .append(String.join(",", tagNames)).append("},id=").append(getMessageId())
+        .append(",message=").append(getMessage());
 
     if (!parameterMap.isEmpty())
     {
-      s.append(",params=").append(parameterMap.stream().map(Entry::toString)
-          .collect(joining(",", "{", "}")));
+      s.append(parameterMap.stream().map(Entry::toString).collect(
+          joining(",", ",params={", "}")));
     }
 
     return s.append(']').toString();

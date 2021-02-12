@@ -19,6 +19,7 @@ import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol.MessageParameterBuilder;
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.ProtocolFactory;
+import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor.MessageWithId;
 
 import lombok.val;
 
@@ -67,7 +68,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   @Override
   public @NotNull B forTag(@NotNull String tagName)
   {
-    val tagDef = protocol.factory.getTagByName(tagName);
+    val tagDef = protocol.getFactory().getTagByName(tagName);
 
     if (tagDef.matches(level))
       tags.add(tagName);
@@ -98,21 +99,31 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   @Override
   public @NotNull P message(@NotNull String message)
   {
-    return message0(protocol.factory.getMessageProcessor()
+    return message0(protocol.getFactory().getMessageProcessor()
         .processMessage(requireNonNull(message, "message must not be null")));
   }
 
 
   @Override
-  public @NotNull P withMessage(@NotNull M message) {
-    return message0(requireNonNull(message, "message must not be null"));
+  public @NotNull P withMessage(@NotNull M message)
+  {
+    val msg = new ProtocolMessageEntry<>(level, message0_resolveTagNames(), throwable,
+        new GenericMessageWithId<>(
+            protocol.getFactory().getMessageProcessor().getIdFromMessage(message),
+            requireNonNull(message, "message must not be null")),
+        protocol.parameterMap);
+
+    protocol.entries.add(msg);
+
+    return createMessageParameterBuilder(msg);
   }
 
 
   @SuppressWarnings("squid:S2583")
-  private @NotNull P message0(@NotNull M message)
+  private @NotNull P message0(@NotNull MessageWithId<M> messageWithId)
   {
-    val msg = new ProtocolMessageEntry<>(level, message0_resolveTagNames(), throwable, message, protocol.parameterMap);
+    val msg = new ProtocolMessageEntry<>(level, message0_resolveTagNames(), throwable, messageWithId,
+        protocol.parameterMap);
 
     protocol.entries.add(msg);
 
@@ -125,7 +136,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
     val resolvedTags = new TreeSet<String>();
 
     for(val tag: protocol.getPropagatedTags(tags))
-      for(val impliedTagDef: protocol.factory.getTagByName(tag).getImpliedTags())
+      for(val impliedTagDef: protocol.getFactory().getTagByName(tag).getImpliedTags())
         if (impliedTagDef.matches(level))
           resolvedTags.add(impliedTagDef.getName());
 

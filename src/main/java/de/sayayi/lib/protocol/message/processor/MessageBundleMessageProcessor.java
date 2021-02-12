@@ -19,8 +19,10 @@ import de.sayayi.lib.message.Message;
 import de.sayayi.lib.message.MessageBundle;
 import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
 import de.sayayi.lib.protocol.exception.ProtocolException;
+import de.sayayi.lib.protocol.spi.GenericMessageWithId;
 
 import lombok.AllArgsConstructor;
+import lombok.val;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -40,6 +42,7 @@ public class MessageBundleMessageProcessor implements MessageProcessor<Message>
   private final boolean parserFallback;
 
 
+  @SuppressWarnings("unused")
   public MessageBundleMessageProcessor(@NotNull MessageBundle messageBundle) {
     this(messageBundle, false);
   }
@@ -67,19 +70,23 @@ public class MessageBundleMessageProcessor implements MessageProcessor<Message>
 
 
   @Override
-  public @NotNull Message processMessage(@NotNull String codeOrMessageFormat)
+  public @NotNull MessageWithId<Message> processMessage(@NotNull String codeOrMessageFormat)
   {
     requireNonNull(codeOrMessageFormat, "codeOrMessageFormat must not be null");
 
-    Message message = isNoValidMessageCode(codeOrMessageFormat) ? null : messageBundle.getByCode(codeOrMessageFormat);
-    if (message == null)
-    {
-      if (!parserFallback)
-        throw new ProtocolException("missing message in bundle for code '" + codeOrMessageFormat + "'");
+    val message = isNoValidMessageCode(codeOrMessageFormat) ? null : messageBundle.getByCode(codeOrMessageFormat);
+    if (message != null)
+      return new GenericMessageWithId<>(message.getCode(), message);
 
-      message = MessageFormatMessageProcessor.INSTANCE.processMessage(codeOrMessageFormat);
-    }
+    if (!parserFallback)
+      throw new ProtocolException("missing message in bundle for code '" + codeOrMessageFormat + "'");
 
-    return message;
+    return MessageFormatMessageProcessor.INSTANCE.processMessage(codeOrMessageFormat);
+  }
+
+
+  @Override
+  public @NotNull String getIdFromMessage(@NotNull Message message) {
+    return MessageFormatMessageProcessor.INSTANCE.getIdFromMessage(message);
   }
 }
