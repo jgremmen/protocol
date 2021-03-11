@@ -391,8 +391,6 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @return  formatted protocol, or {@code null}
    */
-  @SuppressWarnings("unused")
-  @Contract(pure = true)
   default <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level) {
     return format(formatter, level, Tag.any());
   }
@@ -409,8 +407,6 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @return  formatted protocol, or {@code null}
    */
-  @SuppressWarnings("unused")
-  @Contract(pure = true)
   <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level, @NotNull TagSelector tagSelector);
 
 
@@ -425,7 +421,6 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @see #format(ProtocolFormatter, Level, TagSelector)
    */
-  @Contract(pure = true)
   default <R> R format(@NotNull ConfiguredProtocolFormatter<M,R> formatter) {
     return format(formatter, formatter.getLevel(), formatter.getTagSelector(getFactory()));
   }
