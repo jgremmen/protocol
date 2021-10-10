@@ -50,7 +50,7 @@ public class StringProtocolFactory extends GenericProtocolFactory<String>
    *
    * @since 0.7.0
    */
-  @Contract("-> new")
+  @Contract(value = "-> new", pure = true)
   public static @NotNull StringProtocolFactory createPlainTextFactory() {
     return new StringProtocolFactory(ToStringMessageFormatter.IDENTITY);
   }
@@ -63,7 +63,7 @@ public class StringProtocolFactory extends GenericProtocolFactory<String>
    *
    * @since 0.7.0
    */
-  @Contract("-> new")
+  @Contract(value = "-> new", pure = true)
   public static @NotNull StringProtocolFactory createJavaMessageFormatFactory() {
     return new StringProtocolFactory(JavaMessageFormatFormatter.INSTANCE);
   }

@@ -45,6 +45,7 @@ public interface ProtocolFormatter<M,R>
    *
    * @see Protocol#format(ProtocolFormatter, Level, TagSelector)
    */
+  @Contract(mutates = "this")
   void init(@NotNull ProtocolFactory<M> factory, @NotNull Level level, @NotNull TagSelector tagSelector,
             int estimatedGroupDepth);
 
