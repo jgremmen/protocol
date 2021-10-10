@@ -94,6 +94,7 @@ public interface TagSelector
     ANY, ALL_OF, ANY_OF, AND, OR, NOT, FIX;
 
 
+    @Contract(pure = true)
     public boolean isOf() {
       return this == ALL_OF || this == ANY_OF;
     }

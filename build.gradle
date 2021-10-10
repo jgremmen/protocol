@@ -15,7 +15,7 @@ version '1.0.0'
 
 
 ext {
-  jetbrainsAnnotationsVersion = "15.0"
+  jetbrainsAnnotationsVersion = "22.0.0"
   junitVersion = "4.13.1"
   lombokVersion = "1.18.16"
   messageFormatVersion = "0.4.2"
@@ -34,7 +34,7 @@ apply from: file('gradle/publishing.gradle')
 
 
 repositories {
-  jcenter()
+  mavenCentral()
 }
 
 

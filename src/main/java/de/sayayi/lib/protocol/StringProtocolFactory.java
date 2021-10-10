@@ -21,6 +21,7 @@ import de.sayayi.lib.protocol.message.formatter.ToStringMessageFormatter;
 import de.sayayi.lib.protocol.message.processor.StringMessageProcessor;
 import de.sayayi.lib.protocol.spi.GenericProtocolFactory;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.MessageFormat;
@@ -49,7 +50,8 @@ public class StringProtocolFactory extends GenericProtocolFactory<String>
    *
    * @since 0.7.0
    */
-  public static StringProtocolFactory createPlainTextFactory() {
+  @Contract("-> new")
+  public static @NotNull StringProtocolFactory createPlainTextFactory() {
     return new StringProtocolFactory(ToStringMessageFormatter.IDENTITY);
   }
 
@@ -61,7 +63,8 @@ public class StringProtocolFactory extends GenericProtocolFactory<String>
    *
    * @since 0.7.0
    */
-  public static StringProtocolFactory createJavaMessageFormatFactory() {
+  @Contract("-> new")
+  public static @NotNull StringProtocolFactory createJavaMessageFormatFactory() {
     return new StringProtocolFactory(JavaMessageFormatFormatter.INSTANCE);
   }
 
@@ -73,7 +76,8 @@ public class StringProtocolFactory extends GenericProtocolFactory<String>
    *
    * @since 0.7.0
    */
-  public static StringProtocolFactory createJavaStringFormatFactory() {
+  @Contract("-> new")
+  public static @NotNull StringProtocolFactory createJavaStringFormatFactory() {
     return new StringProtocolFactory(JavaStringFormatFormatter.INSTANCE);
   }
 }
