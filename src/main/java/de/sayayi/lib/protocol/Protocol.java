@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.function.Consumer;
@@ -118,7 +119,7 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @return  propagation target tag builder instance, never {@code null}
    */
-  @Contract("_ -> new")
+  @Contract(value = "_ -> new", pure = true)
   @NotNull TargetTagBuilder<M> propagate(@NotNull TagSelector tagSelector);
 
 
@@ -137,7 +138,7 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @since 1.0.0
    */
-  @Contract("_, _ -> this")
+  @Contract(value = "_, _ -> this", mutates = "this")
   default @NotNull Protocol<M> set(@NotNull String parameter, boolean b) {
     return set(parameter, Boolean.valueOf(b));
   }
@@ -158,7 +159,7 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @since 1.0.0
    */
-  @Contract("_, _ -> this")
+  @Contract(value = "_, _ -> this", mutates = "this")
   default @NotNull Protocol<M> set(@NotNull String parameter, int i) {
     return set(parameter, Integer.valueOf(i));
   }
@@ -179,7 +180,7 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @since 1.0.0
    */
-  @Contract("_, _ -> this")
+  @Contract(value = "_, _ -> this", mutates = "this")
   default @NotNull Protocol<M> set(@NotNull String parameter, long l) {
     return set(parameter, Long.valueOf(l));
   }
@@ -200,7 +201,7 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @since 1.0.0
    */
-  @Contract("_, _ -> this")
+  @Contract(value = "_, _ -> this", mutates = "this")
   default @NotNull Protocol<M> set(@NotNull String parameter, float f) {
     return set(parameter, Float.valueOf(f));
   }
@@ -221,7 +222,7 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @since 1.0.0
    */
-  @Contract("_, _ -> this")
+  @Contract(value = "_, _ -> this", mutates = "this")
   default @NotNull Protocol<M> set(@NotNull String parameter, double d) {
     return set(parameter, Double.valueOf(d));
   }
@@ -242,7 +243,7 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @since 1.0.0
    */
-  @Contract("_, _ -> this")
+  @Contract(value = "_, _ -> this", mutates = "this")
   @NotNull Protocol<M> set(@NotNull String parameter, Object value);
 
 
@@ -357,7 +358,7 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @return  new protocol group
    */
-  @Contract("-> new")
+  @Contract(value = "-> new", mutates = "this")
   @NotNull ProtocolGroup<M> createGroup();
 
 
@@ -373,6 +374,7 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @since 0.7.0
    */
+  @Contract(value = "-> new", pure = true)
   @NotNull Iterator<ProtocolGroup<M>> groupIterator();
 
 
@@ -456,20 +458,20 @@ public interface Protocol<M> extends ProtocolQueryable
 
   /**
    * <p>
-   *   Performs {@code action} on a group with the given unique {@code name}.
+   *   Search for a group by name.
    * </p>
    * <p>
    *   The search probes every descendant group starting from this protocol until a matching group is found.
    * </p>
    *
-   * @param name  group name to perform the action on, not {@code null}
-   * @param action  action to perform on the group, not {@code null}
+   * @param name  group name to search for, not {@code null}
    *
-   * @return  {@code true} if a group with the name has been found, {@code false} otherwise
+   * @return  optional instance of the group pr empty if no matching protocol group was found
    *
    * @since 1.0.0
    */
-  boolean forGroupWithName(@NotNull String name, @NotNull Consumer<ProtocolGroup<M>> action);
+  @Contract(pure = true)
+  @NotNull Optional<ProtocolGroup<M>> getGroupByName(@NotNull String name);
 
 
   /**

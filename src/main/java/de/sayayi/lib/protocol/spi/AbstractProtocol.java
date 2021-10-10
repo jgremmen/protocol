@@ -155,13 +155,16 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
 
   @Override
-  public boolean forGroupWithName(@NotNull String name, @NotNull Consumer<ProtocolGroup<M>> action)
+  public @NotNull Optional<ProtocolGroup<M>> getGroupByName(@NotNull String name)
   {
     for(final Iterator<ProtocolGroup<M>> groupIterator = groupIterator(); groupIterator.hasNext();)
-      if (groupIterator.next().forGroupWithName(name, action))
-        return true;
+    {
+      val result = groupIterator.next().getGroupByName(name);
+      if (result.isPresent())
+        return result;
+    }
 
-    return false;
+    return Optional.empty();
   }
 
 

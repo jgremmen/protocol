@@ -480,13 +480,6 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
     @Override
-    @Contract(value = "-> true", pure = true)
-    public boolean isGroupMessage() {
-      return true;
-    }
-
-
-    @Override
     public long getTimeMillis() {
       return groupMessage.getTimeMillis();
     }

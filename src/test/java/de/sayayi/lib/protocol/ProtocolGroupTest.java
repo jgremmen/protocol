@@ -175,7 +175,8 @@ public class ProtocolGroupTest
     gp2.createGroup().setName("group-2-1");
     val gp2_2 = gp2.createGroup().setName("group-2-2");
 
-    assertTrue(protocol.forGroupWithName("group-2-2", group -> { assertEquals(gp2_2, group); }));
+    //noinspection OptionalGetWithoutIsPresent
+    assertEquals(gp2_2, protocol.getGroupByName("group-2-2").get());
   }
 
 

@@ -199,7 +199,9 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
      */
     @Override
     @Contract(value = "-> true", pure = true)
-    boolean isGroupMessage();
+    default boolean isGroupMessage() {
+      return true;
+    }
   }
 
 

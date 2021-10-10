@@ -76,7 +76,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
    * @see #getVisibility()
    * @see #getEffectiveVisibility()
    */
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   @NotNull ProtocolGroup<M> setVisibility(@NotNull Visibility visibility);
 
 
@@ -111,7 +111,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
    *
    * @see #getLevelLimit()
    */
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   @NotNull ProtocolGroup<M> setLevelLimit(@NotNull Level level);
 
 
@@ -125,7 +125,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
    *
    * @see #removeGroupMessage()
    */
-  @Contract("_ -> new")
+  @Contract(value = "_ -> new", mutates = "this")
   @NotNull MessageParameterBuilder<M> setGroupMessage(@NotNull String message);
 
 
@@ -136,7 +136,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
    *
    * @see #setGroupMessage(String)
    */
-  @Contract("-> this")
+  @Contract(value = "-> this", mutates = "this")
   @NotNull ProtocolGroup<M> removeGroupMessage();
 
 
@@ -146,7 +146,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
    * @return  unique name for this group or {@code null} if no name is set.
    *
    * @see #setName(String)
-   * @see Protocol#forGroupWithName(String, Consumer)
+   * @see Protocol#getGroupByName(String)
    * @see Protocol#forEachGroupByRegex(String, Consumer)
    */
   @Contract(pure = true)
@@ -166,10 +166,10 @@ public interface ProtocolGroup<M> extends Protocol<M>
    * @throws ProtocolException  if the group name is not unique across the protocol structure
    *
    * @see #getName()
-   * @see Protocol#forGroupWithName(String, Consumer)
+   * @see Protocol#getGroupByName(String)
    * @see Protocol#forEachGroupByRegex(String, Consumer)
    */
-  @Contract(value = "_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   @NotNull ProtocolGroup<M> setName(String name);
 
 
@@ -218,7 +218,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
   @Override
-  @Contract("_ -> new")
+  @Contract(value = "_ -> new", pure = true)
   @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull TagSelector tagSelector);
 
 
@@ -238,7 +238,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
    * @since 1.0.0
    */
   @Override
-  @Contract("_, _ -> this")
+  @Contract(value = "_, _ -> this", mutates = "this")
   default @NotNull ProtocolGroup<M> set(@NotNull String parameter, boolean b) {
     return set(parameter, Boolean.valueOf(b));
   }
@@ -260,7 +260,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
    * @since 1.0.0
    */
   @Override
-  @Contract("_, _ -> this")
+  @Contract(value = "_, _ -> this", mutates = "this")
   default @NotNull ProtocolGroup<M> set(@NotNull String parameter, int i) {
     return set(parameter, Integer.valueOf(i));
   }
@@ -282,7 +282,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
    * @since 1.0.0
    */
   @Override
-  @Contract("_, _ -> this")
+  @Contract(value = "_, _ -> this", mutates = "this")
   default @NotNull ProtocolGroup<M> set(@NotNull String parameter, long l) {
     return set(parameter, Long.valueOf(l));
   }
@@ -304,7 +304,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
    * @since 1.0.0
    */
   @Override
-  @Contract("_, _ -> this")
+  @Contract(value = "_, _ -> this", mutates = "this")
   default @NotNull ProtocolGroup<M> set(@NotNull String parameter, float f) {
     return set(parameter, Float.valueOf(f));
   }
@@ -326,7 +326,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
    * @since 1.0.0
    */
   @Override
-  @Contract("_, _ -> this")
+  @Contract(value = "_, _ -> this", mutates = "this")
   default @NotNull ProtocolGroup<M> set(@NotNull String parameter, double d) {
     return set(parameter, Double.valueOf(d));
   }
@@ -348,7 +348,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
    * @since 1.0.0
    */
   @Override
-  @Contract("_, _ -> this")
+  @Contract(value = "_, _ -> this", mutates = "this")
   @NotNull ProtocolGroup<M> set(@NotNull String parameter, Object value);
 
 
@@ -539,6 +539,8 @@ public interface ProtocolGroup<M> extends Protocol<M>
       return this != SHOW_HEADER_ONLY && this != HIDDEN;
     }
   }
+
+
 
 
   interface TargetTagBuilder<M> extends Protocol.TargetTagBuilder<M>

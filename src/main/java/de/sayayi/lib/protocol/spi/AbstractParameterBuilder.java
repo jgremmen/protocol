@@ -32,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
@@ -186,8 +187,8 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
-  public boolean forGroupWithName(@NotNull String name, @NotNull Consumer<ProtocolGroup<M>> action) {
-    return protocol.forGroupWithName(name, action);
+  public @NotNull Optional<ProtocolGroup<M>> getGroupByName(@NotNull String name) {
+    return protocol.getGroupByName(name);
   }
 
 

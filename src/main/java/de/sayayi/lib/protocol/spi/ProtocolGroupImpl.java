@@ -33,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -267,8 +268,9 @@ final class ProtocolGroupImpl<M>
       this.name = null;
     else if (!name.equals(this.name))
     {
-      getRootProtocol().forGroupWithName(name,
-          group -> { throw new ProtocolException("group name '" + name + "' must be unique"); });
+      getRootProtocol().getGroupByName(name).ifPresent(group -> {
+        throw new ProtocolException("group name '" + name + "' must be unique");
+      });
 
       this.name = name;
     }
@@ -278,15 +280,8 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public boolean forGroupWithName(@NotNull String name, @NotNull Consumer<ProtocolGroup<M>> action)
-  {
-    if (name.equals(this.name))
-    {
-      action.accept(this);
-      return true;
-    }
-
-    return super.forGroupWithName(name, action);
+  public @NotNull Optional<ProtocolGroup<M>> getGroupByName(@NotNull String name) {
+    return name.equals(this.name) ? Optional.of(this) : super.getGroupByName(name);
   }
 
 
