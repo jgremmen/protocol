@@ -15,10 +15,14 @@
  */
 package de.sayayi.lib.protocol;
 
+import lombok.RequiredArgsConstructor;
+
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
+
+import static lombok.AccessLevel.PRIVATE;
 
 
 /**
@@ -95,6 +99,7 @@ public interface Level
    *
    * @since 0.1.0
    */
+  @RequiredArgsConstructor(access = PRIVATE)
   enum Shared implements Level
   {
     /** Constant representing a level with the lowest possible severity */
@@ -117,11 +122,6 @@ public interface Level
 
 
     private final int severity;
-
-
-    Shared(int severity) {
-      this.severity = severity;
-    }
 
 
     @Override
