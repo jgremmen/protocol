@@ -73,6 +73,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
   }
 
 
+  @Contract(mutates = "this")
   public void put(@NotNull String parameter, Object value)
   {
     requireNonNull(parameter, "parameter must not be null");
@@ -133,7 +134,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
   @Contract(value = "-> new", pure = true)
-  public Iterator<Entry<String,Object>> iterator() {
+  public @NotNull Iterator<Entry<String,Object>> iterator() {
     return new ParameterIterator();
   }
 
@@ -443,14 +444,14 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
     @Override
-    public @NotNull Object[] toArray() {
+    public Object @NotNull [] toArray() {
       return map.stream().map(Entry::getKey).toArray();
     }
 
 
     @Override
-    @SuppressWarnings({ "unchecked", "ConstantConditions" })
-    public @NotNull <T> T[] toArray(@NotNull T[] a)
+    @SuppressWarnings("unchecked")
+    public <T> T @NotNull [] toArray(T @NotNull [] a)
     {
       val size = map.size();
 
@@ -505,14 +506,14 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
     @Override
-    public @NotNull Object[] toArray() {
+    public Object @NotNull [] toArray() {
       return map.stream().toArray();
     }
 
 
     @Override
-    @SuppressWarnings({ "unchecked", "ConstantConditions" })
-    public @NotNull <T> T[] toArray(@NotNull T[] a)
+    @SuppressWarnings("unchecked")
+    public <T> T @NotNull [] toArray(T @NotNull [] a)
     {
       val size = map.size();
 
@@ -587,13 +588,13 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
     @Override
-    public @NotNull Object[] toArray() {
+    public Object @NotNull [] toArray() {
       return map.stream().map(Entry::getValue).toArray();
     }
 
 
     @Override
-    public @NotNull <T> T[] toArray(@NotNull T[] a) {
+    public <T> T @NotNull [] toArray(T @NotNull [] a) {
       throw new UnsupportedOperationException();
     }
   }

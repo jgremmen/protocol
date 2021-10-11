@@ -22,6 +22,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.val;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -62,7 +64,7 @@ public final class TagSelectorLexer implements Iterable<TagSelectorLexer.Token>
 
 
   @Override
-  public Iterator<Token> iterator() {
+  public @NotNull Iterator<Token> iterator() {
     return new TokenIterator();
   }
 
