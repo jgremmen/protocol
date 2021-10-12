@@ -131,7 +131,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   }
 
 
-  private Set<String> message0_resolveTagNames()
+  private @NotNull Set<String> message0_resolveTagNames()
   {
     val resolvedTags = new TreeSet<String>();
 
