@@ -106,6 +106,38 @@ public interface ProtocolFormatter<M,R>
   R getResult();
 
 
+  /**
+   * Formats a {@code protocol} using this formatter iterating over all elements matching {@code level}.
+   *
+   * @param protocol     protocol to be formatted, never {@code null}
+   * @param level        level to match, never {@code null}
+   *
+   * @return  formatted protocol, or {@code null}
+   *
+   * @see Protocol#format(ProtocolFormatter, Level)
+   */
+  default R format(@NotNull Protocol<M> protocol, @NotNull Level level) {
+    return protocol.format(this, level);
+  }
+
+
+  /**
+   * Formats a {@code protocol} using this formatter iterating over all elements matching {@code level} and
+   * {@code tagSelector}.
+   *
+   * @param protocol     protocol to be formatted, never {@code null}
+   * @param level        level to match, never {@code null}
+   * @param tagSelector  selector to match tags, never {@code null}
+   *
+   * @return  formatted protocol, or {@code null}
+   *
+   * @see Protocol#format(ProtocolFormatter, Level, TagSelector)
+   */
+  default R format(@NotNull Protocol<M> protocol, @NotNull Level level, @NotNull TagSelector tagSelector) {
+    return protocol.format(this, level, tagSelector);
+  }
+
+
 
 
   /**
@@ -133,5 +165,19 @@ public interface ProtocolFormatter<M,R>
      */
     @Contract(pure = true)
     @NotNull TagSelector getTagSelector(@NotNull ProtocolFactory<M> protocolFactory);
+
+
+    /**
+     * Formats a {@code protocol} using this formatter.
+     *
+     * @param protocol  protocol to be formatted, never {@code null}
+     *
+     * @return  formatted protocol, or {@code null}
+     *
+     * @see Protocol#format(ConfiguredProtocolFormatter)
+     */
+    default R format(@NotNull Protocol<M> protocol) {
+      return protocol.format(this);
+    }
   }
 }
