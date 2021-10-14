@@ -17,7 +17,7 @@ package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.ProtocolEntry;
-import de.sayayi.lib.protocol.TagSelector;
+import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -89,20 +89,14 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
 
 
   @Override
-  public boolean matches(@NotNull Level level, @NotNull TagSelector tagSelector) {
-    return message.matches0(levelLimit, level, tagSelector);
+  public boolean matches(@NotNull MessageMatcher matcher) {
+    return message.matches0(levelLimit, matcher);
   }
 
 
   @Override
-  public boolean matches(@NotNull Level level) {
-    return message.matches0(levelLimit, level);
-  }
-
-
-  @Override
-  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull TagSelector tagSelector) {
-    return message.getVisibleEntryCount0(levelLimit, recursive, level, tagSelector);
+  public int getVisibleEntryCount(boolean recursive, @NotNull MessageMatcher matcher) {
+    return message.getVisibleEntryCount0(levelLimit, recursive, matcher);
   }
 
 

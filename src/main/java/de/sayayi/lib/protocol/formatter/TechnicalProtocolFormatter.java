@@ -15,19 +15,18 @@
  */
 package de.sayayi.lib.protocol.formatter;
 
-import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol.GenericMessageWithLevel;
 import de.sayayi.lib.protocol.Protocol.Message;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
-import de.sayayi.lib.protocol.TagSelector;
+import de.sayayi.lib.protocol.matcher.MessageMatcher;
+import de.sayayi.lib.protocol.matcher.MessageMatchers;
 
 import lombok.AllArgsConstructor;
 import lombok.val;
 
 import org.jetbrains.annotations.NotNull;
 
-import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
 import static lombok.AccessLevel.PRIVATE;
 
 
@@ -46,14 +45,8 @@ public final class TechnicalProtocolFormatter<M> extends AbstractTreeProtocolFor
 
 
   @Override
-  public @NotNull Level getLevel() {
-    return LOWEST;
-  }
-
-
-  @Override
-  public @NotNull TagSelector getTagSelector(@NotNull ProtocolFactory<M> protocolFactory) {
-    return protocolFactory.getDefaultTag().asSelector();
+  public @NotNull MessageMatcher getMatcher(@NotNull ProtocolFactory<M> protocolFactory) {
+    return MessageMatchers.any();
   }
 
 

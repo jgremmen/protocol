@@ -25,6 +25,7 @@ import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.exception.ProtocolException;
+import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import lombok.val;
 
@@ -150,33 +151,26 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
-  public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level,
-                      @NotNull TagSelector tagSelector) {
-    return protocol.format(formatter, level, tagSelector);
+  public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull MessageMatcher matcher) {
+    return protocol.format(formatter, matcher);
   }
 
 
   @Override
-  public boolean matches(@NotNull Level level, @NotNull TagSelector tagSelector) {
-    return protocol.matches(level, tagSelector);
+  public boolean matches(@NotNull MessageMatcher matcher) {
+    return protocol.matches(matcher);
   }
 
 
   @Override
-  public boolean matches(@NotNull Level level) {
-    return protocol.matches(level);
+  public int getVisibleEntryCount(boolean recursive, @NotNull MessageMatcher matcher) {
+    return protocol.getVisibleEntryCount(recursive, matcher);
   }
 
 
   @Override
-  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull TagSelector tagSelector) {
-    return protocol.getVisibleEntryCount(recursive, level, tagSelector);
-  }
-
-
-  @Override
-  public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull TagSelector tagSelector) {
-    return protocol.iterator(level, tagSelector);
+  public @NotNull ProtocolIterator<M> iterator(@NotNull MessageMatcher matcher) {
+    return protocol.iterator(matcher);
   }
 
 

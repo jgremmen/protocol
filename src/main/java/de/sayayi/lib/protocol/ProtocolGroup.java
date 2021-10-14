@@ -16,6 +16,7 @@
 package de.sayayi.lib.protocol;
 
 import de.sayayi.lib.protocol.exception.ProtocolException;
+import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -174,7 +175,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
   @Contract(pure = true)
-  boolean isHeaderVisible(@NotNull Level level, @NotNull TagSelector tagSelector);
+  boolean isHeaderVisible(@NotNull MessageMatcher matcher);
 
 
   @Override

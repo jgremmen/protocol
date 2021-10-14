@@ -22,13 +22,13 @@ import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolGroup;
-import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupEndEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.ProtocolEnd;
 import de.sayayi.lib.protocol.ProtocolIterator.ProtocolStart;
 import de.sayayi.lib.protocol.TagSelector;
+import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -41,7 +41,6 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
-import static de.sayayi.lib.protocol.Level.compare;
 import static java.util.Spliterator.DISTINCT;
 import static java.util.Spliterator.NONNULL;
 import static java.util.Spliterator.ORDERED;
@@ -98,57 +97,40 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
 
   @Override
-  public boolean matches0(@NotNull Level levelLimit, @NotNull Level level, @NotNull TagSelector tagSelector)
+  public boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
-    if (compare(levelLimit, level) >= 0)
-      for(val entry: entries)
-        if (entry.matches0(levelLimit, level, tagSelector))
-          return true;
+    for(val entry: entries)
+      if (entry.matches0(levelLimit, matcher))
+        return true;
 
     return false;
   }
 
 
-  @Override
-  public boolean matches0(@NotNull Level levelLimit, @NotNull Level level)
-  {
-    if (compare(levelLimit, level) >= 0)
-      for(val entry: entries)
-        if (entry.matches0(levelLimit, level))
-          return true;
-
-    return false;
-  }
-
-
-  @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level levelLimit, @NotNull Level level,
-                                             @NotNull TagSelector tagSelector)
+  @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
     val filteredEntries = new ArrayList<ProtocolEntry<M>>();
 
-    if (compare(levelLimit, level) >= 0)
-      for(final InternalProtocolEntry<M> entry: entries)
-        if (entry.matches0(levelLimit, level, tagSelector))
-        {
-          if (entry instanceof InternalProtocolEntry.Group)
-            filteredEntries.add(ProtocolGroupEntryAdapter.from(levelLimit, (InternalProtocolEntry.Group<M>)entry));
-          else
-            filteredEntries.add(ProtocolMessageEntryAdapter.from(levelLimit, (InternalProtocolEntry.Message<M>)entry));
-        }
+    for(final InternalProtocolEntry<M> entry: entries)
+      if (entry.matches0(levelLimit, matcher))
+      {
+        if (entry instanceof InternalProtocolEntry.Group)
+          filteredEntries.add(ProtocolGroupEntryAdapter.from(levelLimit, (InternalProtocolEntry.Group<M>)entry));
+        else
+          filteredEntries.add(ProtocolMessageEntryAdapter.from(levelLimit, (InternalProtocolEntry.Message<M>)entry));
+      }
 
     return filteredEntries;
   }
 
 
   @Override
-  public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive, @NotNull Level level,
-                                   @NotNull TagSelector tagSelector)
+  public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive, @NotNull MessageMatcher matcher)
   {
     var count = 0;
 
-    if (compare(levelLimit, level) >= 0)
-      for(val entry: entries)
-        count += entry.getVisibleEntryCount0(levelLimit, recursive, level, tagSelector);
+    for(val entry: entries)
+      count += entry.getVisibleEntryCount0(levelLimit, recursive, matcher);
 
     return count;
   }
@@ -199,15 +181,12 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
 
   @Override
-  public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level, @NotNull TagSelector tagSelector)
+  public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull MessageMatcher matcher)
   {
     // initialize formatter
-    formatter.init(factory, level, tagSelector, countGroupDepth());
+    formatter.init(factory, matcher, countGroupDepth());
 
-    for(final Iterator<DepthEntry<M>> iterator = iterator(level, tagSelector); iterator.hasNext();)
-    {
-      val entry = iterator.next();
-
+    iterator(matcher).forEachRemaining(entry -> {
       if (entry instanceof ProtocolStart)
         formatter.protocolStart();
       else if (entry instanceof ProtocolEnd)
@@ -218,7 +197,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
         formatter.groupStart((GroupStartEntry<M>)entry);
       else if (entry instanceof GroupEndEntry)
         formatter.groupEnd((GroupEndEntry<M>)entry);
-    }
+    });
 
     return formatter.getResult();
   }

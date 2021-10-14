@@ -19,6 +19,7 @@ import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
 import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
 import de.sayayi.lib.protocol.formatter.TechnicalProtocolFormatter;
+import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -385,31 +386,16 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
   /**
-   * Formats this protocol using the given {@code formatter} iterating over all elements matching {@code level}.
+   * Formats this protocol using the given {@code formatter} iterating over all elements matching {@code level} and
+   * {@code tagSelector}.
    *
    * @param formatter  protocol formatter to use for formatting this protocol
-   * @param level      level to match
+   * @param matcher    message matcher, never {@code null}
    * @param <R>        result type
    *
    * @return  formatted protocol, or {@code null}
    */
-  default <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level) {
-    return format(formatter, level, Tag.any());
-  }
-
-
-  /**
-   * Formats this protocol using the given {@code formatter} iterating over all elements matching {@code level} and
-   * {@code tagSelector}.
-   *
-   * @param formatter    protocol formatter to use for formatting this protocol
-   * @param level        level to match
-   * @param tagSelector  selector to match tags
-   * @param <R>          result type
-   *
-   * @return  formatted protocol, or {@code null}
-   */
-  <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level, @NotNull TagSelector tagSelector);
+  <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull MessageMatcher matcher);
 
 
   /**
@@ -421,39 +407,24 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @return  formatted protocol, or {@code null}
    *
-   * @see #format(ProtocolFormatter, Level, TagSelector)
+   * @see #format(ProtocolFormatter, MessageMatcher)
    */
   default <R> R format(@NotNull ConfiguredProtocolFormatter<M,R> formatter) {
-    return format(formatter, formatter.getLevel(), formatter.getTagSelector(getFactory()));
+    return format(formatter, formatter.getMatcher(getFactory()));
   }
 
 
-  @Contract(pure = true, value = "_, _ -> new")
-  @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull TagSelector tagSelector);
+  @Contract(pure = true, value = "_ -> new")
+  @NotNull ProtocolIterator<M> iterator(@NotNull MessageMatcher matcher);
 
 
   /**
    * @since 1.0.0
    */
-  @Contract(pure = true, value = "_, _ -> new")
-  default @NotNull Spliterator<DepthEntry<M>> spliterator(@NotNull Level level, @NotNull TagSelector tagSelector) {
-    return spliteratorUnknownSize(iterator(level, tagSelector), ORDERED | DISTINCT | NONNULL);
+  @Contract(pure = true, value = "_ -> new")
+  default @NotNull Spliterator<DepthEntry<M>> spliterator(@NotNull MessageMatcher matcher) {
+    return spliteratorUnknownSize(iterator(matcher), ORDERED | DISTINCT | NONNULL);
   }
-
-
-  /**
-   * Tells if any entry in this protocol matches the given {@code level} and {@code tagSelector}.
-   *
-   * @param level        requested protocol level, not {@code null}
-   * @param tagSelector  tag selector, not {@code null}
-   *
-   * @return  {@code true} if at least 1 entry in the protocol matches, {@code false} otherwise
-   *
-   * @see #matches(Level, TagSelector)
-   * @see ProtocolFactory#getTagByName(String)
-   */
-  @Contract(pure = true)
-  boolean matches(@NotNull Level level, @NotNull TagSelector tagSelector);
 
 
   /**

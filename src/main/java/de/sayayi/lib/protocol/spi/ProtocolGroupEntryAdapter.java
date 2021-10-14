@@ -19,7 +19,7 @@ import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.ProtocolGroup;
-import de.sayayi.lib.protocol.TagSelector;
+import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import lombok.AllArgsConstructor;
 import lombok.val;
@@ -48,20 +48,20 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
 
 
   @Override
-  public @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull TagSelector tagSelector) {
-    return group.getEntries0(levelLimit, level, tagSelector);
+  public @NotNull List<ProtocolEntry<M>> getEntries(@NotNull MessageMatcher matcher) {
+    return group.getEntries0(levelLimit, matcher);
   }
 
 
   @Override
-  public boolean isHeaderVisible(@NotNull Level level, @NotNull TagSelector tagSelector) {
-    return group.isHeaderVisible0(levelLimit, level, tagSelector);
+  public boolean isHeaderVisible(@NotNull MessageMatcher matcher) {
+    return group.isHeaderVisible0(levelLimit, matcher);
   }
 
 
   @Override
-  public @NotNull Level getHeaderLevel(@NotNull Level level, @NotNull TagSelector tagSelector) {
-    return group.getHeaderLevel0(levelLimit, level, tagSelector);
+  public @NotNull Level getHeaderLevel(@NotNull MessageMatcher matcher) {
+    return group.getHeaderLevel0(levelLimit, matcher);
   }
 
 
@@ -72,20 +72,14 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
 
 
   @Override
-  public boolean matches(@NotNull Level level, @NotNull TagSelector tagSelector) {
-    return group.matches0(levelLimit, level, tagSelector);
+  public boolean matches(@NotNull MessageMatcher matcher) {
+    return group.matches0(levelLimit, matcher);
   }
 
 
   @Override
-  public boolean matches(@NotNull Level level) {
-    return group.matches0(levelLimit, level);
-  }
-
-
-  @Override
-  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull TagSelector tagSelector) {
-    return group.getVisibleEntryCount0(levelLimit, recursive, level, tagSelector);
+  public int getVisibleEntryCount(boolean recursive, @NotNull MessageMatcher matcher) {
+    return group.getVisibleEntryCount0(levelLimit, recursive, matcher);
   }
 
 
@@ -108,48 +102,38 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
 
 
   @Override
-  public @NotNull List<ProtocolEntry<M>> getEntries0(@NotNull Level levelLimit, @NotNull Level level,
-                                                     @NotNull TagSelector tagSelector) {
-    return group.getEntries0(levelLimit, level, tagSelector);
+  public @NotNull List<ProtocolEntry<M>> getEntries0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher) {
+    return group.getEntries0(levelLimit, matcher);
   }
 
 
   @Override
-  public boolean isHeaderVisible0(@NotNull Level levelLimit, @NotNull Level level, @NotNull TagSelector tagSelector) {
-    return group.isHeaderVisible0(levelLimit, level, tagSelector);
+  public boolean isHeaderVisible0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher) {
+    return group.isHeaderVisible0(levelLimit, matcher);
   }
 
 
   @Override
-  public @NotNull Level getHeaderLevel0(@NotNull Level levelLimit, @NotNull Level level,
-                                        @NotNull TagSelector tagSelector) {
-    return group.getHeaderLevel0(levelLimit, level, tagSelector);
+  public @NotNull Level getHeaderLevel0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher) {
+    return group.getHeaderLevel0(levelLimit, matcher);
   }
 
 
   @Override
-  public int getVisibleGroupEntryMessageCount0(@NotNull Level levelLimit, @NotNull Level level,
-                                               @NotNull TagSelector tagSelector) {
-    return group.getVisibleGroupEntryMessageCount0(levelLimit, level, tagSelector);
+  public int getVisibleGroupEntryMessageCount0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher) {
+    return group.getVisibleGroupEntryMessageCount0(levelLimit, matcher);
   }
 
 
   @Override
-  public boolean matches0(@NotNull Level levelLimit, @NotNull Level level, @NotNull TagSelector tagSelector) {
-    return group.matches0(levelLimit, level, tagSelector);
+  public boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher) {
+    return group.matches0(levelLimit, matcher);
   }
 
 
   @Override
-  public boolean matches0(@NotNull Level levelLimit, @NotNull Level level) {
-    return group.matches0(levelLimit, level);
-  }
-
-
-  @Override
-  public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive,
-                                   @NotNull Level level, @NotNull TagSelector tagSelector) {
-    return group.getVisibleEntryCount0(levelLimit, recursive, level, tagSelector);
+  public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive, @NotNull MessageMatcher matcher) {
+    return group.getVisibleEntryCount0(levelLimit, recursive, matcher);
   }
 
 
