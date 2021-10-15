@@ -50,7 +50,7 @@ final class LevelMatcher extends AbstractJunction
 
   @Override
   public String toString() {
-    return "isLevel(" + level + ')';
+    return "is(" + level + ')';
   }
 
 
