@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
 import static de.sayayi.lib.protocol.Level.compare;
 import static de.sayayi.lib.protocol.Level.min;
+import static de.sayayi.lib.protocol.matcher.BooleanMatcher.ANY;
 import static lombok.AccessLevel.PRIVATE;
 
 
@@ -55,6 +56,6 @@ final class LevelMatcher extends AbstractJunction
 
   @Contract(pure = true)
   static MessageMatcher.Junction of(@NotNull Level level) {
-    return level.severity() == LOWEST.severity() ? BooleanMatcher.TRUE : new LevelMatcher(level);
+    return level.severity() == LOWEST.severity() ? ANY : new LevelMatcher(level);
   }
 }

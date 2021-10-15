@@ -24,6 +24,8 @@ import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import static de.sayayi.lib.protocol.matcher.BooleanMatcher.ANY;
+import static de.sayayi.lib.protocol.matcher.BooleanMatcher.NONE;
 import static lombok.AccessLevel.PRIVATE;
 
 
@@ -53,12 +55,12 @@ final class NegatingMatcher extends AbstractJunction
   @Contract(pure = true)
   static Junction of(@NotNull MessageMatcher matcher)
   {
-    if (matcher instanceof NegatingMatcher)
+    if (matcher == ANY)
+      return NONE;
+    else if (matcher == NONE)
+      return ANY;
+    else if (matcher instanceof NegatingMatcher)
       return ((NegatingMatcher)matcher).matcher.asJunction();
-    else if (BooleanMatcher.TRUE.equals(matcher))
-      return BooleanMatcher.FALSE;
-    else if (BooleanMatcher.FALSE.equals(matcher))
-      return BooleanMatcher.TRUE;
     else
       return new NegatingMatcher(matcher);
   }

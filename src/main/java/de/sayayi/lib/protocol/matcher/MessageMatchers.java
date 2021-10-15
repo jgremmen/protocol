@@ -38,6 +38,8 @@ import static de.sayayi.lib.protocol.Level.Shared.INFO;
 import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
 import static de.sayayi.lib.protocol.Level.Shared.WARN;
 import static de.sayayi.lib.protocol.ProtocolFactory.DEFAULT_TAG_NAME;
+import static de.sayayi.lib.protocol.matcher.BooleanMatcher.ANY;
+import static de.sayayi.lib.protocol.matcher.BooleanMatcher.NONE;
 import static lombok.AccessLevel.PRIVATE;
 
 
@@ -50,13 +52,13 @@ public final class MessageMatchers
 {
   @Contract(pure = true)
   public static @NotNull Junction any() {
-    return BooleanMatcher.TRUE;
+    return ANY;
   }
 
 
   @Contract(pure = true)
   public static @NotNull Junction none() {
-    return BooleanMatcher.FALSE;
+    return NONE;
   }
 
 
@@ -82,9 +84,9 @@ public final class MessageMatchers
   public static @NotNull Junction hasTag(@NotNull String tagName)
   {
     if (tagName.length() == 0)
-      return BooleanMatcher.FALSE;
+      return NONE;
     else if (DEFAULT_TAG_NAME.equals(tagName))
-      return BooleanMatcher.TRUE;
+      return ANY;
 
     return new AbstractJunction() {
       @Override
@@ -108,9 +110,9 @@ public final class MessageMatchers
     uniqueTagNames.remove("");
 
     if (uniqueTagNames.remove(DEFAULT_TAG_NAME))
-      return BooleanMatcher.TRUE;
+      return ANY;
     else if (uniqueTagNames.isEmpty())
-      return BooleanMatcher.FALSE;
+      return NONE;
 
     return Disjunction.of(uniqueTagNames.stream()
         .map(MessageMatchers::hasTag)
@@ -131,9 +133,9 @@ public final class MessageMatchers
     val hasDefaultTag = uniqueTagNames.remove(DEFAULT_TAG_NAME);
 
     if (uniqueTagNames.remove(""))
-      return BooleanMatcher.FALSE;
+      return NONE;
     else if (uniqueTagNames.isEmpty())
-      return hasDefaultTag ? BooleanMatcher.TRUE : BooleanMatcher.FALSE;
+      return hasDefaultTag ? ANY : NONE;
 
     return Conjunction.of(uniqueTagNames.stream()
         .map(MessageMatchers::hasTag)
@@ -182,7 +184,7 @@ public final class MessageMatchers
   public static @NotNull Junction hasParam(@NotNull String parameterName)
   {
     if (parameterName.length() == 0)
-      return BooleanMatcher.FALSE;
+      return NONE;
 
     return new AbstractJunction() {
       @Override
@@ -203,7 +205,7 @@ public final class MessageMatchers
   public static @NotNull Junction hasParamValue(@NotNull String parameterName)
   {
     if (parameterName.length() == 0)
-      return BooleanMatcher.FALSE;
+      return NONE;
 
     return new AbstractJunction() {
       @Override
@@ -224,7 +226,7 @@ public final class MessageMatchers
   public static @NotNull Junction hasParamValue(@NotNull String parameterName, Object value)
   {
     if (parameterName.length() == 0)
-      return BooleanMatcher.FALSE;
+      return NONE;
 
     return new AbstractJunction() {
       @Override
@@ -285,7 +287,7 @@ public final class MessageMatchers
   public static @NotNull Junction hasMessageId(@NotNull String messageId)
   {
     if (messageId.length() == 0)
-      return BooleanMatcher.FALSE;
+      return NONE;
 
     return new AbstractJunction() {
       @Override

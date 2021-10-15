@@ -26,10 +26,12 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static de.sayayi.lib.protocol.matcher.BooleanMatcher.ANY;
+import static de.sayayi.lib.protocol.matcher.BooleanMatcher.NONE;
 import static java.util.stream.Collectors.joining;
 import static lombok.AccessLevel.PRIVATE;
 
@@ -70,12 +72,11 @@ class Conjunction extends AbstractJunction
     if (matcher.length == 0)
       throw new IllegalArgumentException("matcher must not be empty");
 
-    val matchers = new HashSet<>(Arrays.asList(matcher));
-    if (matchers.contains(BooleanMatcher.FALSE))
-      return BooleanMatcher.FALSE;
+    val matchers = new LinkedHashSet<>(Arrays.asList(matcher));
+    if (matchers.contains(NONE))
+      return NONE;
 
     boolean matchersChanged;
-
     do {
       matchersChanged = false;
 
@@ -93,7 +94,7 @@ class Conjunction extends AbstractJunction
     } while(matchersChanged);
 
     if (matchers.size() > 1)
-      matchers.remove(BooleanMatcher.TRUE);
+      matchers.remove(ANY);
 
     return matchers.size() == 1 ? matchers.iterator().next().asJunction() : new Conjunction(matchers);
   }

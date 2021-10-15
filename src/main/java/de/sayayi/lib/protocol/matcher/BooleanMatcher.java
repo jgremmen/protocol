@@ -34,8 +34,8 @@ import static lombok.AccessLevel.PRIVATE;
 @EqualsAndHashCode(callSuper = false)
 final class BooleanMatcher extends AbstractJunction
 {
-  static final BooleanMatcher TRUE = new BooleanMatcher(true);
-  static final BooleanMatcher FALSE = new BooleanMatcher(false);
+  static final BooleanMatcher ANY = new BooleanMatcher(true);
+  static final BooleanMatcher NONE = new BooleanMatcher(false);
 
   private final boolean matches;
 
@@ -48,6 +48,6 @@ final class BooleanMatcher extends AbstractJunction
 
   @Override
   public String toString() {
-    return Boolean.toString(matches);
+    return matches ? "any()" : "none()";
   }
 }
