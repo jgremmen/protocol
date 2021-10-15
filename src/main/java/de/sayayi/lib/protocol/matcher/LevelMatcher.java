@@ -16,7 +16,8 @@
 package de.sayayi.lib.protocol.matcher;
 
 import de.sayayi.lib.protocol.Level;
-import de.sayayi.lib.protocol.Protocol;
+import de.sayayi.lib.protocol.Protocol.Message;
+import de.sayayi.lib.protocol.matcher.MessageMatcher.Junction;
 
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
@@ -37,13 +38,13 @@ import static lombok.AccessLevel.PRIVATE;
  */
 @RequiredArgsConstructor(access = PRIVATE)
 @EqualsAndHashCode(callSuper = false)
-final class LevelMatcher extends AbstractJunction
+final class LevelMatcher implements Junction
 {
   private final Level level;
 
 
   @Override
-  public <M> boolean matches(@NotNull Level levelLimit, Protocol.@NotNull Message<M> message) {
+  public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
     return compare(min(message.getLevel(), levelLimit), level) >= 0;
   }
 
@@ -55,7 +56,7 @@ final class LevelMatcher extends AbstractJunction
 
 
   @Contract(pure = true)
-  static MessageMatcher.Junction of(@NotNull Level level) {
+  static Junction of(@NotNull Level level) {
     return level.severity() == LOWEST.severity() ? ANY : new LevelMatcher(level);
   }
 }

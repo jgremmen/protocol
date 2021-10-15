@@ -63,7 +63,7 @@ public final class MessageMatchers
 
 
   @Contract(value = "_ -> new", pure = true)
-  public static @NotNull Junction not(MessageMatcher matcher) {
+  public static @NotNull Junction not(@NotNull MessageMatcher matcher) {
     return NegatingMatcher.of(matcher);
   }
 
@@ -88,7 +88,7 @@ public final class MessageMatchers
     else if (DEFAULT_TAG_NAME.equals(tagName))
       return ANY;
 
-    return new AbstractJunction() {
+    return new Junction() {
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
         return message.hasTag(tagName);
@@ -164,7 +164,7 @@ public final class MessageMatchers
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction is(@NotNull TagSelector tagSelector)
   {
-    return new AbstractJunction()
+    return new Junction()
     {
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
@@ -186,7 +186,7 @@ public final class MessageMatchers
     if (parameterName.length() == 0)
       return NONE;
 
-    return new AbstractJunction() {
+    return new Junction() {
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
         return message.getParameterValues().containsKey(parameterName);
@@ -207,7 +207,7 @@ public final class MessageMatchers
     if (parameterName.length() == 0)
       return NONE;
 
-    return new AbstractJunction() {
+    return new Junction() {
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
         return message.getParameterValues().get(parameterName) != null;
@@ -228,14 +228,19 @@ public final class MessageMatchers
     if (parameterName.length() == 0)
       return NONE;
 
-    return new AbstractJunction() {
+    return new Junction() {
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message)
       {
         val parameterValues = message.getParameterValues();
 
-        return parameterValues.containsKey(parameterName) &&
-               Objects.equals(parameterValues.get(parameterName), value);
+        if (value == null)
+        {
+          return parameterValues.containsKey(parameterName) &&
+                 parameterValues.get(parameterName) == null;
+        }
+        else
+          return Objects.equals(parameterValues.get(parameterName), value);
       }
 
 
@@ -289,7 +294,7 @@ public final class MessageMatchers
     if (messageId.length() == 0)
       return NONE;
 
-    return new AbstractJunction() {
+    return new Junction() {
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
         return message.getMessageId().equals(messageId);

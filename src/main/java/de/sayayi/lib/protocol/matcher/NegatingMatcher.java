@@ -17,6 +17,7 @@ package de.sayayi.lib.protocol.matcher;
 
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol.Message;
+import de.sayayi.lib.protocol.matcher.MessageMatcher.Junction;
 
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
@@ -35,9 +36,9 @@ import static lombok.AccessLevel.PRIVATE;
  */
 @RequiredArgsConstructor(access = PRIVATE)
 @EqualsAndHashCode(callSuper = false)
-final class NegatingMatcher extends AbstractJunction
+final class NegatingMatcher implements Junction
 {
-  final MessageMatcher matcher;
+  private final MessageMatcher matcher;
 
 
   @Override

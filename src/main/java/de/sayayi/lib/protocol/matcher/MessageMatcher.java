@@ -21,8 +21,6 @@ import de.sayayi.lib.protocol.Protocol.Message;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
-
 
 /**
  * @author Jeroen Gremmen
@@ -35,18 +33,12 @@ public interface MessageMatcher
 
 
   @Contract(pure = true)
-  default <M> boolean matches(@NotNull Message<M> message) {
-    return matches(HIGHEST, message);
-  }
-
-
-  @Contract(pure = true)
   default @NotNull Junction asJunction()
   {
     if (this instanceof Junction)
       return (Junction)this;
 
-    return new AbstractJunction() {
+    return new Junction() {
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
         return MessageMatcher.this.matches(levelLimit, message);
@@ -59,9 +51,15 @@ public interface MessageMatcher
 
   interface Junction extends MessageMatcher
   {
-    @NotNull Junction and(@NotNull MessageMatcher other);
+    @Contract(pure = true)
+    default @NotNull Junction and(@NotNull MessageMatcher other) {
+      return Conjunction.of(this, other);
+    }
 
 
-    @NotNull Junction or(@NotNull MessageMatcher other);
+    @Contract(pure = true)
+    default @NotNull Junction or(@NotNull MessageMatcher other) {
+      return Disjunction.of(this, other);
+    }
   }
 }
