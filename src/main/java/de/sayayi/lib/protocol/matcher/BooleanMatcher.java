@@ -18,6 +18,7 @@ package de.sayayi.lib.protocol.matcher;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol.Message;
 
+import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +31,8 @@ import static lombok.AccessLevel.PRIVATE;
  * @since 1.0.0
  */
 @RequiredArgsConstructor(access = PRIVATE)
-final class BooleanMatcher extends MessageMatcher.Junction.AbstractBase
+@EqualsAndHashCode(callSuper = false)
+final class BooleanMatcher extends AbstractJunction
 {
   static final BooleanMatcher TRUE = new BooleanMatcher(true);
   static final BooleanMatcher FALSE = new BooleanMatcher(false);

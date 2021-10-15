@@ -19,6 +19,7 @@ import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol.Message;
 import de.sayayi.lib.protocol.TagDef;
 import de.sayayi.lib.protocol.TagSelector;
+import de.sayayi.lib.protocol.matcher.MessageMatcher.Junction;
 
 import lombok.NoArgsConstructor;
 import lombok.val;
@@ -33,7 +34,6 @@ import java.util.TreeSet;
 
 import static de.sayayi.lib.protocol.Level.Shared.DEBUG;
 import static de.sayayi.lib.protocol.Level.Shared.ERROR;
-import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
 import static de.sayayi.lib.protocol.Level.Shared.INFO;
 import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
 import static de.sayayi.lib.protocol.Level.Shared.WARN;
@@ -49,53 +49,47 @@ import static lombok.AccessLevel.PRIVATE;
 public final class MessageMatchers
 {
   @Contract(pure = true)
-  public static @NotNull MessageMatcher.Junction any() {
+  public static @NotNull Junction any() {
     return BooleanMatcher.TRUE;
   }
 
 
   @Contract(pure = true)
-  public static @NotNull MessageMatcher.Junction none() {
+  public static @NotNull Junction none() {
     return BooleanMatcher.FALSE;
   }
 
 
   @Contract(value = "_ -> new", pure = true)
-  public static @NotNull MessageMatcher.Junction not(MessageMatcher matcher)
-  {
-    if (matcher == BooleanMatcher.FALSE)
-      return BooleanMatcher.TRUE;
-    else if (matcher == BooleanMatcher.TRUE)
-      return BooleanMatcher.FALSE;
-    else
-      return new NegatingMatcher(matcher);
+  public static @NotNull Junction not(MessageMatcher matcher) {
+    return NegatingMatcher.of(matcher);
   }
 
 
   @Contract(pure = true)
-  public static @NotNull MessageMatcher.Junction hasThrowable() {
+  public static @NotNull Junction hasThrowable() {
     return HasThrowableMatcher.INSTANCE;
   }
 
 
   @Contract(value = "_ -> new", pure = true)
-  public static @NotNull MessageMatcher.Junction hasTag(@NotNull TagDef tag) {
+  public static @NotNull Junction hasTag(@NotNull TagDef tag) {
     return hasTag(tag.getName());
   }
 
 
   @Contract(value = "_ -> new", pure = true)
-  public static @NotNull MessageMatcher.Junction hasTag(@NotNull String tagName)
+  public static @NotNull Junction hasTag(@NotNull String tagName)
   {
     if (tagName.length() == 0)
       return BooleanMatcher.FALSE;
     else if (DEFAULT_TAG_NAME.equals(tagName))
       return BooleanMatcher.TRUE;
 
-    return new MessageMatcher.Junction.AbstractBase() {
+    return new AbstractJunction() {
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
-        return message.getTagNames().contains(tagName);
+        return message.hasTag(tagName);
       }
 
 
@@ -108,7 +102,7 @@ public final class MessageMatchers
 
 
   @Contract(value = "_ -> new", pure = true)
-  public static @NotNull MessageMatcher.Junction hasAnyOf(@NotNull Collection<String> tagNames)
+  public static @NotNull Junction hasAnyOf(@NotNull Collection<String> tagNames)
   {
     val uniqueTagNames = new TreeSet<>(tagNames);
     uniqueTagNames.remove("");
@@ -118,20 +112,20 @@ public final class MessageMatchers
     else if (uniqueTagNames.isEmpty())
       return BooleanMatcher.FALSE;
 
-    return new MessageMatcher.Disjunction(uniqueTagNames.stream()
+    return Disjunction.of(uniqueTagNames.stream()
         .map(MessageMatchers::hasTag)
         .toArray(MessageMatcher[]::new));
   }
 
 
   @Contract(value = "_ -> new", pure = true)
-  public static @NotNull MessageMatcher.Junction hasAnyOf(@NotNull String... tagNames) {
+  public static @NotNull Junction hasAnyOf(@NotNull String... tagNames) {
     return hasAnyOf(Arrays.asList(tagNames));
   }
 
 
   @Contract(value = "_ -> new", pure = true)
-  public static @NotNull MessageMatcher.Junction hasAllOf(@NotNull Collection<String> tagNames)
+  public static @NotNull Junction hasAllOf(@NotNull Collection<String> tagNames)
   {
     val uniqueTagNames = new TreeSet<>(tagNames);
     val hasDefaultTag = uniqueTagNames.remove(DEFAULT_TAG_NAME);
@@ -141,22 +135,34 @@ public final class MessageMatchers
     else if (uniqueTagNames.isEmpty())
       return hasDefaultTag ? BooleanMatcher.TRUE : BooleanMatcher.FALSE;
 
-    return new MessageMatcher.Conjunction(uniqueTagNames.stream()
+    return Conjunction.of(uniqueTagNames.stream()
         .map(MessageMatchers::hasTag)
         .toArray(MessageMatcher[]::new));
   }
 
 
   @Contract(value = "_ -> new", pure = true)
-  public static @NotNull MessageMatcher.Junction hasAllOf(@NotNull String... tagNames) {
+  public static @NotNull Junction hasAllOf(@NotNull String... tagNames) {
     return hasAllOf(Arrays.asList(tagNames));
   }
 
 
   @Contract(value = "_ -> new", pure = true)
-  public static @NotNull MessageMatcher.Junction forSelector(@NotNull TagSelector tagSelector)
+  public static @NotNull Junction hasNoneOf(@NotNull Collection<String> tagNames) {
+    return not(hasAnyOf(tagNames));
+  }
+
+
+  @Contract(value = "_ -> new", pure = true)
+  public static @NotNull Junction hasNoneOf(@NotNull String... tagNames) {
+    return hasNoneOf(Arrays.asList(tagNames));
+  }
+
+
+  @Contract(value = "_ -> new", pure = true)
+  public static @NotNull Junction is(@NotNull TagSelector tagSelector)
   {
-    return new MessageMatcher.Junction.AbstractBase()
+    return new AbstractJunction()
     {
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
@@ -173,12 +179,12 @@ public final class MessageMatchers
 
 
   @Contract(value = "_ -> new", pure = true)
-  public static @NotNull MessageMatcher.Junction hasParameter(@NotNull String parameterName)
+  public static @NotNull Junction hasParam(@NotNull String parameterName)
   {
     if (parameterName.length() == 0)
       return BooleanMatcher.FALSE;
 
-    return new MessageMatcher.Junction.AbstractBase() {
+    return new AbstractJunction() {
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
         return message.getParameterValues().containsKey(parameterName);
@@ -193,13 +199,34 @@ public final class MessageMatchers
   }
 
 
-  @Contract(value = "_, _ -> new", pure = true)
-  public static @NotNull MessageMatcher.Junction hasValue(@NotNull String parameterName, Object value)
+  @Contract(value = "_ -> new", pure = true)
+  public static @NotNull Junction hasParamValue(@NotNull String parameterName)
   {
     if (parameterName.length() == 0)
       return BooleanMatcher.FALSE;
 
-    return new MessageMatcher.Junction.AbstractBase() {
+    return new AbstractJunction() {
+      @Override
+      public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
+        return message.getParameterValues().get(parameterName) != null;
+      }
+
+
+      @Override
+      public String toString() {
+        return "hasParameterValue(" + parameterName + ')';
+      }
+    };
+  }
+
+
+  @Contract(value = "_, _ -> new", pure = true)
+  public static @NotNull Junction hasParamValue(@NotNull String parameterName, Object value)
+  {
+    if (parameterName.length() == 0)
+      return BooleanMatcher.FALSE;
+
+    return new AbstractJunction() {
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message)
       {
@@ -212,61 +239,55 @@ public final class MessageMatchers
 
       @Override
       public String toString() {
-        return "hasValue(" + parameterName + ',' + value + ')';
+        return "hasParameterValue(" + parameterName + ',' + value + ')';
       }
     };
   }
 
 
   @Contract(pure = true)
-  public static @NotNull MessageMatcher.Junction isLowest() {
-    return isLevel(LOWEST);
+  public static @NotNull Junction isLowest() {
+    return is(LOWEST);
   }
 
 
   @Contract(value = "-> new", pure = true)
-  public static @NotNull MessageMatcher.Junction isDebug() {
-    return isLevel(DEBUG);
+  public static @NotNull Junction isDebug() {
+    return is(DEBUG);
   }
 
 
   @Contract(value = "-> new", pure = true)
-  public static @NotNull MessageMatcher.Junction isInfo() {
-    return isLevel(INFO);
+  public static @NotNull Junction isInfo() {
+    return is(INFO);
   }
 
 
   @Contract(value = "-> new", pure = true)
-  public static @NotNull MessageMatcher.Junction isWarn() {
-    return isLevel(WARN);
+  public static @NotNull Junction isWarn() {
+    return is(WARN);
   }
 
 
   @Contract(value = "-> new", pure = true)
-  public static @NotNull MessageMatcher.Junction isError() {
-    return isLevel(ERROR);
-  }
-
-
-  @Contract(value = "-> new", pure = true)
-  public static @NotNull MessageMatcher.Junction isHighest() {
-    return isLevel(HIGHEST);
+  public static @NotNull Junction isError() {
+    return is(ERROR);
   }
 
 
   @Contract(value = "_ -> new", pure = true)
-  public static @NotNull MessageMatcher.Junction isLevel(@NotNull Level level) {
-    return LOWEST.severity() == level.severity() ? BooleanMatcher.TRUE : new LevelMatcher(level);
+  public static @NotNull Junction is(@NotNull Level level) {
+    return LevelMatcher.of(level);
   }
 
 
   @Contract(value = "_ -> new", pure = true)
-  public static @NotNull MessageMatcher.Junction hasMessageId(@NotNull String messageId)
+  public static @NotNull Junction hasMessageId(@NotNull String messageId)
   {
     if (messageId.length() == 0)
       return BooleanMatcher.FALSE;
 
-    return new MessageMatcher.Junction.AbstractBase() {
+    return new AbstractJunction() {
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
         return message.getMessageId().equals(messageId);

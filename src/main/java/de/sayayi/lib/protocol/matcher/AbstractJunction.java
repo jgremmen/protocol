@@ -15,36 +15,25 @@
  */
 package de.sayayi.lib.protocol.matcher;
 
-import de.sayayi.lib.protocol.Level;
-import de.sayayi.lib.protocol.Protocol.Message;
-
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
+import de.sayayi.lib.protocol.matcher.MessageMatcher.Junction;
 
 import org.jetbrains.annotations.NotNull;
-
-import static lombok.AccessLevel.PRIVATE;
 
 
 /**
  * @author Jeroen Gremmen
  * @since 1.0.0
  */
-@RequiredArgsConstructor(access = PRIVATE)
-@EqualsAndHashCode(callSuper = false)
-final class HasThrowableMatcher extends AbstractJunction
+abstract class AbstractJunction implements Junction
 {
-  static final HasThrowableMatcher INSTANCE = new HasThrowableMatcher();
-
-
   @Override
-  public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
-    return message.getThrowable() != null;
+  public final @NotNull Junction and(@NotNull MessageMatcher other) {
+    return Conjunction.of(this, other);
   }
 
 
   @Override
-  public String toString() {
-    return "hasThrowable()";
+  public final @NotNull Junction or(@NotNull MessageMatcher other) {
+    return Disjunction.of(this, other);
   }
 }

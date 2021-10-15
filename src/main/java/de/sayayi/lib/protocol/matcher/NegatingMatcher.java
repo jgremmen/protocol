@@ -16,27 +16,30 @@
 package de.sayayi.lib.protocol.matcher;
 
 import de.sayayi.lib.protocol.Level;
-import de.sayayi.lib.protocol.Protocol;
+import de.sayayi.lib.protocol.Protocol.Message;
 
+import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import static lombok.AccessLevel.PACKAGE;
+import static lombok.AccessLevel.PRIVATE;
 
 
 /**
  * @author Jeroen Gremmen
  * @since 1.0.0
  */
-@RequiredArgsConstructor(access = PACKAGE)
-final class NegatingMatcher extends MessageMatcher.Junction.AbstractBase
+@RequiredArgsConstructor(access = PRIVATE)
+@EqualsAndHashCode(callSuper = false)
+final class NegatingMatcher extends AbstractJunction
 {
-  private final MessageMatcher matcher;
+  final MessageMatcher matcher;
 
 
   @Override
-  public <M> boolean matches(@NotNull Level levelLimit, Protocol.@NotNull Message<M> message) {
+  public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
     return !matcher.matches(levelLimit, message);
   }
 
@@ -44,5 +47,19 @@ final class NegatingMatcher extends MessageMatcher.Junction.AbstractBase
   @Override
   public String toString() {
     return "not(" + matcher + ')';
+  }
+
+
+  @Contract(pure = true)
+  static Junction of(@NotNull MessageMatcher matcher)
+  {
+    if (matcher instanceof NegatingMatcher)
+      return ((NegatingMatcher)matcher).matcher.asJunction();
+    else if (BooleanMatcher.TRUE.equals(matcher))
+      return BooleanMatcher.FALSE;
+    else if (BooleanMatcher.FALSE.equals(matcher))
+      return BooleanMatcher.TRUE;
+    else
+      return new NegatingMatcher(matcher);
   }
 }

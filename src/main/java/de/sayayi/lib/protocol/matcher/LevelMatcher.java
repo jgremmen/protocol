@@ -18,21 +18,25 @@ package de.sayayi.lib.protocol.matcher;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol;
 
+import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
 import static de.sayayi.lib.protocol.Level.compare;
 import static de.sayayi.lib.protocol.Level.min;
-import static lombok.AccessLevel.PACKAGE;
+import static lombok.AccessLevel.PRIVATE;
 
 
 /**
  * @author Jeroen Gremmen
  * @since 1.0.0
  */
-@RequiredArgsConstructor(access = PACKAGE)
-final class LevelMatcher extends MessageMatcher.Junction.AbstractBase
+@RequiredArgsConstructor(access = PRIVATE)
+@EqualsAndHashCode(callSuper = false)
+final class LevelMatcher extends AbstractJunction
 {
   private final Level level;
 
@@ -44,19 +48,13 @@ final class LevelMatcher extends MessageMatcher.Junction.AbstractBase
 
 
   @Override
-  public String toString()
-  {
-    if (level instanceof Level.Shared)
-      switch((Level.Shared)level)
-      {
-        case LOWEST:   return "true";
-        case DEBUG:    return "isDebug()";
-        case INFO:     return "isInfo()";
-        case WARN:     return "isWarn()";
-        case ERROR:    return "isError()";
-        case HIGHEST:  return "isHighest()";
-      }
+  public String toString() {
+    return "isLevel(" + level + ')';
+  }
 
-    return "isLevel(" + level.severity() + ')';
+
+  @Contract(pure = true)
+  static MessageMatcher.Junction of(@NotNull Level level) {
+    return level.severity() == LOWEST.severity() ? BooleanMatcher.TRUE : new LevelMatcher(level);
   }
 }

@@ -18,15 +18,10 @@ package de.sayayi.lib.protocol.matcher;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol.Message;
 
-import lombok.val;
-
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static java.util.stream.Collectors.joining;
+import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
 
 
 /**
@@ -35,11 +30,28 @@ import static java.util.stream.Collectors.joining;
  */
 public interface MessageMatcher
 {
+  @Contract(pure = true)
   <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message);
 
 
+  @Contract(pure = true)
   default <M> boolean matches(@NotNull Message<M> message) {
-    return matches(Level.Shared.HIGHEST, message);
+    return matches(HIGHEST, message);
+  }
+
+
+  @Contract(pure = true)
+  default @NotNull Junction asJunction()
+  {
+    if (this instanceof Junction)
+      return (Junction)this;
+
+    return new AbstractJunction() {
+      @Override
+      public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
+        return MessageMatcher.this.matches(levelLimit, message);
+      }
+    };
   }
 
 
@@ -51,114 +63,5 @@ public interface MessageMatcher
 
 
     @NotNull Junction or(@NotNull MessageMatcher other);
-  }
-
-
-
-
-  abstract class AbstractBase implements Junction
-  {
-    @Override
-    public @NotNull Junction and(@NotNull MessageMatcher other) {
-      return new Conjunction(this, other);
-    }
-
-
-    @Override
-    public @NotNull Junction or(@NotNull MessageMatcher other) {
-      return new Disjunction(this, other);
-    }
-  }
-
-
-
-
-  class Conjunction extends AbstractBase
-  {
-    private final List<MessageMatcher> matchers;
-
-
-    Conjunction(MessageMatcher... matcher) {
-      this(Arrays.asList(matcher));
-    }
-
-
-    Conjunction(List<MessageMatcher> matchers)
-    {
-      this.matchers = new ArrayList<>(matchers.size());
-
-      for(val matcher: matchers)
-      {
-        if (matcher instanceof Conjunction)
-          this.matchers.addAll(((Conjunction)matcher).matchers);
-        else
-          this.matchers.add(matcher);
-      }
-    }
-
-
-    public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> target)
-    {
-      for(val matcher: matchers)
-        if (!matcher.matches(levelLimit, target))
-          return false;
-
-      return true;
-    }
-
-
-    @Override
-    public String toString()
-    {
-      return matchers.stream()
-          .map(MessageMatcher::toString)
-          .collect(joining(" and ", "(", ")"));
-    }
-  }
-
-
-
-
-  class Disjunction extends AbstractBase
-  {
-    private final List<MessageMatcher> matchers;
-
-
-    Disjunction(MessageMatcher... matcher) {
-      this(Arrays.asList(matcher));
-    }
-
-
-    Disjunction(List<MessageMatcher> matchers)
-    {
-      this.matchers = new ArrayList<>(matchers.size());
-
-      for(val matcher: matchers)
-      {
-        if (matcher instanceof Disjunction)
-          this.matchers.addAll(((Disjunction)matcher).matchers);
-        else
-          this.matchers.add(matcher);
-      }
-    }
-
-
-    public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> target)
-    {
-      for(val matcher: matchers)
-        if (matcher.matches(levelLimit, target))
-          return true;
-
-      return false;
-    }
-
-
-    @Override
-    public String toString()
-    {
-      return matchers.stream()
-          .map(MessageMatcher::toString)
-          .collect(joining(" or ", "(", ")"));
-    }
   }
 }
