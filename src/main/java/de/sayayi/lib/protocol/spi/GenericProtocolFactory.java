@@ -30,7 +30,6 @@ import lombok.val;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -40,6 +39,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
 import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
+import static java.util.Collections.unmodifiableSet;
 import static java.util.Objects.requireNonNull;
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 import static java.util.regex.Pattern.UNICODE_CASE;
@@ -146,7 +146,7 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 
   @Override
   public @NotNull Set<String> getTagNames() {
-    return Collections.unmodifiableSet(registeredTags.keySet());
+    return unmodifiableSet(registeredTags.keySet());
   }
 
 

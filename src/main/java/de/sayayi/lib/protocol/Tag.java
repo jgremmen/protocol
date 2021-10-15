@@ -49,6 +49,7 @@ import static de.sayayi.lib.protocol.TagSelector.MatchType.FIX;
 import static de.sayayi.lib.protocol.TagSelector.MatchType.NOT;
 import static de.sayayi.lib.protocol.TagSelector.MatchType.OR;
 import static de.sayayi.lib.protocol.selector.match.AbstractTagSelectorBuilder.wrap;
+import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.comparingInt;
 import static lombok.AccessLevel.PRIVATE;
@@ -176,7 +177,7 @@ public final class Tag
         return wrap(((SelectorReference)selector).getSelectors()[0]);
 
       case FIX:
-        return MatchFixResult.valueOf(!selector.match(Collections.emptyList()));
+        return MatchFixResult.valueOf(!selector.match(emptyList()));
 
       default:
         return new MatchNot(selector);
@@ -250,7 +251,7 @@ public final class Tag
     for(Iterator<TagSelector> selectorIterator = selectors.iterator(); selectorIterator.hasNext();)
       if ((selector = selectorIterator.next()).getType() == FIX)
       {
-        if (selector.match(Collections.emptyList()))
+        if (selector.match(emptyList()))
           selectorIterator.remove();
         else
         {
@@ -369,7 +370,7 @@ public final class Tag
     for(Iterator<TagSelector> selectorIterator = selectors.iterator(); selectorIterator.hasNext();)
       if ((selector = selectorIterator.next()).getType() == FIX)
       {
-        if (selector.match(Collections.emptyList()))
+        if (selector.match(emptyList()))
         {
           selectors.clear();
           selectors.add(selector);

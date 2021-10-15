@@ -20,9 +20,8 @@ import org.junit.Test;
 
 import lombok.val;
 
-import java.util.Collections;
-
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -41,7 +40,7 @@ public class TagTest
     assertTrue(selector.match(singletonList("system")));
     assertTrue(selector.match(asList("default", "system", "test")));
     assertFalse(selector.match(singletonList("default")));
-    assertFalse(selector.match(Collections.emptyList()));
+    assertFalse(selector.match(emptyList()));
   }
 
 
@@ -70,7 +69,7 @@ public class TagTest
 
     assertTrue(selector.match(singletonList("system")));
     assertTrue(selector.match(asList("default", "system", "test")));
-    assertFalse(selector.match(Collections.emptyList()));
+    assertFalse(selector.match(emptyList()));
   }
 
 
@@ -111,7 +110,7 @@ public class TagTest
     assertFalse(selector.match(singletonList("system")));
     assertFalse(selector.match(asList("default", "system", "test")));
     assertTrue(selector.match(singletonList("default")));
-    assertTrue(selector.match(Collections.emptyList()));
+    assertTrue(selector.match(emptyList()));
   }
 
 
@@ -123,7 +122,7 @@ public class TagTest
     assertFalse(selector.match(singletonList("system")));
     assertFalse(selector.match(asList("default", "system", "test")));
     assertTrue(selector.match(singletonList("default")));
-    assertTrue(selector.match(Collections.emptyList()));
+    assertTrue(selector.match(emptyList()));
   }
 
 
@@ -136,7 +135,7 @@ public class TagTest
     assertTrue(selector.match(singletonList("system")));
     assertTrue(selector.match(asList("default", "system", "test")));
     assertTrue(selector.match(singletonList("console")));
-    assertFalse(selector.match(Collections.emptyList()));
+    assertFalse(selector.match(emptyList()));
   }
 
 
@@ -162,7 +161,7 @@ public class TagTest
     assertFalse(selector.match(singletonList("system")));
     assertTrue(selector.match(asList("default", "system", "test")));
     assertTrue(selector.match(singletonList("console")));
-    assertFalse(selector.match(Collections.emptyList()));
+    assertFalse(selector.match(emptyList()));
   }
 
 
@@ -174,7 +173,7 @@ public class TagTest
     assertTrue(selector.match(singletonList("system")));
     assertFalse(selector.match(asList("default", "system", "test")));
     assertFalse(selector.match(singletonList("console")));
-    assertFalse(selector.match(Collections.emptyList()));
+    assertFalse(selector.match(emptyList()));
   }
 
 

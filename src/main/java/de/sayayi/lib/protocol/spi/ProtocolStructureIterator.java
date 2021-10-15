@@ -32,7 +32,6 @@ import lombok.var;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +42,7 @@ import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.FLATTEN;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ALWAYS;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_IF_NOT_EMPTY;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ONLY;
+import static java.util.Collections.emptySet;
 import static lombok.AccessLevel.PROTECTED;
 
 
@@ -473,7 +473,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
     @Override
     public @NotNull Set<String> getTagNames() {
-      return Collections.emptySet();
+      return emptySet();
     }
 
 

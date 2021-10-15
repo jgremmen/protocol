@@ -20,8 +20,9 @@ import de.sayayi.lib.protocol.exception.TagSelectorParserException;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.Collections;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -37,7 +38,7 @@ public class TagSelectorParserTest
     final TagSelector selector = new TagSelectorParser("system").parseSelector();
 
     assertTrue(selector.match(Arrays.asList("system", "default")));
-    assertFalse(selector.match(Collections.singletonList("default")));
+    assertFalse(selector.match(singletonList("default")));
   }
 
 
@@ -47,8 +48,8 @@ public class TagSelectorParserTest
     final TagSelector selector = new TagSelectorParser("any( ) ").parseSelector();
 
     assertTrue(selector.match(Arrays.asList("system", "default")));
-    assertTrue(selector.match(Collections.singletonList("default")));
-    assertFalse(selector.match(Collections.emptyList()));
+    assertTrue(selector.match(singletonList("default")));
+    assertFalse(selector.match(emptyList()));
   }
 
 
@@ -59,9 +60,9 @@ public class TagSelectorParserTest
 
     assertTrue(selector.match(Arrays.asList("system", "default")));
     assertTrue(selector.match(Arrays.asList("default", "hello")));
-    assertTrue(selector.match(Collections.singletonList("test")));
-    assertFalse(selector.match(Collections.singletonList("default")));
-    assertFalse(selector.match(Collections.emptyList()));
+    assertTrue(selector.match(singletonList("test")));
+    assertFalse(selector.match(singletonList("default")));
+    assertFalse(selector.match(emptyList()));
   }
 
 
@@ -72,9 +73,9 @@ public class TagSelectorParserTest
 
     assertTrue(selector.match(Arrays.asList("system", "default")));
     assertTrue(selector.match(Arrays.asList("default", "hello")));
-    assertTrue(selector.match(Collections.singletonList("test")));
-    assertFalse(selector.match(Collections.singletonList("default")));
-    assertFalse(selector.match(Collections.emptyList()));
+    assertTrue(selector.match(singletonList("test")));
+    assertFalse(selector.match(singletonList("default")));
+    assertFalse(selector.match(emptyList()));
   }
 
 
@@ -85,9 +86,9 @@ public class TagSelectorParserTest
 
     assertFalse(selector.match(Arrays.asList("system", "default")));
     assertFalse(selector.match(Arrays.asList("default", "hello")));
-    assertFalse(selector.match(Collections.singletonList("test")));
-    assertTrue(selector.match(Collections.singletonList("default")));
-    assertTrue(selector.match(Collections.emptyList()));
+    assertFalse(selector.match(singletonList("test")));
+    assertTrue(selector.match(singletonList("default")));
+    assertTrue(selector.match(emptyList()));
   }
 
 

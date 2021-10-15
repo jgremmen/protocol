@@ -63,6 +63,12 @@ final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements
 
 
   @Override
+  public boolean hasTag(@NotNull String tagName) {
+    return tagNames.contains(tagName);
+  }
+
+
+  @Override
   public boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher) {
     return matcher.matches(levelLimit, this);
   }
