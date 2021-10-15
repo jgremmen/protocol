@@ -21,6 +21,7 @@ import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.TagSelector;
+import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import lombok.val;
 
@@ -59,26 +60,20 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
 
 
   @Override
-  public boolean matches(@NotNull Level level, @NotNull TagSelector tagSelector) {
-    return matches0(HIGHEST, level, tagSelector);
+  public boolean matches(@NotNull MessageMatcher matcher) {
+    return matches0(HIGHEST, matcher);
   }
 
 
   @Override
-  public boolean matches(@NotNull Level level) {
-    return matches0(HIGHEST, level);
+  public int getVisibleEntryCount(boolean recursive, @NotNull MessageMatcher matcher) {
+    return getVisibleEntryCount0(HIGHEST, recursive, matcher);
   }
 
 
   @Override
-  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull TagSelector tagSelector) {
-    return getVisibleEntryCount0(HIGHEST, recursive, level, tagSelector);
-  }
-
-
-  @Override
-  public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull TagSelector tagSelector) {
-    return new ProtocolStructureIterator.ForProtocol<>(level, tagSelector, 0, this);
+  public @NotNull ProtocolIterator<M> iterator(@NotNull MessageMatcher matcher) {
+    return new ProtocolStructureIterator.ForProtocol<>(matcher, 0, this);
   }
 
 

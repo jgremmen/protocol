@@ -23,7 +23,7 @@ import de.sayayi.lib.protocol.ProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupEndEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
-import de.sayayi.lib.protocol.TagSelector;
+import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import lombok.val;
 import lombok.var;
@@ -32,13 +32,18 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import static de.sayayi.lib.protocol.Level.SORT_DESCENDING;
+import static de.sayayi.lib.protocol.Level.Shared.DEBUG;
+import static de.sayayi.lib.protocol.Level.Shared.ERROR;
+import static de.sayayi.lib.protocol.Level.Shared.INFO;
+import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
+import static de.sayayi.lib.protocol.Level.Shared.WARN;
 import static de.sayayi.lib.protocol.Level.compare;
+import static java.util.Collections.unmodifiableMap;
 import static org.unbescape.html.HtmlEscape.escapeHtml5;
 
 
@@ -62,8 +67,7 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
 
 
   @Override
-  public void init(@NotNull ProtocolFactory<M> factory, @NotNull Level level, @NotNull TagSelector tagSelector,
-                   int estimatedGroupDepth)
+  public void init(@NotNull ProtocolFactory<M> factory, @NotNull MessageMatcher matcher, int estimatedGroupDepth)
   {
     messageFormatter = factory.getMessageFormatter();
     html.delete(0, html.length());
@@ -310,20 +314,20 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
     static
     {
       val fa4LevelIconClassMap = new TreeMap<Level,String>(SORT_DESCENDING);
-      fa4LevelIconClassMap.put(Level.Shared.ERROR, "fa fa-times");
-      fa4LevelIconClassMap.put(Level.Shared.WARN, "fa fa-exclamation-triangle");
-      fa4LevelIconClassMap.put(Level.Shared.INFO, "fa fa-info-circle");
-      fa4LevelIconClassMap.put(Level.Shared.DEBUG, "fa fa-puzzle-piece");
-      fa4LevelIconClassMap.put(Level.Shared.LOWEST, "fa fa-wrench");
-      FA4_LEVEL_ICON_CLASSES = Collections.unmodifiableMap(fa4LevelIconClassMap);
+      fa4LevelIconClassMap.put(ERROR, "fa fa-times");
+      fa4LevelIconClassMap.put(WARN, "fa fa-exclamation-triangle");
+      fa4LevelIconClassMap.put(INFO, "fa fa-info-circle");
+      fa4LevelIconClassMap.put(DEBUG, "fa fa-puzzle-piece");
+      fa4LevelIconClassMap.put(LOWEST, "fa fa-wrench");
+      FA4_LEVEL_ICON_CLASSES = unmodifiableMap(fa4LevelIconClassMap);
 
       val fa5LevelIconClassMap = new TreeMap<Level,String>(SORT_DESCENDING);
-      fa5LevelIconClassMap.put(Level.Shared.ERROR, "fas fa-times");
-      fa5LevelIconClassMap.put(Level.Shared.WARN, "fas fa-exclamation-triangle");
-      fa5LevelIconClassMap.put(Level.Shared.INFO, "fas fa-info-circle");
-      fa5LevelIconClassMap.put(Level.Shared.DEBUG, "fas fa-puzzle-piece");
-      fa5LevelIconClassMap.put(Level.Shared.LOWEST, "fas fa-wrench");
-      FA5_LEVEL_ICON_CLASSES = Collections.unmodifiableMap(fa5LevelIconClassMap);
+      fa5LevelIconClassMap.put(ERROR, "fas fa-times");
+      fa5LevelIconClassMap.put(WARN, "fas fa-exclamation-triangle");
+      fa5LevelIconClassMap.put(INFO, "fas fa-info-circle");
+      fa5LevelIconClassMap.put(DEBUG, "fas fa-puzzle-piece");
+      fa5LevelIconClassMap.put(LOWEST, "fas fa-wrench");
+      FA5_LEVEL_ICON_CLASSES = unmodifiableMap(fa5LevelIconClassMap);
     }
 
 

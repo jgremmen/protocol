@@ -18,6 +18,7 @@ package de.sayayi.lib.protocol;
 import de.sayayi.lib.protocol.Protocol.GenericMessageWithLevel;
 import de.sayayi.lib.protocol.ProtocolGroup.Visibility;
 import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
+import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -34,21 +35,12 @@ import java.util.Iterator;
 public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
 {
   /**
-   * Returns the level used for iteration.
+   * Returns the message matcher used for iteration.
    *
-   * @return  iteration level, never {@code null}
+   * @return  message matcher, never {@code null}
    */
   @Contract(pure = true)
-  @NotNull Level getLevel();
-
-
-  /**
-   * Returns the tags used for iteration.
-   *
-   * @return  iteration tags, never {@code null}
-   */
-  @Contract(pure = true)
-  @NotNull TagSelector getTagSelector();
+  @NotNull MessageMatcher getMatcher();
 
 
 

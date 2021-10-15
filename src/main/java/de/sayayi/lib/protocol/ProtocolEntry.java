@@ -15,6 +15,8 @@
  */
 package de.sayayi.lib.protocol;
 
+import de.sayayi.lib.protocol.matcher.MessageMatcher;
+
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -54,25 +56,27 @@ public interface ProtocolEntry<M> extends ProtocolQueryable
      * Returns a list of protocol entries provided by this protocol object for the given {@code level} and
      * {@code tagSelector}.
      *
-     * @param level        requested protocol level, not {@code null}
-     * @param tagSelector  tag selector, not {@code null}
+     * @param matcher  message matcher, not {@code null}
      *
      * @return  a list of protocol entries, never {@code null}
+     *
+     * @since 1.0.0
      */
-    @Contract(pure = true, value = "_, _ -> new")
-    @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull TagSelector tagSelector);
+    @Contract(pure = true, value = "_ -> new")
+    @NotNull List<ProtocolEntry<M>> getEntries(@NotNull MessageMatcher matcher);
 
 
     /**
      * Tells if, for the given {@code level} and {@code tagSelector}, the group header message is visible.
      *
-     * @param level        protocol level, not {@code null}
-     * @param tagSelector  tag selector, not {@code null}
+     * @param matcher  message matcher, not {@code null}
      *
      * @return  {@code true} if the group header message is visible, {@code false} otherwise
+     *
+     * @since 1.0.0
      */
     @Contract(pure = true)
-    boolean isHeaderVisible(@NotNull Level level, @NotNull TagSelector tagSelector);
+    boolean isHeaderVisible(@NotNull MessageMatcher matcher);
 
 
     /**
@@ -88,12 +92,13 @@ public interface ProtocolEntry<M> extends ProtocolQueryable
      *   severity.
      * </p>
      *
-     * @param level        protocol level, not {@code null}
-     * @param tagSelector  tag selector, not {@code null}
+     * @param matcher  message matcher, not {@code null}
      *
      * @return  header message level, never {@code null}
+     *
+     * @since 1.0.0
      */
     @Contract(pure = true)
-    @NotNull Level getHeaderLevel(@NotNull Level level, @NotNull TagSelector tagSelector);
+    @NotNull Level getHeaderLevel(@NotNull MessageMatcher matcher);
   }
 }

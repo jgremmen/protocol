@@ -18,7 +18,7 @@ package de.sayayi.lib.protocol.spi;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.ProtocolGroup.Visibility;
-import de.sayayi.lib.protocol.TagSelector;
+import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -55,21 +55,19 @@ interface InternalProtocolEntry<M> extends ProtocolEntry<M>, InternalProtocolQue
     Visibility getEffectiveVisibility();
 
 
-    @Contract(pure = true, value = "_, _, _ -> new")
-    @NotNull List<ProtocolEntry<M>> getEntries0(@NotNull Level levelLimit, @NotNull Level level,
-                                                @NotNull TagSelector tagSelector);
+    @Contract(pure = true, value = "_, _ -> new")
+    @NotNull List<ProtocolEntry<M>> getEntries0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher);
 
 
     @Contract(pure = true)
-    boolean isHeaderVisible0(@NotNull Level levelLimit, @NotNull Level level, @NotNull TagSelector tagSelector);
+    boolean isHeaderVisible0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher);
 
 
     @Contract(pure = true)
-    @NotNull Level getHeaderLevel0(@NotNull Level levelLimit, @NotNull Level level, @NotNull TagSelector tagSelector);
+    @NotNull Level getHeaderLevel0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher);
 
 
     @Contract(pure = true)
-    int getVisibleGroupEntryMessageCount0(@NotNull Level levelLimit, @NotNull Level level,
-                                          @NotNull TagSelector tagSelector);
+    int getVisibleGroupEntryMessageCount0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher);
   }
 }

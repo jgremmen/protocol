@@ -15,14 +15,13 @@
  */
 package de.sayayi.lib.protocol.formatter;
 
-import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol.GenericMessageWithLevel;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolFactory.MessageFormatter;
 import de.sayayi.lib.protocol.ProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
-import de.sayayi.lib.protocol.TagSelector;
+import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import lombok.val;
 
@@ -59,8 +58,7 @@ public abstract class AbstractTreeProtocolFormatter<M> implements ProtocolFormat
 
 
   @Override
-  public void init(@NotNull ProtocolFactory<M> factory, @NotNull Level level, @NotNull TagSelector tagSelector,
-                   int estimatedGroupDepth)
+  public void init(@NotNull ProtocolFactory<M> factory, @NotNull MessageMatcher matcher, int estimatedGroupDepth)
   {
     result.delete(0, result.length());
 

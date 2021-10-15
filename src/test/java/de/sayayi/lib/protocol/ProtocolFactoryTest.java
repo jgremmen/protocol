@@ -34,6 +34,7 @@ import static de.sayayi.lib.protocol.TagDef.MatchCondition.AT_LEAST;
 import static de.sayayi.lib.protocol.TagDef.MatchCondition.EQUAL;
 import static de.sayayi.lib.protocol.TagDef.MatchCondition.NOT_EQUAL;
 import static de.sayayi.lib.protocol.TagDef.MatchCondition.UNTIL;
+import static de.sayayi.lib.protocol.matcher.MessageMatchers.isLowest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -190,7 +191,7 @@ public class ProtocolFactoryTest
     val factory = new GenericProtocolFactory<>(message -> new GenericMessageWithId<>(message + "(ok)"),
         ToStringMessageFormatter.IDENTITY);
     val protocol = factory.createProtocol().debug().message("msg");
-    val iterator = protocol.iterator(LOWEST, Tag.any());
+    val iterator = protocol.iterator(isLowest());
 
     iterator.next();  // protocol start
 

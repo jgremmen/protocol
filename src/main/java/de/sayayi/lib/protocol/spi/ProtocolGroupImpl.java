@@ -24,13 +24,13 @@ import de.sayayi.lib.protocol.ProtocolGroup.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.exception.ProtocolException;
+import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import lombok.Getter;
 import lombok.val;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -44,6 +44,7 @@ import static de.sayayi.lib.protocol.Level.max;
 import static de.sayayi.lib.protocol.Level.min;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_IF_NOT_EMPTY;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ONLY;
+import static java.util.Collections.emptyList;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 
@@ -106,7 +107,7 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public boolean isHeaderVisible0(@NotNull Level levelLimit, @NotNull Level level, @NotNull TagSelector tagSelector)
+  public boolean isHeaderVisible0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
     if (groupMessage != null)
       switch(visibility)
@@ -120,10 +121,10 @@ final class ProtocolGroupImpl<M>
           return true;
 
         case SHOW_HEADER_IF_NOT_EMPTY:
-          return matches0(levelLimit, level, tagSelector);
+          return matches0(levelLimit, matcher);
 
         case FLATTEN_ON_SINGLE_ENTRY:
-          return super.getVisibleEntryCount0(min(this.levelLimit, levelLimit),true, level, tagSelector) > 1;
+          return super.getVisibleEntryCount0(min(this.levelLimit, levelLimit),true, matcher) > 1;
       }
 
     return false;
@@ -131,27 +132,26 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public boolean isHeaderVisible(@NotNull Level level, @NotNull TagSelector tagSelector) {
-    return isHeaderVisible0(levelLimit, level, tagSelector);
+  public boolean isHeaderVisible(@NotNull MessageMatcher matcher) {
+    return isHeaderVisible0(levelLimit, matcher);
   }
 
 
   @Override
-  public @NotNull Level getHeaderLevel0(@NotNull Level levelLimit, @NotNull Level level,
-                                        @NotNull TagSelector tagSelector)
+  public @NotNull Level getHeaderLevel0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
     Level headerLevel = LOWEST;
 
     levelLimit = min(this.levelLimit, levelLimit);
 
-    for(ProtocolEntry<M> entry: getEntries(levelLimit, level, tagSelector))
+    for(ProtocolEntry<M> entry: getEntries(levelLimit, matcher))
     {
       Level protocolEntryLevel;
 
       if (entry instanceof ProtocolEntry.Message)
         protocolEntryLevel = ((ProtocolEntry.Message<M>)entry).getLevel();
       else if (entry instanceof ProtocolEntry.Group)
-        protocolEntryLevel = ((ProtocolEntry.Group<M>)entry).getHeaderLevel(level, tagSelector);
+        protocolEntryLevel = ((ProtocolEntry.Group<M>)entry).getHeaderLevel(matcher);
       else
         continue;
 
@@ -166,61 +166,53 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public @NotNull Level getHeaderLevel(@NotNull Level level, @NotNull TagSelector tagSelector) {
-    return getHeaderLevel0(levelLimit, level, tagSelector);
+  public @NotNull Level getHeaderLevel(@NotNull MessageMatcher matcher) {
+    return getHeaderLevel0(levelLimit, matcher);
   }
 
 
   @Override
-  public @NotNull List<ProtocolEntry<M>> getEntries0(@NotNull Level levelLimit, @NotNull Level level,
-                                                     @NotNull TagSelector tagSelector)
+  public @NotNull List<ProtocolEntry<M>> getEntries0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
     levelLimit = min(this.levelLimit, levelLimit);
 
-    return compare(levelLimit, level) >= 0 && getEffectiveVisibility().isShowEntries()
-        ? super.getEntries(levelLimit, level, tagSelector) : Collections.emptyList();
+    return getEffectiveVisibility().isShowEntries() ? super.getEntries(levelLimit, matcher) : emptyList();
   }
 
 
   @Override
-  public @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull TagSelector tagSelector) {
-    return getEntries(levelLimit, level, tagSelector);
+  public @NotNull List<ProtocolEntry<M>> getEntries(@NotNull MessageMatcher matcher) {
+    return getEntries(levelLimit, matcher);
   }
 
 
   @Override
-  public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive,
-                                   @NotNull Level level, @NotNull TagSelector tagSelector)
+  public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive, @NotNull MessageMatcher matcher)
   {
-    levelLimit = min(this.levelLimit, levelLimit);
+    val effectiveVisibility = getEffectiveVisibility();
+    if (effectiveVisibility == SHOW_HEADER_ONLY)
+      return 1;
 
-    if (compare(levelLimit, level) >= 0)
+    val recursiveEntryCount = super.getVisibleEntryCount0(min(this.levelLimit, levelLimit),
+        true, matcher);
+    val entryCountWithHeader = recursive ? recursiveEntryCount + 1 : 1;
+
+    switch(effectiveVisibility)
     {
-      val effectiveVisibility = getEffectiveVisibility();
+      case SHOW_HEADER_ALWAYS:
+        return entryCountWithHeader;
 
-      if (effectiveVisibility == SHOW_HEADER_ONLY)
-        return 1;
+      case SHOW_HEADER_IF_NOT_EMPTY:
+        return recursiveEntryCount == 0 ? 0 : entryCountWithHeader;
 
-      val recursiveEntryCount = super.getVisibleEntryCount0(levelLimit, true, level, tagSelector);
-      val entryCountWithHeader = recursive ? recursiveEntryCount + 1 : 1;
+      case FLATTEN_ON_SINGLE_ENTRY:
+        return recursiveEntryCount > 1 ? entryCountWithHeader : recursiveEntryCount;
 
-      switch(effectiveVisibility)
-      {
-        case SHOW_HEADER_ALWAYS:
-          return entryCountWithHeader;
+      case FLATTEN:
+        return recursiveEntryCount;
 
-        case SHOW_HEADER_IF_NOT_EMPTY:
-          return recursiveEntryCount == 0 ? 0 : entryCountWithHeader;
-
-        case FLATTEN_ON_SINGLE_ENTRY:
-          return recursiveEntryCount > 1 ? entryCountWithHeader : recursiveEntryCount;
-
-        case FLATTEN:
-          return recursiveEntryCount;
-
-        default:
-          break;
-      }
+      default:
+        break;
     }
 
     return 0;
@@ -228,17 +220,16 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull TagSelector tagSelector) {
-    return getVisibleEntryCount0(levelLimit, recursive, level, tagSelector);
+  public int getVisibleEntryCount(boolean recursive, @NotNull MessageMatcher matcher) {
+    return getVisibleEntryCount0(levelLimit, recursive, matcher);
   }
 
 
   @Override
-  public int getVisibleGroupEntryMessageCount0(@NotNull Level levelLimit, @NotNull Level level,
-                                               @NotNull TagSelector tagSelector)
+  public int getVisibleGroupEntryMessageCount0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
     return getEffectiveVisibility().isShowEntries()
-        ? super.getVisibleEntryCount0(min(this.levelLimit, levelLimit), false, level, tagSelector) : 0;
+        ? super.getVisibleEntryCount0(min(this.levelLimit, levelLimit), false, matcher) : 0;
   }
 
 
@@ -312,43 +303,23 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public boolean matches0(@NotNull Level levelLimit, @NotNull Level level, @NotNull TagSelector tagSelector)
+  public boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
-    levelLimit = min(this.levelLimit, levelLimit);
-
-    return compare(levelLimit, level) >= 0 &&
-           getEffectiveVisibility().isShowEntries() &&
-           super.matches0(levelLimit, level, tagSelector);
+    return getEffectiveVisibility().isShowEntries() &&
+           super.matches0(min(this.levelLimit, levelLimit), matcher);
   }
 
 
   @Override
-  public boolean matches(@NotNull Level level, @NotNull TagSelector tagSelector) {
-    return matches0(levelLimit, level, tagSelector);
+  public boolean matches(@NotNull MessageMatcher matcher) {
+    return matches0(levelLimit, matcher);
   }
 
 
   @Override
-  public boolean matches0(@NotNull Level levelLimit, @NotNull Level level)
+  public @NotNull ProtocolIterator<M> iterator(@NotNull MessageMatcher matcher)
   {
-    levelLimit = min(this.levelLimit, levelLimit);
-
-    return compare(levelLimit, level) >= 0 &&
-           getEffectiveVisibility().isShowEntries() &&
-           super.matches0(levelLimit, level);
-  }
-
-
-  @Override
-  public boolean matches(@NotNull Level level) {
-    return matches0(levelLimit, level);
-  }
-
-
-  @Override
-  public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull TagSelector tagSelector)
-  {
-    return new ProtocolStructureIterator.ForGroup<>(levelLimit, level, tagSelector, 0, this,
+    return new ProtocolStructureIterator.ForGroup<>(levelLimit, matcher, 0, this,
         false, false, true);
   }
 
@@ -474,8 +445,8 @@ final class ProtocolGroupImpl<M>
 
 
     @Override
-    public boolean isHeaderVisible(@NotNull Level level, @NotNull TagSelector tagSelector) {
-      return ProtocolGroupImpl.this.isHeaderVisible(level, tagSelector);
+    public boolean isHeaderVisible(@NotNull MessageMatcher matcher) {
+      return ProtocolGroupImpl.this.isHeaderVisible(matcher);
     }
 
 
@@ -510,8 +481,8 @@ final class ProtocolGroupImpl<M>
 
 
     @Override
-    public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull TagSelector tagSelector) {
-      return ProtocolGroupImpl.this.iterator(level, tagSelector);
+    public @NotNull ProtocolIterator<M> iterator(@NotNull MessageMatcher matcher) {
+      return ProtocolGroupImpl.this.iterator(matcher);
     }
 
 

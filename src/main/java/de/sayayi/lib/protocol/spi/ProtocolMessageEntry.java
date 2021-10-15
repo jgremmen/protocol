@@ -17,20 +17,18 @@ package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor.MessageWithId;
-import de.sayayi.lib.protocol.TagSelector;
+import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import lombok.Getter;
 import lombok.val;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
-import static de.sayayi.lib.protocol.Level.compare;
-import static de.sayayi.lib.protocol.Level.min;
+import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.joining;
 
 
@@ -60,44 +58,37 @@ final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements
 
   @Override
   public @NotNull Set<String> getTagNames() {
-    return Collections.unmodifiableSet(tagNames);
+    return unmodifiableSet(tagNames);
   }
 
 
   @Override
-  public boolean matches0(@NotNull Level levelLimit, @NotNull Level level, @NotNull TagSelector tagSelector) {
-    return matches0(levelLimit, level) && tagSelector.match(tagNames);
+  public boolean hasTag(@NotNull String tagName) {
+    return tagNames.contains(tagName);
   }
 
 
   @Override
-  public boolean matches(@NotNull Level level, @NotNull TagSelector tagSelector) {
-    return matches0(HIGHEST, level, tagSelector);
+  public boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher) {
+    return matcher.matches(levelLimit, this);
   }
 
 
   @Override
-  public boolean matches0(@NotNull Level levelLimit, @NotNull Level level) {
-    return compare(min(this.level, levelLimit), level) >= 0;
+  public boolean matches(@NotNull MessageMatcher matcher) {
+    return matches0(HIGHEST, matcher);
   }
 
 
   @Override
-  public boolean matches(@NotNull Level level) {
-    return compare(this.level, level) >= 0;
+  public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive, @NotNull MessageMatcher matcher) {
+    return matches0(levelLimit, matcher) ? 1 : 0;
   }
 
 
   @Override
-  public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive,
-                                   @NotNull Level level, @NotNull TagSelector tagSelector) {
-    return matches0(levelLimit, level, tagSelector) ? 1 : 0;
-  }
-
-
-  @Override
-  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull TagSelector tagSelector) {
-    return getVisibleEntryCount0(HIGHEST, recursive, level, tagSelector);
+  public int getVisibleEntryCount(boolean recursive, @NotNull MessageMatcher matcher) {
+    return getVisibleEntryCount0(HIGHEST, recursive, matcher);
   }
 
 
