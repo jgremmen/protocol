@@ -174,6 +174,9 @@ public interface ProtocolGroup<M> extends Protocol<M>
   @NotNull ProtocolGroup<M> setName(String name);
 
 
+  /**
+   * @since 1.0.0
+   */
   @Contract(pure = true)
   boolean isHeaderVisible(@NotNull MessageMatcher matcher);
 

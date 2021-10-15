@@ -30,11 +30,13 @@ import org.jetbrains.annotations.NotNull;
 public interface ProtocolQueryable
 {
   /**
-   * Tells if this protocol object matches the given {@code level} and {@code tagSelector}.
+   * Tells if this protocol object matches the given {@code matcher}.
    *
    * @param matcher  message matcher, not {@code null}
    *
    * @return  {@code true} if the protocol object matches, {@code false} otherwise
+   *
+   * @since 1.0.0
    */
   @Contract(pure = true)
   boolean matches(@NotNull MessageMatcher matcher);
@@ -48,6 +50,8 @@ public interface ProtocolQueryable
    *                   {@code true} returns the number of visible entries for all depths starting at the current one
    *
    * @return  number of visible entries
+   *
+   * @since 1.0.0
    */
   @Contract(pure = true)
   int getVisibleEntryCount(boolean recursive, @NotNull MessageMatcher matcher);

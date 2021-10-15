@@ -44,6 +44,8 @@ public interface ProtocolFormatter<M,R>
    *                             visibility settings but is never greater than the estimated depth.
    *
    * @see Protocol#format(ProtocolFormatter, MessageMatcher)
+   *
+   * @since 1.0.0
    */
   @Contract(mutates = "this")
   void init(@NotNull ProtocolFactory<M> factory, @NotNull MessageMatcher matcher, int estimatedGroupDepth);
@@ -115,6 +117,8 @@ public interface ProtocolFormatter<M,R>
    * @return  formatted protocol, or {@code null}
    *
    * @see Protocol#format(ProtocolFormatter, MessageMatcher)
+   *
+   * @since 1.0.0
    */
   default R format(@NotNull Protocol<M> protocol, @NotNull MessageMatcher matcher) {
     return protocol.format(this, matcher);
@@ -136,6 +140,8 @@ public interface ProtocolFormatter<M,R>
      * @param protocolFactory  the factory from which the protocol was created
      *
      * @return  tag selector, never {@code null}
+     *
+     * @since 1.0.0
      */
     @Contract(pure = true)
     @NotNull MessageMatcher getMatcher(@NotNull ProtocolFactory<M> protocolFactory);

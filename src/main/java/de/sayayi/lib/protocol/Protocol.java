@@ -394,6 +394,8 @@ public interface Protocol<M> extends ProtocolQueryable
    * @param <R>        result type
    *
    * @return  formatted protocol, or {@code null}
+   *
+   * @since 1.0.0
    */
   <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull MessageMatcher matcher);
 
@@ -414,6 +416,9 @@ public interface Protocol<M> extends ProtocolQueryable
   }
 
 
+  /**
+   * @since 1.0.0
+   */
   @Contract(pure = true, value = "_ -> new")
   @NotNull ProtocolIterator<M> iterator(@NotNull MessageMatcher matcher);
 
@@ -814,6 +819,12 @@ public interface Protocol<M> extends ProtocolQueryable
      */
     @Contract(pure = true, value = "-> new")
     @NotNull Set<String> getTagNames();
+
+
+    @Contract(pure = true)
+    default boolean hasTag(@NotNull String tagName) {
+      return getTagNames().contains(tagName);
+    }
   }
 
 

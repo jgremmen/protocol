@@ -59,6 +59,8 @@ public interface ProtocolEntry<M> extends ProtocolQueryable
      * @param matcher  message matcher, not {@code null}
      *
      * @return  a list of protocol entries, never {@code null}
+     *
+     * @since 1.0.0
      */
     @Contract(pure = true, value = "_ -> new")
     @NotNull List<ProtocolEntry<M>> getEntries(@NotNull MessageMatcher matcher);
@@ -70,6 +72,8 @@ public interface ProtocolEntry<M> extends ProtocolQueryable
      * @param matcher  message matcher, not {@code null}
      *
      * @return  {@code true} if the group header message is visible, {@code false} otherwise
+     *
+     * @since 1.0.0
      */
     @Contract(pure = true)
     boolean isHeaderVisible(@NotNull MessageMatcher matcher);
@@ -91,6 +95,8 @@ public interface ProtocolEntry<M> extends ProtocolQueryable
      * @param matcher  message matcher, not {@code null}
      *
      * @return  header message level, never {@code null}
+     *
+     * @since 1.0.0
      */
     @Contract(pure = true)
     @NotNull Level getHeaderLevel(@NotNull MessageMatcher matcher);
