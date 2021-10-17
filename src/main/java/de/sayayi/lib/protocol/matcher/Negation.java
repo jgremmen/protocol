@@ -36,7 +36,7 @@ import static lombok.AccessLevel.PRIVATE;
  */
 @RequiredArgsConstructor(access = PRIVATE)
 @EqualsAndHashCode(callSuper = false)
-final class NegatingMatcher implements Junction
+final class Negation implements Junction
 {
   private final MessageMatcher matcher;
 
@@ -60,9 +60,9 @@ final class NegatingMatcher implements Junction
       return NONE;
     else if (matcher == NONE)
       return ANY;
-    else if (matcher instanceof NegatingMatcher)
-      return ((NegatingMatcher)matcher).matcher.asJunction();
+    else if (matcher instanceof Negation)
+      return ((Negation)matcher).matcher.asJunction();
     else
-      return new NegatingMatcher(matcher);
+      return new Negation(matcher);
   }
 }

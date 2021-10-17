@@ -64,7 +64,7 @@ public final class MessageMatchers
 
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction not(@NotNull MessageMatcher matcher) {
-    return NegatingMatcher.of(matcher);
+    return Negation.of(matcher);
   }
 
 
@@ -195,7 +195,7 @@ public final class MessageMatchers
 
       @Override
       public String toString() {
-        return "hasParameter(" + parameterName + ')';
+        return "hasParam(" + parameterName + ')';
       }
     };
   }
@@ -216,7 +216,7 @@ public final class MessageMatchers
 
       @Override
       public String toString() {
-        return "hasParameterValue(" + parameterName + ')';
+        return "hasParamValue(" + parameterName + ')';
       }
     };
   }
@@ -246,7 +246,7 @@ public final class MessageMatchers
 
       @Override
       public String toString() {
-        return "hasParameterValue(" + parameterName + ',' + value + ')';
+        return "hasParamValue(" + parameterName + ',' + value + ')';
       }
     };
   }
@@ -289,7 +289,7 @@ public final class MessageMatchers
 
 
   @Contract(value = "_ -> new", pure = true)
-  public static @NotNull Junction hasMessageId(@NotNull String messageId)
+  public static @NotNull Junction hasMessage(@NotNull String messageId)
   {
     if (messageId.length() == 0)
       return NONE;
@@ -303,7 +303,7 @@ public final class MessageMatchers
 
       @Override
       public String toString() {
-        return "hasMessageId(" + messageId + ')';
+        return "hasMessage(" + messageId + ')';
       }
     };
   }
