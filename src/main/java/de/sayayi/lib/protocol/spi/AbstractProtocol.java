@@ -207,7 +207,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   {
     var depth = 0;
 
-    for(final InternalProtocolEntry<M> entry: entries)
+    for(val entry: entries)
       if (entry instanceof ProtocolGroupImpl)
         depth = Math.max(depth, 1 + ((ProtocolGroupImpl<M>)entry).countGroupDepth());
 
