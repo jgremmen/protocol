@@ -64,7 +64,7 @@ public class MessageBundleMessageProcessor implements MessageProcessor<Message>
    *
    * @since 1.0.0
    */
-  protected boolean isNoValidMessageCode(@SuppressWarnings("unused") @NotNull String codeOrMessageFormat) {
+  protected boolean isInvalidMessageCode(@SuppressWarnings("unused") @NotNull String codeOrMessageFormat) {
     return false;
   }
 
@@ -74,7 +74,7 @@ public class MessageBundleMessageProcessor implements MessageProcessor<Message>
   {
     requireNonNull(codeOrMessageFormat, "codeOrMessageFormat must not be null");
 
-    val message = isNoValidMessageCode(codeOrMessageFormat) ? null : messageBundle.getByCode(codeOrMessageFormat);
+    val message = isInvalidMessageCode(codeOrMessageFormat) ? null : messageBundle.getByCode(codeOrMessageFormat);
     if (message != null)
       return new GenericMessageWithId<>(message.getCode(), message);
 

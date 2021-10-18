@@ -357,7 +357,7 @@ public interface Protocol<M> extends ProtocolQueryable
   /**
    * Create a new protocol group.
    *
-   * @return  new protocol group
+   * @return  new protocol group, never {@code null}
    */
   @Contract(value = "-> new", mutates = "this")
   @NotNull ProtocolGroup<M> createGroup();
