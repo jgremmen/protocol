@@ -74,6 +74,12 @@ public final class MessageMatchers
   }
 
 
+  @Contract(pure = true)
+  public static @NotNull Junction hasThrowable(@NotNull Class<? extends Throwable> type) {
+    return HasThrowableMatcher.of(type);
+  }
+
+
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction hasTag(@NotNull TagDef tag) {
     return hasTag(tag.getName());

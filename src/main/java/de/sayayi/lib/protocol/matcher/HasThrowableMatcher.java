@@ -22,6 +22,7 @@ import de.sayayi.lib.protocol.matcher.MessageMatcher.Junction;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import static lombok.AccessLevel.PRIVATE;
@@ -35,17 +36,25 @@ import static lombok.AccessLevel.PRIVATE;
 @EqualsAndHashCode(callSuper = false)
 final class HasThrowableMatcher implements Junction
 {
-  static final HasThrowableMatcher INSTANCE = new HasThrowableMatcher();
+  static final HasThrowableMatcher INSTANCE = new HasThrowableMatcher(Throwable.class);
+
+  private final Class<? extends Throwable> type;
 
 
   @Override
   public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
-    return message.getThrowable() != null;
+    return type.isInstance(message.getThrowable());
   }
 
 
   @Override
   public String toString() {
-    return "hasThrowable()";
+    return "hasThrowable(" + (type == Throwable.class ? "" : type.getName()) + ')' ;
+  }
+
+
+  @Contract(pure = true)
+  static Junction of(@NotNull Class<? extends Throwable> type) {
+    return type == Throwable.class ? INSTANCE : new HasThrowableMatcher(type);
   }
 }
