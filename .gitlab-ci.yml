@@ -21,4 +21,4 @@ build:
   artifacts:
     paths:
       - ./build/libs/*
-    expire_in: 8 weeks
+    expire_in: 4 weeks
