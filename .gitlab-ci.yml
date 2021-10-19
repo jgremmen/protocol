@@ -3,22 +3,29 @@ image: openjdk:8-jdk-slim
 
 stages:
   - build
+  - test
 
 variables:
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
-  GRADLE_USER_HOME: ".gradle-cache"
+  GRADLE_USER_HOME: ".gradle"
 
 before_script:
   - chmod +x ./gradlew
 
 cache:
   paths:
-    - .gradle-cache
+    - .gradle/wrapper
+    - .gradle/caches
 
 build:
   stage: build
-  script: ./gradlew clean build
+  script: ./gradlew assemble
   artifacts:
     paths:
-      - ./build/libs/*
-    expire_in: 4 weeks
+      - ./build/libs/*.jar
+    expire_in: 1 week
+
+test:
+  stage: test
+  script:
+    - ./gradlew test
