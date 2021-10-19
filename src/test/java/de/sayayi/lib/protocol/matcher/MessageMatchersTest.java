@@ -21,6 +21,8 @@ import org.junit.Test;
 
 import lombok.val;
 
+import java.util.Collections;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
@@ -30,6 +32,7 @@ import static de.sayayi.lib.protocol.matcher.MessageMatchers.hasAnyOf;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.hasMessage;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.hasNoneOf;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.hasParam;
+import static de.sayayi.lib.protocol.matcher.MessageMatchers.hasParamValue;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.hasTag;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
@@ -128,12 +131,37 @@ public class MessageMatchersTest
 
 
   @Test
-  public void testHasParamValue1() {
+  public void testHasParamValue1()
+  {
+    //noinspection unchecked
+    val message = (Message<Object>)mock(Message.class, CALLS_REAL_METHODS);
+    val params = new TreeMap<String,Object>();
+
+    params.put("null", null);
+    params.put("not-null", true);
+
+    when(message.getParameterValues()).thenReturn(Collections.unmodifiableMap(params));
+
+    assertFalse(hasParamValue("null").matches(HIGHEST, message));
+    assertTrue(hasParamValue("not-null").matches(HIGHEST, message));
   }
 
 
   @Test
-  public void testHasParamValue2() {
+  public void testHasParamValue2()
+  {
+    //noinspection unchecked
+    val message = (Message<Object>)mock(Message.class, CALLS_REAL_METHODS);
+    val params = new TreeMap<String,Object>();
+
+    params.put("null", null);
+    params.put("not-null", true);
+
+    when(message.getParameterValues()).thenReturn(Collections.unmodifiableMap(params));
+
+    assertTrue(hasParamValue("null", null).matches(HIGHEST, message));
+    assertTrue(hasParamValue("not-null", true).matches(HIGHEST, message));
+    assertFalse(hasParamValue("not-null", "true").matches(HIGHEST, message));
   }
 
 
