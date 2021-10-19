@@ -1,5 +1,5 @@
 # CI script
-image: java:8-jdk
+image: openjdk:8-jdk-slim
 
 stages:
   - build
