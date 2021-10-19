@@ -17,6 +17,7 @@ package de.sayayi.lib.protocol.matcher;
 
 import de.sayayi.lib.protocol.Protocol.Message;
 import de.sayayi.lib.protocol.StringProtocolFactory;
+import de.sayayi.lib.protocol.Tag;
 import org.junit.Test;
 
 import lombok.val;
@@ -27,13 +28,7 @@ import java.util.TreeSet;
 
 import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
 import static de.sayayi.lib.protocol.ProtocolFactory.DEFAULT_TAG_NAME;
-import static de.sayayi.lib.protocol.matcher.MessageMatchers.hasAllOf;
-import static de.sayayi.lib.protocol.matcher.MessageMatchers.hasAnyOf;
-import static de.sayayi.lib.protocol.matcher.MessageMatchers.hasMessage;
-import static de.sayayi.lib.protocol.matcher.MessageMatchers.hasNoneOf;
-import static de.sayayi.lib.protocol.matcher.MessageMatchers.hasParam;
-import static de.sayayi.lib.protocol.matcher.MessageMatchers.hasParamValue;
-import static de.sayayi.lib.protocol.matcher.MessageMatchers.hasTag;
+import static de.sayayi.lib.protocol.matcher.MessageMatchers.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
 import static org.junit.Assert.assertFalse;
@@ -175,5 +170,19 @@ public class MessageMatchersTest
     assertTrue(hasMessage("MSG-0341").matches(HIGHEST, message));
     assertFalse(hasMessage("MSG-0001").matches(HIGHEST, message));
     assertFalse(hasMessage("").matches(HIGHEST, message));
+  }
+
+
+  @Test
+  public void testIsTagSelector()
+  {
+    //noinspection unchecked
+    val message = (Message<Object>)mock(Message.class, CALLS_REAL_METHODS);
+    when(message.getTagNames()).thenReturn(new TreeSet<>(asList(DEFAULT_TAG_NAME, "gui")));
+
+    assertTrue(is(Tag.parse("gui")).matches(HIGHEST, message));
+    assertTrue(is(Tag.parse(DEFAULT_TAG_NAME)).matches(HIGHEST, message));
+    assertTrue(is(Tag.parse("or(gui,test)")).matches(HIGHEST, message));
+    assertFalse(is(Tag.parse("and(gui,test)")).matches(HIGHEST, message));
   }
 }
