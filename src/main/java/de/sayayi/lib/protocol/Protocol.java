@@ -417,6 +417,10 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
   /**
+   * @param matcher  Message matcher, never {@code null}
+   *
+   * @return  protocol iterator over all matching elements, never {@code null}
+   *
    * @since 1.0.0
    */
   @Contract(pure = true, value = "_ -> new")
@@ -424,6 +428,19 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
   /**
+   * <p>
+   *   Creates a {@code Spliterator} over the elements of this protocol matched by
+   *   {@code matcher}, with no initial size estimate.
+   * </p>
+   * <p>
+   *   The {@code Spliterator} reports {@link Spliterator#ORDERED},{@link Spliterator#DISTINCT} and
+   *   {@link Spliterator#NONNULL}.
+   * </p>
+   *
+   * @param matcher  Message matcher, never {@code null}
+   *
+   * @return A spliterator from an iterator
+   *
    * @since 1.0.0
    */
   @Contract(pure = true, value = "_ -> new")
