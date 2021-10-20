@@ -175,6 +175,11 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
   /**
+   * @param matcher  Message matcher, never {@code null}
+   *
+   * @return  {@code true} if a group header is set and is visible for the given {@code matcher},
+   *          {@code false} otherwise
+   *
    * @since 1.0.0
    */
   @Contract(pure = true)
