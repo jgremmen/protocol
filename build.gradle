@@ -6,6 +6,7 @@ plugins {
   id 'jacoco'
   id 'signing'
   id "org.sonarqube" version "3.0"
+  id 'io.franzbecker.gradle-lombok' version '5.0.0'
 }
 
 
@@ -19,13 +20,37 @@ ext {
   junitVersion = "4.13.2"
   lombokVersion = "1.18.22"
   messageFormatVersion = "0.4.2"
-  mockitoVersion = "3.12.4"
+  mockitoVersion = "4.0.0"
   unbescapeVersion = "1.1.6.RELEASE"
 }
 
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+lombok {
+  version = lombokVersion
+  sha256 = ""
+}
+
+
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(8)
+  }
+}
+
+
+import io.franzbecker.gradle.lombok.task.DelombokTask
+
+task delombok(type: DelombokTask, dependsOn: compileJava) {
+  ext.outputDir = file("$buildDir/delombok")
+  outputs.dir(outputDir)
+  sourceSets.main.java.srcDirs.each {
+    inputs.dir(it)
+    args(it, "-d", outputDir)
+  }
+  doFirst {
+    outputDir.deleteDir();
+  }
+}
 
 
 apply from: file('gradle/javadoc.gradle')

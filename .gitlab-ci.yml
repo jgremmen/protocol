@@ -1,9 +1,8 @@
 # CI script
-image: openjdk:8-jdk-slim
+image: openjdk:8-jdk
 
 stages:
   - build
-  - test
 
 variables:
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
@@ -19,13 +18,8 @@ cache:
 
 build:
   stage: build
-  script: ./gradlew assemble
+  script: ./gradlew build
   artifacts:
     paths:
       - ./build/libs/*.jar
     expire_in: 1 week
-
-test:
-  stage: test
-  script:
-    - ./gradlew test
