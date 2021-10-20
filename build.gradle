@@ -31,8 +31,8 @@ lombok {
 }
 
 
-tasks.withType(JavaCompile).configureEach {
-  javaCompiler = javaToolchains.compilerFor {
+java {
+  toolchain {
     languageVersion = JavaLanguageVersion.of(8)
   }
 }
@@ -41,12 +41,18 @@ tasks.withType(JavaCompile).configureEach {
 import io.franzbecker.gradle.lombok.task.DelombokTask
 
 task delombok(type: DelombokTask, dependsOn: compileJava) {
+  javaLauncher = javaToolchains.launcherFor {
+    languageVersion = JavaLanguageVersion.of(8)
+  }
+
   ext.outputDir = file("$buildDir/delombok")
   outputs.dir(outputDir)
+
   sourceSets.main.java.srcDirs.each {
     inputs.dir(it)
     args(it, "-d", outputDir)
   }
+
   doFirst {
     outputDir.deleteDir();
   }
