@@ -19,11 +19,12 @@ javadoc {
   title "Java Protocol Library ${version}"
 
   (options as StandardJavadocDocletOptions).with {
-    linksOffline 'http://javadox.com/org.jetbrains/annotations/15.0/', 'gradle/javadocs/jetbrains-annotations'
+    linksOffline 'https://javadoc.io/doc/org.jetbrains/annotations/20.0.0/', 'gradle/javadocs/jetbrains-annotations'
 
     encoding 'UTF-8'
 
     group("Protocol Core API", ["de.sayayi.lib.protocol"])
+    group("Protocol Message Matchers", ["de.sayayi.lib.protocol.matcher"])
     group("Protocol Message Processors", ["de.sayayi.lib.protocol.processor"])
     group("Protocol Formatters", ["de.sayayi.lib.protocol.formatter"])
     group("Protocol SPI", ["de.sayayi.lib.protocol.spi"])
@@ -32,5 +33,7 @@ javadoc {
     noQualifiers 'java.util', 'java.lang'
   }
 
+  dependsOn delombok
+  source = delombok.outputDir
   failOnError false
 }
