@@ -48,6 +48,8 @@ public class StringProtocolFactory extends GenericProtocolFactory<String>
    *   This string protocol factory formats messages as is without parameter substitution.
    * </p>
    *
+   * @return  plain text protocol factory, never {@code null}
+   *
    * @since 0.7.0
    */
   @Contract(value = "-> new", pure = true)

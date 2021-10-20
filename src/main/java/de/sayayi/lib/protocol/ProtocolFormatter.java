@@ -38,6 +38,7 @@ public interface ProtocolFormatter<M,R>
    * This method is invoked before any other formatting methods are invoked and must initialize the formatter in
    * such way that it can be reused.
    *
+   * @param factory              protocol factory, never {@code null}
    * @param matcher              message matcher, never {@code null}
    * @param estimatedGroupDepth  the estimated depth of nested protocol groups ({@code 0} means the protocol contains
    *                             no groups). The real depth depends on {@code level}, {@code tags} and group
