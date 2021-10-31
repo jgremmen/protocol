@@ -21,6 +21,7 @@ import de.sayayi.lib.protocol.ProtocolFactory.MessageFormatter;
 import lombok.val;
 import lombok.var;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import static java.util.Arrays.copyOf;
@@ -54,7 +55,7 @@ public abstract class AbstractIndexedMessageFormatter<M> implements MessageForma
       } catch(NumberFormatException ignored) {
       }
 
-      if ((i >> 6) == 0)
+      if (i >> 6 == 0)  // 0..31
       {
         if (i >= parameters.length)
           parameters = copyOf(parameters, i + 1);
@@ -85,5 +86,6 @@ public abstract class AbstractIndexedMessageFormatter<M> implements MessageForma
    *
    * @return  formatted message
    */
+  @Contract(pure = true)
   protected abstract @NotNull String formatMessage(@NotNull GenericMessage<M> message, @NotNull Object[] parameters);
 }

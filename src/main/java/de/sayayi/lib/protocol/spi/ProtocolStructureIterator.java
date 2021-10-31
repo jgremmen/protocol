@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.FLATTEN;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ALWAYS;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_IF_NOT_EMPTY;
@@ -225,8 +226,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   {
     ForProtocol(@NotNull MessageMatcher matcher, int depth, @NotNull ProtocolImpl<M> protocol)
     {
-      super(Level.Shared.HIGHEST, matcher, depth,
-          protocol.getEntries(Level.Shared.HIGHEST, matcher), true);
+      super(HIGHEST, matcher, depth, protocol.getEntries(HIGHEST, matcher), true);
 
       prepareNextEntry(false);
     }

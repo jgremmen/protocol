@@ -82,7 +82,7 @@ public interface ProtocolFactory<M>
   boolean isValidTagName(String tagName);
 
 
-  @Contract("_ -> new")
+  @Contract(value = "_ -> new", mutates = "this")
   @NotNull TagBuilder<M> createTag(@NotNull String name);
 
 
@@ -237,6 +237,7 @@ public interface ProtocolFactory<M>
      *
      * @return  formatted message, never {@code null}
      */
+    @Contract(pure = true)
     @NotNull String formatMessage(@NotNull GenericMessage<M> message);
   }
 }
