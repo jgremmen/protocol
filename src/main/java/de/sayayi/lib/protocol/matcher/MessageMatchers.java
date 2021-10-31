@@ -260,7 +260,7 @@ public final class MessageMatchers
   /**
    * Create a matcher which checks for messages with a level which is at least {@code DEBUG}.
    *
-   * @return  matcher instance which checks for messages with a level >= {@code DEBUG}
+   * @return  matcher instance which checks for messages with a level &gt;= {@code DEBUG}
    *
    * @see #is(Level)
    * @see Level.Shared#DEBUG
@@ -274,7 +274,7 @@ public final class MessageMatchers
   /**
    * Create a matcher which checks for messages with a level which is at least {@code INFO}.
    *
-   * @return  matcher instance which checks for messages with a level >= {@code INFO}
+   * @return  matcher instance which checks for messages with a level &gt;= {@code INFO}
    *
    * @see #is(Level)
    * @see Level.Shared#INFO
@@ -288,7 +288,7 @@ public final class MessageMatchers
   /**
    * Create a matcher which checks for messages with a level which is at least {@code WARN}.
    *
-   * @return  matcher instance which checks for messages with a level >= {@code WARN}
+   * @return  matcher instance which checks for messages with a level &gt;= {@code WARN}
    *
    * @see #is(Level)
    * @see Level.Shared#WARN
@@ -302,7 +302,7 @@ public final class MessageMatchers
   /**
    * Create a matcher which checks for messages with a level which is at least {@code ERROR}.
    *
-   * @return  matcher instance which checks for messages with a level >= {@code ERROR}
+   * @return  matcher instance which checks for messages with a level &gt;= {@code ERROR}
    *
    * @see #is(Level)
    * @see Level.Shared#ERROR
@@ -318,7 +318,7 @@ public final class MessageMatchers
    *
    * @param level  lowest level to match, not {@code null}
    *
-   * @return  matcher instance which checks for messages with a level >= {@code level}
+   * @return  matcher instance which checks for messages with a level &gt;= {@code level}
    */
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction is(@NotNull Level level) {
