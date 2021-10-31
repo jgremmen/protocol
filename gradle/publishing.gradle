@@ -16,9 +16,20 @@
 
 
 tasks.withType(Jar) {
-  from files('LICENSE')
-
   reproducibleFileOrder true
+
+  manifest {
+    attributes(
+            "Implementation-Vendor": "Jeroen Gremmen",
+            "Implementation-Vendor-Id": "de.sayayi",
+            "Implementation-Title": project.name,
+            "Implementation-Version": project.version,
+            "Created-By": "${System.getProperty("java.version")} (${System.getProperty("java.specification.vendor")})",
+            "Built-Date": new Date().format('yyyy-MM-dd HH:mm:ss')
+    )
+  }
+
+  from files('LICENSE')
 }
 
 
