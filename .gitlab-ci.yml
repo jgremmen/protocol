@@ -20,6 +20,7 @@ build:
   stage: build
   script: ./gradlew clean build
   artifacts:
+    name: "protocol-artifacts"
     paths:
       - ./build/libs/*.jar
-    expire_in: 1 week
+    expire_in: 2 weeks
