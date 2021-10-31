@@ -18,7 +18,7 @@ package de.sayayi.lib.protocol;
 import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import lombok.val;
 
@@ -29,9 +29,9 @@ import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.FLATTEN_ON_SINGLE_
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ALWAYS;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.isError;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.isLowest;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**

@@ -16,7 +16,7 @@
 package de.sayayi.lib.protocol;
 
 import de.sayayi.lib.protocol.exception.ProtocolException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import lombok.val;
 
@@ -31,9 +31,10 @@ import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ONLY;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.isDebug;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.isInfo;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.isLowest;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
@@ -200,23 +201,27 @@ public class ProtocolGroupTest
   }
 
 
-  @Test(expected = NullPointerException.class)
+  @Test
   public void testSetVisibiityNull()
   {
-    //noinspection ConstantConditions
-    StringProtocolFactory.createPlainTextFactory().createProtocol().createGroup().setVisibility(null);
+    assertThrows(NullPointerException.class, () -> {
+      //noinspection ConstantConditions
+      StringProtocolFactory.createPlainTextFactory().createProtocol().createGroup().setVisibility(null);
+    });
   }
 
 
-  @Test(expected = NullPointerException.class)
+  @Test
   public void testLevelLimitNull()
   {
-    //noinspection ConstantConditions
-    StringProtocolFactory.createPlainTextFactory().createProtocol().createGroup().setLevelLimit(null);
+    assertThrows(NullPointerException.class, () -> {
+      //noinspection ConstantConditions
+      StringProtocolFactory.createPlainTextFactory().createProtocol().createGroup().setLevelLimit(null);
+    });
   }
 
 
-  @Test(expected = ProtocolException.class)
+  @Test
   public void testDuplicateGroupName()
   {
     val factory = StringProtocolFactory.createPlainTextFactory();
@@ -225,7 +230,9 @@ public class ProtocolGroupTest
     val gp2 = protocol.createGroup().setName("group-2");
     protocol.createGroup().setName("group-3");
 
-    gp2.createGroup().setName("group-2-1");
-    gp2.createGroup().setName("group-3");
+    assertThrows(ProtocolException.class, () -> {
+      gp2.createGroup().setName("group-2-1");
+      gp2.createGroup().setName("group-3");
+    });
   }
 }

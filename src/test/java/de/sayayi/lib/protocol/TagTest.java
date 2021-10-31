@@ -16,15 +16,16 @@
 package de.sayayi.lib.protocol;
 
 import de.sayayi.lib.protocol.exception.ProtocolException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import lombok.val;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
@@ -56,9 +57,9 @@ public class TagTest
 
 
   @SuppressWarnings("ResultOfMethodCallIgnored")
-  @Test(expected = ProtocolException.class)
+  @Test
   public void testAllOfFail() {
-    Tag.allOf();
+    assertThrows(ProtocolException.class, Tag::allOf);
   }
 
 
@@ -96,9 +97,9 @@ public class TagTest
 
 
   @SuppressWarnings("ResultOfMethodCallIgnored")
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testAnyOfFail() {
-    Tag.anyOf();
+    assertThrows(IllegalArgumentException.class, Tag::anyOf);
   }
 
 
@@ -140,16 +141,16 @@ public class TagTest
 
 
   @SuppressWarnings("ResultOfMethodCallIgnored")
-  @Test(expected = ProtocolException.class)
+  @Test
   public void testOrFail() {
-    Tag.or();
+    assertThrows(ProtocolException.class, Tag::or);
   }
 
 
   @SuppressWarnings("ResultOfMethodCallIgnored")
-  @Test(expected = ProtocolException.class)
+  @Test
   public void testAndFail() {
-    Tag.and();
+    assertThrows(ProtocolException.class, Tag::and);
   }
 
 

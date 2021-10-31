@@ -18,7 +18,7 @@ package de.sayayi.lib.protocol.matcher;
 import de.sayayi.lib.protocol.Protocol.Message;
 import de.sayayi.lib.protocol.StringProtocolFactory;
 import de.sayayi.lib.protocol.Tag;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import lombok.val;
 
@@ -31,8 +31,8 @@ import static de.sayayi.lib.protocol.ProtocolFactory.DEFAULT_TAG_NAME;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Answers.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

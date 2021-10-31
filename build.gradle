@@ -17,7 +17,7 @@ version '1.0.0'
 
 ext {
   jetbrainsAnnotationsVersion = "22.0.0"
-  junitVersion = "4.13.2"
+  junitVersion = "5.8.1"
   lombokVersion = "1.18.22"
   messageFormatVersion = "0.6.1"
   mockitoVersion = "4.0.0"
@@ -35,6 +35,11 @@ java {
   toolchain {
     languageVersion = JavaLanguageVersion.of(8)
   }
+}
+
+
+test {
+  useJUnitPlatform()
 }
 
 
@@ -82,9 +87,11 @@ dependencies {
   // test
   testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
-  testImplementation "junit:junit:${junitVersion}"
+  testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
   testImplementation "org.mockito:mockito-core:${mockitoVersion}"
 
   testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
   testCompileOnly "org.jetbrains:annotations:${jetbrainsAnnotationsVersion}"
+
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
 }

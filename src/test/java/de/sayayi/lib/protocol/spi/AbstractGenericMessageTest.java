@@ -15,14 +15,15 @@
  */
 package de.sayayi.lib.protocol.spi;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import lombok.val;
 
 import org.jetbrains.annotations.NotNull;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
@@ -42,13 +43,15 @@ public class AbstractGenericMessageTest
   }
 
 
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   public void testParametersNotModifyable()
   {
     val parameters = new ParameterMap();
     parameters.put("key", "value123");
 
-    new TestMessage("msg", parameters).getParameterValues().put("key2", "test");
+    //noinspection WriteOnlyObject
+    assertThrows(UnsupportedOperationException.class,
+        () -> new TestMessage("msg", parameters).getParameterValues().put("key2", "test"));
   }
 
 

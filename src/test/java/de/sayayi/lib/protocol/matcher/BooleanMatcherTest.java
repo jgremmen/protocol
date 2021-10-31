@@ -16,14 +16,14 @@
 package de.sayayi.lib.protocol.matcher;
 
 import de.sayayi.lib.protocol.Protocol.Message;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import lombok.val;
 
 import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**

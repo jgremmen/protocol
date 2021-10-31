@@ -17,13 +17,13 @@ package de.sayayi.lib.protocol.selector.parser;
 
 import de.sayayi.lib.protocol.selector.parser.TagSelectorLexer.Token;
 import de.sayayi.lib.protocol.selector.parser.TagSelectorLexer.TokenType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
 
 import static de.sayayi.lib.protocol.selector.parser.TagSelectorLexer.TokenType.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 
 /**

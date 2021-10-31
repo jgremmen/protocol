@@ -17,14 +17,15 @@ package de.sayayi.lib.protocol.selector.parser;
 
 import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.exception.TagSelectorParserException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
@@ -92,26 +93,34 @@ public class TagSelectorParserTest
   }
 
 
-  @Test(expected = TagSelectorParserException.class)
-  public void testFailAdditional() {
-    new TagSelectorParser("any( ) test").parseSelector();
+  @Test
+  public void testFailAdditional()
+  {
+    assertThrows(TagSelectorParserException.class,
+        () -> new TagSelectorParser("any( ) test").parseSelector());
   }
 
 
-  @Test(expected = TagSelectorParserException.class)
-  public void testFailNoSelection() {
-    new TagSelectorParser(" ").parseSelector();
+  @Test
+  public void testFailNoSelection()
+  {
+    assertThrows(TagSelectorParserException.class,
+        () -> new TagSelectorParser(" ").parseSelector());
   }
 
 
-  @Test(expected = TagSelectorParserException.class)
-  public void testFailIncomplete() {
-    new TagSelectorParser("allOf(").parseSelector();
+  @Test
+  public void testFailIncomplete()
+  {
+    assertThrows(TagSelectorParserException.class,
+        () -> new TagSelectorParser("allOf(").parseSelector());
   }
 
 
-  @Test(expected = TagSelectorParserException.class)
-  public void testFailWrongToken() {
-    new TagSelectorParser("allOf)").parseSelector();
+  @Test
+  public void testFailWrongToken()
+  {
+    assertThrows(TagSelectorParserException.class,
+        () -> new TagSelectorParser("allOf)").parseSelector());
   }
 }

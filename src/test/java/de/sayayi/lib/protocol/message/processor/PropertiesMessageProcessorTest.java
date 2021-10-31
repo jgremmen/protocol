@@ -18,14 +18,15 @@ package de.sayayi.lib.protocol.message.processor;
 import de.sayayi.lib.protocol.exception.ProtocolException;
 import de.sayayi.lib.protocol.message.formatter.ToStringMessageFormatter;
 import de.sayayi.lib.protocol.spi.GenericProtocolFactory;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import lombok.val;
 
 import java.util.Properties;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 /**
@@ -33,11 +34,11 @@ import static org.junit.Assert.assertEquals;
  */
 public class PropertiesMessageProcessorTest
 {
-  private PropertiesMessageProcessor messageProcessor;
+  private static PropertiesMessageProcessor messageProcessor;
 
 
-  @Before
-  public void init()
+  @BeforeAll
+  public static void init()
   {
     val messageMap = new Properties();
     messageMap.setProperty("001", "Message 1");
@@ -60,12 +61,12 @@ public class PropertiesMessageProcessorTest
   }
 
 
-  @Test(expected = ProtocolException.class)
+  @Test
   public void testUnknownMessage()
   {
     val factory = new GenericProtocolFactory<>(messageProcessor, ToStringMessageFormatter.IDENTITY);
     val protocol = factory.createProtocol();
 
-    protocol.warn().message("004");
+    assertThrows(ProtocolException.class, () -> protocol.warn().message("004"));
   }
 }

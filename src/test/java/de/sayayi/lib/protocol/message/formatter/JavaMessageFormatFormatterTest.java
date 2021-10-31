@@ -16,7 +16,7 @@
 package de.sayayi.lib.protocol.message.formatter;
 
 import de.sayayi.lib.protocol.Protocol.GenericMessage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import lombok.val;
 
@@ -24,7 +24,7 @@ import java.util.HashMap;
 
 import static java.util.Collections.singletonMap;
 import static java.util.Locale.ROOT;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
