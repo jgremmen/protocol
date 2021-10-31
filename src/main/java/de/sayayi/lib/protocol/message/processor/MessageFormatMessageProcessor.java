@@ -16,16 +16,18 @@
 package de.sayayi.lib.protocol.message.processor;
 
 import de.sayayi.lib.message.Message;
+import de.sayayi.lib.message.MessageFactory;
 import de.sayayi.lib.message.exception.MessageParserException;
 import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
 import de.sayayi.lib.protocol.exception.ProtocolException;
 import de.sayayi.lib.protocol.spi.GenericMessageWithId;
 
+import lombok.AllArgsConstructor;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-import static de.sayayi.lib.message.MessageFactory.parse;
 import static java.util.Objects.requireNonNull;
 
 
@@ -35,9 +37,14 @@ import static java.util.Objects.requireNonNull;
  *
  * @see MessageBundleMessageProcessor
  */
-public enum MessageFormatMessageProcessor implements MessageProcessor<Message>
+@AllArgsConstructor
+public class MessageFormatMessageProcessor implements MessageProcessor<Message>
 {
-  INSTANCE;
+  private final @NotNull MessageFactory messageFactory;
+
+
+  public static final MessageFormatMessageProcessor INSTANCE =
+      new MessageFormatMessageProcessor(MessageFactory.NO_CACHE_INSTANCE);
 
 
   @Override
@@ -45,7 +52,7 @@ public enum MessageFormatMessageProcessor implements MessageProcessor<Message>
   {
     try {
       return new GenericMessageWithId<>(
-          parse(requireNonNull(messageFormat, "messageFormat must not be null")));
+          messageFactory.parse(requireNonNull(messageFormat, "messageFormat must not be null")));
     } catch(MessageParserException ex) {
       throw new ProtocolException("failed to process message: " + ex.getMessage(), ex);
     }
