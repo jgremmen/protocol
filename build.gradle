@@ -19,7 +19,7 @@ ext {
   jetbrainsAnnotationsVersion = "22.0.0"
   junitVersion = "4.13.2"
   lombokVersion = "1.18.22"
-  messageFormatVersion = "0.4.2"
+  messageFormatVersion = "0.6.1"
   mockitoVersion = "4.0.0"
   unbescapeVersion = "1.1.6.RELEASE"
 }
