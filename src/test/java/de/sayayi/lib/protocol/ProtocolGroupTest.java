@@ -22,15 +22,16 @@ import lombok.val;
 
 import java.util.LinkedHashSet;
 
+import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.FLATTEN;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.FLATTEN_ON_SINGLE_ENTRY;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.HIDDEN;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ALWAYS;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_IF_NOT_EMPTY;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ONLY;
+import static de.sayayi.lib.protocol.matcher.MessageMatchers.is;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.isDebug;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.isInfo;
-import static de.sayayi.lib.protocol.matcher.MessageMatchers.isLowest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -48,21 +49,21 @@ public class ProtocolGroupTest
     val factory = StringProtocolFactory.createPlainTextFactory();
     val gp = factory.createProtocol().createGroup();
 
-    assertFalse(gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).isHeaderVisible(isLowest()));
-    assertFalse(gp.setVisibility(SHOW_HEADER_ALWAYS).isHeaderVisible(isLowest()));
-    assertFalse(gp.setVisibility(SHOW_HEADER_ONLY).isHeaderVisible(isLowest()));
-    assertFalse(gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).isHeaderVisible(isLowest()));
-    assertFalse(gp.setVisibility(FLATTEN).isHeaderVisible(isLowest()));
-    assertFalse(gp.setVisibility(HIDDEN).isHeaderVisible(isLowest()));
+    assertFalse(gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).isHeaderVisible(is(LOWEST)));
+    assertFalse(gp.setVisibility(SHOW_HEADER_ALWAYS).isHeaderVisible(is(LOWEST)));
+    assertFalse(gp.setVisibility(SHOW_HEADER_ONLY).isHeaderVisible(is(LOWEST)));
+    assertFalse(gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).isHeaderVisible(is(LOWEST)));
+    assertFalse(gp.setVisibility(FLATTEN).isHeaderVisible(is(LOWEST)));
+    assertFalse(gp.setVisibility(HIDDEN).isHeaderVisible(is(LOWEST)));
 
     gp.setGroupMessage("Test");
 
-    assertFalse(gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).isHeaderVisible(isLowest()));
-    assertTrue(gp.setVisibility(SHOW_HEADER_ALWAYS).isHeaderVisible(isLowest()));
-    assertTrue(gp.setVisibility(SHOW_HEADER_ONLY).isHeaderVisible(isLowest()));
-    assertFalse(gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).isHeaderVisible(isLowest()));
-    assertFalse(gp.setVisibility(FLATTEN).isHeaderVisible(isLowest()));
-    assertFalse(gp.setVisibility(HIDDEN).isHeaderVisible(isLowest()));
+    assertFalse(gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).isHeaderVisible(is(LOWEST)));
+    assertTrue(gp.setVisibility(SHOW_HEADER_ALWAYS).isHeaderVisible(is(LOWEST)));
+    assertTrue(gp.setVisibility(SHOW_HEADER_ONLY).isHeaderVisible(is(LOWEST)));
+    assertFalse(gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).isHeaderVisible(is(LOWEST)));
+    assertFalse(gp.setVisibility(FLATTEN).isHeaderVisible(is(LOWEST)));
+    assertFalse(gp.setVisibility(HIDDEN).isHeaderVisible(is(LOWEST)));
 
     gp.debug().message("Msg #1");
 
@@ -91,12 +92,12 @@ public class ProtocolGroupTest
 
     gp.error().message("Msg #3");
 
-    assertTrue(gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).isHeaderVisible(isLowest()));
-    assertTrue(gp.setVisibility(SHOW_HEADER_ALWAYS).isHeaderVisible(isLowest()));
-    assertTrue(gp.setVisibility(SHOW_HEADER_ONLY).isHeaderVisible(isLowest()));
-    assertTrue(gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).isHeaderVisible(isLowest()));
-    assertFalse(gp.setVisibility(FLATTEN).isHeaderVisible(isLowest()));
-    assertFalse(gp.setVisibility(HIDDEN).isHeaderVisible(isLowest()));
+    assertTrue(gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).isHeaderVisible(is(LOWEST)));
+    assertTrue(gp.setVisibility(SHOW_HEADER_ALWAYS).isHeaderVisible(is(LOWEST)));
+    assertTrue(gp.setVisibility(SHOW_HEADER_ONLY).isHeaderVisible(is(LOWEST)));
+    assertTrue(gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).isHeaderVisible(is(LOWEST)));
+    assertFalse(gp.setVisibility(FLATTEN).isHeaderVisible(is(LOWEST)));
+    assertFalse(gp.setVisibility(HIDDEN).isHeaderVisible(is(LOWEST)));
   }
 
 
@@ -106,34 +107,34 @@ public class ProtocolGroupTest
     val factory = StringProtocolFactory.createPlainTextFactory();
     val gp = factory.createProtocol().createGroup();
 
-    assertEquals(0, gp.getVisibleEntryCount(true, isLowest()));
+    assertEquals(0, gp.getVisibleEntryCount(true, is(LOWEST)));
 
     gp.setGroupMessage("Test").with("param1", "Huhu");
 
-    assertEquals(1, gp.setVisibility(SHOW_HEADER_ONLY).getVisibleEntryCount(true, isLowest()));
-    assertEquals(1, gp.setVisibility(SHOW_HEADER_ALWAYS).getVisibleEntryCount(true, isLowest()));
-    assertEquals(0, gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).getVisibleEntryCount(true, isLowest()));
-    assertEquals(0, gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).getVisibleEntryCount(true, isLowest()));
-    assertEquals(0, gp.setVisibility(HIDDEN).getVisibleEntryCount(true, isLowest()));
-    assertEquals(0, gp.setVisibility(FLATTEN).getVisibleEntryCount(true, isLowest()));
+    assertEquals(1, gp.setVisibility(SHOW_HEADER_ONLY).getVisibleEntryCount(true, is(LOWEST)));
+    assertEquals(1, gp.setVisibility(SHOW_HEADER_ALWAYS).getVisibleEntryCount(true, is(LOWEST)));
+    assertEquals(0, gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).getVisibleEntryCount(true, is(LOWEST)));
+    assertEquals(0, gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).getVisibleEntryCount(true, is(LOWEST)));
+    assertEquals(0, gp.setVisibility(HIDDEN).getVisibleEntryCount(true, is(LOWEST)));
+    assertEquals(0, gp.setVisibility(FLATTEN).getVisibleEntryCount(true, is(LOWEST)));
 
     gp.debug().message("msg #1");
 
-    assertEquals(1, gp.setVisibility(SHOW_HEADER_ONLY).getVisibleEntryCount(true, isLowest()));
-    assertEquals(2, gp.setVisibility(SHOW_HEADER_ALWAYS).getVisibleEntryCount(true, isLowest()));
-    assertEquals(2, gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).getVisibleEntryCount(true, isLowest()));
-    assertEquals(1, gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).getVisibleEntryCount(true, isLowest()));
-    assertEquals(0, gp.setVisibility(HIDDEN).getVisibleEntryCount(true, isLowest()));
-    assertEquals(1, gp.setVisibility(FLATTEN).getVisibleEntryCount(true, isLowest()));
+    assertEquals(1, gp.setVisibility(SHOW_HEADER_ONLY).getVisibleEntryCount(true, is(LOWEST)));
+    assertEquals(2, gp.setVisibility(SHOW_HEADER_ALWAYS).getVisibleEntryCount(true, is(LOWEST)));
+    assertEquals(2, gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).getVisibleEntryCount(true, is(LOWEST)));
+    assertEquals(1, gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).getVisibleEntryCount(true, is(LOWEST)));
+    assertEquals(0, gp.setVisibility(HIDDEN).getVisibleEntryCount(true, is(LOWEST)));
+    assertEquals(1, gp.setVisibility(FLATTEN).getVisibleEntryCount(true, is(LOWEST)));
 
     gp.debug().message("msg #2");
 
-    assertEquals(1, gp.setVisibility(SHOW_HEADER_ONLY).getVisibleEntryCount(true, isLowest()));
-    assertEquals(3, gp.setVisibility(SHOW_HEADER_ALWAYS).getVisibleEntryCount(true, isLowest()));
-    assertEquals(3, gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).getVisibleEntryCount(true, isLowest()));
-    assertEquals(3, gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).getVisibleEntryCount(true, isLowest()));
-    assertEquals(0, gp.setVisibility(HIDDEN).getVisibleEntryCount(true, isLowest()));
-    assertEquals(2, gp.setVisibility(FLATTEN).getVisibleEntryCount(true, isLowest()));
+    assertEquals(1, gp.setVisibility(SHOW_HEADER_ONLY).getVisibleEntryCount(true, is(LOWEST)));
+    assertEquals(3, gp.setVisibility(SHOW_HEADER_ALWAYS).getVisibleEntryCount(true, is(LOWEST)));
+    assertEquals(3, gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).getVisibleEntryCount(true, is(LOWEST)));
+    assertEquals(3, gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).getVisibleEntryCount(true, is(LOWEST)));
+    assertEquals(0, gp.setVisibility(HIDDEN).getVisibleEntryCount(true, is(LOWEST)));
+    assertEquals(2, gp.setVisibility(FLATTEN).getVisibleEntryCount(true, is(LOWEST)));
   }
 
 

@@ -34,7 +34,7 @@ import static de.sayayi.lib.protocol.TagDef.MatchCondition.AT_LEAST;
 import static de.sayayi.lib.protocol.TagDef.MatchCondition.EQUAL;
 import static de.sayayi.lib.protocol.TagDef.MatchCondition.NOT_EQUAL;
 import static de.sayayi.lib.protocol.TagDef.MatchCondition.UNTIL;
-import static de.sayayi.lib.protocol.matcher.MessageMatchers.isLowest;
+import static de.sayayi.lib.protocol.matcher.MessageMatchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -50,7 +50,9 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class ProtocolFactoryTest
 {
   @Test
-  public void testCreateEmptyTag() {
+  public void testCreateEmptyTag()
+  {
+    //noinspection WriteOnlyObject
     assertThrows(ProtocolException.class, () -> StringProtocolFactory.createPlainTextFactory().createTag(""));
   }
 
@@ -58,6 +60,7 @@ public class ProtocolFactoryTest
   @Test
   public void testCreateDuplicateTag()
   {
+    //noinspection WriteOnlyObject
     val factory = StringProtocolFactory.createPlainTextFactory();
 
     assertThrows(ProtocolException.class, () -> {
@@ -197,7 +200,7 @@ public class ProtocolFactoryTest
     val factory = new GenericProtocolFactory<>(message -> new GenericMessageWithId<>(message + "(ok)"),
         ToStringMessageFormatter.IDENTITY);
     val protocol = factory.createProtocol().debug().message("msg");
-    val iterator = protocol.iterator(isLowest());
+    val iterator = protocol.iterator(is(LOWEST));
 
     iterator.next();  // protocol start
 

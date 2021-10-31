@@ -27,7 +27,6 @@ import lombok.val;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.TreeSet;
@@ -35,11 +34,11 @@ import java.util.TreeSet;
 import static de.sayayi.lib.protocol.Level.Shared.DEBUG;
 import static de.sayayi.lib.protocol.Level.Shared.ERROR;
 import static de.sayayi.lib.protocol.Level.Shared.INFO;
-import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
 import static de.sayayi.lib.protocol.Level.Shared.WARN;
 import static de.sayayi.lib.protocol.ProtocolFactory.DEFAULT_TAG_NAME;
 import static de.sayayi.lib.protocol.matcher.BooleanMatcher.ANY;
 import static de.sayayi.lib.protocol.matcher.BooleanMatcher.NONE;
+import static java.util.Arrays.asList;
 import static lombok.AccessLevel.PRIVATE;
 
 
@@ -62,7 +61,7 @@ public final class MessageMatchers
   }
 
 
-  @Contract(value = "_ -> new", pure = true)
+  @Contract(pure = true)
   public static @NotNull Junction not(@NotNull MessageMatcher matcher) {
     return Negation.of(matcher);
   }
@@ -128,7 +127,7 @@ public final class MessageMatchers
 
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction hasAnyOf(@NotNull String... tagNames) {
-    return hasAnyOf(Arrays.asList(tagNames));
+    return hasAnyOf(asList(tagNames));
   }
 
 
@@ -151,7 +150,7 @@ public final class MessageMatchers
 
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction hasAllOf(@NotNull String... tagNames) {
-    return hasAllOf(Arrays.asList(tagNames));
+    return hasAllOf(asList(tagNames));
   }
 
 
@@ -163,7 +162,7 @@ public final class MessageMatchers
 
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction hasNoneOf(@NotNull String... tagNames) {
-    return hasNoneOf(Arrays.asList(tagNames));
+    return hasNoneOf(asList(tagNames));
   }
 
 
@@ -189,7 +188,7 @@ public final class MessageMatchers
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction hasParam(@NotNull String parameterName)
   {
-    if (parameterName.length() == 0)
+    if (parameterName.isEmpty())
       return NONE;
 
     return new Junction() {
@@ -258,42 +257,82 @@ public final class MessageMatchers
   }
 
 
-  @Contract(pure = true)
-  public static @NotNull Junction isLowest() {
-    return is(LOWEST);
-  }
-
-
+  /**
+   * Create a matcher which checks for messages with a level which is at least {@code DEBUG}.
+   *
+   * @return  matcher instance which checks for messages with a level >= {@code DEBUG}
+   *
+   * @see #is(Level)
+   * @see Level.Shared#DEBUG
+   */
   @Contract(value = "-> new", pure = true)
   public static @NotNull Junction isDebug() {
     return is(DEBUG);
   }
 
 
+  /**
+   * Create a matcher which checks for messages with a level which is at least {@code INFO}.
+   *
+   * @return  matcher instance which checks for messages with a level >= {@code INFO}
+   *
+   * @see #is(Level)
+   * @see Level.Shared#INFO
+   */
   @Contract(value = "-> new", pure = true)
   public static @NotNull Junction isInfo() {
     return is(INFO);
   }
 
 
+  /**
+   * Create a matcher which checks for messages with a level which is at least {@code WARN}.
+   *
+   * @return  matcher instance which checks for messages with a level >= {@code WARN}
+   *
+   * @see #is(Level)
+   * @see Level.Shared#WARN
+   */
   @Contract(value = "-> new", pure = true)
   public static @NotNull Junction isWarn() {
     return is(WARN);
   }
 
 
+  /**
+   * Create a matcher which checks for messages with a level which is at least {@code ERROR}.
+   *
+   * @return  matcher instance which checks for messages with a level >= {@code ERROR}
+   *
+   * @see #is(Level)
+   * @see Level.Shared#ERROR
+   */
   @Contract(value = "-> new", pure = true)
   public static @NotNull Junction isError() {
     return is(ERROR);
   }
 
 
+  /**
+   * Create a matcher which checks for messages with a level which is at least {@code level}.
+   *
+   * @param level  lowest level to match, not {@code null}
+   *
+   * @return  matcher instance which checks for messages with a level >= {@code level}
+   */
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction is(@NotNull Level level) {
     return LevelMatcher.of(level);
   }
 
 
+  /**
+   * Create a matcher which checks for messages with the given {@code messageId}.
+   *
+   * @param messageId  message id to match, not {@code null}
+   *
+   * @return  matcher instance which checks for messages with the given {@code messageId}
+   */
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction hasMessage(@NotNull String messageId)
   {

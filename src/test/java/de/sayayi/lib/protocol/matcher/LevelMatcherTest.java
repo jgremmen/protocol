@@ -30,7 +30,6 @@ import static de.sayayi.lib.protocol.matcher.MessageMatchers.is;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.isDebug;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.isError;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.isInfo;
-import static de.sayayi.lib.protocol.matcher.MessageMatchers.isLowest;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.isWarn;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -50,7 +49,7 @@ public class LevelMatcherTest
     val message = (Message<Object>)mock(Message.class);
     when(message.getLevel()).thenReturn(LOWEST);
 
-    assertTrue(isLowest().matches(HIGHEST, message));
+    assertTrue(is(LOWEST).matches(HIGHEST, message));
     assertFalse(isDebug().matches(HIGHEST, message));
     assertFalse(isInfo().matches(HIGHEST, message));
     assertFalse(isWarn().matches(HIGHEST, message));
@@ -66,7 +65,7 @@ public class LevelMatcherTest
     val message = (Message<Object>)mock(Message.class);
     when(message.getLevel()).thenReturn(DEBUG);
 
-    assertTrue(isLowest().matches(HIGHEST, message));
+    assertTrue(is(LOWEST).matches(HIGHEST, message));
     assertTrue(isDebug().matches(HIGHEST, message));
     assertFalse(isInfo().matches(HIGHEST, message));
     assertFalse(isWarn().matches(HIGHEST, message));
@@ -82,7 +81,7 @@ public class LevelMatcherTest
     val message = (Message<Object>)mock(Message.class);
     when(message.getLevel()).thenReturn(INFO);
 
-    assertTrue(isLowest().matches(HIGHEST, message));
+    assertTrue(is(LOWEST).matches(HIGHEST, message));
     assertTrue(isDebug().matches(HIGHEST, message));
     assertTrue(isInfo().matches(HIGHEST, message));
     assertFalse(isWarn().matches(HIGHEST, message));
@@ -98,7 +97,7 @@ public class LevelMatcherTest
     val message = (Message<Object>)mock(Message.class);
     when(message.getLevel()).thenReturn(WARN);
 
-    assertTrue(isLowest().matches(HIGHEST, message));
+    assertTrue(is(LOWEST).matches(HIGHEST, message));
     assertTrue(isDebug().matches(HIGHEST, message));
     assertTrue(isInfo().matches(HIGHEST, message));
     assertTrue(isWarn().matches(HIGHEST, message));
@@ -114,7 +113,7 @@ public class LevelMatcherTest
     val message = (Message<Object>)mock(Message.class);
     when(message.getLevel()).thenReturn(ERROR);
 
-    assertTrue(isLowest().matches(HIGHEST, message));
+    assertTrue(is(LOWEST).matches(HIGHEST, message));
     assertTrue(isDebug().matches(HIGHEST, message));
     assertTrue(isInfo().matches(HIGHEST, message));
     assertTrue(isWarn().matches(HIGHEST, message));
@@ -132,7 +131,7 @@ public class LevelMatcherTest
     val message = (Message<Object>)mock(Message.class);
     when(message.getLevel()).thenReturn(HIGHEST);
 
-    assertTrue(isLowest().matches(HIGHEST, message));
+    assertTrue(is(LOWEST).matches(HIGHEST, message));
     assertTrue(isDebug().matches(HIGHEST, message));
     assertTrue(isInfo().matches(HIGHEST, message));
     assertTrue(isWarn().matches(HIGHEST, message));

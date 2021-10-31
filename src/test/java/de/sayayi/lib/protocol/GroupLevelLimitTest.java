@@ -21,11 +21,12 @@ import lombok.val;
 
 import static de.sayayi.lib.protocol.Level.Shared.ERROR;
 import static de.sayayi.lib.protocol.Level.Shared.INFO;
+import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
 import static de.sayayi.lib.protocol.Level.Shared.WARN;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.FLATTEN_ON_SINGLE_ENTRY;
+import static de.sayayi.lib.protocol.matcher.MessageMatchers.is;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.isError;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.isInfo;
-import static de.sayayi.lib.protocol.matcher.MessageMatchers.isLowest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -73,7 +74,7 @@ public class GroupLevelLimitTest
     gp2.setVisibility(FLATTEN_ON_SINGLE_ENTRY).error().message("msg").setLevelLimit(ERROR);
     gp1.setLevelLimit(WARN);
 
-    val iterator = p.iterator(isLowest());
+    val iterator = p.iterator(is(LOWEST));
 
     assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolStart);
     assertMessageWithLevel(iterator.next(), WARN, true, true);
