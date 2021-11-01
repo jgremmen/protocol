@@ -12,7 +12,7 @@ plugins {
 
 description 'Protocol Library'
 group 'de.sayayi.lib'
-version '1.0.0'
+version '1.0.1'
 
 buildDir = ".build"
 
