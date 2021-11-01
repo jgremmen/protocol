@@ -20,18 +20,16 @@ import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.Tag;
 import de.sayayi.lib.protocol.TagDef;
+import de.sayayi.lib.protocol.TagDef.MatchCondition;
 import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.exception.ProtocolException;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.val;
-import lombok.var;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -41,8 +39,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
 import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
+import static java.util.Collections.unmodifiableSet;
+import static java.util.Objects.requireNonNull;
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 import static java.util.regex.Pattern.UNICODE_CASE;
+import static java.util.stream.Collectors.joining;
 
 
 /**
@@ -58,35 +59,28 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
   private static final AtomicInteger FACTORY_ID = new AtomicInteger(0);
   private static final AtomicInteger TAG_ID = new AtomicInteger(0);
 
-  private final Map<String,TagDefImpl> registeredTags = new TreeMap<String,TagDefImpl>();
+  private final Map<String,TagDefImpl> registeredTags = new TreeMap<>();
   private final int id;
-  @Getter private final TagDef defaultTag;
-  @Getter private final MessageProcessor<M> messageProcessor;
-  @Getter private final MessageFormatter<M> messageFormatter;
-
-  protected final Map<String,Object> defaultParameterValues;
+  @Getter private final @NotNull TagDef defaultTag;
+  @Getter private final @NotNull MessageProcessor<M> messageProcessor;
+  @Getter private final @NotNull MessageFormatter<M> messageFormatter;
 
 
-  @SuppressWarnings({ "java:S2583", "ConstantConditions" })
   public GenericProtocolFactory(@NotNull MessageProcessor<M> messageProcessor,
                                 @NotNull MessageFormatter<M> messageFormatter)
   {
-    if (messageProcessor == null)
-      throw new NullPointerException("messageProcessur must not be null");
-
-    this.messageProcessor = messageProcessor;
-    this.messageFormatter = messageFormatter;
+    this.messageProcessor = requireNonNull(messageProcessor, "messageProcessor must not be null");
+    this.messageFormatter = requireNonNull(messageFormatter, "messageFormatter must not be null");
 
     id = FACTORY_ID.incrementAndGet();
 
     defaultTag = createTag(DEFAULT_TAG_NAME).getTagDef();
-    defaultParameterValues = new HashMap<String,Object>();
   }
 
 
   @Override
   public @NotNull Protocol<M> createProtocol() {
-    return new ProtocolImpl<M>(this);
+    return new ProtocolImpl<>(this);
   }
 
 
@@ -140,16 +134,11 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
     if (!isValidTagName(name))
       throw new ProtocolException("invalid tag name '" + name + "'");
 
-    var tagDef = registeredTags.get(name);
-    if (tagDef == null)
-      registeredTags.put(name, tagDef = new TagDefImpl(name));
-
-    return tagDef;
+    return registeredTags.computeIfAbsent(name, TagDefImpl::new);
   }
 
 
   @Override
-  @SuppressWarnings({ "squid:S2589" })
   public boolean hasTag(String name) {
     return name != null && registeredTags.containsKey(name);
   }
@@ -157,19 +146,13 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 
   @Override
   public @NotNull Set<String> getTagNames() {
-    return Collections.unmodifiableSet(registeredTags.keySet());
+    return unmodifiableSet(registeredTags.keySet());
   }
 
 
   @Override
   public @NotNull Set<TagDef> getTagDefs() {
-    return new TreeSet<TagDef>(registeredTags.values());
-  }
-
-
-  @Override
-  public @NotNull Map<String,Object> getDefaultParameterValues() {
-    return Collections.unmodifiableMap(defaultParameterValues);
+    return new TreeSet<>(registeredTags.values());
   }
 
 
@@ -181,7 +164,7 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 
 
 
-  private class TagBuilderImpl implements TagBuilder<M>
+  private final class TagBuilderImpl implements TagBuilder<M>
   {
     @Getter private final TagDefImpl tagDef;
 
@@ -191,17 +174,11 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
     }
 
 
-    @SuppressWarnings({"ConstantConditions", "squid:S2583"})
     @Override
-    public @NotNull TagBuilder<M> match(@NotNull TagDef.MatchCondition matchCondition, @NotNull Level matchLevel)
+    public @NotNull TagBuilder<M> match(@NotNull MatchCondition matchCondition, @NotNull Level matchLevel)
     {
-      if (matchCondition == null)
-        throw new NullPointerException("matchCondition must not be null");
-      if (matchLevel == null)
-        throw new NullPointerException("matchLevel must not be null");
-
-      tagDef.matchCondition = matchCondition;
-      tagDef.matchLevel = matchLevel;
+      tagDef.matchCondition = requireNonNull(matchCondition, "matchCondition must not be null");
+      tagDef.matchLevel = requireNonNull(matchLevel, "matchLevel must not be null");
 
       return this;
     }
@@ -282,12 +259,6 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 
 
     @Override
-    public @NotNull Map<String,Object> getDefaultParameterValues() {
-      return GenericProtocolFactory.this.getDefaultParameterValues();
-    }
-
-
-    @Override
     public @NotNull MessageProcessor<M> getMessageProcessor() {
       return GenericProtocolFactory.this.getMessageProcessor();
     }
@@ -302,6 +273,7 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 
 
 
+  @SuppressWarnings("java:S100")
   @EqualsAndHashCode(doNotUseGetters = true, onlyExplicitlyIncluded = true)
   static final class TagDefImpl implements TagDef, Comparable<TagDefImpl>
   {
@@ -313,7 +285,7 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
     @Getter private MatchCondition matchCondition = MatchCondition.AT_LEAST;
     @Getter private Level matchLevel = LOWEST;
 
-    private final Set<TagDefImpl> implies = new TreeSet<TagDefImpl>();
+    private final Set<TagDefImpl> implies = new TreeSet<>();
 
 
     TagDefImpl(@NotNull String name)
@@ -324,11 +296,9 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 
 
     @Override
-    @SuppressWarnings({ "squid:S2583", "ConstantConditions" })
     public boolean matches(@NotNull Level level)
     {
-      if (level == null)
-        throw new NullPointerException("level must not be null");
+      requireNonNull(level, "level must not be null");
 
       switch(matchCondition)
       {
@@ -384,49 +354,35 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 
 
     @Override
-    public String toString()
+    public String toString() {
+      return "Tag[id=" + id + ",name=" + name + toString_implies() + ',' + matchLevel + toString_matchCondition() + ']';
+    }
+
+
+    private @NotNull String toString_implies()
     {
-      val s = new StringBuilder("Tag[id=").append(id).append(",name=").append(name);
+      return implies.isEmpty()
+          ? ""
+          : (",implies={" + implies.stream().map(TagDef::getName).collect(joining(",")) + '}');
+    }
 
-      if (!implies.isEmpty())
-      {
-        s.append(",implies={");
-        var first = true;
 
-        for(TagDef tagDef: implies)
-        {
-          if (first)
-            first = false;
-          else
-            s.append(',');
-
-          s.append(tagDef.getName());
-        }
-
-        s.append('}');
-      }
-
-      s.append(',').append(matchLevel);
-
+    private @NotNull String toString_matchCondition()
+    {
       switch(matchCondition)
       {
         case AT_LEAST:
-          s.append("(>=)");
-          break;
+          return "(>=)";
 
         case NOT_EQUAL:
-          s.append("(!=)");
-          break;
+          return "(!=)";
 
         case UNTIL:
-          s.append("(<=)");
-          break;
+          return "(<=)";
 
         default:
-          break;
+          return "";
       }
-
-      return s.append(']').toString();
     }
   }
 }

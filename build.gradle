@@ -6,21 +6,61 @@ plugins {
   id 'jacoco'
   id 'signing'
   id "org.sonarqube" version "3.0"
+  id 'io.franzbecker.gradle-lombok' version '5.0.0'
 }
 
 
 description 'Protocol Library'
 group 'de.sayayi.lib'
-version '0.7.0'
+version '1.0.0'
 
 
 ext {
-  jetbrainsAnnotationsVersion = "13.0"
-  junitVersion = "4.13.1"
-  lombokVersion = "1.18.16"
-  messageFormatVersion = "0.4.2"
-  mockitoVersion = "3.6.28"
+  jetbrainsAnnotationsVersion = "22.0.0"
+  junitVersion = "5.8.1"
+  lombokVersion = "1.18.22"
+  messageFormatVersion = "0.6.1"
+  mockitoVersion = "4.0.0"
   unbescapeVersion = "1.1.6.RELEASE"
+}
+
+
+lombok {
+  version = lombokVersion
+  sha256 = ""
+}
+
+
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(8)
+  }
+}
+
+
+test {
+  useJUnitPlatform()
+}
+
+
+import io.franzbecker.gradle.lombok.task.DelombokTask
+
+task delombok(type: DelombokTask, dependsOn: compileJava) {
+  javaLauncher = javaToolchains.launcherFor {
+    languageVersion = JavaLanguageVersion.of(8)
+  }
+
+  ext.outputDir = file("$buildDir/delombok")
+  outputs.dir(outputDir)
+
+  sourceSets.main.java.srcDirs.each {
+    inputs.dir(it)
+    args(it, "-d", outputDir)
+  }
+
+  doFirst {
+    outputDir.deleteDir();
+  }
 }
 
 
@@ -30,7 +70,7 @@ apply from: file('gradle/publishing.gradle')
 
 
 repositories {
-  jcenter()
+  mavenCentral()
 }
 
 
@@ -47,21 +87,11 @@ dependencies {
   // test
   testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
-  testImplementation "junit:junit:${junitVersion}"
+  testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
   testImplementation "org.mockito:mockito-core:${mockitoVersion}"
 
   testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
   testCompileOnly "org.jetbrains:annotations:${jetbrainsAnnotationsVersion}"
-}
 
-
-compileJava {
-  sourceCompatibility = JavaVersion.VERSION_1_6
-  targetCompatibility = JavaVersion.VERSION_1_6
-}
-
-
-compileTestJava {
-  sourceCompatibility = JavaVersion.VERSION_1_8
-  targetCompatibility = JavaVersion.VERSION_1_8
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
 }

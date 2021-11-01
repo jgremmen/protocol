@@ -15,8 +15,7 @@
  */
 package de.sayayi.lib.protocol;
 
-import de.sayayi.lib.protocol.Level.Shared;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import lombok.val;
 
@@ -25,9 +24,12 @@ import static de.sayayi.lib.protocol.Level.Shared.INFO;
 import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
 import static de.sayayi.lib.protocol.Level.Shared.WARN;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.FLATTEN_ON_SINGLE_ENTRY;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static de.sayayi.lib.protocol.matcher.MessageMatchers.is;
+import static de.sayayi.lib.protocol.matcher.MessageMatchers.isError;
+import static de.sayayi.lib.protocol.matcher.MessageMatchers.isInfo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
@@ -48,9 +50,9 @@ public class GroupLevelLimitTest
 
     gp.setLevelLimit(WARN);
 
-    assertFalse(gp.matches(Shared.ERROR));
+    assertFalse(gp.matches(isError()));
 
-    val iterator = gp.iterator(INFO, Tag.any());
+    val iterator = gp.iterator(isInfo());
 
     assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolStart);
     assertTrue(iterator.next() instanceof ProtocolIterator.GroupStartEntry);
@@ -72,7 +74,7 @@ public class GroupLevelLimitTest
     gp2.setVisibility(FLATTEN_ON_SINGLE_ENTRY).error().message("msg").setLevelLimit(ERROR);
     gp1.setLevelLimit(WARN);
 
-    val iterator = p.iterator(LOWEST, Tag.any());
+    val iterator = p.iterator(is(LOWEST));
 
     assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolStart);
     assertMessageWithLevel(iterator.next(), WARN, true, true);

@@ -17,14 +17,24 @@ package de.sayayi.lib.protocol;
 
 import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
 import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
+import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
 import de.sayayi.lib.protocol.formatter.TechnicalProtocolFormatter;
+import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.function.Consumer;
+
+import static java.util.Spliterator.DISTINCT;
+import static java.util.Spliterator.NONNULL;
+import static java.util.Spliterator.ORDERED;
+import static java.util.Spliterators.spliteratorUnknownSize;
 
 
 /**
@@ -110,8 +120,132 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @return  propagation target tag builder instance, never {@code null}
    */
-  @Contract("_ -> new")
+  @Contract(value = "_ -> new", pure = true)
   @NotNull TargetTagBuilder<M> propagate(@NotNull TagSelector tagSelector);
+
+
+  /**
+   * <p>
+   *   Set a parameter value.
+   * </p>
+   * <p>
+   *   Parameter values set for this protocol are available for both messages and groups added to this protocol.
+   * </p>
+   *
+   * @param parameter  name of the parameter to set, never {@code null}
+   * @param b          parameter value
+   *
+   * @return  current protocol instance
+   *
+   * @since 1.0.0
+   */
+  @Contract(value = "_, _ -> this", mutates = "this")
+  default @NotNull Protocol<M> set(@NotNull String parameter, boolean b) {
+    return set(parameter, Boolean.valueOf(b));
+  }
+
+
+  /**
+   * <p>
+   *   Set a parameter value.
+   * </p>
+   * <p>
+   *   Parameter values set for this protocol are available for both messages and groups added to this protocol.
+   * </p>
+   *
+   * @param parameter  name of the parameter to set, never {@code null}
+   * @param i          parameter value
+   *
+   * @return  current protocol instance
+   *
+   * @since 1.0.0
+   */
+  @Contract(value = "_, _ -> this", mutates = "this")
+  default @NotNull Protocol<M> set(@NotNull String parameter, int i) {
+    return set(parameter, Integer.valueOf(i));
+  }
+
+
+  /**
+   * <p>
+   *   Set a parameter value.
+   * </p>
+   * <p>
+   *   Parameter values set for this protocol are available for both messages and groups added to this protocol.
+   * </p>
+   *
+   * @param parameter  name of the parameter to set, never {@code null}
+   * @param l          parameter value
+   *
+   * @return  current protocol instance
+   *
+   * @since 1.0.0
+   */
+  @Contract(value = "_, _ -> this", mutates = "this")
+  default @NotNull Protocol<M> set(@NotNull String parameter, long l) {
+    return set(parameter, Long.valueOf(l));
+  }
+
+
+  /**
+   * <p>
+   *   Set a parameter value.
+   * </p>
+   * <p>
+   *   Parameter values set for this protocol are available for both messages and groups added to this protocol.
+   * </p>
+   *
+   * @param parameter  name of the parameter to set, never {@code null}
+   * @param f          parameter value
+   *
+   * @return  current protocol instance
+   *
+   * @since 1.0.0
+   */
+  @Contract(value = "_, _ -> this", mutates = "this")
+  default @NotNull Protocol<M> set(@NotNull String parameter, float f) {
+    return set(parameter, Float.valueOf(f));
+  }
+
+
+  /**
+   * <p>
+   *   Set a parameter value.
+   * </p>
+   * <p>
+   *   Parameter values set for this protocol are available for both messages and groups added to this protocol.
+   * </p>
+   *
+   * @param parameter  name of the parameter to set, never {@code null}
+   * @param d          parameter value
+   *
+   * @return  current protocol instance
+   *
+   * @since 1.0.0
+   */
+  @Contract(value = "_, _ -> this", mutates = "this")
+  default @NotNull Protocol<M> set(@NotNull String parameter, double d) {
+    return set(parameter, Double.valueOf(d));
+  }
+
+
+  /**
+   * <p>
+   *   Set a parameter value.
+   * </p>
+   * <p>
+   *   Parameter values set for this protocol are available for both messages and groups added to this protocol.
+   * </p>
+   *
+   * @param parameter  name of the parameter to set, never {@code null}
+   * @param value      parameter value
+   *
+   * @return  current protocol instance
+   *
+   * @since 1.0.0
+   */
+  @Contract(value = "_, _ -> this", mutates = "this")
+  @NotNull Protocol<M> set(@NotNull String parameter, Object value);
 
 
   /**
@@ -127,7 +261,9 @@ public interface Protocol<M> extends ProtocolQueryable
    * @see Level.Shared#DEBUG DEBUG
    */
   @Contract(pure = true, value = "-> new")
-  @NotNull ProtocolMessageBuilder<M> debug();
+  default @NotNull ProtocolMessageBuilder<M> debug() {
+    return add(Level.Shared.DEBUG);
+  }
 
 
   /**
@@ -143,7 +279,9 @@ public interface Protocol<M> extends ProtocolQueryable
    * @see Level.Shared#INFO INFO
    */
   @Contract(pure = true, value = "-> new")
-  @NotNull ProtocolMessageBuilder<M> info();
+  default @NotNull ProtocolMessageBuilder<M> info() {
+    return add(Level.Shared.INFO);
+  }
 
 
   /**
@@ -159,7 +297,9 @@ public interface Protocol<M> extends ProtocolQueryable
    * @see Level.Shared#WARN WARN
    */
   @Contract(pure = true, value = "-> new")
-  @NotNull ProtocolMessageBuilder<M> warn();
+  default @NotNull ProtocolMessageBuilder<M> warn() {
+    return add(Level.Shared.WARN);
+  }
 
 
   /**
@@ -175,7 +315,9 @@ public interface Protocol<M> extends ProtocolQueryable
    * @see Level.Shared#ERROR ERROR
    */
   @Contract(pure = true, value = "-> new")
-  @NotNull ProtocolMessageBuilder<M> error();
+  default @NotNull ProtocolMessageBuilder<M> error() {
+    return add(Level.Shared.ERROR);
+  }
 
 
   /**
@@ -194,7 +336,9 @@ public interface Protocol<M> extends ProtocolQueryable
    * @see Level.Shared#ERROR ERROR
    */
   @Contract(pure = true, value = "_ -> new")
-  @NotNull ProtocolMessageBuilder<M> error(@NotNull Throwable throwable);
+  default @NotNull ProtocolMessageBuilder<M> error(@NotNull Throwable throwable) {
+    return add(Level.Shared.ERROR).withThrowable(throwable);
+  }
 
 
   /**
@@ -213,46 +357,60 @@ public interface Protocol<M> extends ProtocolQueryable
   /**
    * Create a new protocol group.
    *
-   * @return  new protocol group
+   * @return  new protocol group, never {@code null}
    */
-  @Contract("-> new")
+  @Contract(value = "-> new", mutates = "this")
   @NotNull ProtocolGroup<M> createGroup();
 
 
   /**
+   * <p>
+   *   Returns a group iterator for this protocol.
+   * </p>
+   * <p>
+   *   The protocol groups returned by the iterator are direct descendants of this protocol.
+   * </p>
+   *
+   * @return  group iterator for this protocol, never {@code null}
+   *
    * @since 0.7.0
    */
+  @Contract(value = "-> new", pure = true)
   @NotNull Iterator<ProtocolGroup<M>> groupIterator();
 
 
   /**
-   * Formats this protocol using the given {@code formatter} iterating over all elements matching {@code level}.
+   * <p>
+   *   Creates a {@code Spliterator} over all protocol groups which are direct descendants of this
+   *   protocol, with a rough initial size estimate.
+   * </p>
+   * <p>
+   *   The {@code Spliterator} reports {@link Spliterator#ORDERED}, {@link Spliterator#DISTINCT} and
+   *   {@link Spliterator#NONNULL}.
+   * </p>
    *
-   * @param formatter  protocol formatter to use for formatting this protocol
-   * @param level      level to match
-   * @param <R>        result type
+   * @return  group spliterator for this protocol, never {@code null}
    *
-   * @return  formatted protocol, or {@code null}
+   * @see #groupIterator()
+   *
+   * @since 1.0.0
    */
-  @SuppressWarnings("unused")
-  @Contract(pure = true)
-  <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level);
+  @NotNull Spliterator<ProtocolGroup<M>> groupSpliterator();
 
 
   /**
    * Formats this protocol using the given {@code formatter} iterating over all elements matching {@code level} and
    * {@code tagSelector}.
    *
-   * @param formatter    protocol formatter to use for formatting this protocol
-   * @param level        level to match
-   * @param tagSelector  selector to match tags
-   * @param <R>          result type
+   * @param formatter  protocol formatter to use for formatting this protocol
+   * @param matcher    message matcher, never {@code null}
+   * @param <R>        result type
    *
    * @return  formatted protocol, or {@code null}
+   *
+   * @since 1.0.0
    */
-  @SuppressWarnings("unused")
-  @Contract(pure = true)
-  <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level, @NotNull TagSelector tagSelector);
+  <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull MessageMatcher matcher);
 
 
   /**
@@ -264,65 +422,78 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @return  formatted protocol, or {@code null}
    *
-   * @see #format(ProtocolFormatter, Level, TagSelector)
+   * @see #format(ProtocolFormatter, MessageMatcher)
    */
-  @Contract(pure = true)
-  <R> R format(@NotNull ConfiguredProtocolFormatter<M,R> formatter);
-
-
-  @Contract(pure = true, value = "_, _ -> new")
-  @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull TagSelector tagSelector);
+  default <R> R format(@NotNull ConfiguredProtocolFormatter<M,R> formatter) {
+    return format(formatter, formatter.getMatcher(getFactory()));
+  }
 
 
   /**
-   * Tells if any entry in this protocol matches the given {@code level} and {@code tagSelector}.
+   * @param matcher  Message matcher, never {@code null}
    *
-   * @param level        requested protocol level, not {@code null}
-   * @param tagSelector  tag selector, not {@code null}
+   * @return  protocol iterator over all matching elements, never {@code null}
    *
-   * @return  {@code true} if at least 1 entry in the protocol matches, {@code false} otherwise
-   *
-   * @see #matches(Level, TagSelector)
-   * @see ProtocolFactory#getTagByName(String)
+   * @since 1.0.0
    */
-  @Contract(pure = true)
-  boolean matches(@NotNull Level level, @NotNull TagSelector tagSelector);
+  @Contract(pure = true, value = "_ -> new")
+  @NotNull ProtocolIterator<M> iterator(@NotNull MessageMatcher matcher);
 
 
   /**
    * <p>
-   *   Find a group with the given unique {@code name}.
+   *   Creates a {@code Spliterator} over the elements of this protocol matched by
+   *   {@code matcher}, with no initial size estimate.
+   * </p>
+   * <p>
+   *   The {@code Spliterator} reports {@link Spliterator#ORDERED},{@link Spliterator#DISTINCT} and
+   *   {@link Spliterator#NONNULL}.
+   * </p>
+   *
+   * @param matcher  Message matcher, never {@code null}
+   *
+   * @return A spliterator from an iterator
+   *
+   * @since 1.0.0
+   */
+  @Contract(pure = true, value = "_ -> new")
+  default @NotNull Spliterator<DepthEntry<M>> spliterator(@NotNull MessageMatcher matcher) {
+    return spliteratorUnknownSize(iterator(matcher), ORDERED | DISTINCT | NONNULL);
+  }
+
+
+  /**
+   * <p>
+   *   Search for a group by name.
    * </p>
    * <p>
    *   The search probes every descendant group starting from this protocol until a matching group is found.
    * </p>
    *
-   * @param name  group name, not {@code null} or empty
+   * @param name  group name to search for, not {@code null}
    *
-   * @return  protocol group with the name set or {@code null} if no group was found.
+   * @return  optional instance of the group pr empty if no matching protocol group was found
    *
-   * @since 0.7.0
+   * @since 1.0.0
    */
   @Contract(pure = true)
-  ProtocolGroup<M> findGroupWithName(@NotNull String name);
+  @NotNull Optional<ProtocolGroup<M>> getGroupByName(@NotNull String name);
 
 
   /**
    * <p>
-   *   Find all groups with names that match the given regular expression {@code regex}.
+   *   Performs {@code action} on all groups with names that match the given regular expression {@code regex}.
    * </p>
    * <p>
    *   The search probes every descendant group starting from this protocol for matching groups.
    * </p>
    *
    * @param regex  regular expression for matching group names, not {@code null} or empty
+   * @param action  action to perform on matching groups, not {@code null}
    *
-   * @return  set of protocol groups with matching names, never {@code null}.
-   *
-   * @since 0.7.0
+   * @since 1.0.0
    */
-  @Contract(pure = true)
-  @NotNull Set<ProtocolGroup<M>> findGroupsByRegex(@NotNull String regex);
+  void forEachGroupByRegex(@NotNull String regex, @NotNull Consumer<ProtocolGroup<M>> action);
 
 
   /**
@@ -332,7 +503,10 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @since 0.7.0
    */
-  @NotNull String toStringTree();
+  @Contract(pure = true)
+  default @NotNull String toStringTree() {
+    return format(TechnicalProtocolFormatter.getInstance());
+  }
 
 
 
@@ -360,8 +534,6 @@ public interface Protocol<M> extends ProtocolQueryable
      *
      * @return  this instance
      *
-     * @throws IllegalArgumentException  if {@code tagName} is not registered by the same protocol factory
-     *
      * @see ProtocolFactory#getTagByName(String)
      */
     @Contract("_ -> this")
@@ -376,8 +548,6 @@ public interface Protocol<M> extends ProtocolQueryable
      * @param tagNames  names of the tags to associate with the new message, never {@code null}
      *
      * @return  this instance
-     *
-     * @throws IllegalArgumentException  if at least one tagName is not registered by the protocol factory
      *
      * @see ProtocolFactory#getTagByName(String)
      */
@@ -478,7 +648,9 @@ public interface Protocol<M> extends ProtocolQueryable
      * @return  paramter builder instance for the current message
      */
     @Contract("_, _ -> this")
-    @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, boolean value);
+    default @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, boolean value) {
+      return with(parameter, Boolean.valueOf(value));
+    }
 
 
     /**
@@ -494,7 +666,9 @@ public interface Protocol<M> extends ProtocolQueryable
      * @return  paramter builder instance for the current message
      */
     @Contract("_, _ -> this")
-    @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, int value);
+    default @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, int value) {
+      return with(parameter, Integer.valueOf(value));
+    }
 
 
     /**
@@ -510,7 +684,9 @@ public interface Protocol<M> extends ProtocolQueryable
      * @return  paramter builder instance for the current message
      */
     @Contract("_, _ -> this")
-    @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, long value);
+    default @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, long value) {
+      return with(parameter, Long.valueOf(value));
+    }
 
 
     /**
@@ -526,7 +702,9 @@ public interface Protocol<M> extends ProtocolQueryable
      * @return  paramter builder instance for the current message
      */
     @Contract("_, _ -> this")
-    @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, float value);
+    default @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, float value) {
+      return with(parameter, Float.valueOf(value));
+    }
 
 
     /**
@@ -542,7 +720,9 @@ public interface Protocol<M> extends ProtocolQueryable
      * @return  paramter builder instance for the current message
      */
     @Contract("_, _ -> this")
-    @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, double value);
+    default @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, double value) {
+      return with(parameter, Double.valueOf(value));
+    }
 
 
     /**
@@ -572,6 +752,17 @@ public interface Protocol<M> extends ProtocolQueryable
    */
   interface GenericMessage<M>
   {
+    /**
+     * Returns the id for this message. The id must not be unique.
+     *
+     * @return  id for this message, never {@code null}
+     *
+     * @since 1.0.0
+     */
+    @Contract(pure = true)
+    @NotNull String getMessageId();
+
+
     /**
      * Returns the internal representation of the message.
      *
@@ -658,6 +849,12 @@ public interface Protocol<M> extends ProtocolQueryable
      */
     @Contract(pure = true, value = "-> new")
     @NotNull Set<String> getTagNames();
+
+
+    @Contract(pure = true)
+    default boolean hasTag(@NotNull String tagName) {
+      return getTagNames().contains(tagName);
+    }
   }
 
 

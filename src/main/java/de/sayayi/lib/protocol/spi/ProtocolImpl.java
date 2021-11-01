@@ -21,10 +21,17 @@ import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.TagSelector;
+import de.sayayi.lib.protocol.matcher.MessageMatcher;
+
+import lombok.val;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map.Entry;
+
 import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
+import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.joining;
 
 
 /**
@@ -36,7 +43,7 @@ import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
 final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
 {
   ProtocolImpl(@NotNull ProtocolFactory<M> factory) {
-    super(factory);
+    super(factory, null);
   }
 
 
@@ -46,38 +53,27 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
   }
 
 
-  @SuppressWarnings({ "squid:S2583", "ConstantConditions" })
   @Override
-  public @NotNull ProtocolMessageBuilder<M> add(@NotNull Level level)
-  {
-    if (level == null)
-      throw new NullPointerException("level must not be null");
-
-    return new MessageBuilder(level);
+  public @NotNull ProtocolMessageBuilder<M> add(@NotNull Level level) {
+    return new MessageBuilder(requireNonNull(level, "level must not be null"));
   }
 
 
   @Override
-  public boolean matches(@NotNull Level level, @NotNull TagSelector tagSelector) {
-    return matches0(HIGHEST, level, tagSelector);
+  public boolean matches(@NotNull MessageMatcher matcher) {
+    return matches0(HIGHEST, matcher);
   }
 
 
   @Override
-  public boolean matches(@NotNull Level level) {
-    return matches0(HIGHEST, level);
+  public int getVisibleEntryCount(boolean recursive, @NotNull MessageMatcher matcher) {
+    return getVisibleEntryCount0(HIGHEST, recursive, matcher);
   }
 
 
   @Override
-  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull TagSelector tagSelector) {
-    return getVisibleEntryCount0(HIGHEST, recursive, level, tagSelector);
-  }
-
-
-  @Override
-  public @NotNull ProtocolIterator<M> iterator(@NotNull Level level, @NotNull TagSelector tagSelector) {
-    return new ProtocolStructureIterator.ForProtocol<M>(level, tagSelector, 0, this);
+  public @NotNull ProtocolIterator<M> iterator(@NotNull MessageMatcher matcher) {
+    return new ProtocolStructureIterator.ForProtocol<>(matcher, 0, this);
   }
 
 
@@ -88,8 +84,25 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
 
 
   @Override
-  public String toString() {
-    return "Protocol[id=" + getId() + ']';
+  public @NotNull Protocol<M> set(@NotNull String parameter, Object value)
+  {
+    parameterMap.put(parameter, value);
+    return this;
+  }
+
+
+  @Override
+  public String toString()
+  {
+    val s = new StringBuilder("Protocol[id=").append(getId());
+
+    if (!parameterMap.isEmpty())
+    {
+      s.append(",params=").append(parameterMap.stream().map(Entry::toString)
+          .collect(joining(",", "{", "}")));
+    }
+
+    return s.append(']').toString();
   }
 
 
@@ -117,6 +130,14 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
   {
     ParameterBuilder(ProtocolMessageEntry<M> message) {
       super(ProtocolImpl.this, message);
+    }
+
+
+    @Override
+    public @NotNull Protocol<M> set(@NotNull String parameter, Object value)
+    {
+      parameterMap.put(parameter, value);
+      return this;
     }
   }
 

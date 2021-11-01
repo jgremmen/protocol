@@ -21,7 +21,7 @@ import de.sayayi.lib.protocol.Protocol.GenericMessage;
 import de.sayayi.lib.protocol.Protocol.GenericMessageWithLevel;
 import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.ProtocolIterator;
-import de.sayayi.lib.protocol.TagSelector;
+import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,17 +32,18 @@ import lombok.var;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.FLATTEN;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ALWAYS;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_IF_NOT_EMPTY;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ONLY;
+import static java.util.Collections.emptySet;
 import static lombok.AccessLevel.PROTECTED;
 
 
@@ -65,13 +66,12 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   };
 
 
-  private final Level levelLimit;
-  @Getter private final Level level;
-  @Getter private final TagSelector tagSelector;
+  private final @NotNull Level levelLimit;
+  @Getter private final @NotNull MessageMatcher matcher;
   @Getter @Setter(PROTECTED) private int depth;
 
   private ForGroup<M> groupIterator;
-  private Iterator<ProtocolEntry<M>> iterator;
+  private @NotNull Iterator<ProtocolEntry<M>> iterator;
   private RankingDepthEntry<M> previousVisibleEntry;
 
   private final boolean rootProtocol;
@@ -84,12 +84,11 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   private int lastEntryIdx;
 
 
-  protected ProtocolStructureIterator(@NotNull Level levelLimit, @NotNull Level level, @NotNull TagSelector tagSelector,
+  protected ProtocolStructureIterator(@NotNull Level levelLimit, @NotNull MessageMatcher matcher,
                                       int depth, @NotNull List<ProtocolEntry<M>> protocolEntries, boolean rootProtocol)
   {
     this.levelLimit = levelLimit;
-    this.level = level;
-    this.tagSelector = tagSelector;
+    this.matcher = matcher;
     this.depth = depth;
     this.rootProtocol = rootProtocol;
 
@@ -152,13 +151,6 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   }
 
 
-  @Override
-  @Contract("-> fail")
-  public void remove() {
-    throw new UnsupportedOperationException();
-  }
-
-
   @Contract(pure = true)
   protected boolean hasPreviousVisibleEntry() {
     return previousVisibleEntry != null;
@@ -209,13 +201,13 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
       if (protocolEntry instanceof InternalProtocolEntry.Group)
       {
-        groupIterator = new ProtocolStructureIterator.ForGroup<M>(levelLimit, level, tagSelector, depth,
+        groupIterator = new ProtocolStructureIterator.ForGroup<>(levelLimit, matcher, depth,
             (InternalProtocolEntry.Group<M>)protocolEntry, hasEntryBefore, iterator.hasNext(),
             false);
         continue;
       }
 
-      addNextEntry(new MessageEntryImpl<M>(depth, !hasEntryBefore, !iterator.hasNext(),
+      addNextEntry(new MessageEntryImpl<>(depth, !hasEntryBefore, !iterator.hasNext(),
           (Protocol.Message<M>)protocolEntry));
       return;
     }
@@ -223,10 +215,8 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
   @Override
-  public String toString()
-  {
-    return (this instanceof ForGroup ? "GroupIterator" : "ProtocolIterator") +
-        "[level=" + level + ",tagSelector=" + tagSelector + ",depth=" + depth + ']';
+  public String toString() {
+    return "Iterator[matcher=" + matcher + ",depth=" + depth + ']';
   }
 
 
@@ -234,10 +224,9 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
   static final class ForProtocol<M> extends ProtocolStructureIterator<M>
   {
-    ForProtocol(@NotNull Level level, @NotNull TagSelector tagSelector, int depth, @NotNull ProtocolImpl<M> protocol)
+    ForProtocol(@NotNull MessageMatcher matcher, int depth, @NotNull ProtocolImpl<M> protocol)
     {
-      super(Level.Shared.HIGHEST, level, tagSelector, depth,
-          protocol.getEntries(Level.Shared.HIGHEST, level, tagSelector), true);
+      super(HIGHEST, matcher, depth, protocol.getEntries(HIGHEST, matcher), true);
 
       prepareNextEntry(false);
     }
@@ -246,6 +235,12 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     @Override
     protected void prepareNextEntry() {
       prepareNextEntry(hasPreviousVisibleEntry());
+    }
+
+
+    @Override
+    public String toString() {
+      return "Protocol" + super.toString();
     }
   }
 
@@ -259,12 +254,12 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
     @SuppressWarnings("squid:S00107")
-    ForGroup(@NotNull Level levelLimit, @NotNull Level level, @NotNull TagSelector tagSelector, int depth,
+    ForGroup(@NotNull Level levelLimit, @NotNull MessageMatcher matcher, int depth,
              @NotNull InternalProtocolEntry.Group<M> protocol, boolean hasEntryBeforeGroup,
              boolean hasEntryAfterGroup, boolean rootProtocol)
     {
-      super(protocol.getHeaderLevel0(levelLimit, level, tagSelector), level, tagSelector, depth,
-          protocol.getEntries0(levelLimit, level, tagSelector), rootProtocol);
+      super(protocol.getHeaderLevel0(levelLimit, matcher), matcher, depth,
+          protocol.getEntries0(levelLimit, matcher), rootProtocol);
 
       var visibility = protocol.getEffectiveVisibility();
 
@@ -279,8 +274,8 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
         case SHOW_HEADER_ALWAYS:
           // header + messages, increase depth
           setDepth(depth + 1);
-          addNextEntry(new GroupStartEntryImpl<M>(protocol.getGroupMessage(), super.levelLimit,
-              protocol.getVisibleGroupEntryMessageCount0(super.levelLimit, level, tagSelector),
+          addNextEntry(new GroupStartEntryImpl<>(protocol.getGroupMessage(), super.levelLimit,
+              protocol.getVisibleGroupEntryMessageCount0(super.levelLimit, matcher),
               depth + 1, !hasEntryBeforeGroup, !hasEntryAfterGroup));
           groupHeader = true;
           forceFirst = true;
@@ -289,7 +284,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
         case SHOW_HEADER_ONLY:
           // header only, no messages; remain at same depth
           setLastMessageOrGroupEncountered();
-          addNextEntry(new GroupMessageEntryImpl<M>(depth, !hasEntryBeforeGroup, !hasEntryAfterGroup,
+          addNextEntry(new GroupMessageEntryImpl<>(depth, !hasEntryBeforeGroup, !hasEntryAfterGroup,
               super.levelLimit, protocol.getGroupMessage()));
           break;
 
@@ -309,7 +304,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     protected void lastEntryEncountered()
     {
       if (groupHeader)
-        addNextEntry(new GroupEndEntryImpl<M>(getDepth()));
+        addNextEntry(new GroupEndEntryImpl<>(getDepth()));
 
       super.lastEntryEncountered();
     }
@@ -320,6 +315,12 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     {
       prepareNextEntry(hasPreviousVisibleEntry() && !forceFirst);
       forceFirst = false;
+    }
+
+
+    @Override
+    public String toString() {
+      return "Group" + super.toString();
     }
   }
 
@@ -334,8 +335,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
 
-  abstract static class RankingDepthEntryImpl<M> extends DepthEntryImpl<M>
-      implements RankingDepthEntry<M>
+  abstract static class RankingDepthEntryImpl<M> extends DepthEntryImpl<M> implements RankingDepthEntry<M>
   {
     @Getter final boolean first;
     @Getter final boolean last;
@@ -358,8 +358,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     final Protocol.Message<M> message;
 
 
-    private MessageEntryImpl(int depth, boolean first, boolean last,
-                             @NotNull Protocol.Message<M> message)
+    private MessageEntryImpl(int depth, boolean first, boolean last, @NotNull Protocol.Message<M> message)
     {
       super(depth, first, last);
 
@@ -382,6 +381,12 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     @Override
     public @NotNull Set<String> getTagNames() {
       return message.getTagNames();
+    }
+
+
+    @Override
+    public @NotNull String getMessageId() {
+      return message.getMessageId();
     }
 
 
@@ -426,12 +431,18 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
     private GroupMessageEntryImpl(int depth, boolean first, boolean last, Level level,
-                                  GenericMessage<M> groupMessage)
+                                  @NotNull GenericMessage<M> groupMessage)
     {
       super(depth, first, last);
 
       this.level = level;
       this.groupMessage = groupMessage;
+    }
+
+
+    @Override
+    public @NotNull String getMessageId() {
+      return groupMessage.getMessageId();
     }
 
 
@@ -442,7 +453,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
     @Override
-    public @NotNull Map<String, Object> getParameterValues() {
+    public @NotNull Map<String,Object> getParameterValues() {
       return groupMessage.getParameterValues();
     }
 
@@ -462,14 +473,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
     @Override
     public @NotNull Set<String> getTagNames() {
-      return Collections.emptySet();
-    }
-
-
-    @Override
-    @Contract(value = "-> true", pure = true)
-    public boolean isGroupMessage() {
-      return true;
+      return emptySet();
     }
 
 
@@ -509,7 +513,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
       while(iterator.hasNext())
       {
         nextEntry = iterator.next();
-        if (nextEntry.getVisibleEntryCount(true, level, tagSelector) > 0)
+        if (nextEntry.getVisibleEntryCount(true, matcher) > 0)
           return;
       }
 
@@ -535,12 +539,6 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
       return entry;
     }
-
-
-    @Override
-    public void remove() {
-      throw new UnsupportedOperationException();
-    }
   }
 
 
@@ -559,6 +557,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
       this.groupMessage = new GenericMessageWithLevel<M>() {
         @Override public @NotNull Level getLevel() { return level; }
+        @Override public @NotNull String getMessageId() { return groupMessage.getMessageId(); }
         @Override public @NotNull M getMessage() { return groupMessage.getMessage(); }
         @Override public @NotNull Map<String,Object> getParameterValues() { return groupMessage.getParameterValues(); }
         @Override public long getTimeMillis() { return groupMessage.getTimeMillis(); }

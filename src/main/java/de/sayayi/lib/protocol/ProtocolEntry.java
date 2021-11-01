@@ -15,11 +15,12 @@
  */
 package de.sayayi.lib.protocol;
 
+import de.sayayi.lib.protocol.matcher.MessageMatcher;
+
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Set;
 
 
 /**
@@ -42,6 +43,8 @@ public interface ProtocolEntry<M> extends ProtocolQueryable
   }
 
 
+
+
   /**
    *
    * @param <M>  internal message object type
@@ -53,25 +56,27 @@ public interface ProtocolEntry<M> extends ProtocolQueryable
      * Returns a list of protocol entries provided by this protocol object for the given {@code level} and
      * {@code tagSelector}.
      *
-     * @param level        requested protocol level, not {@code null}
-     * @param tagSelector  tag selector, not {@code null}
+     * @param matcher  message matcher, not {@code null}
      *
      * @return  a list of protocol entries, never {@code null}
+     *
+     * @since 1.0.0
      */
-    @Contract(pure = true, value = "_, _ -> new")
-    @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level level, @NotNull TagSelector tagSelector);
+    @Contract(pure = true, value = "_ -> new")
+    @NotNull List<ProtocolEntry<M>> getEntries(@NotNull MessageMatcher matcher);
 
 
     /**
      * Tells if, for the given {@code level} and {@code tagSelector}, the group header message is visible.
      *
-     * @param level        protocol level, not {@code null}
-     * @param tagSelector  tag selector, not {@code null}
+     * @param matcher  message matcher, not {@code null}
      *
      * @return  {@code true} if the group header message is visible, {@code false} otherwise
+     *
+     * @since 1.0.0
      */
     @Contract(pure = true)
-    boolean isHeaderVisible(@NotNull Level level, @NotNull TagSelector tagSelector);
+    boolean isHeaderVisible(@NotNull MessageMatcher matcher);
 
 
     /**
@@ -87,44 +92,13 @@ public interface ProtocolEntry<M> extends ProtocolQueryable
      *   severity.
      * </p>
      *
-     * @param level        protocol level, not {@code null}
-     * @param tagSelector  tag selector, not {@code null}
+     * @param matcher  message matcher, not {@code null}
      *
      * @return  header message level, never {@code null}
+     *
+     * @since 1.0.0
      */
     @Contract(pure = true)
-    @NotNull Level getHeaderLevel(@NotNull Level level, @NotNull TagSelector tagSelector);
-
-
-    /**
-     * <p>
-     *   Find a group with the given unique {@code name}.
-     * </p>
-     * <p>
-     *   The search probes every descendant group starting from this protocol until a matching group is found.
-     * </p>
-     *
-     * @param name  group name, not {@code null} or empty
-     *
-     * @return  protocol group with the name set or {@code null} if no group was found.
-     */
-    @Contract(pure = true)
-    ProtocolGroup<M> findGroupWithName(@NotNull String name);
-
-
-    /**
-     * <p>
-     *   Find all groups with names that match the given regular expression {@code regex}.
-     * </p>
-     * <p>
-     *   The search probes every descendant group starting from this protocol for matching groups.
-     * </p>
-     *
-     * @param regex  regular expression for matching group names, not {@code null} or empty
-     *
-     * @return  set of protocol groups with matching names, never {@code null}.
-     */
-    @Contract(pure = true)
-    @NotNull Set<ProtocolGroup<M>> findGroupsByRegex(@NotNull String regex);
+    @NotNull Level getHeaderLevel(@NotNull MessageMatcher matcher);
   }
 }

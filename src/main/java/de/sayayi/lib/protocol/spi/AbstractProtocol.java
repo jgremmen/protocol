@@ -16,23 +16,19 @@
 package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.Level;
-import de.sayayi.lib.protocol.Level.Shared;
 import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolFormatter;
-import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolGroup;
-import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupEndEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.ProtocolEnd;
 import de.sayayi.lib.protocol.ProtocolIterator.ProtocolStart;
-import de.sayayi.lib.protocol.Tag;
 import de.sayayi.lib.protocol.TagSelector;
-import de.sayayi.lib.protocol.formatter.TechnicalProtocolFormatter;
+import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -41,16 +37,14 @@ import lombok.var;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
+
+import static java.util.Spliterator.DISTINCT;
+import static java.util.Spliterator.NONNULL;
+import static java.util.Spliterator.ORDERED;
+import static java.util.Spliterator.SORTED;
 
 
 /**
@@ -59,27 +53,28 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Jeroen Gremmen
  */
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, doNotUseGetters = true, callSuper = false)
-abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
-    implements Protocol<M>, InternalProtocolQueryable
+abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implements Protocol<M>, InternalProtocolQueryable
 {
   private static final AtomicInteger PROTOCOL_ID = new AtomicInteger(0);
 
   @EqualsAndHashCode.Include
   @Getter private final int id;
 
-  @Getter final ProtocolFactory<M> factory;
+  @Getter final @NotNull ProtocolFactory<M> factory;
 
-  final List<InternalProtocolEntry<M>> entries;
-  final Map<TagSelector,Set<String>> tagPropagationMap;
+  final @NotNull ParameterMap parameterMap;
+  final @NotNull List<InternalProtocolEntry<M>> entries;
+  final @NotNull Map<TagSelector,Set<String>> tagPropagationMap;
 
 
-  protected AbstractProtocol(@NotNull ProtocolFactory<M> factory)
+  protected AbstractProtocol(@NotNull ProtocolFactory<M> factory, ParameterMap parentParameterMap)
   {
     this.factory = factory;
 
     id = PROTOCOL_ID.incrementAndGet();
-    entries = new ArrayList<InternalProtocolEntry<M>>(8);
-    tagPropagationMap = new HashMap<TagSelector,Set<String>>(8);
+    parameterMap = new ParameterMap(parentParameterMap);
+    entries = new ArrayList<>(8);
+    tagPropagationMap = new HashMap<>(8);
   }
 
 
@@ -88,7 +83,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
     if (tagPropagationMap.isEmpty())
       return tags;
 
-    val collectedPropagatedTagDefs = new TreeSet<String>(tags);
+    val collectedPropagatedTagDefs = new TreeSet<>(tags);
 
     for(val tagPropagation: tagPropagationMap.entrySet())
       if (tagPropagation.getKey().match(collectedPropagatedTagDefs))
@@ -98,126 +93,66 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   }
 
 
-  @Override
-  public @NotNull B debug() {
-    return add(Shared.DEBUG);
-  }
-
-
-  @Override
-  public @NotNull B info() {
-    return add(Shared.INFO);
-  }
-
-
-  @Override
-  public @NotNull B warn() {
-    return add(Shared.WARN);
-  }
-
-
-  @Override
-  public @NotNull B error() {
-    return add(Shared.ERROR);
-  }
-
-
-  @SuppressWarnings("unchecked")
-  @Override
-  public @NotNull B error(@NotNull Throwable throwable) {
-    return (B)add(Shared.ERROR).withThrowable(throwable);
-  }
-
-
-  @SuppressWarnings("squid:S3038")
   public abstract @NotNull B add(@NotNull Level level);
 
 
   @Override
-  public boolean matches0(@NotNull Level levelLimit, @NotNull Level level, @NotNull TagSelector tagSelector)
+  public boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
-    if (levelLimit.severity() >= level.severity())
-      for(val entry: entries)
-        if (entry.matches0(levelLimit, level, tagSelector))
-          return true;
+    for(val entry: entries)
+      if (entry.matches0(levelLimit, matcher))
+        return true;
 
     return false;
   }
 
 
-  @Override
-  public boolean matches0(@NotNull Level levelLimit, @NotNull Level level)
-  {
-    if (levelLimit.severity() >= level.severity())
-      for(val entry: entries)
-        if (entry.matches0(levelLimit, level))
-          return true;
-
-    return false;
-  }
-
-
-  @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level levelLimit, @NotNull Level level,
-                                             @NotNull TagSelector tagSelector)
+  @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
     val filteredEntries = new ArrayList<ProtocolEntry<M>>();
 
-    if (levelLimit.severity() >= level.severity())
-      for(final InternalProtocolEntry<M> entry: entries)
-        if (entry.matches0(levelLimit, level, tagSelector))
-        {
-          if (entry instanceof InternalProtocolEntry.Group)
-          {
-            filteredEntries.add(ProtocolGroupEntryAdapter.from(levelLimit,
-                (InternalProtocolEntry.Group<M>)entry));
-          }
-          else
-          {
-            filteredEntries.add(ProtocolMessageEntryAdapter.from(levelLimit,
-                (InternalProtocolEntry.Message<M>)entry));
-          }
-        }
+    for(final InternalProtocolEntry<M> entry: entries)
+      if (entry.matches0(levelLimit, matcher))
+      {
+        if (entry instanceof InternalProtocolEntry.Group)
+          filteredEntries.add(ProtocolGroupEntryAdapter.from(levelLimit, (InternalProtocolEntry.Group<M>)entry));
+        else
+          filteredEntries.add(ProtocolMessageEntryAdapter.from(levelLimit, (InternalProtocolEntry.Message<M>)entry));
+      }
 
     return filteredEntries;
   }
 
 
   @Override
-  public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive, @NotNull Level level,
-                                   @NotNull TagSelector tagSelector)
+  public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive, @NotNull MessageMatcher matcher)
   {
     var count = 0;
 
-    if (levelLimit.severity() >= level.severity())
-      for(val entry: entries)
-        count += entry.getVisibleEntryCount0(levelLimit, recursive, level, tagSelector);
+    for(val entry: entries)
+      count += entry.getVisibleEntryCount0(levelLimit, recursive, matcher);
 
     return count;
   }
 
 
   @Override
-  public ProtocolGroup<M> findGroupWithName(@NotNull String name)
+  public @NotNull Optional<ProtocolGroup<M>> getGroupByName(@NotNull String name)
   {
-    ProtocolGroup<M> group = null;
-
     for(final Iterator<ProtocolGroup<M>> groupIterator = groupIterator(); groupIterator.hasNext();)
-      if ((group = groupIterator.next().findGroupWithName(name)) != null)
-        break;
+    {
+      val result = groupIterator.next().getGroupByName(name);
+      if (result.isPresent())
+        return result;
+    }
 
-    return group;
+    return Optional.empty();
   }
 
 
   @Override
-  public @NotNull Set<ProtocolGroup<M>> findGroupsByRegex(@NotNull String regex)
-  {
-    val groups = new LinkedHashSet<ProtocolGroup<M>>();
-
-    for(final Iterator<ProtocolGroup<M>> groupIterator = groupIterator(); groupIterator.hasNext();)
-      groups.addAll(groupIterator.next().findGroupsByRegex(regex));
-
-    return groups;
+  public void forEachGroupByRegex(@NotNull String regex, @NotNull Consumer<ProtocolGroup<M>> action) {
+    groupIterator().forEachRemaining(group -> group.forEachGroupByRegex(regex, action));
   }
 
 
@@ -225,7 +160,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   public @NotNull ProtocolGroup<M> createGroup()
   {
     @SuppressWarnings("unchecked")
-    val group = new ProtocolGroupImpl<M>((AbstractProtocol<M,ProtocolMessageBuilder<M>>)this);
+    val group = new ProtocolGroupImpl<>((AbstractProtocol<M,ProtocolMessageBuilder<M>>)this);
 
     entries.add(group);
 
@@ -240,21 +175,18 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
 
 
   @Override
-  public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level) {
-    return format(formatter, level, Tag.any());
+  public @NotNull Spliterator<ProtocolGroup<M>> groupSpliterator() {
+    return Spliterators.spliterator(groupIterator(), entries.size(), DISTINCT | ORDERED | SORTED | NONNULL);
   }
 
 
   @Override
-  public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull Level level, @NotNull TagSelector tagSelector)
+  public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull MessageMatcher matcher)
   {
     // initialize formatter
-    formatter.init(factory, level, tagSelector, countGroupDepth());
+    formatter.init(factory, matcher, countGroupDepth());
 
-    for(Iterator<DepthEntry<M>> iterator = iterator(level, tagSelector); iterator.hasNext();)
-    {
-      val entry = iterator.next();
-
+    iterator(matcher).forEachRemaining(entry -> {
       if (entry instanceof ProtocolStart)
         formatter.protocolStart();
       else if (entry instanceof ProtocolEnd)
@@ -265,15 +197,9 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
         formatter.groupStart((GroupStartEntry<M>)entry);
       else if (entry instanceof GroupEndEntry)
         formatter.groupEnd((GroupEndEntry<M>)entry);
-    }
+    });
 
     return formatter.getResult();
-  }
-
-
-  @Override
-  public <R> R format(@NotNull ConfiguredProtocolFormatter<M,R> formatter) {
-    return format(formatter, formatter.getLevel(), formatter.getTagSelector(factory));
   }
 
 
@@ -281,17 +207,11 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   {
     var depth = 0;
 
-    for(InternalProtocolEntry<M> entry: entries)
+    for(val entry: entries)
       if (entry instanceof ProtocolGroupImpl)
         depth = Math.max(depth, 1 + ((ProtocolGroupImpl<M>)entry).countGroupDepth());
 
     return depth;
-  }
-
-
-  @Override
-  public @NotNull String toStringTree() {
-    return format(TechnicalProtocolFormatter.<M>getInstance());
   }
 
 
@@ -315,15 +235,16 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
 
     private void findNext()
     {
-      InternalProtocolEntry<M> entry;
-
       while(iterator.hasNext())
-        if ((entry = iterator.next()) instanceof ProtocolGroup)
+      {
+        val entry = iterator.next();
+        if (entry instanceof ProtocolGroup)
         {
           //noinspection unchecked
           next = (ProtocolGroup<M>)entry;
           return;
         }
+      }
 
       next = null;
     }
@@ -345,12 +266,6 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
       findNext();
 
       return nextGroup;
-    }
-
-
-    @Override
-    public void remove() {
-      throw new UnsupportedOperationException();
     }
   }
 }

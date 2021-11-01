@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static de.sayayi.lib.protocol.selector.parser.TagSelectorLexer.TokenType.AND;
 import static de.sayayi.lib.protocol.selector.parser.TagSelectorLexer.TokenType.COMMA;
 import static de.sayayi.lib.protocol.selector.parser.TagSelectorLexer.TokenType.L_PAREN;
 import static de.sayayi.lib.protocol.selector.parser.TagSelectorLexer.TokenType.R_PAREN;
@@ -55,7 +54,7 @@ public final class TagSelectorParser
   {
     lexer = new TagSelectorLexer(selector);
     tokenIterator = lexer.iterator();
-    tokens = new ArrayList<Token>();
+    tokens = new ArrayList<>();
   }
 
 
@@ -89,19 +88,19 @@ public final class TagSelectorParser
 
   @NotNull ParsedRule<TagSelector> parseSelector(int t)
   {
-    val t0 = getTokenAt(t);
-    if (t0 == null)
+    val token = getTokenAt(t);
+    if (token == null)
     {
       val idx = lexer.getLength() + 1;
       throw new TagSelectorParserException(idx, idx, "missing selector");
     }
 
-    val type = t0.getType();
+    val type = token.getType();
 
     switch(type)
     {
       case TAG:
-        return new ParsedRule<TagSelector>(t, t, Tag.of(t0.getText()));
+        return new ParsedRule<>(t, t, Tag.of(token.getText()));
 
       case ALL_OF:
       case ANY_OF:
@@ -109,8 +108,10 @@ public final class TagSelectorParser
         return parseXXXOf(t, type);
 
       case AND:
+        return parseAnd(t);
+
       case OR:
-        return parseAndOr(t, type == AND);
+        return parseOr(t);
 
       case ANY:
       case TRUE:
@@ -121,20 +122,27 @@ public final class TagSelectorParser
         return parseNot(t);
 
       default:
-        throw new TagSelectorParserException(t0.getStart(), t0.getEnd(), "unexpected token '" + t0.getText() + "'");
+        throw new TagSelectorParserException(token.getStart(), token.getEnd(),
+            "unexpected token '" + token.getText() + "'");
     }
   }
 
 
-  private @NotNull ParsedRule<TagSelector> parseAndOr(int t, boolean and)
+  private @NotNull ParsedRule<TagSelector> parseAnd(int t)
   {
     // t0=and t1=<parameters>
+    val parameters = parseParameters(t + 1);
+
+    return new ParsedRule<>(t, parameters.tokenLast, Tag.and(parameters.result.toArray(new TagSelector[0])));
+  }
+
+
+  private @NotNull ParsedRule<TagSelector> parseOr(int t)
+  {
     // t0=or t1=<parameters>
     val parameters = parseParameters(t + 1);
 
-    return new ParsedRule<TagSelector>(t, parameters.tokenLast, and
-        ? Tag.and(parameters.result.toArray(new TagSelector[0]))
-        : Tag.or(parameters.result.toArray(new TagSelector[0])));
+    return new ParsedRule<>(t, parameters.tokenLast, Tag.or(parameters.result.toArray(new TagSelector[0])));
   }
 
 
@@ -164,7 +172,7 @@ public final class TagSelectorParser
         throw new IllegalStateException("Unexpected value: " + type);
     }
 
-    return new ParsedRule<TagSelector>(t, tagList.tokenLast, selector);
+    return new ParsedRule<>(t, tagList.tokenLast, selector);
   }
 
 
@@ -178,11 +186,11 @@ public final class TagSelectorParser
     switch(type)
     {
       case ANY:
-        return new ParsedRule<TagSelector>(t, t + 2, new MatchAny());
+        return new ParsedRule<>(t, t + 2, new MatchAny());
 
       case TRUE:
       case FALSE:
-        return new ParsedRule<TagSelector>(t, t + 2, MatchFixResult.valueOf(type == TRUE));
+        return new ParsedRule<>(t, t + 2, MatchFixResult.valueOf(type == TRUE));
 
       default:
         throw new IllegalStateException("Unexpected value: " + type);
@@ -199,7 +207,7 @@ public final class TagSelectorParser
 
     expect(lastIdx, R_PAREN);
 
-    return new ParsedRule<TagSelector>(t, lastIdx, Tag.not(selector.result));
+    return new ParsedRule<>(t, lastIdx, Tag.not(selector.result));
   }
 
 
@@ -223,7 +231,7 @@ public final class TagSelectorParser
 
     expect(t, R_PAREN);
 
-    return new ParsedRule<List<TagSelector>>(tokenStart, t, parameters);
+    return new ParsedRule<>(tokenStart, t, parameters);
   }
 
 
@@ -244,7 +252,7 @@ public final class TagSelectorParser
 
     expect(t, R_PAREN);
 
-    return new ParsedRule<List<String>>(tokenStart, t, parameters);
+    return new ParsedRule<>(tokenStart, t, parameters);
   }
 
 

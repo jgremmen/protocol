@@ -16,11 +16,13 @@
 package de.sayayi.lib.protocol;
 
 import de.sayayi.lib.protocol.exception.ProtocolException;
+import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.function.Consumer;
 
 
 /**
@@ -75,7 +77,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
    * @see #getVisibility()
    * @see #getEffectiveVisibility()
    */
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   @NotNull ProtocolGroup<M> setVisibility(@NotNull Visibility visibility);
 
 
@@ -110,7 +112,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
    *
    * @see #getLevelLimit()
    */
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   @NotNull ProtocolGroup<M> setLevelLimit(@NotNull Level level);
 
 
@@ -124,7 +126,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
    *
    * @see #removeGroupMessage()
    */
-  @Contract("_ -> new")
+  @Contract(value = "_ -> new", mutates = "this")
   @NotNull MessageParameterBuilder<M> setGroupMessage(@NotNull String message);
 
 
@@ -135,7 +137,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
    *
    * @see #setGroupMessage(String)
    */
-  @Contract("-> this")
+  @Contract(value = "-> this", mutates = "this")
   @NotNull ProtocolGroup<M> removeGroupMessage();
 
 
@@ -145,7 +147,8 @@ public interface ProtocolGroup<M> extends Protocol<M>
    * @return  unique name for this group or {@code null} if no name is set.
    *
    * @see #setName(String)
-   * @see Protocol#findGroupWithName(String)
+   * @see Protocol#getGroupByName(String)
+   * @see Protocol#forEachGroupByRegex(String, Consumer)
    */
   @Contract(pure = true)
   String getName();
@@ -164,34 +167,58 @@ public interface ProtocolGroup<M> extends Protocol<M>
    * @throws ProtocolException  if the group name is not unique across the protocol structure
    *
    * @see #getName()
-   * @see Protocol#findGroupWithName(String)
+   * @see Protocol#getGroupByName(String)
+   * @see Protocol#forEachGroupByRegex(String, Consumer)
    */
-  @Contract(value = "_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   @NotNull ProtocolGroup<M> setName(String name);
 
 
+  /**
+   * @param matcher  Message matcher, never {@code null}
+   *
+   * @return  {@code true} if a group header is set and is visible for the given {@code matcher},
+   *          {@code false} otherwise
+   *
+   * @since 1.0.0
+   */
   @Contract(pure = true)
-  boolean isHeaderVisible(@NotNull Level level, @NotNull TagSelector tagSelector);
+  boolean isHeaderVisible(@NotNull MessageMatcher matcher);
 
 
   @Override
   @Contract(pure = true, value = "-> new")
-  @NotNull ProtocolMessageBuilder<M> debug();
+  default @NotNull ProtocolMessageBuilder<M> debug() {
+    return add(Level.Shared.DEBUG);
+  }
 
 
   @Override
   @Contract(pure = true, value = "-> new")
-  @NotNull ProtocolMessageBuilder<M> info();
+  default @NotNull ProtocolMessageBuilder<M> info() {
+    return add(Level.Shared.INFO);
+  }
 
 
   @Override
   @Contract(pure = true, value = "-> new")
-  @NotNull ProtocolMessageBuilder<M> warn();
+  default @NotNull ProtocolMessageBuilder<M> warn() {
+    return add(Level.Shared.WARN);
+  }
 
 
   @Override
   @Contract(pure = true, value = "-> new")
-  @NotNull ProtocolMessageBuilder<M> error();
+  default @NotNull ProtocolMessageBuilder<M> error() {
+    return add(Level.Shared.ERROR);
+  }
+
+
+  @Override
+  @Contract(pure = true, value = "_ -> new")
+  default @NotNull ProtocolMessageBuilder<M> error(@NotNull Throwable throwable) {
+    return add(Level.Shared.ERROR).withThrowable(throwable);
+  }
 
 
   @Override
@@ -200,8 +227,138 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
   @Override
-  @Contract("_ -> new")
+  @Contract(value = "_ -> new", pure = true)
   @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull TagSelector tagSelector);
+
+
+  /**
+   * <p>
+   *   Set a parameter value.
+   * </p>
+   * <p>
+   *   Parameter values set for this protocol are available for both messages and groups added to this protocol.
+   * </p>
+   *
+   * @param parameter  name of the parameter to set, never {@code null}
+   * @param b          parameter value
+   *
+   * @return  current protocol instance
+   *
+   * @since 1.0.0
+   */
+  @Override
+  @Contract(value = "_, _ -> this", mutates = "this")
+  default @NotNull ProtocolGroup<M> set(@NotNull String parameter, boolean b) {
+    return set(parameter, Boolean.valueOf(b));
+  }
+
+
+  /**
+   * <p>
+   *   Set a parameter value.
+   * </p>
+   * <p>
+   *   Parameter values set for this protocol are available for both messages and groups added to this protocol.
+   * </p>
+   *
+   * @param parameter  name of the parameter to set, never {@code null}
+   * @param i          parameter value
+   *
+   * @return  current protocol instance
+   *
+   * @since 1.0.0
+   */
+  @Override
+  @Contract(value = "_, _ -> this", mutates = "this")
+  default @NotNull ProtocolGroup<M> set(@NotNull String parameter, int i) {
+    return set(parameter, Integer.valueOf(i));
+  }
+
+
+  /**
+   * <p>
+   *   Set a parameter value.
+   * </p>
+   * <p>
+   *   Parameter values set for this protocol are available for both messages and groups added to this protocol.
+   * </p>
+   *
+   * @param parameter  name of the parameter to set, never {@code null}
+   * @param l          parameter value
+   *
+   * @return  current protocol instance
+   *
+   * @since 1.0.0
+   */
+  @Override
+  @Contract(value = "_, _ -> this", mutates = "this")
+  default @NotNull ProtocolGroup<M> set(@NotNull String parameter, long l) {
+    return set(parameter, Long.valueOf(l));
+  }
+
+
+  /**
+   * <p>
+   *   Set a parameter value.
+   * </p>
+   * <p>
+   *   Parameter values set for this protocol are available for both messages and groups added to this protocol.
+   * </p>
+   *
+   * @param parameter  name of the parameter to set, never {@code null}
+   * @param f          parameter value
+   *
+   * @return  current protocol instance
+   *
+   * @since 1.0.0
+   */
+  @Override
+  @Contract(value = "_, _ -> this", mutates = "this")
+  default @NotNull ProtocolGroup<M> set(@NotNull String parameter, float f) {
+    return set(parameter, Float.valueOf(f));
+  }
+
+
+  /**
+   * <p>
+   *   Set a parameter value.
+   * </p>
+   * <p>
+   *   Parameter values set for this protocol are available for both messages and groups added to this protocol.
+   * </p>
+   *
+   * @param parameter  name of the parameter to set, never {@code null}
+   * @param d          parameter value
+   *
+   * @return  current protocol instance
+   *
+   * @since 1.0.0
+   */
+  @Override
+  @Contract(value = "_, _ -> this", mutates = "this")
+  default @NotNull ProtocolGroup<M> set(@NotNull String parameter, double d) {
+    return set(parameter, Double.valueOf(d));
+  }
+
+
+  /**
+   * <p>
+   *   Set a parameter value.
+   * </p>
+   * <p>
+   *   Parameter values set for this protocol are available for both messages and groups added to this protocol.
+   * </p>
+   *
+   * @param parameter  name of the parameter to set, never {@code null}
+   * @param value      parameter value
+   *
+   * @return  current protocol instance
+   *
+   * @since 1.0.0
+   */
+  @Override
+  @Contract(value = "_, _ -> this", mutates = "this")
+  @NotNull ProtocolGroup<M> set(@NotNull String parameter, Object value);
 
 
   /**
@@ -257,27 +414,37 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
     @Override
     @Contract("_, _ -> this")
-    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, boolean value);
+    default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, boolean value) {
+      return with(parameter, Boolean.valueOf(value));
+    }
 
 
     @Override
     @Contract("_, _ -> this")
-    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, int value);
+    default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, int value) {
+      return with(parameter, Integer.valueOf(value));
+    }
 
 
     @Override
     @Contract("_, _ -> this")
-    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, long value);
+    default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, long value) {
+      return with(parameter, Long.valueOf(value));
+    }
 
 
     @Override
     @Contract("_, _ -> this")
-    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, float value);
+    default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, float value) {
+      return with(parameter, Float.valueOf(value));
+    }
 
 
     @Override
     @Contract("_, _ -> this")
-    @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, double value);
+    default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, double value) {
+      return with(parameter, Double.valueOf(value));
+    }
 
 
     @Override
@@ -381,6 +548,8 @@ public interface ProtocolGroup<M> extends Protocol<M>
       return this != SHOW_HEADER_ONLY && this != HIDDEN;
     }
   }
+
+
 
 
   interface TargetTagBuilder<M> extends Protocol.TargetTagBuilder<M>

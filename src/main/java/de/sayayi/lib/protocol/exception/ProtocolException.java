@@ -17,6 +17,8 @@ package de.sayayi.lib.protocol.exception;
 
 
 /**
+ * Protocol related exception.
+ *
  * @author Jeroen Gremmen
  * @since 0.7.0
  */

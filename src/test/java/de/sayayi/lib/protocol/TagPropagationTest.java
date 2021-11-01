@@ -15,15 +15,16 @@
  */
 package de.sayayi.lib.protocol;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import lombok.val;
 
-import static de.sayayi.lib.protocol.Level.Shared.DEBUG;
-import static de.sayayi.lib.protocol.Level.Shared.ERROR;
 import static de.sayayi.lib.protocol.Level.Shared.INFO;
 import static de.sayayi.lib.protocol.TagDef.MatchCondition.AT_LEAST;
-import static org.junit.Assert.assertEquals;
+import static de.sayayi.lib.protocol.matcher.MessageMatchers.hasTag;
+import static de.sayayi.lib.protocol.matcher.MessageMatchers.isDebug;
+import static de.sayayi.lib.protocol.matcher.MessageMatchers.isError;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 /**
@@ -43,7 +44,7 @@ public class TagPropagationTest
     protocol.debug().message("debug")
             .warn().message("error");
 
-    assertEquals(0, protocol.getVisibleEntryCount(false, ERROR, uiTagDef.asSelector()));
-    assertEquals(1, protocol.getVisibleEntryCount(false, DEBUG, uiTagDef.asSelector()));
+    assertEquals(0, protocol.getVisibleEntryCount(false, isError().and(hasTag(uiTagDef))));
+    assertEquals(1, protocol.getVisibleEntryCount(false, isDebug().and(hasTag(uiTagDef))));
   }
 }

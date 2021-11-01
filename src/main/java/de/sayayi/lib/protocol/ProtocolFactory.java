@@ -23,8 +23,8 @@ import de.sayayi.lib.protocol.message.processor.StringMessageProcessor;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 
 /**
@@ -82,7 +82,7 @@ public interface ProtocolFactory<M>
   boolean isValidTagName(String tagName);
 
 
-  @Contract("_ -> new")
+  @Contract(value = "_ -> new", mutates = "this")
   @NotNull TagBuilder<M> createTag(@NotNull String name);
 
 
@@ -123,16 +123,6 @@ public interface ProtocolFactory<M>
    */
   @Contract(pure = true)
   @NotNull TagDef getDefaultTag();
-
-
-  /**
-   * returns a map with parameter name/value entries which will be available to every message created by protocol
-   * instances belonging directly or indirectly to this factory.
-   *
-   * @return  map with default name/value entries, never {@code null}
-   */
-  @Contract(pure = true)
-  @NotNull Map<String,Object> getDefaultParameterValues();
 
 
 
@@ -181,7 +171,50 @@ public interface ProtocolFactory<M>
   interface MessageProcessor<M>
   {
     @Contract(pure = true)
-    @NotNull M processMessage(@NotNull String message);
+    @NotNull MessageWithId<M> processMessage(@NotNull String message);
+
+
+    /**
+     * Returns the id from an already processed message. The default implementation generates a unique UUID.
+     *
+     * @param message  processed message, not {@code null}
+     *
+     * @return  id, never {@code null}
+     *
+     * @since 1.0.0
+     */
+    @Contract(pure = true)
+    default @NotNull String getIdFromMessage(@NotNull M message) {
+      return UUID.randomUUID().toString();
+    }
+
+
+
+
+    /**
+     * @param <M>  internal message object type
+     *
+     * @since 1.0.0
+     */
+    interface MessageWithId<M>
+    {
+      /**
+       * Returns the message id.
+       *
+       * @return  message id, never {@code null}
+       */
+      @Contract(pure = true)
+      @NotNull String getId();
+
+
+      /**
+       * Returns the processed message.
+       *
+       * @return  processed message, never {@code null}
+       */
+      @Contract(pure = true)
+      @NotNull M getMessage();
+    }
   }
 
 
@@ -204,6 +237,7 @@ public interface ProtocolFactory<M>
      *
      * @return  formatted message, never {@code null}
      */
+    @Contract(pure = true)
     @NotNull String formatMessage(@NotNull GenericMessage<M> message);
   }
 }

@@ -20,8 +20,15 @@ import de.sayayi.lib.message.MessageFactory;
 import de.sayayi.lib.message.exception.MessageParserException;
 import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
 import de.sayayi.lib.protocol.exception.ProtocolException;
+import de.sayayi.lib.protocol.spi.GenericMessageWithId;
+
+import lombok.AllArgsConstructor;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
+
+import static java.util.Objects.requireNonNull;
 
 
 /**
@@ -30,18 +37,34 @@ import org.jetbrains.annotations.NotNull;
  *
  * @see MessageBundleMessageProcessor
  */
-public enum MessageFormatMessageProcessor implements MessageProcessor<Message>
+@AllArgsConstructor
+public class MessageFormatMessageProcessor implements MessageProcessor<Message>
 {
-  INSTANCE;
+  private final @NotNull MessageFactory messageFactory;
+
+
+  public static final MessageFormatMessageProcessor INSTANCE =
+      new MessageFormatMessageProcessor(MessageFactory.NO_CACHE_INSTANCE);
 
 
   @Override
-  public @NotNull Message processMessage(@NotNull String messageFormat)
+  public @NotNull MessageWithId<Message> processMessage(@NotNull String messageFormat)
   {
     try {
-      return MessageFactory.parse(messageFormat);
+      return new GenericMessageWithId<>(
+          messageFactory.parse(requireNonNull(messageFormat, "messageFormat must not be null")));
     } catch(MessageParserException ex) {
       throw new ProtocolException("failed to process message: " + ex.getMessage(), ex);
     }
+  }
+
+
+  @Override
+  public @NotNull String getIdFromMessage(@NotNull Message message)
+  {
+    if (message instanceof Message.WithCode)
+      return ((Message.WithCode)message).getCode();
+
+    return UUID.randomUUID().toString();
   }
 }

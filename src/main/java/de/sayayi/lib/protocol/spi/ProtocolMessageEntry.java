@@ -16,20 +16,20 @@
 package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.Level;
-import de.sayayi.lib.protocol.TagSelector;
+import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor.MessageWithId;
+import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import lombok.Getter;
 import lombok.val;
-import lombok.var;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
-import static de.sayayi.lib.protocol.spi.LevelHelper.min;
+import static java.util.Collections.unmodifiableSet;
+import static java.util.stream.Collectors.joining;
 
 
 /**
@@ -40,85 +40,70 @@ import static de.sayayi.lib.protocol.spi.LevelHelper.min;
  */
 final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements InternalProtocolEntry.Message<M>
 {
-  @Getter private final Level level;
-  private final Set<String> tags;
+  @Getter private final @NotNull Level level;
+  private final @NotNull Set<String> tagNames;
   @Getter private final Throwable throwable;
 
 
-  ProtocolMessageEntry(@NotNull Level level, @NotNull Set<String> tags, Throwable throwable, @NotNull M message,
-                       @NotNull Map<String,Object> defaultParameterValues)
+  ProtocolMessageEntry(@NotNull Level level, @NotNull Set<String> tagNames, Throwable throwable,
+                       @NotNull MessageWithId<M> messageWithId, @NotNull ParameterMap parentParameterMap)
   {
-    super(message, defaultParameterValues);
+    super(messageWithId, parentParameterMap);
 
     this.level = level;
-    this.tags = tags;
+    this.tagNames = tagNames;
     this.throwable = throwable;
   }
 
 
   @Override
   public @NotNull Set<String> getTagNames() {
-    return Collections.unmodifiableSet(tags);
+    return unmodifiableSet(tagNames);
   }
 
 
   @Override
-  public boolean matches0(@NotNull Level levelLimit, @NotNull Level level, @NotNull TagSelector tagSelector) {
-    return matches0(levelLimit, level) && tagSelector.match(tags);
+  public boolean hasTag(@NotNull String tagName) {
+    return tagNames.contains(tagName);
   }
 
 
   @Override
-  public boolean matches(@NotNull Level level, @NotNull TagSelector tagSelector) {
-    return matches0(HIGHEST, level, tagSelector);
+  public boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher) {
+    return matcher.matches(levelLimit, this);
   }
 
 
   @Override
-  public boolean matches0(@NotNull Level levelLimit, @NotNull Level level) {
-    return min(this.level, levelLimit).severity() >= level.severity();
+  public boolean matches(@NotNull MessageMatcher matcher) {
+    return matches0(HIGHEST, matcher);
   }
 
 
   @Override
-  public boolean matches(@NotNull Level level) {
-    return this.level.severity() >= level.severity();
+  public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive, @NotNull MessageMatcher matcher) {
+    return matches0(levelLimit, matcher) ? 1 : 0;
   }
 
 
   @Override
-  public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive,
-                                   @NotNull Level level, @NotNull TagSelector tagSelector) {
-    return matches0(levelLimit, level, tagSelector) ? 1 : 0;
-  }
-
-
-  @Override
-  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull TagSelector tagSelector) {
-    return getVisibleEntryCount0(HIGHEST, recursive, level, tagSelector);
+  public int getVisibleEntryCount(boolean recursive, @NotNull MessageMatcher matcher) {
+    return getVisibleEntryCount0(HIGHEST, recursive, matcher);
   }
 
 
   @Override
   public String toString()
   {
-    val s = new StringBuilder("Message[level=").append(level).append(",tags={");
-    var first = true;
+    val s = new StringBuilder("Message[level=").append(level).append(",tags={")
+        .append(String.join(",", tagNames)).append("},id=").append(getMessageId())
+        .append(",message=").append(getMessage());
 
-    for(val tag: tags)
+    if (!parameterMap.isEmpty())
     {
-      if (first)
-        first = false;
-      else
-        s.append(',');
-
-      s.append(tag);
+      s.append(parameterMap.stream().map(Entry::toString).collect(
+          joining(",", ",params={", "}")));
     }
-
-    s.append("},message=").append(message);
-
-    if (!parameterValues.isEmpty())
-      s.append(",params=").append(parameterValues);
 
     return s.append(']').toString();
   }

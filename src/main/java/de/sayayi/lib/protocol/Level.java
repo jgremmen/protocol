@@ -15,11 +15,14 @@
  */
 package de.sayayi.lib.protocol;
 
-import lombok.val;
+import lombok.RequiredArgsConstructor;
 
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
+
+import static lombok.AccessLevel.PRIVATE;
 
 
 /**
@@ -43,17 +46,7 @@ public interface Level
    *
    * @since 0.7.0
    */
-  Comparator<Level> SORT_ASCENDING = new Comparator<Level>() {
-    @Override
-    @SuppressWarnings("java:S3358")
-    public int compare(Level o1, Level o2)
-    {
-      val s1 = o1.severity();
-      val s2 = o2.severity();
-
-      return s1 < s2 ? -1 : (s1 == s2 ? 0 : 1);
-    }
-  };
+  Comparator<Level> SORT_ASCENDING = Comparator.comparingInt(Level::severity);
 
 
   /**
@@ -61,17 +54,7 @@ public interface Level
    *
    * @since 0.7.0
    */
-  Comparator<Level> SORT_DESCENDING = new Comparator<Level>() {
-    @Override
-    @SuppressWarnings("java:S3358")
-    public int compare(Level o1, Level o2)
-    {
-      val s1 = o1.severity();
-      val s2 = o2.severity();
-
-      return s1 < s2 ? 1 : (s1 == s2 ? 0 : -1);
-    }
-  };
+  Comparator<Level> SORT_DESCENDING = SORT_ASCENDING.reversed();
 
 
   /**
@@ -90,12 +73,33 @@ public interface Level
   int severity();
 
 
+  @Contract(pure = true)
+  static @NotNull Level max(@NotNull Level l1, @NotNull Level l2) {
+    return l1.severity() >= l2.severity() ? l1 : l2;
+  }
+
+
+  @Contract(pure = true)
+  static @NotNull Level min(@NotNull Level l1, @NotNull Level l2) {
+    return l1.severity() <= l2.severity() ? l1 : l2;
+  }
+
+
+  @Contract(pure = true)
+  static int compare(@NotNull Level l1, @NotNull Level l2) {
+    return Integer.compare(l1.severity(), l2.severity());
+  }
+
+
+
+
   /**
    * Level constants for the {@linkplain Protocol#debug() debug()}, {@linkplain Protocol#info() info()},
    * {@linkplain Protocol#warn() warn()} and {@linkplain Protocol#error() error()} protocol methods.
    *
    * @since 0.1.0
    */
+  @RequiredArgsConstructor(access = PRIVATE)
   enum Shared implements Level
   {
     /** Constant representing a level with the lowest possible severity */
@@ -118,11 +122,6 @@ public interface Level
 
 
     private final int severity;
-
-
-    Shared(int severity) {
-      this.severity = severity;
-    }
 
 
     @Override

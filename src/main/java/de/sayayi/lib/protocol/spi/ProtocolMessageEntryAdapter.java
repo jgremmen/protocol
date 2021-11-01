@@ -17,17 +17,20 @@ package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.ProtocolEntry;
-import de.sayayi.lib.protocol.TagSelector;
+import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.val;
-import lombok.var;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+
+import static de.sayayi.lib.protocol.Level.compare;
+import static java.util.stream.Collectors.joining;
 
 
 /**
@@ -39,8 +42,14 @@ import java.util.Set;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
 {
-  private final Level levelLimit;
-  private final InternalProtocolEntry.Message<M> message;
+  private final @NotNull Level levelLimit;
+  private final @NotNull InternalProtocolEntry.Message<M> message;
+
+
+  @Override
+  public @NotNull String getMessageId() {
+    return message.getMessageId();
+  }
 
 
   @Override
@@ -80,44 +89,30 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
 
 
   @Override
-  public boolean matches(@NotNull Level level, @NotNull TagSelector tagSelector) {
-    return message.matches0(levelLimit, level, tagSelector);
+  public boolean matches(@NotNull MessageMatcher matcher) {
+    return message.matches0(levelLimit, matcher);
   }
 
 
   @Override
-  public boolean matches(@NotNull Level level) {
-    return message.matches0(levelLimit, level);
-  }
-
-
-  @Override
-  public int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull TagSelector tagSelector) {
-    return message.getVisibleEntryCount0(levelLimit, recursive, level, tagSelector);
+  public int getVisibleEntryCount(boolean recursive, @NotNull MessageMatcher matcher) {
+    return message.getVisibleEntryCount0(levelLimit, recursive, matcher);
   }
 
 
   @Override
   public String toString()
   {
-    val s = new StringBuilder("Message[level=").append(levelLimit).append(",tags={");
-    var first = true;
-
-    for(val tag: getTagNames())
-    {
-      if (first)
-        first = false;
-      else
-        s.append(',');
-
-      s.append(tag);
-    }
-
-    s.append("},message=").append(message.getMessage());
+    val s = new StringBuilder("Message[level=").append(levelLimit).append(",tags={")
+        .append(String.join(",", getTagNames())).append("},id=").append(getMessageId())
+        .append(",message=").append(message.getMessage());
 
     val parameterValues = getParameterValues();
     if (!parameterValues.isEmpty())
-      s.append(",params=").append(parameterValues);
+    {
+      s.append(parameterValues.entrySet().stream().map(Entry::toString).collect(
+          joining(",", ",params={", "}")));
+    }
 
     return s.append(']').toString();
   }
@@ -126,7 +121,7 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
   static <M> ProtocolEntry.Message<M> from(@NotNull Level levelLimit,
                                            @NotNull InternalProtocolEntry.Message<M> messageEntry)
   {
-    return levelLimit.severity() < messageEntry.getLevel().severity()
-        ? new ProtocolMessageEntryAdapter<M>(levelLimit, messageEntry) : messageEntry;
+    return compare(levelLimit, messageEntry.getLevel()) < 0
+        ? new ProtocolMessageEntryAdapter<>(levelLimit, messageEntry) : messageEntry;
   }
 }

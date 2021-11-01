@@ -16,8 +16,11 @@
 package de.sayayi.lib.protocol.message.processor;
 
 import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
+import de.sayayi.lib.protocol.spi.GenericMessageWithId;
 
 import org.jetbrains.annotations.NotNull;
+
+import static java.util.Objects.requireNonNull;
 
 
 /**
@@ -30,7 +33,7 @@ public enum StringMessageProcessor implements MessageProcessor<String>
 
 
   @Override
-  public @NotNull String processMessage(@NotNull String message) {
-    return message;
+  public @NotNull MessageWithId<String> processMessage(@NotNull String message) {
+    return new GenericMessageWithId<>(requireNonNull(message, "message must not be null"));
   }
 }

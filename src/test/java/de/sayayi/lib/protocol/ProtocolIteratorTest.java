@@ -18,7 +18,7 @@ package de.sayayi.lib.protocol;
 import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import lombok.val;
 
@@ -28,9 +28,11 @@ import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
 import static de.sayayi.lib.protocol.Level.Shared.WARN;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.FLATTEN_ON_SINGLE_ENTRY;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ALWAYS;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static de.sayayi.lib.protocol.matcher.MessageMatchers.is;
+import static de.sayayi.lib.protocol.matcher.MessageMatchers.isError;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
@@ -59,7 +61,7 @@ public class ProtocolIteratorTest
 
     //String tree = protocol.format(new TechnicalProtocolFormatter<String>(factory));
 
-    val iterator = protocol.iterator(LOWEST, Tag.any());
+    val iterator = protocol.iterator(is(LOWEST));
     GroupStartEntry<String> grpEntry;
     MessageEntry<String> msgEntry;
 
@@ -128,7 +130,7 @@ public class ProtocolIteratorTest
             .createGroup().setGroupMessage("grp #2, header").setVisibility(FLATTEN_ON_SINGLE_ENTRY)
                           .debug().message("grp #2, msg #1");
 
-    val iterator = protocol.iterator(LOWEST, Tag.any());
+    val iterator = protocol.iterator(is(LOWEST));
     GroupStartEntry<String> grpEntry;
     MessageEntry<String> msgEntry;
 
@@ -163,12 +165,9 @@ public class ProtocolIteratorTest
   {
     val factory = StringProtocolFactory.createPlainTextFactory();
     val protocol = factory.createProtocol().debug().message("msg");
-    val iterator = protocol.iterator(ERROR, Tag.any());
+    val iterator = protocol.iterator(isError());
 
     assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolStart);
-
-    assertEquals(ERROR, iterator.getLevel());
-
     assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolEnd);
   }
 
@@ -178,9 +177,7 @@ public class ProtocolIteratorTest
   {
     val factory = StringProtocolFactory.createPlainTextFactory();
     val protocol = factory.createProtocol().debug().message("msg #1");
-    val iterator = protocol.iterator(LOWEST, Tag.any());
-
-    assertEquals(LOWEST, iterator.getLevel());
+    val iterator = protocol.iterator(is(LOWEST));
 
     DepthEntry<String> entry;
     MessageEntry<String> message;
@@ -212,9 +209,7 @@ public class ProtocolIteratorTest
             .warn().message("msg #2")
             .error().message("msg #3");
 
-    val iterator = protocol.iterator(LOWEST, Tag.any());
-
-    assertEquals(LOWEST, iterator.getLevel());
+    val iterator = protocol.iterator(is(LOWEST));
 
     DepthEntry<String> entry;
     MessageEntry<String> message;
@@ -268,7 +263,7 @@ public class ProtocolIteratorTest
         .setGroupMessage("Group")
         .error().message("Error");
 
-    val iterator = protocol.iterator(LOWEST, Tag.any());
+    val iterator = protocol.iterator(is(LOWEST));
 
     assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolStart);
     assertTrue(iterator.next() instanceof ProtocolIterator.GroupStartEntry);

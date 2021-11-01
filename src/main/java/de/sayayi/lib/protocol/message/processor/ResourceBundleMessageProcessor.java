@@ -17,6 +17,7 @@ package de.sayayi.lib.protocol.message.processor;
 
 import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
 import de.sayayi.lib.protocol.exception.ProtocolException;
+import de.sayayi.lib.protocol.spi.GenericMessageWithId;
 
 import lombok.AllArgsConstructor;
 
@@ -24,22 +25,26 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ResourceBundle;
 
+import static java.util.Objects.requireNonNull;
+
 
 /**
  * @author Jeroen Gremmen
  * @since 0.7.0
  */
 @AllArgsConstructor
-public class ResourceBundleMessageProcessor implements MessageProcessor<String>
+public final class ResourceBundleMessageProcessor implements MessageProcessor<String>
 {
   private final ResourceBundle resourceBundle;
 
 
   @Override
-  public @NotNull String processMessage(@NotNull String key)
+  public @NotNull MessageWithId<String> processMessage(@NotNull String key)
   {
+    requireNonNull(key, "key must not be null");
+
     try {
-      return resourceBundle.getString(key);
+      return new GenericMessageWithId<>(key, resourceBundle.getString(key));
     } catch(Exception ex) {
       throw new ProtocolException("cannot process resource with key '" + key + "'", ex);
     }

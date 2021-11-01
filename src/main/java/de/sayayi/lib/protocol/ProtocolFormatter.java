@@ -19,6 +19,7 @@ import de.sayayi.lib.protocol.ProtocolGroup.Visibility;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupEndEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
+import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -37,16 +38,18 @@ public interface ProtocolFormatter<M,R>
    * This method is invoked before any other formatting methods are invoked and must initialize the formatter in
    * such way that it can be reused.
    *
-   * @param level  matching protocol level
-   * @param tagSelector  tag selector
+   * @param factory              protocol factory, never {@code null}
+   * @param matcher              message matcher, never {@code null}
    * @param estimatedGroupDepth  the estimated depth of nested protocol groups ({@code 0} means the protocol contains
    *                             no groups). The real depth depends on {@code level}, {@code tags} and group
    *                             visibility settings but is never greater than the estimated depth.
    *
-   * @see Protocol#format(ProtocolFormatter, Level, TagSelector)
+   * @see Protocol#format(ProtocolFormatter, MessageMatcher)
+   *
+   * @since 1.0.0
    */
-  void init(@NotNull ProtocolFactory<M> factory, @NotNull Level level, @NotNull TagSelector tagSelector,
-            int estimatedGroupDepth);
+  @Contract(mutates = "this")
+  void init(@NotNull ProtocolFactory<M> factory, @NotNull MessageMatcher matcher, int estimatedGroupDepth);
 
 
   /**
@@ -56,7 +59,8 @@ public interface ProtocolFormatter<M,R>
    *
    * @see #protocolEnd()
    */
-  void protocolStart();
+  default void protocolStart() {
+  }
 
 
   /**
@@ -67,7 +71,8 @@ public interface ProtocolFormatter<M,R>
    * @see #protocolStart()
    * @see #getResult()
    */
-  void protocolEnd();
+  default void protocolEnd() {
+  }
 
 
   /**
@@ -86,10 +91,12 @@ public interface ProtocolFormatter<M,R>
   void message(@NotNull MessageEntry<M> message);
 
 
-  void groupStart(@NotNull GroupStartEntry<M> group);
+  default void groupStart(@NotNull GroupStartEntry<M> group) {
+  }
 
 
-  void groupEnd(@NotNull GroupEndEntry<M> groupEnd);
+  default void groupEnd(@NotNull GroupEndEntry<M> groupEnd) {
+  }
 
 
   /**
@@ -99,6 +106,24 @@ public interface ProtocolFormatter<M,R>
    */
   @Contract(pure = true)
   R getResult();
+
+
+  /**
+   * Formats a {@code protocol} using this formatter iterating over all elements matching {@code level} and
+   * {@code tagSelector}.
+   *
+   * @param protocol  protocol to be formatted, never {@code null}
+   * @param matcher   message matcher, never {@code null}
+   *
+   * @return  formatted protocol, or {@code null}
+   *
+   * @see Protocol#format(ProtocolFormatter, MessageMatcher)
+   *
+   * @since 1.0.0
+   */
+  default R format(@NotNull Protocol<M> protocol, @NotNull MessageMatcher matcher) {
+    return protocol.format(this, matcher);
+  }
 
 
 
@@ -111,22 +136,29 @@ public interface ProtocolFormatter<M,R>
   interface ConfiguredProtocolFormatter<M,R> extends ProtocolFormatter<M,R>
   {
     /**
-     * Returns the protocol level to be used for formatting.
-     *
-     * @return  protocol level, never {@code null}
-     */
-    @Contract(pure = true)
-    @NotNull Level getLevel();
-
-
-    /**
-     * Returns the tag selector to be used for formatting.
+     * Returns the message matcher to be used for formatting.
      *
      * @param protocolFactory  the factory from which the protocol was created
      *
      * @return  tag selector, never {@code null}
+     *
+     * @since 1.0.0
      */
     @Contract(pure = true)
-    @NotNull TagSelector getTagSelector(@NotNull ProtocolFactory<M> protocolFactory);
+    @NotNull MessageMatcher getMatcher(@NotNull ProtocolFactory<M> protocolFactory);
+
+
+    /**
+     * Formats a {@code protocol} using this formatter.
+     *
+     * @param protocol  protocol to be formatted, never {@code null}
+     *
+     * @return  formatted protocol, or {@code null}
+     *
+     * @see Protocol#format(ConfiguredProtocolFormatter)
+     */
+    default R format(@NotNull Protocol<M> protocol) {
+      return protocol.format(this);
+    }
   }
 }

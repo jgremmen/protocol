@@ -16,7 +16,7 @@
 package de.sayayi.lib.protocol.message.formatter;
 
 import de.sayayi.lib.message.Message;
-import de.sayayi.lib.message.ParameterFactory;
+import de.sayayi.lib.message.MessageContext;
 import de.sayayi.lib.protocol.Protocol.GenericMessage;
 import de.sayayi.lib.protocol.ProtocolFactory.MessageFormatter;
 
@@ -24,21 +24,23 @@ import lombok.AllArgsConstructor;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+
 
 /**
  * @author Jeroen Gremmen
  * @since 0.7.0
  *
- * @see Message#format(Message.Parameters)
+ * @see Message#format(MessageContext, Map)
  */
 @AllArgsConstructor
 public final class MessageFormatFormatter implements MessageFormatter<Message>
 {
-  private final ParameterFactory parameterFactory;
+  private final @NotNull MessageContext messageContext;
 
 
   @Override
   public @NotNull String formatMessage(@NotNull GenericMessage<Message> message) {
-    return message.getMessage().format(parameterFactory.with(message.getParameterValues()));
+    return message.getMessage().format(messageContext, message.getParameterValues());
   }
 }

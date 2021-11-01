@@ -17,6 +17,7 @@ package de.sayayi.lib.protocol.message.processor;
 
 import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
 import de.sayayi.lib.protocol.exception.ProtocolException;
+import de.sayayi.lib.protocol.spi.GenericMessageWithId;
 
 import lombok.AllArgsConstructor;
 import lombok.val;
@@ -25,24 +26,26 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Properties;
 
+import static java.util.Objects.requireNonNull;
+
 
 /**
  * @author Jeroen Gremmen
  * @since 0.7.0
  */
 @AllArgsConstructor
-public class PropertiesMessageProcessor implements MessageProcessor<String>
+public final class PropertiesMessageProcessor implements MessageProcessor<String>
 {
   private final Properties properties;
 
 
   @Override
-  public @NotNull String processMessage(@NotNull String key)
+  public @NotNull MessageWithId<String> processMessage(@NotNull String key)
   {
-    val message = properties.getProperty(key);
+    val message = properties.getProperty(requireNonNull(key, "key must not be null"));
     if (message == null)
       throw new ProtocolException("missing property message for key '" + key + "'");
 
-    return message;
+    return new GenericMessageWithId<>(key, message);
   }
 }

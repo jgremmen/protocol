@@ -18,8 +18,9 @@ package de.sayayi.lib.protocol;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.exception.ProtocolException;
 import de.sayayi.lib.protocol.message.formatter.ToStringMessageFormatter;
+import de.sayayi.lib.protocol.spi.GenericMessageWithId;
 import de.sayayi.lib.protocol.spi.GenericProtocolFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import lombok.val;
 
@@ -33,11 +34,13 @@ import static de.sayayi.lib.protocol.TagDef.MatchCondition.AT_LEAST;
 import static de.sayayi.lib.protocol.TagDef.MatchCondition.EQUAL;
 import static de.sayayi.lib.protocol.TagDef.MatchCondition.NOT_EQUAL;
 import static de.sayayi.lib.protocol.TagDef.MatchCondition.UNTIL;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static de.sayayi.lib.protocol.matcher.MessageMatchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 
 /**
@@ -46,30 +49,38 @@ import static org.junit.Assert.fail;
 @SuppressWarnings({ "ConstantConditions", "ResultOfMethodCallIgnored" })
 public class ProtocolFactoryTest
 {
-  @Test(expected = ProtocolException.class)
-  public void testCreateEmptyTag() {
-    StringProtocolFactory.createPlainTextFactory().createTag("");
+  @Test
+  public void testCreateEmptyTag()
+  {
+    //noinspection WriteOnlyObject
+    assertThrows(ProtocolException.class, () -> StringProtocolFactory.createPlainTextFactory().createTag(""));
   }
 
 
-  @Test(expected = ProtocolException.class)
+  @Test
   public void testCreateDuplicateTag()
   {
+    //noinspection WriteOnlyObject
     val factory = StringProtocolFactory.createPlainTextFactory();
-    factory.createTag("tag");
-    factory.createTag("tag");
+
+    assertThrows(ProtocolException.class, () -> {
+      factory.createTag("tag");
+      factory.createTag("tag");
+    });
   }
 
 
-  @Test(expected = ProtocolException.class)
+  @Test
   public void testModifyEmptyTag() {
-    StringProtocolFactory.createPlainTextFactory().modifyTag("");
+    assertThrows(ProtocolException.class, () -> StringProtocolFactory.createPlainTextFactory().modifyTag(""));
   }
 
 
-  @Test(expected = ProtocolException.class)
-  public void testModifyUnknownTag() {
-    StringProtocolFactory.createPlainTextFactory().modifyTag("unknown");
+  @Test
+  public void testModifyUnknownTag()
+  {
+    assertThrows(ProtocolException.class,
+        () -> StringProtocolFactory.createPlainTextFactory().modifyTag("unknown"));
   }
 
 
@@ -80,18 +91,6 @@ public class ProtocolFactoryTest
     factory.createTag("tag");
 
     assertNotNull(factory.modifyTag("tag"));
-  }
-
-
-  @Test
-  public void testDefaultParameters()
-  {
-    val factory = new StringProtocolFactory(ToStringMessageFormatter.IDENTITY) {{
-        defaultParameterValues.put("name", "protocol factory");
-      }
-    };
-
-    assertEquals("protocol factory", factory.getDefaultParameterValues().get("name"));
   }
 
 
@@ -198,9 +197,10 @@ public class ProtocolFactoryTest
   @Test
   public void testProcessMessage()
   {
-    val factory = new GenericProtocolFactory<>(message -> message + "(ok)", ToStringMessageFormatter.IDENTITY);
+    val factory = new GenericProtocolFactory<>(message -> new GenericMessageWithId<>(message + "(ok)"),
+        ToStringMessageFormatter.IDENTITY);
     val protocol = factory.createProtocol().debug().message("msg");
-    val iterator = protocol.iterator(LOWEST, Tag.any());
+    val iterator = protocol.iterator(is(LOWEST));
 
     iterator.next();  // protocol start
 

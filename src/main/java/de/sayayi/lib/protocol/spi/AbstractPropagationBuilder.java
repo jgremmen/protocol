@@ -22,7 +22,6 @@ import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.exception.ProtocolException;
 
 import lombok.val;
-import lombok.var;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -37,7 +36,7 @@ abstract class AbstractPropagationBuilder<M,B extends ProtocolMessageBuilder<M>>
     extends AbstractBuilder<M,B>
     implements TargetTagBuilder<M>
 {
-  private final TagSelector tagSelector;
+  private final @NotNull TagSelector tagSelector;
 
 
   protected AbstractPropagationBuilder(@NotNull AbstractProtocol<M,B> protocol, @NotNull TagSelector tagSelector)
@@ -54,24 +53,16 @@ abstract class AbstractPropagationBuilder<M,B extends ProtocolMessageBuilder<M>>
     if (!protocol.factory.isValidTagName(targetTagName))
       throw new IllegalArgumentException("invalid target tag name '" + targetTagName + "'");
 
-    var propagationSet = protocol.tagPropagationMap.get(tagSelector);
-    if (propagationSet == null)
-    {
-      propagationSet = new TreeSet<String>();
-      protocol.tagPropagationMap.put(tagSelector, propagationSet);
-    }
-
-    propagationSet.add(targetTagName);
+    protocol.tagPropagationMap.computeIfAbsent(tagSelector, k -> new TreeSet<>()).add(targetTagName);
 
     return protocol;
   }
 
 
   @Override
-  @SuppressWarnings({ "java:S2583", "java:S2589", "ConstantConditions" })
   public @NotNull Protocol<M> to(@NotNull String... targetTagNames)
   {
-    if (targetTagNames == null || targetTagNames.length == 0)
+    if (targetTagNames.length == 0)
       throw new ProtocolException("targetTagNames must not be empty");
 
     for(val targetTagName: targetTagNames)

@@ -16,13 +16,12 @@
 package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.Protocol.GenericMessage;
+import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor.MessageWithId;
 
 import lombok.Getter;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 
@@ -33,23 +32,35 @@ import java.util.Map;
  */
 abstract class AbstractGenericMessage<M> implements GenericMessage<M>
 {
-  @Getter final M message;
   @Getter final long timeMillis;
 
-  protected final Map<String,Object> parameterValues;
+  protected final @NotNull MessageWithId<M> messageWithId;
+  protected final @NotNull ParameterMap parameterMap;
 
 
-  protected AbstractGenericMessage(@NotNull M message, @NotNull Map<String,Object> defaultParameterValues)
+  protected AbstractGenericMessage(@NotNull MessageWithId<M> messageWithId, @NotNull ParameterMap parentParameterMap)
   {
-    this.message = message;
-    this.parameterValues = new HashMap<String,Object>(defaultParameterValues);
+    this.messageWithId = messageWithId;
 
     timeMillis = System.currentTimeMillis();
+    parameterMap = new ParameterMap(parentParameterMap);
+  }
+
+
+  @Override
+  public @NotNull String getMessageId() {
+    return messageWithId.getId();
+  }
+
+
+  @Override
+  public @NotNull M getMessage() {
+    return messageWithId.getMessage();
   }
 
 
   @Override
   public @NotNull Map<String,Object> getParameterValues() {
-    return Collections.unmodifiableMap(parameterValues);
+    return parameterMap.unmodifyableMap();
   }
 }

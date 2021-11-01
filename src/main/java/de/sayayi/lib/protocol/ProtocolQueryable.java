@@ -15,6 +15,8 @@
  */
 package de.sayayi.lib.protocol;
 
+import de.sayayi.lib.protocol.matcher.MessageMatcher;
+
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,38 +30,29 @@ import org.jetbrains.annotations.NotNull;
 public interface ProtocolQueryable
 {
   /**
-   * Tells if this protocol object matches the given {@code level} and {@code tagSelector}.
+   * Tells if this protocol object matches the given {@code matcher}.
    *
-   * @param level        requested protocol level, not {@code null}
-   * @param tagSelector  tag selector, not {@code null}
+   * @param matcher  message matcher, not {@code null}
    *
    * @return  {@code true} if the protocol object matches, {@code false} otherwise
+   *
+   * @since 1.0.0
    */
   @Contract(pure = true)
-  boolean matches(@NotNull Level level, @NotNull TagSelector tagSelector);
+  boolean matches(@NotNull MessageMatcher matcher);
 
 
   /**
-   * Tells if this protocol object matches the given {@code level}.
+   * Returns the number of visible entries for the given message {@code matcher}.
    *
-   * @param level  requested protocol level, not {@code null}
-   *
-   * @return  {@code true} if the protocol object matches, {@code false} otherwise
-   */
-  @Contract(pure = true)
-  boolean matches(@NotNull Level level);
-
-
-  /**
-   * Returns the number of visible entries for the given {@code level} and {@code tagSelector}.
-   *
-   * @param level        requested protocol level, not {@code null}
-   * @param tagSelector  tag selector, not {@code null}
-   * @param recursive    {@code false} returns the number of visible entries for the current depth only,
-   *                     {@code true} returns the number of visible entries for all depths starting at the current one
+   * @param matcher    message matcher, not {@code null}
+   * @param recursive  {@code false} returns the number of visible entries for the current depth only,
+   *                   {@code true} returns the number of visible entries for all depths starting at the current one
    *
    * @return  number of visible entries
+   *
+   * @since 1.0.0
    */
   @Contract(pure = true)
-  int getVisibleEntryCount(boolean recursive, @NotNull Level level, @NotNull TagSelector tagSelector);
+  int getVisibleEntryCount(boolean recursive, @NotNull MessageMatcher matcher);
 }

@@ -40,8 +40,7 @@ public final class JavaMessageFormatFormatter extends AbstractIndexedMessageForm
 
 
   @Override
-  protected @NotNull String formatMessage(@NotNull GenericMessage<String> message,
-                                          @NotNull Object[] parameters) {
+  protected @NotNull String formatMessage(@NotNull GenericMessage<String> message, @NotNull Object[] parameters) {
     return new MessageFormat(message.getMessage(), locale).format(parameters);
   }
 }

@@ -76,25 +76,8 @@ abstract class AbstractTagNameMatch extends AbstractTagSelectorBuilder implement
   }
 
 
-  protected String tagNamesAsCSV()
-  {
-    if (tagNames.length == 1)
-      return tagNames[0];
-
-    val s = new StringBuilder();
-    var first = true;
-
-    for(val tagName: tagNames)
-    {
-      if (first)
-        first = false;
-      else
-        s.append(',');
-
-      s.append(tagName);
-    }
-
-    return s.toString();
+  protected String tagNamesAsCSV() {
+    return tagNames.length == 1 ? tagNames[0] : String.join(",", tagNames);
   }
 
 

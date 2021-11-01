@@ -1,24 +1,26 @@
 # CI script
-image: java:8-jdk
+image: openjdk:8-jdk
 
 stages:
   - build
 
 variables:
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
-  GRADLE_USER_HOME: ".gradle-cache"
+  GRADLE_USER_HOME: ".gradle"
 
 before_script:
   - chmod +x ./gradlew
 
 cache:
   paths:
-    - .gradle-cache
+    - .gradle/wrapper
+    - .gradle/caches
 
 build:
   stage: build
-  script: ./gradlew clean build sonarqube -Dsonar.host.url="$SONAR_HOST_URL" -Dsonar.login="$SONAR_LOGIN" -Dsonar.projectKey="gitlab:protocol:$CI_COMMIT_REF_SLUG" --info
+  script: ./gradlew clean build
   artifacts:
+    name: "protocol-artifacts"
     paths:
-      - ./build/libs/*
-    expire_in: 8 weeks
+      - ./build/libs/*.jar
+    expire_in: 2 weeks

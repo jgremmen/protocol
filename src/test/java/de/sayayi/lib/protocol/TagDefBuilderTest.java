@@ -16,11 +16,12 @@
 package de.sayayi.lib.protocol;
 
 import de.sayayi.lib.protocol.message.formatter.ToStringMessageFormatter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import lombok.val;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
@@ -29,19 +30,23 @@ import static org.junit.Assert.assertTrue;
 @SuppressWarnings({ "ResultOfMethodCallIgnored", "ConstantConditions" })
 public class TagDefBuilderTest
 {
-  @Test(expected = NullPointerException.class)
+  @Test
   public void testMatchNullCondition()
   {
-    new StringProtocolFactory(ToStringMessageFormatter.IDENTITY)
-        .createTag("tag").match(null, Level.Shared.INFO);
+    assertThrows(NullPointerException.class, () -> {
+      new StringProtocolFactory(ToStringMessageFormatter.IDENTITY)
+          .createTag("tag").match(null, Level.Shared.INFO);
+    });
   }
 
 
-  @Test(expected = NullPointerException.class)
+  @Test
   public void testMatchNullLevel()
   {
-    new StringProtocolFactory(ToStringMessageFormatter.IDENTITY)
-        .createTag("tag").match(TagDef.MatchCondition.AT_LEAST, null);
+    assertThrows(NullPointerException.class, () -> {
+      new StringProtocolFactory(ToStringMessageFormatter.IDENTITY)
+          .createTag("tag").match(TagDef.MatchCondition.AT_LEAST, null);
+    });
   }
 
 
@@ -69,7 +74,6 @@ public class TagDefBuilderTest
 
     tag.createProtocol();
     tag.createTag("tag2");
-    tag.getDefaultParameterValues();
     tag.getDefaultTag();
     tag.getTagByName("tag");
     tag.getTagDefs();
@@ -79,14 +83,17 @@ public class TagDefBuilderTest
   }
 
 
-  @Test(expected = NullPointerException.class)
+  @Test
   public void testTagMatches()
   {
     val factory = new StringProtocolFactory(ToStringMessageFormatter.IDENTITY);
-    factory.createTag("tag")
-        .match(TagDef.MatchCondition.EQUAL, Level.Shared.INFO)
-        .getTagDef()
-        .matches(null);
+
+    assertThrows(NullPointerException.class, () -> {
+      factory.createTag("tag")
+          .match(TagDef.MatchCondition.EQUAL, Level.Shared.INFO)
+          .getTagDef()
+          .matches(null);
+    });
   }
 
 
