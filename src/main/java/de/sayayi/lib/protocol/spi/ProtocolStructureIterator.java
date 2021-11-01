@@ -66,12 +66,12 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   };
 
 
-  private final Level levelLimit;
-  @Getter private final MessageMatcher matcher;
+  private final @NotNull Level levelLimit;
+  @Getter private final @NotNull MessageMatcher matcher;
   @Getter @Setter(PROTECTED) private int depth;
 
   private ForGroup<M> groupIterator;
-  private Iterator<ProtocolEntry<M>> iterator;
+  private @NotNull Iterator<ProtocolEntry<M>> iterator;
   private RankingDepthEntry<M> previousVisibleEntry;
 
   private final boolean rootProtocol;

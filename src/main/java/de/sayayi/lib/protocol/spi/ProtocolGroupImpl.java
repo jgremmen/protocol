@@ -61,8 +61,8 @@ final class ProtocolGroupImpl<M>
 {
   @Getter private final AbstractProtocol<M,Protocol.ProtocolMessageBuilder<M>> parent;
 
-  @Getter private Level levelLimit;
-  @Getter private Visibility visibility;
+  @Getter private @NotNull Level levelLimit;
+  @Getter private @NotNull Visibility visibility;
   @Getter private GroupMessage groupMessage;
   @Getter private String name;
 

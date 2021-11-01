@@ -19,6 +19,8 @@ import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 
 import lombok.RequiredArgsConstructor;
 
+import org.jetbrains.annotations.NotNull;
+
 import static lombok.AccessLevel.PROTECTED;
 
 
@@ -35,5 +37,5 @@ abstract class AbstractBuilder<M,B extends ProtocolMessageBuilder<M>>
   /**
    * Reference of the protocol this builder is associated with.
    */
-  protected final AbstractProtocol<M,B> protocol;
+  protected final @NotNull AbstractProtocol<M,B> protocol;
 }

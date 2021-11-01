@@ -42,8 +42,8 @@ import static java.util.stream.Collectors.joining;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
 {
-  private final Level levelLimit;
-  private final InternalProtocolEntry.Message<M> message;
+  private final @NotNull Level levelLimit;
+  private final @NotNull InternalProtocolEntry.Message<M> message;
 
 
   @Override

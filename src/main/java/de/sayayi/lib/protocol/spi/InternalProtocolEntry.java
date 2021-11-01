@@ -48,11 +48,11 @@ interface InternalProtocolEntry<M> extends ProtocolEntry<M>, InternalProtocolQue
 
 
     @Contract(pure = true)
-    Visibility getVisibility();
+    @NotNull Visibility getVisibility();
 
 
     @Contract(pure = true)
-    Visibility getEffectiveVisibility();
+    @NotNull Visibility getEffectiveVisibility();
 
 
     @Contract(pure = true, value = "_, _ -> new")

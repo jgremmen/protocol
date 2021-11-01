@@ -34,8 +34,8 @@ abstract class AbstractGenericMessage<M> implements GenericMessage<M>
 {
   @Getter final long timeMillis;
 
-  protected final MessageWithId<M> messageWithId;
-  protected final ParameterMap parameterMap;
+  protected final @NotNull MessageWithId<M> messageWithId;
+  protected final @NotNull ParameterMap parameterMap;
 
 
   protected AbstractGenericMessage(@NotNull MessageWithId<M> messageWithId, @NotNull ParameterMap parentParameterMap)

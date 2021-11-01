@@ -60,11 +60,11 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   @EqualsAndHashCode.Include
   @Getter private final int id;
 
-  @Getter final ProtocolFactory<M> factory;
+  @Getter final @NotNull ProtocolFactory<M> factory;
 
-  final ParameterMap parameterMap;
-  final List<InternalProtocolEntry<M>> entries;
-  final Map<TagSelector,Set<String>> tagPropagationMap;
+  final @NotNull ParameterMap parameterMap;
+  final @NotNull List<InternalProtocolEntry<M>> entries;
+  final @NotNull Map<TagSelector,Set<String>> tagPropagationMap;
 
 
   protected AbstractProtocol(@NotNull ProtocolFactory<M> factory, ParameterMap parentParameterMap)

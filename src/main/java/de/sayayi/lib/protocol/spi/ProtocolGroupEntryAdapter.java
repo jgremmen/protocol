@@ -43,8 +43,8 @@ import static lombok.AccessLevel.PRIVATE;
 @AllArgsConstructor(access = PRIVATE)
 final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<M>
 {
-  private final Level levelLimit;
-  private final InternalProtocolEntry.Group<M> group;
+  private final @NotNull Level levelLimit;
+  private final @NotNull InternalProtocolEntry.Group<M> group;
 
 
   @Override
@@ -90,13 +90,13 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
 
 
   @Override
-  public ProtocolGroup.Visibility getVisibility() {
+  public @NotNull ProtocolGroup.Visibility getVisibility() {
     return group.getVisibility();
   }
 
 
   @Override
-  public ProtocolGroup.Visibility getEffectiveVisibility() {
+  public @NotNull ProtocolGroup.Visibility getEffectiveVisibility() {
     return group.getEffectiveVisibility();
   }
 

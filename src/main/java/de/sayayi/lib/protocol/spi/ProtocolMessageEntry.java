@@ -40,8 +40,8 @@ import static java.util.stream.Collectors.joining;
  */
 final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements InternalProtocolEntry.Message<M>
 {
-  @Getter private final Level level;
-  private final Set<String> tagNames;
+  @Getter private final @NotNull Level level;
+  private final @NotNull Set<String> tagNames;
   @Getter private final Throwable throwable;
 
 

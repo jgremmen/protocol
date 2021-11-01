@@ -49,7 +49,7 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
     extends AbstractBuilder<M,B>
     implements MessageParameterBuilder<M>
 {
-  private final AbstractGenericMessage<M> message;
+  private final @NotNull AbstractGenericMessage<M> message;
 
 
   protected AbstractParameterBuilder(@NotNull AbstractProtocol<M,B> protocol,

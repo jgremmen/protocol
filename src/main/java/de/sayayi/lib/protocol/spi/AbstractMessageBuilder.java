@@ -44,8 +44,8 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
     extends AbstractBuilder<M,B>
     implements ProtocolMessageBuilder<M>
 {
-  private final Level level;
-  private final Set<String> tags;
+  private final @NotNull Level level;
+  private final @NotNull Set<String> tags;
 
   private Throwable throwable;
 
@@ -108,8 +108,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   public @NotNull P withMessage(@NotNull M message)
   {
     val msg = new ProtocolMessageEntry<>(level, message0_resolveTagNames(), throwable,
-        new GenericMessageWithId<>(
-            protocol.getFactory().getMessageProcessor().getIdFromMessage(message),
+        new GenericMessageWithId<>(protocol.getFactory().getMessageProcessor().getIdFromMessage(message),
             requireNonNull(message, "message must not be null")),
         protocol.parameterMap);
 

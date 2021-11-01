@@ -146,7 +146,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
   @Contract(value = "-> new", pure = true)
-  public Stream<Entry<String,Object>> stream() {
+  public @NotNull Stream<Entry<String,Object>> stream() {
     return StreamSupport.stream(spliterator(), false);
   }
 
@@ -219,7 +219,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
   @RequiredArgsConstructor(access = PRIVATE)
   private static final class UnmodifyableMap implements Map<String,Object>
   {
-    private final ParameterMap map;
+    private final @NotNull ParameterMap map;
 
     private Set<String> keySet;
     private Set<Entry<String,Object>> entrySet;
@@ -317,7 +317,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
   private abstract static class AbstractUnmodifyableCollection<T> implements Collection<T>
   {
     @EqualsAndHashCode.Include
-    protected final ParameterMap map;
+    protected final @NotNull ParameterMap map;
 
 
     protected AbstractUnmodifyableCollection(@NotNull ParameterMap map) {
@@ -605,7 +605,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
   @AllArgsConstructor(access = PRIVATE)
   private static final class ParameterEntry implements Entry<String,Object>
   {
-    @Getter final String key;
+    @Getter final @NotNull String key;
     @Getter Object value;
 
 
@@ -647,7 +647,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
   @AllArgsConstructor(access = PRIVATE)
   private final class ParameterIterator implements Iterator<Entry<String,Object>>
   {
-    private final Iterator<Entry<String,Object>> parentIterator;
+    private final @NotNull Iterator<Entry<String,Object>> parentIterator;
     private final int expectedModCount;
 
     private Entry<String,Object> nextParentEntry;
@@ -706,7 +706,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
     @Override
-    public Entry<String,Object> next()
+    public @NotNull Entry<String,Object> next()
     {
       if (expectedModCount != modCount)
         throw new ConcurrentModificationException();

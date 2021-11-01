@@ -37,14 +37,12 @@ import java.util.UUID;
 @AllArgsConstructor
 public final class GenericMessageWithId<M> implements MessageWithId<M>
 {
-  private final String id;
-  private final M message;
+  private final @NotNull String id;
+  private final @NotNull M message;
 
 
-  public GenericMessageWithId(@NotNull M message)
-  {
-    id = UUID.randomUUID().toString();
-    this.message = message;
+  public GenericMessageWithId(@NotNull M message) {
+    this(UUID.randomUUID().toString(), message);
   }
 
 

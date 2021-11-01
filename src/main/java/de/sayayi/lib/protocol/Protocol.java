@@ -380,6 +380,19 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
   /**
+   * <p>
+   *   Creates a {@code Spliterator} over all protocol groups which are direct descendants of this
+   *   protocol, with a rough initial size estimate.
+   * </p>
+   * <p>
+   *   The {@code Spliterator} reports {@link Spliterator#ORDERED}, {@link Spliterator#DISTINCT} and
+   *   {@link Spliterator#NONNULL}.
+   * </p>
+   *
+   * @return  group spliterator for this protocol, never {@code null}
+   *
+   * @see #groupIterator()
+   *
    * @since 1.0.0
    */
   @NotNull Spliterator<ProtocolGroup<M>> groupSpliterator();

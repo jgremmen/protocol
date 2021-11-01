@@ -61,9 +61,9 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 
   private final Map<String,TagDefImpl> registeredTags = new TreeMap<>();
   private final int id;
-  @Getter private final TagDef defaultTag;
-  @Getter private final MessageProcessor<M> messageProcessor;
-  @Getter private final MessageFormatter<M> messageFormatter;
+  @Getter private final @NotNull TagDef defaultTag;
+  @Getter private final @NotNull MessageProcessor<M> messageProcessor;
+  @Getter private final @NotNull MessageFormatter<M> messageFormatter;
 
 
   public GenericProtocolFactory(@NotNull MessageProcessor<M> messageProcessor,
