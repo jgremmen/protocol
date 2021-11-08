@@ -31,10 +31,6 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.TreeSet;
 
-import static de.sayayi.lib.protocol.Level.Shared.DEBUG;
-import static de.sayayi.lib.protocol.Level.Shared.ERROR;
-import static de.sayayi.lib.protocol.Level.Shared.INFO;
-import static de.sayayi.lib.protocol.Level.Shared.WARN;
 import static de.sayayi.lib.protocol.ProtocolFactory.DEFAULT_TAG_NAME;
 import static de.sayayi.lib.protocol.matcher.BooleanMatcher.ANY;
 import static de.sayayi.lib.protocol.matcher.BooleanMatcher.NONE;
@@ -267,7 +263,7 @@ public final class MessageMatchers
    */
   @Contract(value = "-> new", pure = true)
   public static @NotNull Junction isDebug() {
-    return is(DEBUG);
+    return LevelMatcher.DEBUG;
   }
 
 
@@ -281,7 +277,7 @@ public final class MessageMatchers
    */
   @Contract(value = "-> new", pure = true)
   public static @NotNull Junction isInfo() {
-    return is(INFO);
+    return LevelMatcher.INFO;
   }
 
 
@@ -295,7 +291,7 @@ public final class MessageMatchers
    */
   @Contract(value = "-> new", pure = true)
   public static @NotNull Junction isWarn() {
-    return is(WARN);
+    return LevelMatcher.WARN;
   }
 
 
@@ -309,7 +305,7 @@ public final class MessageMatchers
    */
   @Contract(value = "-> new", pure = true)
   public static @NotNull Junction isError() {
-    return is(ERROR);
+    return LevelMatcher.ERROR;
   }
 
 

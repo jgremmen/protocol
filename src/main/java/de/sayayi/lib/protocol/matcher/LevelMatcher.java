@@ -40,6 +40,11 @@ import static lombok.AccessLevel.PRIVATE;
 @EqualsAndHashCode(callSuper = false)
 final class LevelMatcher implements Junction
 {
+  static final Junction DEBUG = new LevelMatcher(Level.Shared.DEBUG);
+  static final Junction INFO = new LevelMatcher(Level.Shared.INFO);
+  static final Junction WARN = new LevelMatcher(Level.Shared.WARN);
+  static final Junction ERROR = new LevelMatcher(Level.Shared.ERROR);
+
   private final Level level;
 
 
@@ -56,7 +61,19 @@ final class LevelMatcher implements Junction
 
 
   @Contract(pure = true)
-  static Junction of(@NotNull Level level) {
-    return level.severity() == LOWEST.severity() ? ANY : new LevelMatcher(level);
+  static Junction of(@NotNull Level level)
+  {
+    if (level == Level.Shared.DEBUG)
+      return DEBUG;
+    else if (level == Level.Shared.INFO)
+      return INFO;
+    else if (level == Level.Shared.WARN)
+      return WARN;
+    else if (level == Level.Shared.ERROR)
+      return ERROR;
+    else if (level.severity() == LOWEST.severity())
+      return ANY;
+    else
+      return new LevelMatcher(level);
   }
 }
