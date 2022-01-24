@@ -364,6 +364,21 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
   /**
+   * Create a new protocol group with the given {@code name}.
+   *
+   * @param name  protocol group name or {@code null}
+   *
+   * @return  new protocol group, never {@code null}
+   *
+   * @see ProtocolGroup#setName(String)
+   */
+  @Contract(value = "_ -> new", mutates = "this")
+  default @NotNull ProtocolGroup<M> createGroup(String name) {
+    return createGroup().setName(name);
+  }
+
+
+  /**
    * <p>
    *   Returns a group iterator for this protocol.
    * </p>

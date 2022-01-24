@@ -12,17 +12,17 @@ plugins {
 
 description 'Protocol Library'
 group 'de.sayayi.lib'
-version '1.0.0'
+version '1.0.1'
 
 buildDir = ".build"
 
 
 ext {
   jetbrainsAnnotationsVersion = "22.0.0"
-  junitVersion = "5.8.1"
+  junitVersion = "5.8.2"
   lombokVersion = "1.18.22"
   messageFormatVersion = "0.6.1"
-  mockitoVersion = "4.0.0"
+  mockitoVersion = "4.2.0"
   unbescapeVersion = "1.1.6.RELEASE"
 }
 

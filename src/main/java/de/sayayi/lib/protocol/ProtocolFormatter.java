@@ -154,8 +154,6 @@ public interface ProtocolFormatter<M,R>
      * @param protocol  protocol to be formatted, never {@code null}
      *
      * @return  formatted protocol, or {@code null}
-     *
-     * @see Protocol#format(ConfiguredProtocolFormatter)
      */
     default R format(@NotNull Protocol<M> protocol) {
       return protocol.format(this);
