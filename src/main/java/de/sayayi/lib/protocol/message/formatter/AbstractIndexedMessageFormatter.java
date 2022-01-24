@@ -70,7 +70,7 @@ public abstract class AbstractIndexedMessageFormatter<M> implements MessageForma
 
   /**
    * <p>
-   *   This method replaces {@link MessageFormatter#formatMessage(GenericMessage)}.
+   *   This method replaces {@code formatMessage(GenericMessage)}.
    * </p>
    * <p>
    *   Message parameters are collected into an {@code Object[]} by using the parameter name as an index in
