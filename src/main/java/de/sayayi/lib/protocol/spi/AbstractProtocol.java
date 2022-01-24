@@ -184,7 +184,8 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull MessageMatcher matcher)
   {
     // initialize formatter
-    formatter.init(factory, matcher, countGroupDepth());
+    formatter.init(factory, matcher,
+        countGroupDepth() + ((this instanceof ProtocolGroupImpl) ? 1 : 0));
 
     iterator(matcher).forEachRemaining(entry -> {
       if (entry instanceof ProtocolStart)

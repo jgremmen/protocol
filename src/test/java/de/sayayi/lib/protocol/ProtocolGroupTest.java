@@ -16,9 +16,12 @@
 package de.sayayi.lib.protocol;
 
 import de.sayayi.lib.protocol.exception.ProtocolException;
+import de.sayayi.lib.protocol.matcher.MessageMatcher;
 import org.junit.jupiter.api.Test;
 
 import lombok.val;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashSet;
 
@@ -29,6 +32,7 @@ import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.HIDDEN;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ALWAYS;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_IF_NOT_EMPTY;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ONLY;
+import static de.sayayi.lib.protocol.matcher.MessageMatchers.any;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.is;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.isDebug;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.isInfo;
@@ -235,5 +239,44 @@ public class ProtocolGroupTest
       gp2.createGroup().setName("group-2-1");
       gp2.createGroup().setName("group-3");
     });
+  }
+
+
+  @Test
+  @SuppressWarnings("ResultOfMethodCallIgnored")
+  public void testProtocolGroupFormatter()
+  {
+    val factory = StringProtocolFactory.createPlainTextFactory();
+    val protocol = factory.createProtocol();
+    val groupProtocol = protocol.createGroup()
+        .setVisibility(SHOW_HEADER_ALWAYS)
+        .setGroupMessage("Group message");
+
+    groupProtocol.warn().message("Warning");
+
+    protocol.format(new ProtocolFormatter<String,Object>()
+    {
+      @Override
+      public void init(@NotNull ProtocolFactory<String> factory, @NotNull MessageMatcher matcher, int estimatedGroupDepth) {
+        assertEquals(1, estimatedGroupDepth);
+      }
+
+      @Override public void message(ProtocolIterator.@NotNull MessageEntry<String> message) {}
+      @Override public Object getResult() { return null; }
+    }, any());
+
+    groupProtocol.format(new ProtocolFormatter<String,Object>()
+    {
+      @Override
+      public void init(@NotNull ProtocolFactory<String> factory, @NotNull MessageMatcher matcher, int estimatedGroupDepth) {
+        assertEquals(1, estimatedGroupDepth);
+      }
+
+      @Override public void message(ProtocolIterator.@NotNull MessageEntry<String> message) {}
+      @Override public Object getResult() { return null; }
+    }, any());
+
+    protocol.toStringTree();
+    groupProtocol.toStringTree();
   }
 }
