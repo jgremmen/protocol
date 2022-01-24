@@ -22,5 +22,5 @@ build:
   artifacts:
     name: "protocol-artifacts"
     paths:
-      - ./build/libs/*.jar
+      - ./.build/libs/*.jar
     expire_in: 2 weeks
