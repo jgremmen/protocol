@@ -174,9 +174,8 @@ final class ProtocolGroupImpl<M>
   @Override
   public @NotNull List<ProtocolEntry<M>> getEntries0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
-    levelLimit = min(this.levelLimit, levelLimit);
-
-    return getEffectiveVisibility().isShowEntries() ? super.getEntries(levelLimit, matcher) : emptyList();
+    return getEffectiveVisibility().isShowEntries()
+        ? super.getEntries(min(this.levelLimit, levelLimit), matcher) : emptyList();
   }
 
 
