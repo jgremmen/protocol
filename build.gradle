@@ -18,7 +18,7 @@ buildDir = ".build"
 
 
 ext {
-  jetbrainsAnnotationsVersion = "22.0.0"
+  jetbrainsAnnotationsVersion = "23.0.0"
   junitVersion = "5.8.2"
   lombokVersion = "1.18.22"
   messageFormatVersion = "0.6.1"

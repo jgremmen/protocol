@@ -76,7 +76,7 @@ public abstract class AbstractIndexedMessageFormatter<M> implements MessageForma
    *   Message parameters are collected into an {@code Object[]} by using the parameter name as an index in
    *   the array. The resulting array has a size equal to the largest index number found + 1. In order to
    *   prevent large numbers leading to allocating huge amounts of memory, the maximum index taken into
-   *   account is {@code 63}.
+   *   account is {@code 31}.
    *   <br>
    *   Missing indices will be initialized as {@code null} in the resulting array.
    * </p>

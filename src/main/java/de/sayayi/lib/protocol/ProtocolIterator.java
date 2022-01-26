@@ -22,8 +22,11 @@ import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Range;
 
 import java.util.Iterator;
+
+import static java.lang.Integer.MAX_VALUE;
 
 
 /**
@@ -81,6 +84,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
      * @return  entry depth
      */
     @Contract(pure = true)
+    @Range(from = 0, to = MAX_VALUE)
     int getDepth();
   }
 
@@ -88,6 +92,10 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
 
 
   /**
+   * <p>
+   *   In addition to {@link DepthEntry} this type provides information about the position, with respect
+   *   to its depth, it is listed in.
+   * </p>
    *
    * @param <M>  internal message object type
    */
@@ -165,7 +173,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
 
   /**
    * Group message entry. This entry is generated for groups which have no visible entries themselves but have a
-   * visible group header message.
+   * visible group header message. Eg. for visibility {@link Visibility#SHOW_HEADER_ONLY}.
    *
    * @param <M>  internal message object type
    *
@@ -235,6 +243,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
      * @see #getDepth()
      */
     @Contract(pure = true)
+    @Range(from = 1, to = MAX_VALUE)
     int getMessageCount();
   }
 

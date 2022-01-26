@@ -23,6 +23,8 @@ import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -410,6 +412,7 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @since 1.0.0
    */
+  @Contract(value = "-> new", pure = true)
   @NotNull Spliterator<ProtocolGroup<M>> groupSpliterator();
 
 
@@ -646,7 +649,7 @@ public interface Protocol<M> extends ProtocolQueryable
      *
      * @return  paramter builder instance for the current message
      */
-    @Contract("_ -> this")
+    @Contract(value = "_ -> this", mutates = "this")
     @NotNull MessageParameterBuilder<M> with(@NotNull Map<String,Object> parameterValues);
 
 
@@ -662,7 +665,7 @@ public interface Protocol<M> extends ProtocolQueryable
      *
      * @return  paramter builder instance for the current message
      */
-    @Contract("_, _ -> this")
+    @Contract(value = "_, _ -> this", mutates = "this")
     default @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, boolean value) {
       return with(parameter, Boolean.valueOf(value));
     }
@@ -680,7 +683,7 @@ public interface Protocol<M> extends ProtocolQueryable
      *
      * @return  paramter builder instance for the current message
      */
-    @Contract("_, _ -> this")
+    @Contract(value = "_, _ -> this", mutates = "this")
     default @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, int value) {
       return with(parameter, Integer.valueOf(value));
     }
@@ -698,7 +701,7 @@ public interface Protocol<M> extends ProtocolQueryable
      *
      * @return  paramter builder instance for the current message
      */
-    @Contract("_, _ -> this")
+    @Contract(value = "_, _ -> this", mutates = "this")
     default @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, long value) {
       return with(parameter, Long.valueOf(value));
     }
@@ -716,7 +719,7 @@ public interface Protocol<M> extends ProtocolQueryable
      *
      * @return  paramter builder instance for the current message
      */
-    @Contract("_, _ -> this")
+    @Contract(value = "_, _ -> this", mutates = "this")
     default @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, float value) {
       return with(parameter, Float.valueOf(value));
     }
@@ -734,7 +737,7 @@ public interface Protocol<M> extends ProtocolQueryable
      *
      * @return  paramter builder instance for the current message
      */
-    @Contract("_, _ -> this")
+    @Contract(value = "_, _ -> this", mutates = "this")
     default @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, double value) {
       return with(parameter, Double.valueOf(value));
     }
@@ -752,7 +755,7 @@ public interface Protocol<M> extends ProtocolQueryable
      *
      * @return  paramter builder instance for the current message
      */
-    @Contract("_, _ -> this")
+    @Contract(value = "_, _ -> this", mutates = "this")
     @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, Object value);
   }
 
@@ -813,6 +816,7 @@ public interface Protocol<M> extends ProtocolQueryable
      *
      * @see #getMessage()
      */
+    @UnmodifiableView
     @Contract(pure = true, value = "-> new")
     @NotNull Map<String,Object> getParameterValues();
   }
@@ -862,6 +866,7 @@ public interface Protocol<M> extends ProtocolQueryable
      *
      * @since 0.7.0
      */
+    @Unmodifiable
     @Contract(pure = true, value = "-> new")
     @NotNull Set<String> getTagNames();
 
