@@ -21,6 +21,9 @@ import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Range;
+
+import static java.lang.Integer.MAX_VALUE;
 
 
 /**
@@ -34,5 +37,6 @@ interface InternalProtocolQueryable extends ProtocolQueryable
 
 
   @Contract(pure = true)
+  @Range(from = 0, to = MAX_VALUE)
   int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive, @NotNull MessageMatcher matcher);
 }
