@@ -18,6 +18,7 @@ buildDir = ".build"
 
 
 ext {
+  gsonVersion = "2.8.9"
   jetbrainsAnnotationsVersion = "23.0.0"
   junitVersion = "5.8.2"
   lombokVersion = "1.18.22"
@@ -82,6 +83,8 @@ dependencies {
 
   implementation "org.unbescape:unbescape:${unbescapeVersion}", optional
   implementation "de.sayayi.lib:message-format-nodep:${messageFormatVersion}", optional
+  implementation "com.google.code.gson:gson:${gsonVersion}", optional
+
 
   compileOnlyApi "org.projectlombok:lombok:${lombokVersion}"
   compileOnlyApi "org.jetbrains:annotations:${jetbrainsAnnotationsVersion}"
