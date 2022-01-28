@@ -84,17 +84,34 @@ public interface ProtocolFormatter<M,R>
    *   messages. A distinction can be made by checking {@link MessageEntry#isGroupMessage()}.
    * </p>
    *
-   * @param message, never {@code null}
+   * @param message  message, never {@code null}
    *
    * @see ProtocolGroup#setVisibility(Visibility)
    */
   void message(@NotNull MessageEntry<M> message);
 
 
+  /**
+   * <p>
+   *   Format the start of a group.
+   * </p>
+   * <p>
+   *   This method is invoked for a group, which has a group message as well as at least 1 message.
+   * </p>
+   *
+   * @param group  group start, never {@code null}
+   */
   default void groupStart(@NotNull GroupStartEntry<M> group) {
   }
 
 
+  /**
+   * <p>
+   *   Format the end of a group. It always has a preceding {@link GroupStartEntry}.
+   * </p>
+   *
+   * @param groupEnd  group end, never {@code null}
+   */
   default void groupEnd(@NotNull GroupEndEntry<M> groupEnd) {
   }
 
