@@ -45,7 +45,7 @@ import java.util.function.Consumer;
 public interface ProtocolGroup<M> extends Protocol<M>
 {
   /**
-   * Returns the visibility for this protocol group.
+   * Returns the visibility setting for this protocol group.
    *
    * @return  visibility, never {@code null}
    *

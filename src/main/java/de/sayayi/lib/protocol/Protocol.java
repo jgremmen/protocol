@@ -888,6 +888,18 @@ public interface Protocol<M> extends ProtocolQueryable
   interface Group<M>
   {
     /**
+     * Returns the unique name for this group. The name can be used to find a group from a parent protocol instance.
+     *
+     * @return  unique name for this group or {@code null} if no name is set.
+     *
+     * @see Protocol#getGroupByName(String)
+     * @see Protocol#forEachGroupByRegex(String, Consumer)
+     */
+    @Contract(pure = true)
+    String getName();
+
+
+    /**
      * Returns the group header message.
      *
      * @return  group header message or {@code null}

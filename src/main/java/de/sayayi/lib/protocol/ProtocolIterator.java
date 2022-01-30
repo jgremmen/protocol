@@ -183,6 +183,15 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
   interface GroupMessageEntry<M> extends MessageEntry<M>
   {
     /**
+     * Returns the unique name for this group.
+     *
+     * @return  unique name for this group or {@code null} if no name is set.
+     */
+    @Contract(pure = true)
+    String getName();
+
+
+    /**
      * {@inheritDoc}
      *
      * @return  always {@code null}

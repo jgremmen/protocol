@@ -71,7 +71,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   @Getter @Setter(PROTECTED) private int depth;
 
   private ForGroup<M> groupIterator;
-  private @NotNull Iterator<ProtocolEntry<M>> iterator;
+  private Iterator<ProtocolEntry<M>> iterator;
   private RankingDepthEntry<M> previousVisibleEntry;
 
   private final boolean rootProtocol;
@@ -274,8 +274,8 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
         case SHOW_HEADER_ALWAYS:
           // header + messages, increase depth
           setDepth(depth + 1);
-          addNextEntry(new GroupStartEntryImpl<>(protocol.getGroupMessage(), super.levelLimit,
-              protocol.getVisibleGroupEntryMessageCount0(super.levelLimit, matcher),
+          addNextEntry(new GroupStartEntryImpl<>(protocol.getName(), protocol.getGroupMessage(),
+              super.levelLimit, protocol.getVisibleGroupEntryMessageCount0(super.levelLimit, matcher),
               depth + 1, !hasEntryBeforeGroup, !hasEntryAfterGroup));
           groupHeader = true;
           forceFirst = true;
@@ -285,7 +285,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
           // header only, no messages; remain at same depth
           setLastMessageOrGroupEncountered();
           addNextEntry(new GroupMessageEntryImpl<>(depth, !hasEntryBeforeGroup, !hasEntryAfterGroup,
-              super.levelLimit, protocol.getGroupMessage()));
+              protocol.getName(), super.levelLimit, protocol.getGroupMessage()));
           break;
 
         case HIDDEN:
@@ -426,15 +426,17 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
   private static class GroupMessageEntryImpl<M> extends RankingDepthEntryImpl<M> implements GroupMessageEntry<M>
   {
-    final Level level;
+    @Getter final String name;
+    @Getter final Level level;
     final GenericMessage<M> groupMessage;
 
 
-    private GroupMessageEntryImpl(int depth, boolean first, boolean last, Level level,
-                                  @NotNull GenericMessage<M> groupMessage)
+    private GroupMessageEntryImpl(int depth, boolean first, boolean last, String name,
+                                  @NotNull Level level, @NotNull GenericMessage<M> groupMessage)
     {
       super(depth, first, last);
 
+      this.name = name;
       this.level = level;
       this.groupMessage = groupMessage;
     }
@@ -455,12 +457,6 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     @Override
     public @NotNull Map<String,Object> getParameterValues() {
       return groupMessage.getParameterValues();
-    }
-
-
-    @Override
-    public @NotNull Level getLevel() {
-      return level;
     }
 
 
@@ -546,11 +542,12 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
   private static class GroupStartEntryImpl<M> extends RankingDepthEntryImpl<M> implements GroupStartEntry<M>
   {
+    @Getter private final String name;
     @Getter private final GenericMessageWithLevel<M> groupMessage;
     @Getter private final int messageCount;
 
 
-    private GroupStartEntryImpl(final GenericMessage<M> groupMessage, final Level level,
+    private GroupStartEntryImpl(String name, final GenericMessage<M> groupMessage, final Level level,
                                 int messageCount, int depth, boolean first, boolean last)
     {
       super(depth, first, last);
@@ -563,6 +560,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
         @Override public long getTimeMillis() { return groupMessage.getTimeMillis(); }
       };
 
+      this.name = name;
       this.messageCount = messageCount;
     }
 

@@ -66,6 +66,12 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
 
 
   @Override
+  public String getName() {
+    return group.getName();
+  }
+
+
+  @Override
   public Protocol.GenericMessage<M> getGroupMessage() {
     return group.getGroupMessage();
   }
