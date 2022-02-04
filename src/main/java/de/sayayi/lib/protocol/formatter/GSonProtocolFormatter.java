@@ -21,13 +21,12 @@ import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolFactory.MessageFormatter;
 import de.sayayi.lib.protocol.ProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupEndEntry;
+import de.sayayi.lib.protocol.ProtocolIterator.GroupMessageEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.exception.ProtocolException;
 import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
-import lombok.Getter;
-import lombok.Setter;
 import lombok.val;
 
 import org.jetbrains.annotations.NotNull;
@@ -45,16 +44,21 @@ import java.io.StringWriter;
 public class GSonProtocolFormatter<M> implements ProtocolFormatter<M,String>
 {
   private final StringWriter json;
-
-  @Getter @Setter
-  private boolean prettyPrint;
+  private final boolean prettyPrint;
 
   private JsonWriter jsonWriter;
   private MessageFormatter<M> messageFormatter;
 
 
   public GSonProtocolFormatter() {
+    this(false);
+  }
+
+
+  public GSonProtocolFormatter(boolean prettyPrint)
+  {
     json = new StringWriter();
+    this.prettyPrint = prettyPrint;
   }
 
 
@@ -117,7 +121,10 @@ public class GSonProtocolFormatter<M> implements ProtocolFormatter<M,String>
 
       // message
       if (message.isGroupMessage())
+      {
+        jsonWriter.name("group-name").value(((GroupMessageEntry<M>)message).getName());
         jsonWriter.name("group-message").value(messageFormatter.formatMessage(message));
+      }
       else
       {
         jsonWriter.name("message").value(messageFormatter.formatMessage(message));
@@ -153,6 +160,7 @@ public class GSonProtocolFormatter<M> implements ProtocolFormatter<M,String>
       jsonWriter.name("timestamp").value(message.getTimeMillis());
 
       // group message
+      jsonWriter.name("group-name").value(group.getName());
       jsonWriter.name("group-message").value(messageFormatter.formatMessage(message));
 
       // level
