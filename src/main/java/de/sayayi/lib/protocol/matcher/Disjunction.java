@@ -43,7 +43,7 @@ import static lombok.AccessLevel.PRIVATE;
  */
 @RequiredArgsConstructor(access = PRIVATE)
 @EqualsAndHashCode(callSuper = false)
-class Disjunction implements Junction
+final class Disjunction implements Junction
 {
   private final Set<MessageMatcher> matchers;
 

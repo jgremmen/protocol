@@ -84,7 +84,7 @@ public final class MessageMatchers
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction hasTag(@NotNull String tagName)
   {
-    if (tagName.length() == 0)
+    if (tagName.isEmpty())
       return NONE;
     else if (DEFAULT_TAG_NAME.equals(tagName))
       return ANY;
@@ -205,7 +205,7 @@ public final class MessageMatchers
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction hasParamValue(@NotNull String parameterName)
   {
-    if (parameterName.length() == 0)
+    if (parameterName.isEmpty())
       return NONE;
 
     return new Junction() {
@@ -226,7 +226,7 @@ public final class MessageMatchers
   @Contract(value = "_, _ -> new", pure = true)
   public static @NotNull Junction hasParamValue(@NotNull String parameterName, Object value)
   {
-    if (parameterName.length() == 0)
+    if (parameterName.isEmpty())
       return NONE;
 
     return new Junction() {
@@ -235,13 +235,9 @@ public final class MessageMatchers
       {
         val parameterValues = message.getParameterValues();
 
-        if (value == null)
-        {
-          return parameterValues.containsKey(parameterName) &&
-                 parameterValues.get(parameterName) == null;
-        }
-        else
-          return Objects.equals(parameterValues.get(parameterName), value);
+        return value == null
+            ? parameterValues.containsKey(parameterName) && parameterValues.get(parameterName) == null
+            : Objects.equals(parameterValues.get(parameterName), value);
       }
 
 
@@ -314,7 +310,7 @@ public final class MessageMatchers
    *
    * @param level  lowest level to match, not {@code null}
    *
-   * @return  matcher instance which checks for messages with a level &gt;= {@code level}
+   * @return  matcher instance which checks for messages with level &gt;= {@code level}
    */
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction is(@NotNull Level level) {
@@ -332,7 +328,7 @@ public final class MessageMatchers
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction hasMessage(@NotNull String messageId)
   {
-    if (messageId.length() == 0)
+    if (messageId.isEmpty())
       return NONE;
 
     return new Junction() {
