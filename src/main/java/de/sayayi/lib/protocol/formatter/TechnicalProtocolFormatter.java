@@ -41,7 +41,8 @@ import static lombok.AccessLevel.PRIVATE;
 public final class TechnicalProtocolFormatter<M> extends AbstractTreeProtocolFormatter<M>
     implements ConfiguredProtocolFormatter<M,String>
 {
-  private static final ConfiguredProtocolFormatter<?,String> INSTANCE = new TechnicalProtocolFormatter<>();
+  private static final ConfiguredProtocolFormatter<?,String> INSTANCE =
+      new TechnicalProtocolFormatter<>();
 
 
   @Override
@@ -53,10 +54,14 @@ public final class TechnicalProtocolFormatter<M> extends AbstractTreeProtocolFor
   @Override
   protected String format(@NotNull GenericMessageWithLevel<M> message)
   {
-    val s = new StringBuilder(super.format(message)).append("  {level=").append(message.getLevel());
+    val s = new StringBuilder(super.format(message)).append("  {level=")
+        .append(message.getLevel());
 
     if (message instanceof Message)
-      s.append(",tags=").append(((Message<M>)message).getTagNames().toString().replace(", ", ","));
+    {
+      s.append(",tags=").append(((Message<M>)message).getTagNames().toString()
+          .replace(", ", ","));
+    }
 
     return s.append('}').toString();
   }

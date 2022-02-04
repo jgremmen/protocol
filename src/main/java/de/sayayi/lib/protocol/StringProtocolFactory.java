@@ -60,7 +60,8 @@ public class StringProtocolFactory extends GenericProtocolFactory<String>
 
   /**
    * <p>
-   *   This string protocol factory formats messages using {@link MessageFormat#format(String, Object...)}.
+   *   This string protocol factory formats messages using
+   *   {@link MessageFormat#format(String, Object...)}.
    * </p>
    *
    * @return  java message format protocol factory, never {@code null}
@@ -75,7 +76,8 @@ public class StringProtocolFactory extends GenericProtocolFactory<String>
 
   /**
    * <p>
-   *   This string protocol factory formats messages using {@link String#format(String, Object...)}.
+   *   This string protocol factory formats messages using
+   *   {@link String#format(String, Object...)}.
    * </p>
    *
    * @return  java string format protocol factory, never {@code null}

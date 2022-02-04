@@ -83,7 +83,8 @@ public abstract class AbstractTagSelectorBuilder implements TagSelector.Builder
 
 
 
-  private static final class TagReferenceBuilder extends AbstractTagSelectorBuilder implements TagReference
+  private static final class TagReferenceBuilder extends AbstractTagSelectorBuilder
+      implements TagReference
   {
     private final TagSelector selector;
 
@@ -116,7 +117,8 @@ public abstract class AbstractTagSelectorBuilder implements TagSelector.Builder
 
 
 
-  private static final class SelectorReferenceBuilder extends AbstractTagSelectorBuilder implements SelectorReference
+  private static final class SelectorReferenceBuilder extends AbstractTagSelectorBuilder
+      implements SelectorReference
   {
     private final TagSelector selector;
 

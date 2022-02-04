@@ -53,14 +53,16 @@ public class MessageBundleMessageProcessor implements MessageProcessor<Message>
    *   Check whether the given {@code codeOrMessageFormat} is not a valid message code.
    * </p>
    * <p>
-   *   The default implementation returns {@code false} which is sufficiant in most cases. If message codes
-   *   are easily identifiable (eg. by regex) this method can be overridden to prevent non-existing message
-   *   codes from being parsed (only if {@link #parserFallback} is set to {@code true}).
+   *   The default implementation returns {@code false} which is sufficiant in most cases. If
+   *   message codes are easily identifiable (eg. by regex) this method can be overridden to
+   *   prevent non-existing message codes from being parsed (only if {@link #parserFallback} is
+   *   set to {@code true}).
    * </p>
    *
    * @param codeOrMessageFormat  code or message to check, never {@code null}
    *
-   * @return  {@code true} if the given code or message format is not a message code, {@code false} otherwise
+   * @return  {@code true} if the given code or message format is not a message code,
+   *          {@code false} otherwise
    *
    * @since 1.0.0
    */
@@ -74,7 +76,8 @@ public class MessageBundleMessageProcessor implements MessageProcessor<Message>
   {
     requireNonNull(codeOrMessageFormat, "codeOrMessageFormat must not be null");
 
-    val message = isInvalidMessageCode(codeOrMessageFormat) ? null : messageBundle.getByCode(codeOrMessageFormat);
+    val message = isInvalidMessageCode(codeOrMessageFormat)
+        ? null : messageBundle.getByCode(codeOrMessageFormat);
     if (message != null)
       return new GenericMessageWithId<>(message.getCode(), message);
 

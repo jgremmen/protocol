@@ -63,7 +63,8 @@ public class GSonProtocolFormatter<M> implements ProtocolFormatter<M,String>
 
 
   @Override
-  public void init(@NotNull ProtocolFactory<M> factory, @NotNull MessageMatcher matcher, int estimatedGroupDepth)
+  public void init(@NotNull ProtocolFactory<M> factory, @NotNull MessageMatcher matcher,
+                   int estimatedGroupDepth)
   {
     messageFormatter = factory.getMessageFormatter();
 

@@ -51,8 +51,8 @@ public class MessageFormatMessageProcessor implements MessageProcessor<Message>
   public @NotNull MessageWithId<Message> processMessage(@NotNull String messageFormat)
   {
     try {
-      return new GenericMessageWithId<>(
-          messageFactory.parse(requireNonNull(messageFormat, "messageFormat must not be null")));
+      return new GenericMessageWithId<>(messageFactory.parse(
+          requireNonNull(messageFormat, "messageFormat must not be null")));
     } catch(MessageParserException ex) {
       throw new ProtocolException("failed to process message: " + ex.getMessage(), ex);
     }

@@ -108,7 +108,8 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
 
 
   @Override
-  public @NotNull List<ProtocolEntry<M>> getEntries0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher) {
+  public @NotNull List<ProtocolEntry<M>> getEntries0(@NotNull Level levelLimit,
+                                                     @NotNull MessageMatcher matcher) {
     return group.getEntries0(levelLimit, matcher);
   }
 
@@ -126,7 +127,8 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
 
 
   @Override
-  public int getVisibleGroupEntryMessageCount0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher) {
+  public int getVisibleGroupEntryMessageCount0(@NotNull Level levelLimit,
+                                               @NotNull MessageMatcher matcher) {
     return group.getVisibleGroupEntryMessageCount0(levelLimit, matcher);
   }
 

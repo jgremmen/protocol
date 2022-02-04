@@ -38,7 +38,8 @@ import static java.util.stream.Collectors.joining;
  * @author Jeroen Gremmen
  * @since 0.1.0
  */
-final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements InternalProtocolEntry.Message<M>
+final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M>
+    implements InternalProtocolEntry.Message<M>
 {
   @Getter private final @NotNull Level level;
   private final @NotNull Set<String> tagNames;
@@ -46,7 +47,8 @@ final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements
 
 
   ProtocolMessageEntry(@NotNull Level level, @NotNull Set<String> tagNames, Throwable throwable,
-                       @NotNull MessageWithId<M> messageWithId, @NotNull ParameterMap parentParameterMap)
+                       @NotNull MessageWithId<M> messageWithId,
+                       @NotNull ParameterMap parentParameterMap)
   {
     super(messageWithId, parentParameterMap);
 

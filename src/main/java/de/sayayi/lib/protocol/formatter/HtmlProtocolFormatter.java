@@ -67,7 +67,8 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
 
 
   @Override
-  public void init(@NotNull ProtocolFactory<M> factory, @NotNull MessageMatcher matcher, int estimatedGroupDepth)
+  public void init(@NotNull ProtocolFactory<M> factory, @NotNull MessageMatcher matcher,
+                   int estimatedGroupDepth)
   {
     messageFormatter = factory.getMessageFormatter();
     html.delete(0, html.length());
@@ -118,7 +119,9 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
 
     indent(message.getDepth());
 
-    val liClasses = new String[] { "level-" + levelToHtmlClass(message.getLevel()), messageLiClass(message) };
+    val liClasses = new String[] {
+        "level-" + levelToHtmlClass(message.getLevel()), messageLiClass(message)
+    };
     val liSpanClasses = new String[] {
         message.isGroupMessage() ? "group-message" : null, "message", messageSpanClass(message)
     };
@@ -165,7 +168,9 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
 
     indent(depth - 1);
 
-    val liClasses = new String[] { "level-" + levelToHtmlClass(message.getLevel()), groupHeaderLiClass(message) };
+    val liClasses = new String[] {
+        "level-" + levelToHtmlClass(message.getLevel()), groupHeaderLiClass(message)
+    };
     val liSpanClasses = new String[] { "group", groupHeaderLiSpanClass(message) };
 
     html.append("<li").append(classFromArray(liClasses)).append('>')

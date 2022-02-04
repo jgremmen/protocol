@@ -53,8 +53,8 @@ public interface ProtocolEntry<M> extends ProtocolQueryable
   interface Group<M> extends ProtocolEntry<M>, Protocol.Group<M>
   {
     /**
-     * Returns a list of protocol entries provided by this protocol object for the given {@code level} and
-     * {@code tagSelector}.
+     * Returns a list of protocol entries provided by this protocol object for the given
+     * {@code level} and {@code tagSelector}.
      *
      * @param matcher  message matcher, not {@code null}
      *
@@ -84,12 +84,12 @@ public interface ProtocolEntry<M> extends ProtocolQueryable
      *   Returns the level of the group header message for the given {@code matcher}.
      * </p>
      * <p>
-     *   The group header message level is defined as the highest (= most severe) level of all containing messages
-     *   and sub-groups which are visible for the given {@code matcher}.
+     *   The group header message level is defined as the highest (= most severe) level of all
+     *   containing messages and sub-groups which are visible for the given {@code matcher}.
      * </p>
      * <p>
-     *   If the group does not contain any messages, the returned value will be a level with the lowest possible
-     *   severity.
+     *   If the group does not contain any messages, the returned value will be a level with the
+     *   lowest possible severity.
      * </p>
      *
      * @param matcher  message matcher, not {@code null}

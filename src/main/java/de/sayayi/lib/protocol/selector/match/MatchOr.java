@@ -61,6 +61,6 @@ public final class MatchOr extends AbstractTagSelectorBuilder implements Selecto
   {
     return selectors.length == 1
         ? selectors[0].toString()
-        : "or(" + Arrays.stream(selectors).map(TagSelector::toString).collect(joining(",")) + ')';
+        : "or(" + Arrays.stream(selectors).map(Object::toString).collect(joining(",")) + ')';
   }
 }

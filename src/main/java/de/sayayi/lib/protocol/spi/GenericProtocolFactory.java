@@ -175,7 +175,8 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 
 
     @Override
-    public @NotNull TagBuilder<M> match(@NotNull MatchCondition matchCondition, @NotNull Level matchLevel)
+    public @NotNull TagBuilder<M> match(@NotNull MatchCondition matchCondition,
+                                        @NotNull Level matchLevel)
     {
       tagDef.matchCondition = requireNonNull(matchCondition, "matchCondition must not be null");
       tagDef.matchLevel = requireNonNull(matchLevel, "matchLevel must not be null");
@@ -354,8 +355,10 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 
 
     @Override
-    public String toString() {
-      return "Tag[id=" + id + ",name=" + name + toString_implies() + ',' + matchLevel + toString_matchCondition() + ']';
+    public String toString()
+    {
+      return "Tag[id=" + id + ",name=" + name + toString_implies() + ',' +
+             matchLevel + toString_matchCondition() + ']';
     }
 
 

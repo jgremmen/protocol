@@ -29,8 +29,8 @@ import static java.util.Arrays.copyOf;
 
 /**
  * <p>
- *   Abstract class for message formatters that require the parameters to be provided in an {@code Object[]}
- *   instead of a {@code Map}.
+ *   Abstract class for message formatters that require the parameters to be provided in an
+ *   {@code Object[]} instead of a {@code Map}.
  * </p>
  *
  * @param <M>  internal message object type
@@ -73,10 +73,10 @@ public abstract class AbstractIndexedMessageFormatter<M> implements MessageForma
    *   This method replaces {@code formatMessage(GenericMessage)}.
    * </p>
    * <p>
-   *   Message parameters are collected into an {@code Object[]} by using the parameter name as an index in
-   *   the array. The resulting array has a size equal to the largest index number found + 1. In order to
-   *   prevent large numbers leading to allocating huge amounts of memory, the maximum index taken into
-   *   account is {@code 31}.
+   *   Message parameters are collected into an {@code Object[]} by using the parameter name as an
+   *   index in the array. The resulting array has a size equal to the largest index number
+   *   found + 1. In order to prevent large numbers leading to allocating huge amounts of memory,
+   *   the maximum index taken into account is {@code 31}.
    *   <br>
    *   Missing indices will be initialized as {@code null} in the resulting array.
    * </p>
@@ -87,5 +87,6 @@ public abstract class AbstractIndexedMessageFormatter<M> implements MessageForma
    * @return  formatted message
    */
   @Contract(pure = true)
-  protected abstract @NotNull String formatMessage(@NotNull GenericMessage<M> message, @NotNull Object[] parameters);
+  protected abstract @NotNull String formatMessage(@NotNull GenericMessage<M> message,
+                                                   @NotNull Object[] parameters);
 }

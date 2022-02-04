@@ -53,7 +53,8 @@ import static java.util.Spliterator.SORTED;
  * @author Jeroen Gremmen
  */
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, doNotUseGetters = true, callSuper = false)
-abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implements Protocol<M>, InternalProtocolQueryable
+abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
+    implements Protocol<M>, InternalProtocolQueryable
 {
   private static final AtomicInteger PROTOCOL_ID = new AtomicInteger(0);
 
@@ -107,7 +108,8 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   }
 
 
-  @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
+  @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level levelLimit,
+                                             @NotNull MessageMatcher matcher)
   {
     val filteredEntries = new ArrayList<ProtocolEntry<M>>();
 
@@ -115,9 +117,15 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
       if (entry.matches0(levelLimit, matcher))
       {
         if (entry instanceof InternalProtocolEntry.Group)
-          filteredEntries.add(ProtocolGroupEntryAdapter.from(levelLimit, (InternalProtocolEntry.Group<M>)entry));
+        {
+          filteredEntries.add(ProtocolGroupEntryAdapter.from(levelLimit,
+              (InternalProtocolEntry.Group<M>)entry));
+        }
         else
-          filteredEntries.add(ProtocolMessageEntryAdapter.from(levelLimit, (InternalProtocolEntry.Message<M>)entry));
+        {
+          filteredEntries.add(ProtocolMessageEntryAdapter.from(levelLimit,
+              (InternalProtocolEntry.Message<M>)entry));
+        }
       }
 
     return filteredEntries;
@@ -175,8 +183,10 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
 
   @Override
-  public @NotNull Spliterator<ProtocolGroup<M>> groupSpliterator() {
-    return Spliterators.spliterator(groupIterator(), entries.size(), DISTINCT | ORDERED | SORTED | NONNULL);
+  public @NotNull Spliterator<ProtocolGroup<M>> groupSpliterator()
+  {
+    return Spliterators.spliterator(groupIterator(), entries.size(),
+        DISTINCT | ORDERED | SORTED | NONNULL);
   }
 
 

@@ -56,7 +56,8 @@ interface InternalProtocolEntry<M> extends ProtocolEntry<M>, InternalProtocolQue
 
 
     @Contract(pure = true, value = "_, _ -> new")
-    @NotNull List<ProtocolEntry<M>> getEntries0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher);
+    @NotNull List<ProtocolEntry<M>> getEntries0(@NotNull Level levelLimit,
+                                                @NotNull MessageMatcher matcher);
 
 
     @Contract(pure = true)

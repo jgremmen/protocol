@@ -81,7 +81,7 @@ final class Conjunction implements Junction
     do {
       matchersChanged = false;
 
-      for(final Iterator<MessageMatcher> matcherIterator = matchers.iterator(); matcherIterator.hasNext();)
+      for(Iterator<MessageMatcher> matcherIterator = matchers.iterator(); matcherIterator.hasNext();)
       {
         val m = matcherIterator.next();
         if (m instanceof Conjunction)

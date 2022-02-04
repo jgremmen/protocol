@@ -58,7 +58,8 @@ public abstract class AbstractTreeProtocolFormatter<M> implements ProtocolFormat
 
 
   @Override
-  public void init(@NotNull ProtocolFactory<M> factory, @NotNull MessageMatcher matcher, int estimatedGroupDepth)
+  public void init(@NotNull ProtocolFactory<M> factory, @NotNull MessageMatcher matcher,
+                   int estimatedGroupDepth)
   {
     result.delete(0, result.length());
 
