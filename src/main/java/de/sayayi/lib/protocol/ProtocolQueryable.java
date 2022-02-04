@@ -49,8 +49,6 @@ public interface ProtocolQueryable
    * Returns the number of visible entries for the given message {@code matcher}.
    *
    * @param matcher    message matcher, not {@code null}
-   * @param recursive  {@code false} returns the number of visible entries for the current depth only,
-   *                   {@code true} returns the number of visible entries for all depths starting at the current one
    *
    * @return  number of visible entries
    *
@@ -58,5 +56,5 @@ public interface ProtocolQueryable
    */
   @Contract(pure = true)
   @Range(from = 0, to = MAX_VALUE)
-  int getVisibleEntryCount(boolean recursive, @NotNull MessageMatcher matcher);
+  int getVisibleEntryCount(@NotNull MessageMatcher matcher);
 }

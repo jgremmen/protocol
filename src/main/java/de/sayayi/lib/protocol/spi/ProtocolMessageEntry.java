@@ -81,14 +81,14 @@ final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements
 
 
   @Override
-  public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive, @NotNull MessageMatcher matcher) {
+  public int getVisibleEntryCount0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher) {
     return matches0(levelLimit, matcher) ? 1 : 0;
   }
 
 
   @Override
-  public int getVisibleEntryCount(boolean recursive, @NotNull MessageMatcher matcher) {
-    return getVisibleEntryCount0(HIGHEST, recursive, matcher);
+  public int getVisibleEntryCount(@NotNull MessageMatcher matcher) {
+    return getVisibleEntryCount0(HIGHEST, matcher);
   }
 
 

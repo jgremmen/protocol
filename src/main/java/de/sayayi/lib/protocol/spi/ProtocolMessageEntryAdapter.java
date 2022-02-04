@@ -95,8 +95,8 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
 
 
   @Override
-  public int getVisibleEntryCount(boolean recursive, @NotNull MessageMatcher matcher) {
-    return message.getVisibleEntryCount0(levelLimit, recursive, matcher);
+  public int getVisibleEntryCount(@NotNull MessageMatcher matcher) {
+    return message.getVisibleEntryCount0(levelLimit, matcher);
   }
 
 

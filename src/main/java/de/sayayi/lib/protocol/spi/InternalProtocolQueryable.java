@@ -38,5 +38,5 @@ interface InternalProtocolQueryable extends ProtocolQueryable
 
   @Contract(pure = true)
   @Range(from = 0, to = MAX_VALUE)
-  int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive, @NotNull MessageMatcher matcher);
+  int getVisibleEntryCount0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher);
 }

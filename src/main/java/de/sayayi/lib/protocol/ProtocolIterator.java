@@ -18,7 +18,6 @@ package de.sayayi.lib.protocol;
 import de.sayayi.lib.protocol.Protocol.GenericMessageWithLevel;
 import de.sayayi.lib.protocol.ProtocolGroup.Visibility;
 import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
-import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -37,17 +36,6 @@ import static java.lang.Integer.MAX_VALUE;
  */
 public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
 {
-  /**
-   * Returns the message matcher used for iteration.
-   *
-   * @return  message matcher, never {@code null}
-   */
-  @Contract(pure = true)
-  @NotNull MessageMatcher getMatcher();
-
-
-
-
   /**
    * <p>
    *   This class is the basis for every entry produced by the protocol iterator. It provides the group depth
@@ -99,7 +87,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
    *
    * @param <M>  internal message object type
    */
-  interface RankingDepthEntry<M> extends DepthEntry<M>
+  interface BoundedDepthEntry<M> extends DepthEntry<M>
   {
     /**
      * Tells if this is the first entry with respect to its depth.
@@ -155,7 +143,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
    *
    * @param <M>  internal message object type
    */
-  interface MessageEntry<M> extends RankingDepthEntry<M>, Protocol.Message<M>
+  interface MessageEntry<M> extends BoundedDepthEntry<M>, Protocol.Message<M>
   {
     /**
      * Tells if this message is a group header message.
@@ -197,7 +185,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
      * @return  always {@code null}
      */
     @Override
-    @Contract("-> null")
+    @Contract(value = "-> null", pure = true)
     Throwable getThrowable();
 
 
@@ -230,7 +218,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
    * @see GroupMessageEntry
    * @see GroupEndEntry
    */
-  interface GroupStartEntry<M> extends RankingDepthEntry<M>, Protocol.Group<M>
+  interface GroupStartEntry<M> extends BoundedDepthEntry<M>, Protocol.Group<M>
   {
     /**
      * {@inheritDoc}

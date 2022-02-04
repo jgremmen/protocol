@@ -44,7 +44,7 @@ public class TagPropagationTest
     protocol.debug().message("debug")
             .warn().message("error");
 
-    assertEquals(0, protocol.getVisibleEntryCount(false, isError().and(hasTag(uiTagDef))));
-    assertEquals(1, protocol.getVisibleEntryCount(false, isDebug().and(hasTag(uiTagDef))));
+    assertEquals(0, protocol.getVisibleEntryCount(isError().and(hasTag(uiTagDef))));
+    assertEquals(1, protocol.getVisibleEntryCount(isDebug().and(hasTag(uiTagDef))));
   }
 }

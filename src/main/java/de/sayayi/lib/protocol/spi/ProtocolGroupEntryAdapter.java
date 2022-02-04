@@ -84,8 +84,8 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
 
 
   @Override
-  public int getVisibleEntryCount(boolean recursive, @NotNull MessageMatcher matcher) {
-    return group.getVisibleEntryCount0(levelLimit, recursive, matcher);
+  public int getVisibleEntryCount(@NotNull MessageMatcher matcher) {
+    return group.getVisibleEntryCount0(levelLimit, matcher);
   }
 
 
@@ -138,8 +138,8 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
 
 
   @Override
-  public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive, @NotNull MessageMatcher matcher) {
-    return group.getVisibleEntryCount0(levelLimit, recursive, matcher);
+  public int getVisibleEntryCount0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher) {
+    return group.getVisibleEntryCount0(levelLimit, matcher);
   }
 
 

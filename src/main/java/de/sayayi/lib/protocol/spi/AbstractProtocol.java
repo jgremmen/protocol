@@ -125,12 +125,12 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
 
   @Override
-  public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive, @NotNull MessageMatcher matcher)
+  public int getVisibleEntryCount0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
     var count = 0;
 
     for(val entry: entries)
-      count += entry.getVisibleEntryCount0(levelLimit, recursive, matcher);
+      count += entry.getVisibleEntryCount0(levelLimit, matcher);
 
     return count;
   }
