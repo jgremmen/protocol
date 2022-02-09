@@ -43,6 +43,12 @@ public interface MessageMatcher
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
         return MessageMatcher.this.matches(levelLimit, message);
       }
+
+
+      @Override
+      public String toString() {
+        return MessageMatcher.this.toString();
+      }
     };
   }
 

@@ -36,6 +36,7 @@ import static de.sayayi.lib.protocol.ProtocolFactory.DEFAULT_TAG_NAME;
 import static de.sayayi.lib.protocol.matcher.BooleanMatcher.ANY;
 import static de.sayayi.lib.protocol.matcher.BooleanMatcher.NONE;
 import static java.util.Arrays.asList;
+import static java.util.Objects.requireNonNull;
 import static lombok.AccessLevel.PRIVATE;
 
 
@@ -64,15 +65,46 @@ public final class MessageMatchers
   }
 
 
+  static final Junction HAS_THROWABLE_MATCHER = new Junction()
+  {
+    @Override
+    public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
+      return message.getThrowable() != null;
+    }
+
+
+    @Override
+    public String toString() {
+      return "hasThrowable()";
+    }
+  };
+
+
   @Contract(pure = true)
   public static @NotNull Junction hasThrowable() {
-    return HasThrowableMatcher.INSTANCE;
+    return HAS_THROWABLE_MATCHER;
   }
 
 
   @Contract(pure = true)
-  public static @NotNull Junction hasThrowable(@NotNull Class<? extends Throwable> type) {
-    return HasThrowableMatcher.of(type);
+  public static @NotNull Junction hasThrowable(@NotNull Class<? extends Throwable> type)
+  {
+    if (requireNonNull(type) == Throwable.class)
+      return HAS_THROWABLE_MATCHER;
+
+    return new Junction()
+    {
+      @Override
+      public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
+        return type.isInstance(message.getThrowable());
+      }
+
+
+      @Override
+      public String toString() {
+        return "hasThrowable(" + type.getName() + ')';
+      }
+    };
   }
 
 
@@ -347,7 +379,7 @@ public final class MessageMatchers
   }
 
 
-  private static final Junction IN_GROUP_MATCHER = new Junction() {
+  static final Junction IN_GROUP_MATCHER = new Junction() {
     @Override
     public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
       return message.getProtocol().isProtocolGroup();
@@ -398,7 +430,7 @@ public final class MessageMatchers
   public static @NotNull Junction inGroup(@NotNull String groupName)
   {
     if (groupName.isEmpty())
-      return inGroup();
+      return IN_GROUP_MATCHER;
 
     return new Junction()
     {
