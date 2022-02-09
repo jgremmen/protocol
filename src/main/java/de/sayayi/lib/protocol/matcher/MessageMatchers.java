@@ -32,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 
 import static de.sayayi.lib.protocol.ProtocolFactory.DEFAULT_TAG_NAME;
 import static de.sayayi.lib.protocol.matcher.BooleanMatcher.ANY;
@@ -66,8 +67,7 @@ public final class MessageMatchers
   }
 
 
-  static final Junction HAS_THROWABLE_MATCHER = new Junction()
-  {
+  static final Junction HAS_THROWABLE_MATCHER = new Junction() {
     @Override
     public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
       return message.getThrowable() != null;
@@ -93,8 +93,7 @@ public final class MessageMatchers
     if (requireNonNull(type) == Throwable.class)
       return HAS_THROWABLE_MATCHER;
 
-    return new Junction()
-    {
+    return new Junction() {
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
         return type.isInstance(message.getThrowable());
@@ -199,8 +198,7 @@ public final class MessageMatchers
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction is(@NotNull TagSelector tagSelector)
   {
-    return new Junction()
-    {
+    return new Junction() {
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
         return tagSelector.match(message.getTagNames());
@@ -440,8 +438,7 @@ public final class MessageMatchers
     if (groupName.isEmpty())
       return IN_GROUP_MATCHER;
 
-    return new Junction()
-    {
+    return new Junction() {
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message)
       {
@@ -460,8 +457,48 @@ public final class MessageMatchers
   }
 
 
-  static final Junction IN_ROOT_MATCHER = new Junction()
+  /**
+   * <p>
+   *   Create a matcher which checks for messages that are contained in a protocol group with
+   *   a name that matches {@code groupNameRegex}.
+   * </p>
+   *
+   * @param groupNameRegex  regular expression for protocol group name to match, not {@code null}
+   *
+   * @return  matcher instance which checks for messages that are contained in a named
+   *          protocol group, never {@code null}
+   *
+   * @since 1.1.0
+   */
+  @Contract(pure = true)
+  public static @NotNull Junction inGroupRegex(@NotNull String groupNameRegex)
   {
+    val pattern = Pattern.compile(requireNonNull(groupNameRegex));
+
+    return new Junction() {
+      @Override
+      public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message)
+      {
+        val protocol = message.getProtocol();
+        if (protocol.isProtocolGroup())
+        {
+          val groupName = ((ProtocolGroup<M>)protocol).getName();
+          return groupName != null && pattern.matcher(groupName).matches();
+        }
+
+        return false;
+      }
+
+
+      @Override
+      public String toString() {
+        return "inGroupRegex(" + groupNameRegex + ')';
+      }
+    };
+  }
+
+
+  static final Junction IN_ROOT_MATCHER = new Junction() {
     @Override
     public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
       return message.getProtocol().getParent() == null;
@@ -504,8 +541,7 @@ public final class MessageMatchers
   {
     val protocolId = protocol.getId();
 
-    return new Junction()
-    {
+    return new Junction() {
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
         return message.getProtocol().getId() == protocolId;
