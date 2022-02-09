@@ -286,7 +286,8 @@ public final class MessageMatchers
   /**
    * Create a matcher which checks for messages with a level which is at least {@code DEBUG}.
    *
-   * @return  matcher instance which checks for messages with a level &gt;= {@code DEBUG}
+   * @return  matcher instance which checks for messages with a level &gt;= {@code DEBUG},
+   *          never {@code null}
    *
    * @see #is(Level)
    * @see Level.Shared#DEBUG
@@ -300,7 +301,8 @@ public final class MessageMatchers
   /**
    * Create a matcher which checks for messages with a level which is at least {@code INFO}.
    *
-   * @return  matcher instance which checks for messages with a level &gt;= {@code INFO}
+   * @return  matcher instance which checks for messages with a level &gt;= {@code INFO},
+   *          never {@code null}
    *
    * @see #is(Level)
    * @see Level.Shared#INFO
@@ -314,7 +316,8 @@ public final class MessageMatchers
   /**
    * Create a matcher which checks for messages with a level which is at least {@code WARN}.
    *
-   * @return  matcher instance which checks for messages with a level &gt;= {@code WARN}
+   * @return  matcher instance which checks for messages with a level &gt;= {@code WARN},
+   *          never {@code null}
    *
    * @see #is(Level)
    * @see Level.Shared#WARN
@@ -328,7 +331,8 @@ public final class MessageMatchers
   /**
    * Create a matcher which checks for messages with a level which is at least {@code ERROR}.
    *
-   * @return  matcher instance which checks for messages with a level &gt;= {@code ERROR}
+   * @return  matcher instance which checks for messages with a level &gt;= {@code ERROR},
+   *          never {@code null}
    *
    * @see #is(Level)
    * @see Level.Shared#ERROR
@@ -344,7 +348,8 @@ public final class MessageMatchers
    *
    * @param level  lowest level to match, not {@code null}
    *
-   * @return  matcher instance which checks for messages with level &gt;= {@code level}
+   * @return  matcher instance which checks for messages with level &gt;= {@code level},
+   *          never {@code null}
    */
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction is(@NotNull Level level) {
@@ -357,7 +362,8 @@ public final class MessageMatchers
    *
    * @param messageId  message id to match, not {@code null}
    *
-   * @return  matcher instance which checks for messages with the given {@code messageId}
+   * @return  matcher instance which checks for messages with the given {@code messageId},
+   *          never {@code null}
    */
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction hasMessage(@NotNull String messageId)
@@ -397,7 +403,8 @@ public final class MessageMatchers
   /**
    * Create a matcher which checks for messages that are contained in a protocol group.
    *
-   * @return  matcher instance which checks for messages that are contained in a protocol group
+   * @return  matcher instance which checks for messages that are contained in a protocol group,
+   *          never {@code null}
    *
    * @see #inGroup(String)
    *
@@ -421,7 +428,7 @@ public final class MessageMatchers
    * @param groupName  name of the protocol group name to match, not {@code null}
    *
    * @return  matcher instance which checks for messages that are contained in a named
-   *          protocol group
+   *          protocol group, never {@code null}
    *
    * @see #inGroup()
    *
@@ -471,7 +478,8 @@ public final class MessageMatchers
   /**
    * Create a matcher which checks for messages that are in the root protocol.
    *
-   * @return  matcher instance which checks for messages that are in the root protocol
+   * @return  matcher instance which checks for messages that are in the root protocol,
+   *          never {@code null}
    *
    * @since 1.1.0
    */
@@ -481,6 +489,16 @@ public final class MessageMatchers
   }
 
 
+  /**
+   * Create a matcher which checks for messages that are contained in a specific protocol instance.
+   *
+   * @param protocol  protocol instance to match, not {@code null}
+   *
+   * @return  matcher instance which checks for messages that are contained in a specific
+   *          protocol instance, never {@code null}
+   *
+   * @since 1.1.0
+   */
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction inProtocol(@NotNull Protocol<?> protocol)
   {
