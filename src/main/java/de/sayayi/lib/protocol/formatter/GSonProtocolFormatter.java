@@ -17,6 +17,7 @@ package de.sayayi.lib.protocol.formatter;
 
 import com.google.gson.stream.JsonWriter;
 import de.sayayi.lib.protocol.Level;
+import de.sayayi.lib.protocol.Protocol.GenericMessageWithLevel;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolFactory.MessageFormatter;
 import de.sayayi.lib.protocol.ProtocolFormatter;
@@ -29,6 +30,7 @@ import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import lombok.val;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -47,7 +49,7 @@ public class GSonProtocolFormatter<M> implements ProtocolFormatter<M,String>
   private final boolean prettyPrint;
 
   private JsonWriter jsonWriter;
-  private MessageFormatter<M> messageFormatter;
+  protected MessageFormatter<M> messageFormatter;
 
 
   public GSonProtocolFormatter() {
@@ -118,17 +120,17 @@ public class GSonProtocolFormatter<M> implements ProtocolFormatter<M,String>
       jsonWriter.beginObject();
 
       jsonWriter.name("id").value(message.getMessageId());
-      jsonWriter.name("timestamp").value(message.getTimeMillis());
+      formatTimestamp(jsonWriter.name("timestamp"), message.getTimeMillis());
 
       // message
       if (message.isGroupMessage())
       {
         jsonWriter.name("group-name").value(((GroupMessageEntry<M>)message).getName());
-        jsonWriter.name("group-message").value(messageFormatter.formatMessage(message));
+        jsonWriter.name("group-message").value(formatMessage(message));
       }
       else
       {
-        jsonWriter.name("message").value(messageFormatter.formatMessage(message));
+        jsonWriter.name("message").value(formatMessage(message));
 
         // tags (all in one line)
         jsonWriter.name("tags").beginArray();
@@ -149,6 +151,32 @@ public class GSonProtocolFormatter<M> implements ProtocolFormatter<M,String>
   }
 
 
+  @Contract(mutates = "param1")
+  private void formatTimestamp(@NotNull JsonWriter writer, long timestamp) throws IOException
+  {
+    val value = formatTimestamp(timestamp);
+
+    if (value instanceof Number)
+      writer.value((Number)value);
+    else if (value instanceof String)
+      writer.value((String)value);
+    else
+      throw new IllegalStateException("formatted timestamp must be Number or String");
+  }
+
+
+  @Contract(pure = true)
+  protected @NotNull Object formatTimestamp(long timestamp) {
+    return timestamp;
+  }
+
+
+  @Contract(pure = true)
+  protected @NotNull String formatMessage(@NotNull GenericMessageWithLevel<M> message) {
+    return messageFormatter.formatMessage(message);
+  }
+
+
   @Override
   public void groupStart(@NotNull GroupStartEntry<M> group)
   {
@@ -158,11 +186,11 @@ public class GSonProtocolFormatter<M> implements ProtocolFormatter<M,String>
       val message = group.getGroupMessage();
 
       jsonWriter.name("id").value(message.getMessageId());
-      jsonWriter.name("timestamp").value(message.getTimeMillis());
+      formatTimestamp(jsonWriter.name("timestamp"), message.getTimeMillis());
 
       // group message
       jsonWriter.name("group-name").value(group.getName());
-      jsonWriter.name("group-message").value(messageFormatter.formatMessage(message));
+      jsonWriter.name("group-message").value(formatMessage(message));
 
       // level
       val level = message.getLevel();
