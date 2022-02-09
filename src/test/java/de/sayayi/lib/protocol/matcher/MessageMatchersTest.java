@@ -15,7 +15,7 @@
  */
 package de.sayayi.lib.protocol.matcher;
 
-import de.sayayi.lib.protocol.Protocol.Message;
+import de.sayayi.lib.protocol.ProtocolEntry.Message;
 import de.sayayi.lib.protocol.StringProtocolFactory;
 import de.sayayi.lib.protocol.Tag;
 import org.junit.jupiter.api.Test;

@@ -16,6 +16,7 @@
 package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.Level;
+import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
@@ -67,6 +68,12 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
   @Override
   public @NotNull Map<String,Object> getParameterValues() {
     return message.getParameterValues();
+  }
+
+
+  @Override
+  public @NotNull Protocol<M> getProtocol() {
+    return message.getProtocol();
   }
 
 

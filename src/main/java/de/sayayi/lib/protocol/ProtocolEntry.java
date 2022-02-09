@@ -36,17 +36,24 @@ import java.util.List;
 public interface ProtocolEntry<M> extends ProtocolQueryable
 {
   /**
-   *
    * @param <M>  internal message object type
    */
-  interface Message<M> extends ProtocolEntry<M>, Protocol.Message<M> {
+  interface Message<M> extends ProtocolEntry<M>, Protocol.Message<M>
+  {
+    /**
+     * Returns the protocol which contains this message.
+     *
+     * @return  protocol which contains this message, never {@code null}
+     *
+     * @since 1.1.0
+     */
+    @NotNull Protocol<M> getProtocol();
   }
 
 
 
 
   /**
-   *
    * @param <M>  internal message object type
    */
   @SuppressWarnings("squid:S2176")

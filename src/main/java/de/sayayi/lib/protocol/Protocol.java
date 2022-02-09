@@ -95,6 +95,19 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
   /**
+   * Tells if this protocol is a protocol group.
+   *
+   * @return  {@code true} if this protocol is a protocol group, {@code false otherwise}
+   * 
+   * @since 1.1.0
+   */
+  @Contract(pure = true)
+  default boolean isProtocolGroup() {
+    return this instanceof ProtocolGroup;
+  }
+
+
+  /**
    * Returns the id for this protocol. Protocol ids are unique.
    *
    * @return  protocol id

@@ -16,6 +16,7 @@
 package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.Level;
+import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor.MessageWithId;
 import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
@@ -41,17 +42,20 @@ import static java.util.stream.Collectors.joining;
 final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M>
     implements InternalProtocolEntry.Message<M>
 {
+  @Getter private final @NotNull Protocol<M> protocol;
   @Getter private final @NotNull Level level;
   private final @NotNull Set<String> tagNames;
   @Getter private final Throwable throwable;
 
 
-  ProtocolMessageEntry(@NotNull Level level, @NotNull Set<String> tagNames, Throwable throwable,
+  ProtocolMessageEntry(@NotNull Protocol<M> protocol, @NotNull Level level,
+                       @NotNull Set<String> tagNames, Throwable throwable,
                        @NotNull MessageWithId<M> messageWithId,
                        @NotNull ParameterMap parentParameterMap)
   {
     super(messageWithId, parentParameterMap);
 
+    this.protocol = protocol;
     this.level = level;
     this.tagNames = tagNames;
     this.throwable = throwable;

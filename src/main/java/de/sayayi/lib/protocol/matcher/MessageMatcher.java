@@ -16,7 +16,7 @@
 package de.sayayi.lib.protocol.matcher;
 
 import de.sayayi.lib.protocol.Level;
-import de.sayayi.lib.protocol.Protocol.Message;
+import de.sayayi.lib.protocol.ProtocolEntry.Message;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

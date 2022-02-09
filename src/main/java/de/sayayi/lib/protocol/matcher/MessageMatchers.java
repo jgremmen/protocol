@@ -16,7 +16,8 @@
 package de.sayayi.lib.protocol.matcher;
 
 import de.sayayi.lib.protocol.Level;
-import de.sayayi.lib.protocol.Protocol.Message;
+import de.sayayi.lib.protocol.ProtocolEntry.Message;
+import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.TagDef;
 import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.matcher.MessageMatcher.Junction;
@@ -341,6 +342,79 @@ public final class MessageMatchers
       @Override
       public String toString() {
         return "hasMessage(" + messageId + ')';
+      }
+    };
+  }
+
+
+  private static final Junction IN_GROUP_MATCHER = new Junction() {
+    @Override
+    public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
+      return message.getProtocol().isProtocolGroup();
+    }
+
+
+    @Override
+    public String toString() {
+      return "inGroup()";
+    }
+  };
+
+
+  /**
+   * Create a matcher which checks for messages that are contained in a protocol group.
+   *
+   * @return  matcher instance which checks for messages that are contained in a protocol group
+   *
+   * @see #inGroup(String)
+   *
+   * @since 1.1.0
+   */
+  @Contract(pure = true)
+  public static @NotNull Junction inGroup() {
+    return IN_GROUP_MATCHER;
+  }
+
+
+  /**
+   * <p>
+   *   Create a matcher which checks for messages that are contained in a protocol group with
+   *   name equal to {@code groupName}.
+   * </p>
+   * <p>
+   *   If {@code groupName} is empty, any protocol group will match, regardless of its name.
+   * </p>
+   *
+   * @param groupName  name of the protocol group name to match, not {@code null}
+   *
+   * @return  matcher instance which checks for messages that are contained in a named
+   *          protocol group
+   *
+   * @see #inGroup()
+   *
+   * @since 1.1.0
+   */
+  @Contract(pure = true)
+  public static @NotNull Junction inGroup(@NotNull String groupName)
+  {
+    if (groupName.isEmpty())
+      return inGroup();
+
+    return new Junction()
+    {
+      @Override
+      public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message)
+      {
+        val protocol = message.getProtocol();
+
+        return protocol.isProtocolGroup() &&
+               groupName.equals(((ProtocolGroup<M>)protocol).getName());
+      }
+
+
+      @Override
+      public String toString() {
+        return "inGroup(" + groupName + ')';
       }
     };
   }

@@ -107,7 +107,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   @Override
   public @NotNull P withMessage(@NotNull M message)
   {
-    val msg = new ProtocolMessageEntry<>(level, message0_resolveTagNames(), throwable,
+    val msg = new ProtocolMessageEntry<>(protocol, level, message0_resolveTagNames(), throwable,
         new GenericMessageWithId<>(
             protocol.getFactory().getMessageProcessor().getIdFromMessage(message),
             requireNonNull(message, "message must not be null")),
@@ -122,7 +122,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   @SuppressWarnings("squid:S2583")
   private @NotNull P message0(@NotNull MessageWithId<M> messageWithId)
   {
-    val msg = new ProtocolMessageEntry<>(level, message0_resolveTagNames(), throwable,
+    val msg = new ProtocolMessageEntry<>(protocol, level, message0_resolveTagNames(), throwable,
         messageWithId, protocol.parameterMap);
 
     protocol.entries.add(msg);

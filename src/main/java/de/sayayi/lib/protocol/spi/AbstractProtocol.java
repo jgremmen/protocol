@@ -195,7 +195,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   {
     // initialize formatter
     formatter.init(factory, matcher,
-        countGroupDepth() + ((this instanceof ProtocolGroupImpl) ? 1 : 0));
+        countGroupDepth() + (isProtocolGroup() ? 1 : 0));
 
     iterator(matcher).forEachRemaining(entry -> {
       if (entry instanceof MessageEntry)
