@@ -16,6 +16,7 @@
 package de.sayayi.lib.protocol.matcher;
 
 import de.sayayi.lib.protocol.Level;
+import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolEntry.Message;
 import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.TagDef;
@@ -447,6 +448,55 @@ public final class MessageMatchers
       @Override
       public String toString() {
         return "inGroup(" + groupName + ')';
+      }
+    };
+  }
+
+
+  static final Junction IN_ROOT_MATCHER = new Junction()
+  {
+    @Override
+    public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
+      return message.getProtocol().getParent() == null;
+    }
+
+
+    @Override
+    public String toString() {
+      return "inRoot()";
+    }
+  };
+
+
+  /**
+   * Create a matcher which checks for messages that are in the root protocol.
+   *
+   * @return  matcher instance which checks for messages that are in the root protocol
+   *
+   * @since 1.1.0
+   */
+  @Contract(pure = true)
+  public static @NotNull Junction inRoot() {
+    return IN_ROOT_MATCHER;
+  }
+
+
+  @Contract(value = "_ -> new", pure = true)
+  public static @NotNull Junction inProtocol(@NotNull Protocol<?> protocol)
+  {
+    val protocolId = protocol.getId();
+
+    return new Junction()
+    {
+      @Override
+      public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
+        return message.getProtocol().getId() == protocolId;
+      }
+
+
+      @Override
+      public String toString() {
+        return "inProtocol(" + protocolId + ')';
       }
     };
   }
