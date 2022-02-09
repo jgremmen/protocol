@@ -275,9 +275,8 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
       this.hasEntryAfterGroup = hasEntryAfterGroup;
 
-      var visibility = protocol.getEffectiveVisibility();
-
       // normalize visibility
+      var visibility = protocol.getEffectiveVisibility();
       if (visibility == SHOW_HEADER_ALWAYS && !hasNextVisibleEntryAtSameDepth())
         visibility = SHOW_HEADER_ONLY;
       else if (visibility == SHOW_HEADER_IF_NOT_EMPTY)

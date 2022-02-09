@@ -198,16 +198,16 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
         countGroupDepth() + ((this instanceof ProtocolGroupImpl) ? 1 : 0));
 
     iterator(matcher).forEachRemaining(entry -> {
-      if (entry instanceof ProtocolStart)
-        formatter.protocolStart();
-      else if (entry instanceof ProtocolEnd)
-        formatter.protocolEnd();
-      else if (entry instanceof MessageEntry)
+      if (entry instanceof MessageEntry)
         formatter.message((MessageEntry<M>)entry);
       else if (entry instanceof GroupStartEntry)
         formatter.groupStart((GroupStartEntry<M>)entry);
       else if (entry instanceof GroupEndEntry)
         formatter.groupEnd((GroupEndEntry<M>)entry);
+      else if (entry instanceof ProtocolStart)
+        formatter.protocolStart();
+      else if (entry instanceof ProtocolEnd)
+        formatter.protocolEnd();
     });
 
     return formatter.getResult();
