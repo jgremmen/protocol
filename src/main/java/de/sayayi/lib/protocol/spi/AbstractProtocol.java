@@ -22,6 +22,7 @@ import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolGroup;
+import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupEndEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
@@ -113,7 +114,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   {
     val filteredEntries = new ArrayList<ProtocolEntry<M>>();
 
-    for(final InternalProtocolEntry<M> entry: entries)
+    for(val entry: entries)
       if (entry.matches0(levelLimit, matcher))
       {
         if (entry instanceof InternalProtocolEntry.Group)
@@ -173,6 +174,51 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
     entries.add(group);
 
     return group;
+  }
+
+
+  @Override
+  public @NotNull Spliterator<DepthEntry<M>> spliterator(@NotNull MessageMatcher matcher)
+  {
+    val iterator = iterator(matcher);
+
+    return new Spliterator<DepthEntry<M>>() {
+      @Override
+      public boolean tryAdvance(@NotNull Consumer<? super DepthEntry<M>> action)
+      {
+        if (iterator.hasNext())
+        {
+          action.accept(iterator.next());
+          return true;
+        }
+
+        return false;
+      }
+
+
+      @Override
+      public void forEachRemaining(@NotNull Consumer<? super DepthEntry<M>> action) {
+        iterator.forEachRemaining(action);
+      }
+
+
+      @Override
+      public Spliterator<DepthEntry<M>> trySplit() {
+        return null;
+      }
+
+
+      @Override
+      public long estimateSize() {
+        return Long.MAX_VALUE;
+      }
+
+
+      @Override
+      public int characteristics() {
+        return DISTINCT | NONNULL | ORDERED | IMMUTABLE;
+      }
+    };
   }
 
 

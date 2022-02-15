@@ -32,11 +32,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.function.Consumer;
-
-import static java.util.Spliterator.DISTINCT;
-import static java.util.Spliterator.NONNULL;
-import static java.util.Spliterator.ORDERED;
-import static java.util.Spliterators.spliteratorUnknownSize;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 
 /**
@@ -484,8 +481,8 @@ public interface Protocol<M> extends ProtocolQueryable
    *   {@code matcher}, with no initial size estimate.
    * </p>
    * <p>
-   *   The {@code Spliterator} reports {@link Spliterator#ORDERED},{@link Spliterator#DISTINCT} and
-   *   {@link Spliterator#NONNULL}.
+   *   The {@code Spliterator} reports {@link Spliterator#ORDERED},{@link Spliterator#DISTINCT},
+   *   {@link Spliterator#NONNULL} and {@link Spliterator#IMMUTABLE}.
    * </p>
    *
    * @param matcher  Message matcher, never {@code null}
@@ -495,8 +492,12 @@ public interface Protocol<M> extends ProtocolQueryable
    * @since 1.0.0
    */
   @Contract(pure = true, value = "_ -> new")
-  default @NotNull Spliterator<DepthEntry<M>> spliterator(@NotNull MessageMatcher matcher) {
-    return spliteratorUnknownSize(iterator(matcher), ORDERED | DISTINCT | NONNULL);
+  @NotNull Spliterator<DepthEntry<M>> spliterator(@NotNull MessageMatcher matcher);
+
+
+  @Contract(pure = true, value = "_ -> new")
+  default @NotNull Stream<DepthEntry<M>> stream(@NotNull MessageMatcher matcher) {
+    return StreamSupport.stream(spliterator(matcher), false);
   }
 
 

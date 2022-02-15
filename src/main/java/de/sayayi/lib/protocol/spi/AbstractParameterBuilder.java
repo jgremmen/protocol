@@ -175,6 +175,12 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
+  public @NotNull Spliterator<ProtocolIterator.DepthEntry<M>> spliterator(@NotNull MessageMatcher matcher) {
+    return protocol.spliterator(matcher);
+  }
+
+
+  @Override
   public @NotNull TargetTagBuilder<M> propagate(@NotNull TagSelector tagSelector) {
     return protocol.propagate(tagSelector);
   }
