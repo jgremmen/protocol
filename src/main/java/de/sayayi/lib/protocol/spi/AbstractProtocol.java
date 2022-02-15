@@ -178,47 +178,8 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
 
 
   @Override
-  public @NotNull Spliterator<DepthEntry<M>> spliterator(@NotNull MessageMatcher matcher)
-  {
-    val iterator = iterator(matcher);
-
-    return new Spliterator<DepthEntry<M>>() {
-      @Override
-      public boolean tryAdvance(@NotNull Consumer<? super DepthEntry<M>> action)
-      {
-        if (iterator.hasNext())
-        {
-          action.accept(iterator.next());
-          return true;
-        }
-
-        return false;
-      }
-
-
-      @Override
-      public void forEachRemaining(@NotNull Consumer<? super DepthEntry<M>> action) {
-        iterator.forEachRemaining(action);
-      }
-
-
-      @Override
-      public Spliterator<DepthEntry<M>> trySplit() {
-        return null;
-      }
-
-
-      @Override
-      public long estimateSize() {
-        return Long.MAX_VALUE;
-      }
-
-
-      @Override
-      public int characteristics() {
-        return DISTINCT | NONNULL | ORDERED | IMMUTABLE;
-      }
-    };
+  public @NotNull Spliterator<DepthEntry<M>> spliterator(@NotNull MessageMatcher matcher) {
+    return new ProtocolSpliterator<>(iterator(matcher));
   }
 
 
