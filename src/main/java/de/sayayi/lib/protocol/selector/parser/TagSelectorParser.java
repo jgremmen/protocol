@@ -80,7 +80,10 @@ public final class TagSelectorParser
     val token = getTokenAt(selector.tokenLast + 1);
 
     if (token != null)
-      throw new TagSelectorParserException(token.getStart(), token.getEnd(), "unexpected token: " + token.getText());
+    {
+      throw new TagSelectorParserException(token.getStart(), token.getEnd(),
+          "unexpected token: " + token.getText());
+    }
 
     return selector.result;
   }
@@ -133,7 +136,8 @@ public final class TagSelectorParser
     // t0=and t1=<parameters>
     val parameters = parseParameters(t + 1);
 
-    return new ParsedRule<>(t, parameters.tokenLast, Tag.and(parameters.result.toArray(new TagSelector[0])));
+    return new ParsedRule<>(t, parameters.tokenLast,
+        Tag.and(parameters.result.toArray(new TagSelector[0])));
   }
 
 
@@ -142,7 +146,8 @@ public final class TagSelectorParser
     // t0=or t1=<parameters>
     val parameters = parseParameters(t + 1);
 
-    return new ParsedRule<>(t, parameters.tokenLast, Tag.or(parameters.result.toArray(new TagSelector[0])));
+    return new ParsedRule<>(t, parameters.tokenLast,
+        Tag.or(parameters.result.toArray(new TagSelector[0])));
   }
 
 
@@ -263,11 +268,15 @@ public final class TagSelectorParser
     if (token == null)
     {
       val lastIdx = lexer.getLength() + 1;
-      throw new TagSelectorParserException(lastIdx, lastIdx, "unexpected end; missing " + type.getText());
+      throw new TagSelectorParserException(lastIdx, lastIdx,
+          "unexpected end; missing " + type.getText());
     }
 
     if (token.getType() != type)
-      throw new TagSelectorParserException(token.getStart(), token.getStart(), "missing " + type.getText());
+    {
+      throw new TagSelectorParserException(token.getStart(), token.getStart(),
+          "missing " + type.getText());
+    }
 
     return token;
   }

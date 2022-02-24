@@ -19,6 +19,9 @@ import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Range;
+
+import static java.lang.Integer.MAX_VALUE;
 
 
 /**
@@ -46,13 +49,12 @@ public interface ProtocolQueryable
    * Returns the number of visible entries for the given message {@code matcher}.
    *
    * @param matcher    message matcher, not {@code null}
-   * @param recursive  {@code false} returns the number of visible entries for the current depth only,
-   *                   {@code true} returns the number of visible entries for all depths starting at the current one
    *
    * @return  number of visible entries
    *
    * @since 1.0.0
    */
   @Contract(pure = true)
-  int getVisibleEntryCount(boolean recursive, @NotNull MessageMatcher matcher);
+  @Range(from = 0, to = MAX_VALUE)
+  int getVisibleEntryCount(@NotNull MessageMatcher matcher);
 }

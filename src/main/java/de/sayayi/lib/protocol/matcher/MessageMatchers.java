@@ -16,7 +16,9 @@
 package de.sayayi.lib.protocol.matcher;
 
 import de.sayayi.lib.protocol.Level;
-import de.sayayi.lib.protocol.Protocol.Message;
+import de.sayayi.lib.protocol.Protocol;
+import de.sayayi.lib.protocol.ProtocolEntry.Message;
+import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.TagDef;
 import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.matcher.MessageMatcher.Junction;
@@ -30,11 +32,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 
 import static de.sayayi.lib.protocol.ProtocolFactory.DEFAULT_TAG_NAME;
 import static de.sayayi.lib.protocol.matcher.BooleanMatcher.ANY;
 import static de.sayayi.lib.protocol.matcher.BooleanMatcher.NONE;
 import static java.util.Arrays.asList;
+import static java.util.Objects.requireNonNull;
 import static lombok.AccessLevel.PRIVATE;
 
 
@@ -63,15 +67,44 @@ public final class MessageMatchers
   }
 
 
+  static final Junction HAS_THROWABLE_MATCHER = new Junction() {
+    @Override
+    public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
+      return message.getThrowable() != null;
+    }
+
+
+    @Override
+    public String toString() {
+      return "hasThrowable()";
+    }
+  };
+
+
   @Contract(pure = true)
   public static @NotNull Junction hasThrowable() {
-    return HasThrowableMatcher.INSTANCE;
+    return HAS_THROWABLE_MATCHER;
   }
 
 
   @Contract(pure = true)
-  public static @NotNull Junction hasThrowable(@NotNull Class<? extends Throwable> type) {
-    return HasThrowableMatcher.of(type);
+  public static @NotNull Junction hasThrowable(@NotNull Class<? extends Throwable> type)
+  {
+    if (requireNonNull(type) == Throwable.class)
+      return HAS_THROWABLE_MATCHER;
+
+    return new Junction() {
+      @Override
+      public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
+        return type.isInstance(message.getThrowable());
+      }
+
+
+      @Override
+      public String toString() {
+        return "hasThrowable(" + type.getName() + ')';
+      }
+    };
   }
 
 
@@ -84,7 +117,7 @@ public final class MessageMatchers
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction hasTag(@NotNull String tagName)
   {
-    if (tagName.length() == 0)
+    if (tagName.isEmpty())
       return NONE;
     else if (DEFAULT_TAG_NAME.equals(tagName))
       return ANY;
@@ -165,8 +198,7 @@ public final class MessageMatchers
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction is(@NotNull TagSelector tagSelector)
   {
-    return new Junction()
-    {
+    return new Junction() {
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
         return tagSelector.match(message.getTagNames());
@@ -205,7 +237,7 @@ public final class MessageMatchers
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction hasParamValue(@NotNull String parameterName)
   {
-    if (parameterName.length() == 0)
+    if (parameterName.isEmpty())
       return NONE;
 
     return new Junction() {
@@ -226,7 +258,7 @@ public final class MessageMatchers
   @Contract(value = "_, _ -> new", pure = true)
   public static @NotNull Junction hasParamValue(@NotNull String parameterName, Object value)
   {
-    if (parameterName.length() == 0)
+    if (parameterName.isEmpty())
       return NONE;
 
     return new Junction() {
@@ -235,13 +267,9 @@ public final class MessageMatchers
       {
         val parameterValues = message.getParameterValues();
 
-        if (value == null)
-        {
-          return parameterValues.containsKey(parameterName) &&
-                 parameterValues.get(parameterName) == null;
-        }
-        else
-          return Objects.equals(parameterValues.get(parameterName), value);
+        return value == null
+            ? parameterValues.containsKey(parameterName) && parameterValues.get(parameterName) == null
+            : Objects.equals(parameterValues.get(parameterName), value);
       }
 
 
@@ -256,7 +284,8 @@ public final class MessageMatchers
   /**
    * Create a matcher which checks for messages with a level which is at least {@code DEBUG}.
    *
-   * @return  matcher instance which checks for messages with a level &gt;= {@code DEBUG}
+   * @return  matcher instance which checks for messages with a level &gt;= {@code DEBUG},
+   *          never {@code null}
    *
    * @see #is(Level)
    * @see Level.Shared#DEBUG
@@ -270,7 +299,8 @@ public final class MessageMatchers
   /**
    * Create a matcher which checks for messages with a level which is at least {@code INFO}.
    *
-   * @return  matcher instance which checks for messages with a level &gt;= {@code INFO}
+   * @return  matcher instance which checks for messages with a level &gt;= {@code INFO},
+   *          never {@code null}
    *
    * @see #is(Level)
    * @see Level.Shared#INFO
@@ -284,7 +314,8 @@ public final class MessageMatchers
   /**
    * Create a matcher which checks for messages with a level which is at least {@code WARN}.
    *
-   * @return  matcher instance which checks for messages with a level &gt;= {@code WARN}
+   * @return  matcher instance which checks for messages with a level &gt;= {@code WARN},
+   *          never {@code null}
    *
    * @see #is(Level)
    * @see Level.Shared#WARN
@@ -298,7 +329,8 @@ public final class MessageMatchers
   /**
    * Create a matcher which checks for messages with a level which is at least {@code ERROR}.
    *
-   * @return  matcher instance which checks for messages with a level &gt;= {@code ERROR}
+   * @return  matcher instance which checks for messages with a level &gt;= {@code ERROR},
+   *          never {@code null}
    *
    * @see #is(Level)
    * @see Level.Shared#ERROR
@@ -314,7 +346,8 @@ public final class MessageMatchers
    *
    * @param level  lowest level to match, not {@code null}
    *
-   * @return  matcher instance which checks for messages with a level &gt;= {@code level}
+   * @return  matcher instance which checks for messages with level &gt;= {@code level},
+   *          never {@code null}
    */
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction is(@NotNull Level level) {
@@ -327,12 +360,13 @@ public final class MessageMatchers
    *
    * @param messageId  message id to match, not {@code null}
    *
-   * @return  matcher instance which checks for messages with the given {@code messageId}
+   * @return  matcher instance which checks for messages with the given {@code messageId},
+   *          never {@code null}
    */
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction hasMessage(@NotNull String messageId)
   {
-    if (messageId.length() == 0)
+    if (messageId.isEmpty())
       return NONE;
 
     return new Junction() {
@@ -345,6 +379,178 @@ public final class MessageMatchers
       @Override
       public String toString() {
         return "hasMessage(" + messageId + ')';
+      }
+    };
+  }
+
+
+  static final Junction IN_GROUP_MATCHER = new Junction() {
+    @Override
+    public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
+      return message.getProtocol().isProtocolGroup();
+    }
+
+
+    @Override
+    public String toString() {
+      return "inGroup()";
+    }
+  };
+
+
+  /**
+   * Create a matcher which checks for messages that are contained in a protocol group.
+   *
+   * @return  matcher instance which checks for messages that are contained in a protocol group,
+   *          never {@code null}
+   *
+   * @see #inGroup(String)
+   *
+   * @since 1.1.0
+   */
+  @Contract(pure = true)
+  public static @NotNull Junction inGroup() {
+    return IN_GROUP_MATCHER;
+  }
+
+
+  /**
+   * <p>
+   *   Create a matcher which checks for messages that are contained in a protocol group with
+   *   name equal to {@code groupName}.
+   * </p>
+   * <p>
+   *   If {@code groupName} is empty, any protocol group will match, regardless of its name.
+   * </p>
+   *
+   * @param groupName  name of the protocol group name to match, not {@code null}
+   *
+   * @return  matcher instance which checks for messages that are contained in a named
+   *          protocol group, never {@code null}
+   *
+   * @see #inGroup()
+   *
+   * @since 1.1.0
+   */
+  @Contract(pure = true)
+  public static @NotNull Junction inGroup(@NotNull String groupName)
+  {
+    if (groupName.isEmpty())
+      return IN_GROUP_MATCHER;
+
+    return new Junction() {
+      @Override
+      public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message)
+      {
+        val protocol = message.getProtocol();
+
+        return protocol.isProtocolGroup() &&
+               groupName.equals(((ProtocolGroup<M>)protocol).getName());
+      }
+
+
+      @Override
+      public String toString() {
+        return "inGroup(" + groupName + ')';
+      }
+    };
+  }
+
+
+  /**
+   * <p>
+   *   Create a matcher which checks for messages that are contained in a protocol group with
+   *   a name that matches {@code groupNameRegex}.
+   * </p>
+   *
+   * @param groupNameRegex  regular expression for protocol group name to match, not {@code null}
+   *
+   * @return  matcher instance which checks for messages that are contained in a named
+   *          protocol group, never {@code null}
+   *
+   * @since 1.1.0
+   */
+  @Contract(pure = true)
+  public static @NotNull Junction inGroupRegex(@NotNull String groupNameRegex)
+  {
+    val pattern = Pattern.compile(requireNonNull(groupNameRegex));
+
+    return new Junction() {
+      @Override
+      public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message)
+      {
+        val protocol = message.getProtocol();
+        if (protocol.isProtocolGroup())
+        {
+          val groupName = ((ProtocolGroup<M>)protocol).getName();
+          return groupName != null && pattern.matcher(groupName).matches();
+        }
+
+        return false;
+      }
+
+
+      @Override
+      public String toString() {
+        return "inGroupRegex(" + groupNameRegex + ')';
+      }
+    };
+  }
+
+
+  static final Junction IN_ROOT_MATCHER = new Junction() {
+    @Override
+    public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
+      return message.getProtocol().getParent() == null;
+    }
+
+
+    @Override
+    public String toString() {
+      return "inRoot()";
+    }
+  };
+
+
+  /**
+   * Create a matcher which checks for messages that are in the root protocol.
+   *
+   * @return  matcher instance which checks for messages that are in the root protocol,
+   *          never {@code null}
+   *
+   * @since 1.1.0
+   */
+  @Contract(pure = true)
+  public static @NotNull Junction inRoot() {
+    return IN_ROOT_MATCHER;
+  }
+
+
+  /**
+   * Create a matcher which checks for messages that are contained in a specific protocol instance.
+   *
+   * @param protocol  protocol instance to match, not {@code null}
+   *
+   * @return  matcher instance which checks for messages that are contained in a specific
+   *          protocol instance, never {@code null}
+   *
+   * @since 1.1.0
+   */
+  @Contract(value = "_ -> new", pure = true)
+  public static @NotNull Junction inProtocol(@NotNull Protocol<?> protocol)
+  {
+    val protocolId = protocol.getId();
+
+    return new Junction() {
+      @Override
+      public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
+        return message.getProtocol().getId() == protocolId;
+      }
+
+
+      @Override
+      public String toString() {
+        return "inProtocol(" + protocolId + ')';
       }
     };
   }

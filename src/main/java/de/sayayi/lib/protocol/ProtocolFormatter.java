@@ -35,21 +35,23 @@ import org.jetbrains.annotations.NotNull;
 public interface ProtocolFormatter<M,R>
 {
   /**
-   * This method is invoked before any other formatting methods are invoked and must initialize the formatter in
-   * such way that it can be reused.
+   * This method is invoked before any other formatting methods are invoked and must initialize
+   * the formatter in such way that it can be reused.
    *
    * @param factory              protocol factory, never {@code null}
    * @param matcher              message matcher, never {@code null}
-   * @param estimatedGroupDepth  the estimated depth of nested protocol groups ({@code 0} means the protocol contains
-   *                             no groups). The real depth depends on {@code level}, {@code tags} and group
-   *                             visibility settings but is never greater than the estimated depth.
+   * @param estimatedGroupDepth  the estimated depth of nested protocol groups ({@code 0} means the
+   *                             protocol contains no groups). The real depth depends on
+   *                             {@code level}, {@code tags} and group visibility settings but is
+   *                             never greater than the estimated depth.
    *
    * @see Protocol#format(ProtocolFormatter, MessageMatcher)
    *
    * @since 1.0.0
    */
   @Contract(mutates = "this")
-  void init(@NotNull ProtocolFactory<M> factory, @NotNull MessageMatcher matcher, int estimatedGroupDepth);
+  void init(@NotNull ProtocolFactory<M> factory, @NotNull MessageMatcher matcher,
+            int estimatedGroupDepth);
 
 
   /**
@@ -80,21 +82,39 @@ public interface ProtocolFormatter<M,R>
    *   Format the given message.
    * </p>
    * <p>
-   *   This method is used for both regular messages as well as group header messages for groups with no containing
-   *   messages. A distinction can be made by checking {@link MessageEntry#isGroupMessage()}.
+   *   This method is used for both regular messages as well as group header messages for groups
+   *   with no containing messages. A distinction can be made by checking
+   *   {@link MessageEntry#isGroupMessage()}.
    * </p>
    *
-   * @param message, never {@code null}
+   * @param message  message, never {@code null}
    *
    * @see ProtocolGroup#setVisibility(Visibility)
    */
   void message(@NotNull MessageEntry<M> message);
 
 
+  /**
+   * <p>
+   *   Format the start of a group.
+   * </p>
+   * <p>
+   *   This method is invoked for a group, which has a group message as well as at least 1 message.
+   * </p>
+   *
+   * @param group  group start, never {@code null}
+   */
   default void groupStart(@NotNull GroupStartEntry<M> group) {
   }
 
 
+  /**
+   * <p>
+   *   Format the end of a group. It always has a preceding {@link GroupStartEntry}.
+   * </p>
+   *
+   * @param groupEnd  group end, never {@code null}
+   */
   default void groupEnd(@NotNull GroupEndEntry<M> groupEnd) {
   }
 
@@ -109,8 +129,8 @@ public interface ProtocolFormatter<M,R>
 
 
   /**
-   * Formats a {@code protocol} using this formatter iterating over all elements matching {@code level} and
-   * {@code tagSelector}.
+   * Formats a {@code protocol} using this formatter iterating over all elements matching
+   * {@code level} and {@code tagSelector}.
    *
    * @param protocol  protocol to be formatted, never {@code null}
    * @param matcher   message matcher, never {@code null}

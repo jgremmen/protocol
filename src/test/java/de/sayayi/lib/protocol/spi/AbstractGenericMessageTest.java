@@ -49,7 +49,6 @@ public class AbstractGenericMessageTest
     val parameters = new ParameterMap();
     parameters.put("key", "value123");
 
-    //noinspection WriteOnlyObject
     assertThrows(UnsupportedOperationException.class,
         () -> new TestMessage("msg", parameters).getParameterValues().put("key2", "test"));
   }

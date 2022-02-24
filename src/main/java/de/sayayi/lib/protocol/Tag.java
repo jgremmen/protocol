@@ -64,9 +64,12 @@ import static lombok.AccessLevel.PRIVATE;
 public final class Tag
 {
   private static final Comparator<TagSelector> CMP_TYPE = comparing(TagSelector::getType);
-  private static final Comparator<TagSelector> CMP_NOT_FIRST = comparingInt(o -> (o.getType() == NOT ? 0 : 1));
-  private static final Comparator<TagSelector> CMP_ALL_OF_FIRST = comparingInt(o -> (o.getType() == ALL_OF ? 0 : 1));
-  private static final Comparator<TagSelector> CMP_ANY_OF_FIRST = comparingInt(o -> (isAnyOfMatcher(o) ? 0 : 1));
+  private static final Comparator<TagSelector> CMP_NOT_FIRST =
+      comparingInt(o -> o.getType() == NOT ? 0 : 1);
+  private static final Comparator<TagSelector> CMP_ALL_OF_FIRST =
+      comparingInt(o -> o.getType() == ALL_OF ? 0 : 1);
+  private static final Comparator<TagSelector> CMP_ANY_OF_FIRST =
+      comparingInt(o -> isAnyOfMatcher(o) ? 0 : 1);
 
 
   @Contract(value = "_ -> new", pure = true)
@@ -80,8 +83,8 @@ public final class Tag
    *
    * @param tagName  tag name
    *
-   * @return  tag selector for the given {@code tagName}. The returned object allows for constructing a more
-   *          complex selector following the builder pattern.
+   * @return  tag selector for the given {@code tagName}. The returned object allows for
+   *          constructing a more complex selector following the builder pattern.
    */
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Builder of(@NotNull String tagName) {
@@ -106,8 +109,8 @@ public final class Tag
    *
    * @param tagNames  tag names
    *
-   * @return  tag selector which matches any of the given {@code tagNames}. The returned object allows for
-   *          constructing a more complex selector following the builder pattern.
+   * @return  tag selector which matches any of the given {@code tagNames}. The returned object
+   *          allows for constructing a more complex selector following the builder pattern.
    */
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Builder anyOf(@NotNull String... tagNames)
@@ -127,8 +130,8 @@ public final class Tag
    *
    * @param tagNames  tag names
    *
-   * @return  tag selector which matches all of the given {@code tagNames}. The returned object allows for
-   *          constructing a more complex selector following the builder pattern.
+   * @return  tag selector which matches all of the given {@code tagNames}. The returned object
+   *          allows for constructing a more complex selector following the builder pattern.
    */
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Builder allOf(@NotNull String... tagNames)
@@ -145,8 +148,8 @@ public final class Tag
    *
    * @param tagNames  tag names
    *
-   * @return  tag selector which matches none of the given {@code tagNames}. The returned object allows for
-   *          constructing a more complex selector following the builder pattern.
+   * @return  tag selector which matches none of the given {@code tagNames}. The returned object
+   *          allows for constructing a more complex selector following the builder pattern.
    */
   @Contract(pure = true)
   public static @NotNull Builder noneOf(@NotNull String... tagNames) {
@@ -159,8 +162,9 @@ public final class Tag
    *
    * @param tagName  tag name
    *
-   * @return  tag selector which matches if the given {@code tagName} is not contained. The returned object allows
-   *          for constructing a more complex selector following the builder pattern.
+   * @return  tag selector which matches if the given {@code tagName} is not contained. The
+   *          returned object allows for constructing a more complex selector following the builder
+   *          pattern.
    */
   @Contract(pure = true)
   public static @NotNull Builder not(@NotNull String tagName) {
@@ -313,8 +317,9 @@ public final class Tag
         break;
 
       selectors.remove(1);
-      selectors.set(0,
-          new MatchAllOf(((TagReference)selector0).getTagNames(), ((TagReference)selector1).getTagNames()));
+      selectors.set(0, new MatchAllOf(
+          ((TagReference)selector0).getTagNames(),
+          ((TagReference)selector1).getTagNames()));
     }
   }
 
@@ -412,8 +417,9 @@ public final class Tag
         break;
 
       selectors.remove(1);
-      selectors.set(0,
-          new MatchAnyOf(((TagReference)selector0).getTagNames(), ((TagReference)selector1).getTagNames()));
+      selectors.set(0, new MatchAnyOf(
+          ((TagReference)selector0).getTagNames(),
+          ((TagReference)selector1).getTagNames()));
     }
   }
 

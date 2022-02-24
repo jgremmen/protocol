@@ -34,13 +34,15 @@ import java.util.Locale;
 @AllArgsConstructor
 public final class JavaMessageFormatFormatter extends AbstractIndexedMessageFormatter<String>
 {
-  public static final JavaMessageFormatFormatter INSTANCE = new JavaMessageFormatFormatter(Locale.getDefault());
+  public static final JavaMessageFormatFormatter INSTANCE =
+      new JavaMessageFormatFormatter(Locale.getDefault());
 
   private final Locale locale;
 
 
   @Override
-  protected @NotNull String formatMessage(@NotNull GenericMessage<String> message, @NotNull Object[] parameters) {
+  protected @NotNull String formatMessage(@NotNull GenericMessage<String> message,
+                                          @NotNull Object[] parameters) {
     return new MessageFormat(message.getMessage(), locale).format(parameters);
   }
 }

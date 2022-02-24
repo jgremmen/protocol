@@ -16,7 +16,7 @@
 package de.sayayi.lib.protocol.matcher;
 
 import de.sayayi.lib.protocol.Level;
-import de.sayayi.lib.protocol.Protocol.Message;
+import de.sayayi.lib.protocol.ProtocolEntry.Message;
 import de.sayayi.lib.protocol.matcher.MessageMatcher.Junction;
 
 import lombok.EqualsAndHashCode;
@@ -43,7 +43,7 @@ import static lombok.AccessLevel.PRIVATE;
  */
 @RequiredArgsConstructor(access = PRIVATE)
 @EqualsAndHashCode(callSuper = false)
-class Conjunction implements Junction
+final class Conjunction implements Junction
 {
   private final Set<MessageMatcher> matchers;
 
@@ -81,7 +81,7 @@ class Conjunction implements Junction
     do {
       matchersChanged = false;
 
-      for(final Iterator<MessageMatcher> matcherIterator = matchers.iterator(); matcherIterator.hasNext();)
+      for(Iterator<MessageMatcher> matcherIterator = matchers.iterator(); matcherIterator.hasNext();)
       {
         val m = matcherIterator.next();
         if (m instanceof Conjunction)

@@ -28,6 +28,7 @@ import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
 import static de.sayayi.lib.protocol.Level.Shared.WARN;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.FLATTEN_ON_SINGLE_ENTRY;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ALWAYS;
+import static de.sayayi.lib.protocol.matcher.MessageMatchers.any;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.is;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.isError;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -59,7 +60,7 @@ public class ProtocolIteratorTest
 
     grp1.debug().message("d1,msg2");
 
-    //String tree = protocol.format(new TechnicalProtocolFormatter<String>(factory));
+    System.out.println(protocol.toStringTree());
 
     val iterator = protocol.iterator(is(LOWEST));
     GroupStartEntry<String> grpEntry;
@@ -78,7 +79,7 @@ public class ProtocolIteratorTest
     assertTrue(grpEntry.isLast());
     assertEquals(1, grpEntry.getDepth());
     assertEquals("d0,grp1", grpEntry.getGroupMessage().getMessage());
-    assertEquals(3, grpEntry.getMessageCount());
+    assertEquals(5, grpEntry.getMessageCount());
 
     msgEntry = (MessageEntry<String>)iterator.next();
     assertTrue(msgEntry.isFirst());
@@ -270,5 +271,29 @@ public class ProtocolIteratorTest
     assertTrue(iterator.next() instanceof ProtocolIterator.MessageEntry);
     assertTrue(iterator.next() instanceof ProtocolIterator.GroupEndEntry);
     assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolEnd);
+  }
+
+
+  @Test
+  public void testGroupsWithoutHeaders()
+  {
+    val factory = StringProtocolFactory.createPlainTextFactory();
+    val protocol = factory.createProtocol().createGroup()
+        .setGroupMessage("Main header");
+
+    val grp1 = protocol.createGroup();
+    val grp2 = protocol.createGroup();
+    val grp3 = protocol.createGroup();
+
+    grp1.info().message("msg 1 grp 1");
+    grp1.info().message("msg 2 grp 1");
+    grp2.info().message("msg grp 2");
+    grp3.info().message("msg grp 3");
+
+    System.out.println(protocol.toStringTree());
+
+    protocol.iterator(any()).forEachRemaining(d -> {
+      System.out.println(d.toString());
+    });
   }
 }

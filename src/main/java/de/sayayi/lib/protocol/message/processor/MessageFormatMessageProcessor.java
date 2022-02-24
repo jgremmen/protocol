@@ -40,19 +40,19 @@ import static java.util.Objects.requireNonNull;
 @AllArgsConstructor
 public class MessageFormatMessageProcessor implements MessageProcessor<Message>
 {
-  private final @NotNull MessageFactory messageFactory;
-
-
   public static final MessageFormatMessageProcessor INSTANCE =
       new MessageFormatMessageProcessor(MessageFactory.NO_CACHE_INSTANCE);
+
+
+  private final @NotNull MessageFactory messageFactory;
 
 
   @Override
   public @NotNull MessageWithId<Message> processMessage(@NotNull String messageFormat)
   {
     try {
-      return new GenericMessageWithId<>(
-          messageFactory.parse(requireNonNull(messageFormat, "messageFormat must not be null")));
+      return new GenericMessageWithId<>(messageFactory.parse(
+          requireNonNull(messageFormat, "messageFormat must not be null")));
     } catch(MessageParserException ex) {
       throw new ProtocolException("failed to process message: " + ex.getMessage(), ex);
     }
@@ -62,9 +62,8 @@ public class MessageFormatMessageProcessor implements MessageProcessor<Message>
   @Override
   public @NotNull String getIdFromMessage(@NotNull Message message)
   {
-    if (message instanceof Message.WithCode)
-      return ((Message.WithCode)message).getCode();
-
-    return UUID.randomUUID().toString();
+    return message instanceof Message.WithCode
+        ? ((Message.WithCode)message).getCode()
+        : UUID.randomUUID().toString();
   }
 }

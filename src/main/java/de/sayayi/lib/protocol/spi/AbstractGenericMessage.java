@@ -38,7 +38,8 @@ abstract class AbstractGenericMessage<M> implements GenericMessage<M>
   protected final @NotNull ParameterMap parameterMap;
 
 
-  protected AbstractGenericMessage(@NotNull MessageWithId<M> messageWithId, @NotNull ParameterMap parentParameterMap)
+  protected AbstractGenericMessage(@NotNull MessageWithId<M> messageWithId,
+                                   @NotNull ParameterMap parentParameterMap)
   {
     this.messageWithId = messageWithId;
 

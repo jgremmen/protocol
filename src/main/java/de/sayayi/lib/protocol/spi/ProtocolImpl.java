@@ -66,8 +66,8 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
 
 
   @Override
-  public int getVisibleEntryCount(boolean recursive, @NotNull MessageMatcher matcher) {
-    return getVisibleEntryCount0(HIGHEST, recursive, matcher);
+  public int getVisibleEntryCount(@NotNull MessageMatcher matcher) {
+    return getVisibleEntryCount0(HIGHEST, matcher);
   }
 
 
@@ -108,7 +108,8 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
 
 
 
-  private class MessageBuilder extends AbstractMessageBuilder<M,ProtocolMessageBuilder<M>,MessageParameterBuilder<M>>
+  private class MessageBuilder
+      extends AbstractMessageBuilder<M,ProtocolMessageBuilder<M>,MessageParameterBuilder<M>>
   {
     MessageBuilder(@NotNull Level level) {
       super(ProtocolImpl.this, level);

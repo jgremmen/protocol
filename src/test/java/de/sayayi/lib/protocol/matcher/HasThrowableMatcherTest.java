@@ -15,7 +15,7 @@
  */
 package de.sayayi.lib.protocol.matcher;
 
-import de.sayayi.lib.protocol.Protocol;
+import de.sayayi.lib.protocol.ProtocolEntry.Message;
 import org.junit.jupiter.api.Test;
 
 import lombok.val;
@@ -36,7 +36,7 @@ public class HasThrowableMatcherTest
   public void testMatchesDefault()
   {
     //noinspection unchecked
-    val message = (Protocol.Message<Object>)mock(Protocol.Message.class);
+    val message = (Message<Object>)mock(Message.class);
     when(message.getThrowable()).thenReturn(new NullPointerException());
 
     assertTrue(MessageMatchers.hasThrowable().matches(HIGHEST, message));
@@ -51,7 +51,7 @@ public class HasThrowableMatcherTest
   public void testMatchesTyped()
   {
     //noinspection unchecked
-    val message = (Protocol.Message<Object>)mock(Protocol.Message.class);
+    val message = (Message<Object>)mock(Message.class);
     when(message.getThrowable()).thenReturn(new NullPointerException());
 
     assertTrue(MessageMatchers.hasThrowable(RuntimeException.class).matches(HIGHEST, message));

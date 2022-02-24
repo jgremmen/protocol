@@ -27,14 +27,15 @@ import java.util.function.Consumer;
 
 /**
  * <p>
- *   A protocol group provides the same functionality as a {@link Protocol}. In addition, a protocol group
- *   can be assigned a group header message and the visibility of the protocol entries in the group can be
- *   controlled by setting the {@link Visibility}.
+ *   A protocol group provides the same functionality as a {@link Protocol}. In addition, a
+ *   protocol group can be assigned a group header message and the visibility of the protocol
+ *   entries in the group can be controlled by setting the {@link Visibility}.
  * </p>
  * <p>
- *   ProtocolGroup instances are not thread safe. It is however possible to use separate protocol groups for each
- *   thread, created by the same parent protocol as long as the parent is not used for formatting/querying operations
- *   during the time other threads are protocolling on their group.
+ *   ProtocolGroup instances are not thread safe. It is however possible to use separate protocol
+ *   groups for each thread, created by the same parent protocol as long as the parent is not used
+ *   for formatting/querying operations during the time other threads are protocolling on their
+ *   group.
  * </p>
  *
  * @param <M>  internal message object type
@@ -45,7 +46,7 @@ import java.util.function.Consumer;
 public interface ProtocolGroup<M> extends Protocol<M>
 {
   /**
-   * Returns the visibility for this protocol group.
+   * Returns the visibility setting for this protocol group.
    *
    * @return  visibility, never {@code null}
    *
@@ -56,8 +57,8 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
   /**
-   * Returns the effective visibility for this protocol group. The effective visibility depends on the visibility
-   * set for this group as well as the existence of a group message.
+   * Returns the effective visibility for this protocol group. The effective visibility depends
+   * on the visibility set for this group as well as the existence of a group message.
    *
    * @return  effective visibility, never {@code null}
    *
@@ -94,16 +95,18 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
   /**
    * <p>
-   *   Sets the highest level for this protocol group. The default setting is {@link Level.Shared#HIGHEST}.
+   *   Sets the highest level for this protocol group. The default setting is
+   *   {@link Level.Shared#HIGHEST}.
    * </p>
    * <p>
-   *   The severity for messages in this protocol group are limited to {@code level}. If a message has a higher
-   *   severity its level will equal to the limit set by this method. If a message has a lower severity level,
-   *   the level is not modified.
+   *   The severity for messages in this protocol group are limited to {@code level}. If a message
+   *   has a higher severity its level will equal to the limit set by this method. If a message has
+   *   a lower severity level, the level is not modified.
    * </p>
    * <p>
-   *   Messages returned by the protocol iterator or passed to formatting methods during formatting, will respect
-   *   the limit set by this method. References to the message itself however will show the real severity level.
+   *   Messages returned by the protocol iterator or passed to formatting methods during formatting,
+   *   will respect the limit set by this method. References to the message itself however will
+   *   show the real severity level.
    * </p>
    *
    * @param level  the highest level propagated for messages in this group, never {@code null}
@@ -117,8 +120,8 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
   /**
-   * Sets a group header message and initiates a parameter builder which allows configuring parameter values for the
-   * message.
+   * Sets a group header message and initiates a parameter builder which allows configuring
+   * parameter values for the message.
    *
    * @param message  message text
    *
@@ -142,7 +145,8 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
   /**
-   * Returns the unique name for this group. The name can be used to find a group from a parent protocol instance.
+   * Returns the unique name for this group. The name can be used to find a group from a parent
+   * protocol instance.
    *
    * @return  unique name for this group or {@code null} if no name is set.
    *
@@ -236,7 +240,8 @@ public interface ProtocolGroup<M> extends Protocol<M>
    *   Set a parameter value.
    * </p>
    * <p>
-   *   Parameter values set for this protocol are available for both messages and groups added to this protocol.
+   *   Parameter values set for this protocol are available for both messages and groups added to
+   *   this protocol.
    * </p>
    *
    * @param parameter  name of the parameter to set, never {@code null}
@@ -258,7 +263,8 @@ public interface ProtocolGroup<M> extends Protocol<M>
    *   Set a parameter value.
    * </p>
    * <p>
-   *   Parameter values set for this protocol are available for both messages and groups added to this protocol.
+   *   Parameter values set for this protocol are available for both messages and groups added to
+   *   this protocol.
    * </p>
    *
    * @param parameter  name of the parameter to set, never {@code null}
@@ -280,7 +286,8 @@ public interface ProtocolGroup<M> extends Protocol<M>
    *   Set a parameter value.
    * </p>
    * <p>
-   *   Parameter values set for this protocol are available for both messages and groups added to this protocol.
+   *   Parameter values set for this protocol are available for both messages and groups added to
+   *   this protocol.
    * </p>
    *
    * @param parameter  name of the parameter to set, never {@code null}
@@ -302,7 +309,8 @@ public interface ProtocolGroup<M> extends Protocol<M>
    *   Set a parameter value.
    * </p>
    * <p>
-   *   Parameter values set for this protocol are available for both messages and groups added to this protocol.
+   *   Parameter values set for this protocol are available for both messages and groups added to
+   *   this protocol.
    * </p>
    *
    * @param parameter  name of the parameter to set, never {@code null}
@@ -324,7 +332,8 @@ public interface ProtocolGroup<M> extends Protocol<M>
    *   Set a parameter value.
    * </p>
    * <p>
-   *   Parameter values set for this protocol are available for both messages and groups added to this protocol.
+   *   Parameter values set for this protocol are available for both messages and groups added to
+   *   this protocol.
    * </p>
    *
    * @param parameter  name of the parameter to set, never {@code null}
@@ -346,7 +355,8 @@ public interface ProtocolGroup<M> extends Protocol<M>
    *   Set a parameter value.
    * </p>
    * <p>
-   *   Parameter values set for this protocol are available for both messages and groups added to this protocol.
+   *   Parameter values set for this protocol are available for both messages and groups added to
+   *   this protocol.
    * </p>
    *
    * @param parameter  name of the parameter to set, never {@code null}
@@ -414,35 +424,40 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
     @Override
     @Contract("_, _ -> this")
-    default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, boolean value) {
+    default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter,
+                                                                   boolean value) {
       return with(parameter, Boolean.valueOf(value));
     }
 
 
     @Override
     @Contract("_, _ -> this")
-    default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, int value) {
+    default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter,
+                                                                   int value) {
       return with(parameter, Integer.valueOf(value));
     }
 
 
     @Override
     @Contract("_, _ -> this")
-    default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, long value) {
+    default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter,
+                                                                   long value) {
       return with(parameter, Long.valueOf(value));
     }
 
 
     @Override
     @Contract("_, _ -> this")
-    default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, float value) {
+    default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter,
+                                                                   float value) {
       return with(parameter, Float.valueOf(value));
     }
 
 
     @Override
     @Contract("_, _ -> this")
-    default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, double value) {
+    default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter,
+                                                                   double value) {
       return with(parameter, Double.valueOf(value));
     }
 
@@ -501,10 +516,12 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
     /**
      * <p>
-     *   Do not show the group header message, regardless of the number of visible entries contained in the group.
+     *   Do not show the group header message, regardless of the number of visible entries
+     *   contained in the group.
      * </p>
      * <p>
-     *   All group entries are merged with the parent as if the messages had been added to the parent protocol directly.
+     *   All group entries are merged with the parent as if the messages had been added to the
+     *   parent protocol directly.
      * </p>
      */
     FLATTEN,

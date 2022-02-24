@@ -22,7 +22,7 @@ import lombok.Getter;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
+import static java.util.UUID.randomUUID;
 
 
 /**
@@ -42,7 +42,7 @@ public final class GenericMessageWithId<M> implements MessageWithId<M>
 
 
   public GenericMessageWithId(@NotNull M message) {
-    this(UUID.randomUUID().toString(), message);
+    this(randomUUID().toString(), message);
   }
 
 

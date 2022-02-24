@@ -26,6 +26,7 @@ import de.sayayi.lib.protocol.exception.ProtocolException;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 import org.jetbrains.annotations.NotNull;
@@ -44,6 +45,7 @@ import static java.util.Objects.requireNonNull;
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 import static java.util.regex.Pattern.UNICODE_CASE;
 import static java.util.stream.Collectors.joining;
+import static lombok.AccessLevel.PACKAGE;
 
 
 /**
@@ -164,18 +166,15 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 
 
 
+  @RequiredArgsConstructor(access = PACKAGE)
   private final class TagBuilderImpl implements TagBuilder<M>
   {
-    @Getter private final TagDefImpl tagDef;
-
-
-    TagBuilderImpl(@NotNull TagDefImpl tagDef) {
-      this.tagDef = tagDef;
-    }
+    @Getter private final @NotNull TagDefImpl tagDef;
 
 
     @Override
-    public @NotNull TagBuilder<M> match(@NotNull MatchCondition matchCondition, @NotNull Level matchLevel)
+    public @NotNull TagBuilder<M> match(@NotNull MatchCondition matchCondition,
+                                        @NotNull Level matchLevel)
     {
       tagDef.matchCondition = requireNonNull(matchCondition, "matchCondition must not be null");
       tagDef.matchLevel = requireNonNull(matchLevel, "matchLevel must not be null");
@@ -280,10 +279,10 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
     @EqualsAndHashCode.Include
     private final int id;
 
-    @Getter private final String name;
+    @Getter private final @NotNull String name;
 
-    @Getter private MatchCondition matchCondition = MatchCondition.AT_LEAST;
-    @Getter private Level matchLevel = LOWEST;
+    @Getter private @NotNull MatchCondition matchCondition = MatchCondition.AT_LEAST;
+    @Getter private @NotNull Level matchLevel = LOWEST;
 
     private final Set<TagDefImpl> implies = new TreeSet<>();
 
@@ -354,8 +353,10 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 
 
     @Override
-    public String toString() {
-      return "Tag[id=" + id + ",name=" + name + toString_implies() + ',' + matchLevel + toString_matchCondition() + ']';
+    public String toString()
+    {
+      return "Tag[id=" + id + ",name=" + name + toString_implies() + ',' +
+             matchLevel + toString_matchCondition() + ']';
     }
 
 

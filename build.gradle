@@ -2,7 +2,7 @@ plugins {
   id 'java-library'
   id 'idea'
   id 'maven-publish'
-  id 'nebula.optional-base' version '5.0.3'
+  id 'nebula.optional-base' version '7.0.0'
   id 'jacoco'
   id 'signing'
   id "org.sonarqube" version "3.0"
@@ -12,13 +12,14 @@ plugins {
 
 description 'Protocol Library'
 group 'de.sayayi.lib'
-version '1.0.1'
+version '1.1.0'
 
 buildDir = ".build"
 
 
 ext {
-  jetbrainsAnnotationsVersion = "22.0.0"
+  gsonVersion = "2.8.9"
+  jetbrainsAnnotationsVersion = "23.0.0"
   junitVersion = "5.8.2"
   lombokVersion = "1.18.22"
   messageFormatVersion = "0.6.1"
@@ -48,9 +49,9 @@ test {
 import io.franzbecker.gradle.lombok.task.DelombokTask
 
 task delombok(type: DelombokTask, dependsOn: compileJava) {
-  javaLauncher = javaToolchains.launcherFor {
+  javaLauncher.set(javaToolchains.launcherFor {
     languageVersion = JavaLanguageVersion.of(8)
-  }
+  })
 
   ext.outputDir = file("$buildDir/delombok")
   outputs.dir(outputDir)
@@ -82,6 +83,7 @@ dependencies {
 
   implementation "org.unbescape:unbescape:${unbescapeVersion}", optional
   implementation "de.sayayi.lib:message-format-nodep:${messageFormatVersion}", optional
+  implementation "com.google.code.gson:gson:${gsonVersion}", optional
 
   compileOnlyApi "org.projectlombok:lombok:${lombokVersion}"
   compileOnlyApi "org.jetbrains:annotations:${jetbrainsAnnotationsVersion}"

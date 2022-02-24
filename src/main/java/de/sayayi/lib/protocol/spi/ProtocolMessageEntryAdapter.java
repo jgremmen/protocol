@@ -16,6 +16,7 @@
 package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.Level;
+import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
@@ -71,6 +72,12 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
 
 
   @Override
+  public @NotNull Protocol<M> getProtocol() {
+    return message.getProtocol();
+  }
+
+
+  @Override
   public @NotNull Level getLevel() {
     return levelLimit;
   }
@@ -95,8 +102,8 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
 
 
   @Override
-  public int getVisibleEntryCount(boolean recursive, @NotNull MessageMatcher matcher) {
-    return message.getVisibleEntryCount0(levelLimit, recursive, matcher);
+  public int getVisibleEntryCount(@NotNull MessageMatcher matcher) {
+    return message.getVisibleEntryCount0(levelLimit, matcher);
   }
 
 

@@ -163,14 +163,20 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
-  public int getVisibleEntryCount(boolean recursive, @NotNull MessageMatcher matcher) {
-    return protocol.getVisibleEntryCount(recursive, matcher);
+  public int getVisibleEntryCount(@NotNull MessageMatcher matcher) {
+    return protocol.getVisibleEntryCount(matcher);
   }
 
 
   @Override
   public @NotNull ProtocolIterator<M> iterator(@NotNull MessageMatcher matcher) {
     return protocol.iterator(matcher);
+  }
+
+
+  @Override
+  public @NotNull Spliterator<ProtocolIterator.DepthEntry<M>> spliterator(@NotNull MessageMatcher matcher) {
+    return protocol.spliterator(matcher);
   }
 
 

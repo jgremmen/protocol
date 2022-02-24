@@ -65,7 +65,8 @@ abstract class AbstractTagNameMatch extends AbstractTagSelectorBuilder implement
           length++;
         }
 
-      this.tagNames = length < uniqueTagNames.length ? Arrays.copyOf(uniqueTagNames, length) : uniqueTagNames;
+      this.tagNames = length < uniqueTagNames.length
+          ? Arrays.copyOf(uniqueTagNames, length) : uniqueTagNames;
     }
   }
 

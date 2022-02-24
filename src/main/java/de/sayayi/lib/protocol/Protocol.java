@@ -23,6 +23,8 @@ import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -30,11 +32,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.function.Consumer;
-
-import static java.util.Spliterator.DISTINCT;
-import static java.util.Spliterator.NONNULL;
-import static java.util.Spliterator.ORDERED;
-import static java.util.Spliterators.spliteratorUnknownSize;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 
 /**
@@ -42,8 +41,9 @@ import static java.util.Spliterators.spliteratorUnknownSize;
  *   This interface is the core instance for protocolling messages.
  * </p>
  * <p>
- *   A protocol is created by a protocol factory or by creating a group protocol using another protocol. Group
- *   protocols have additional functionality but share the same core functions defined in this interface.
+ *   A protocol is created by a protocol factory or by creating a group protocol using another
+ *   protocol. Group protocols have additional functionality but share the same core functions
+ *   defined in this interface.
  * </p>
  *
  * <pre>
@@ -92,6 +92,19 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
   /**
+   * Tells if this protocol is a protocol group.
+   *
+   * @return  {@code true} if this protocol is a protocol group, {@code false} otherwise
+   *
+   * @since 1.1.0
+   */
+  @Contract(pure = true)
+  default boolean isProtocolGroup() {
+    return this instanceof ProtocolGroup;
+  }
+
+
+  /**
    * Returns the id for this protocol. Protocol ids are unique.
    *
    * @return  protocol id
@@ -129,7 +142,8 @@ public interface Protocol<M> extends ProtocolQueryable
    *   Set a parameter value.
    * </p>
    * <p>
-   *   Parameter values set for this protocol are available for both messages and groups added to this protocol.
+   *   Parameter values set for this protocol are available for both messages and groups added to
+   *   this protocol.
    * </p>
    *
    * @param parameter  name of the parameter to set, never {@code null}
@@ -150,7 +164,8 @@ public interface Protocol<M> extends ProtocolQueryable
    *   Set a parameter value.
    * </p>
    * <p>
-   *   Parameter values set for this protocol are available for both messages and groups added to this protocol.
+   *   Parameter values set for this protocol are available for both messages and groups added to
+   *   this protocol.
    * </p>
    *
    * @param parameter  name of the parameter to set, never {@code null}
@@ -171,7 +186,8 @@ public interface Protocol<M> extends ProtocolQueryable
    *   Set a parameter value.
    * </p>
    * <p>
-   *   Parameter values set for this protocol are available for both messages and groups added to this protocol.
+   *   Parameter values set for this protocol are available for both messages and groups added to
+   *   this protocol.
    * </p>
    *
    * @param parameter  name of the parameter to set, never {@code null}
@@ -192,7 +208,8 @@ public interface Protocol<M> extends ProtocolQueryable
    *   Set a parameter value.
    * </p>
    * <p>
-   *   Parameter values set for this protocol are available for both messages and groups added to this protocol.
+   *   Parameter values set for this protocol are available for both messages and groups added to
+   *   this protocol.
    * </p>
    *
    * @param parameter  name of the parameter to set, never {@code null}
@@ -213,7 +230,8 @@ public interface Protocol<M> extends ProtocolQueryable
    *   Set a parameter value.
    * </p>
    * <p>
-   *   Parameter values set for this protocol are available for both messages and groups added to this protocol.
+   *   Parameter values set for this protocol are available for both messages and groups added to
+   *   this protocol.
    * </p>
    *
    * @param parameter  name of the parameter to set, never {@code null}
@@ -234,7 +252,8 @@ public interface Protocol<M> extends ProtocolQueryable
    *   Set a parameter value.
    * </p>
    * <p>
-   *   Parameter values set for this protocol are available for both messages and groups added to this protocol.
+   *   Parameter values set for this protocol are available for both messages and groups added to
+   *   this protocol.
    * </p>
    *
    * @param parameter  name of the parameter to set, never {@code null}
@@ -400,8 +419,8 @@ public interface Protocol<M> extends ProtocolQueryable
    *   protocol, with a rough initial size estimate.
    * </p>
    * <p>
-   *   The {@code Spliterator} reports {@link Spliterator#ORDERED}, {@link Spliterator#DISTINCT} and
-   *   {@link Spliterator#NONNULL}.
+   *   The {@code Spliterator} reports {@link Spliterator#ORDERED}, {@link Spliterator#DISTINCT}
+   *   and {@link Spliterator#NONNULL}.
    * </p>
    *
    * @return  group spliterator for this protocol, never {@code null}
@@ -410,12 +429,13 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @since 1.0.0
    */
+  @Contract(value = "-> new", pure = true)
   @NotNull Spliterator<ProtocolGroup<M>> groupSpliterator();
 
 
   /**
-   * Formats this protocol using the given {@code formatter} iterating over all elements matching {@code level} and
-   * {@code tagSelector}.
+   * Formats this protocol using the given {@code formatter} iterating over all elements matching
+   * {@code level} and {@code tagSelector}.
    *
    * @param formatter  protocol formatter to use for formatting this protocol
    * @param matcher    message matcher, never {@code null}
@@ -461,8 +481,8 @@ public interface Protocol<M> extends ProtocolQueryable
    *   {@code matcher}, with no initial size estimate.
    * </p>
    * <p>
-   *   The {@code Spliterator} reports {@link Spliterator#ORDERED},{@link Spliterator#DISTINCT} and
-   *   {@link Spliterator#NONNULL}.
+   *   The {@code Spliterator} reports {@link Spliterator#ORDERED},{@link Spliterator#DISTINCT},
+   *   {@link Spliterator#NONNULL} and {@link Spliterator#IMMUTABLE}.
    * </p>
    *
    * @param matcher  Message matcher, never {@code null}
@@ -472,8 +492,12 @@ public interface Protocol<M> extends ProtocolQueryable
    * @since 1.0.0
    */
   @Contract(pure = true, value = "_ -> new")
-  default @NotNull Spliterator<DepthEntry<M>> spliterator(@NotNull MessageMatcher matcher) {
-    return spliteratorUnknownSize(iterator(matcher), ORDERED | DISTINCT | NONNULL);
+  @NotNull Spliterator<DepthEntry<M>> spliterator(@NotNull MessageMatcher matcher);
+
+
+  @Contract(pure = true, value = "_ -> new")
+  default @NotNull Stream<DepthEntry<M>> stream(@NotNull MessageMatcher matcher) {
+    return StreamSupport.stream(spliterator(matcher), false);
   }
 
 
@@ -482,7 +506,8 @@ public interface Protocol<M> extends ProtocolQueryable
    *   Search for a group by name.
    * </p>
    * <p>
-   *   The search probes every descendant group starting from this protocol until a matching group is found.
+   *   The search probes every descendant group starting from this protocol until a matching group
+   *   is found.
    * </p>
    *
    * @param name  group name to search for, not {@code null}
@@ -497,7 +522,8 @@ public interface Protocol<M> extends ProtocolQueryable
 
   /**
    * <p>
-   *   Performs {@code action} on all groups with names that match the given regular expression {@code regex}.
+   *   Performs {@code action} on all groups with names that match the given regular expression
+   *   {@code regex}.
    * </p>
    * <p>
    *   The search probes every descendant group starting from this protocol for matching groups.
@@ -531,8 +557,9 @@ public interface Protocol<M> extends ProtocolQueryable
    *   Builder pattern for creating a protocol message.
    * </p>
    * <p>
-   *   The builder collects tag and throwable information to be associated with the message. The message itself is
-   *   added to the protocol when the {@link #message(String)} method is invoked.
+   *   The builder collects tag and throwable information to be associated with the message.
+   *   The message itself is added to the protocol when the {@link #message(String)} method is
+   *   invoked.
    * </p>
    *
    * @param <M>  internal message object type
@@ -587,14 +614,16 @@ public interface Protocol<M> extends ProtocolQueryable
 
     /**
      * <p>
-     *   Creates a new protocol message based on the builder settings and adds the message to the protocol.
+     *   Creates a new protocol message based on the builder settings and adds the message to the
+     *   protocol.
      * </p>
      * <p>
-     *   The {@code message} parameter is converted into an internal representation of type {@code M} using
-     *   the {@link MessageProcessor} assigned to the protocol factory.
+     *   The {@code message} parameter is converted into an internal representation of type
+     *   {@code M} using the {@link MessageProcessor} assigned to the protocol factory.
      * </p>
      *
-     * @param message  message text, resource key or any other message identifier, never {@code null}
+     * @param message  message text, resource key or any other message identifier, never
+     *                 {@code null}
      *
      * @return  parameter builder instance for the newly created message
      */
@@ -604,11 +633,13 @@ public interface Protocol<M> extends ProtocolQueryable
 
     /**
      * <p>
-     *   Creates a new protocol message based on the builder settings and adds the message to the protocol.
+     *   Creates a new protocol message based on the builder settings and adds the message to
+     *   the protocol.
      * </p>
      * <p>
-     *   This method differs from {@link #message(String)} in that it bypasses the {@link MessageProcessor}
-     *   and directly adds the internal message representation to the protocol.
+     *   This method differs from {@link #message(String)} in that it bypasses the
+     *   {@link MessageProcessor} and directly adds the internal message representation to the
+     *   protocol.
      * </p>
      *
      * @param message  internal message instance, never {@code null}
@@ -635,34 +666,36 @@ public interface Protocol<M> extends ProtocolQueryable
   {
     /**
      * <p>
-     *   Associate the provided {@code parameterValues} with this message. New parameters are added, existing
-     *   parameters are overridden.
+     *   Associate the provided {@code parameterValues} with this message. New parameters are
+     *   added, existing parameters are overridden.
      * </p>
      * <p>
      *   Any restrictions on parameter name and value are handled by {@link #with(String, Object)}.
      * </p>
      *
-     * @param parameterValues  map with parameter values. the parameter name must not be {@code null} or empty.
+     * @param parameterValues  map with parameter values. the parameter name must not be
+     *                         {@code null} or empty.
      *
      * @return  paramter builder instance for the current message
      */
-    @Contract("_ -> this")
+    @Contract(value = "_ -> this", mutates = "this")
     @NotNull MessageParameterBuilder<M> with(@NotNull Map<String,Object> parameterValues);
 
 
     /**
      * <p>
-     *   Associate the provided {@code parameter} and boolean {@code value} with this message. If a parameter with
-     *   the same name already has a value, it will be overridden.
+     *   Associate the provided {@code parameter} and boolean {@code value} with this message.
+     *   If a parameter with the same name already has a value, it will be overridden.
      * </p>
      *
-     * @param parameter  parameter name, not {@code null} or empty. although there are no restrictions, it is
-     *                   recommended that the parameter name matches regular expression {@code \p{Alnum}\p{Graph}*}.
+     * @param parameter  parameter name, not {@code null} or empty. although there are no
+     *                   restrictions, it is recommended that the parameter name matches regular
+     *                   expression {@code \p{Alnum}\p{Graph}*}.
      * @param value      parameter value
      *
      * @return  paramter builder instance for the current message
      */
-    @Contract("_, _ -> this")
+    @Contract(value = "_, _ -> this", mutates = "this")
     default @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, boolean value) {
       return with(parameter, Boolean.valueOf(value));
     }
@@ -670,17 +703,18 @@ public interface Protocol<M> extends ProtocolQueryable
 
     /**
      * <p>
-     *   Associate the provided {@code parameter} and int {@code value} with this message. If a parameter with
-     *   the same name already has a value, it will be overridden.
+     *   Associate the provided {@code parameter} and int {@code value} with this message.
+     *   If a parameter with the same name already has a value, it will be overridden.
      * </p>
      *
-     * @param parameter  parameter name, not {@code null} or empty. although there are no restrictions, it is
-     *                   recommended that the parameter name matches regular expression {@code \p{Alnum}\p{Graph}*}.
+     * @param parameter  parameter name, not {@code null} or empty. although there are no
+     *                   restrictions, it is recommended that the parameter name matches regular
+     *                   expression {@code \p{Alnum}\p{Graph}*}.
      * @param value      parameter value
      *
      * @return  paramter builder instance for the current message
      */
-    @Contract("_, _ -> this")
+    @Contract(value = "_, _ -> this", mutates = "this")
     default @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, int value) {
       return with(parameter, Integer.valueOf(value));
     }
@@ -688,17 +722,18 @@ public interface Protocol<M> extends ProtocolQueryable
 
     /**
      * <p>
-     *   Associate the provided {@code parameter} and long {@code value} with this message. If a parameter with
-     *   the same name already has a value, it will be overridden.
+     *   Associate the provided {@code parameter} and long {@code value} with this message.
+     *   If a parameter with the same name already has a value, it will be overridden.
      * </p>
      *
-     * @param parameter  parameter name, not {@code null} or empty. although there are no restrictions, it is
-     *                   recommended that the parameter name matches regular expression {@code \p{Alnum}\p{Graph}*}.
+     * @param parameter  parameter name, not {@code null} or empty. although there are no
+     *                   restrictions, it is recommended that the parameter name matches regular
+     *                   expression {@code \p{Alnum}\p{Graph}*}.
      * @param value      parameter value
      *
      * @return  paramter builder instance for the current message
      */
-    @Contract("_, _ -> this")
+    @Contract(value = "_, _ -> this", mutates = "this")
     default @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, long value) {
       return with(parameter, Long.valueOf(value));
     }
@@ -706,17 +741,18 @@ public interface Protocol<M> extends ProtocolQueryable
 
     /**
      * <p>
-     *   Associate the provided {@code parameter} and float {@code value} with this message. If a parameter with
-     *   the same name already has a value, it will be overridden.
+     *   Associate the provided {@code parameter} and float {@code value} with this message.
+     *   If a parameter with the same name already has a value, it will be overridden.
      * </p>
      *
-     * @param parameter  parameter name, not {@code null} or empty. although there are no restrictions, it is
-     *                   recommended that the parameter name matches regular expression {@code \p{Alnum}\p{Graph}*}.
+     * @param parameter  parameter name, not {@code null} or empty. although there are no
+     *                   restrictions, it is recommended that the parameter name matches regular
+     *                   expression {@code \p{Alnum}\p{Graph}*}.
      * @param value      parameter value
      *
      * @return  paramter builder instance for the current message
      */
-    @Contract("_, _ -> this")
+    @Contract(value = "_, _ -> this", mutates = "this")
     default @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, float value) {
       return with(parameter, Float.valueOf(value));
     }
@@ -724,17 +760,18 @@ public interface Protocol<M> extends ProtocolQueryable
 
     /**
      * <p>
-     *   Associate the provided {@code parameter} and double {@code value} with this message. If a parameter with
-     *   the same name already has a value, it will be overridden.
+     *   Associate the provided {@code parameter} and double {@code value} with this message.
+     *   If a parameter with the same name already has a value, it will be overridden.
      * </p>
      *
-     * @param parameter  parameter name, not {@code null} or empty. although there are no restrictions, it is
-     *                   recommended that the parameter name matches regular expression {@code \p{Alnum}\p{Graph}*}.
+     * @param parameter  parameter name, not {@code null} or empty. although there are no
+     *                   restrictions, it is recommended that the parameter name matches regular
+     *                   expression {@code \p{Alnum}\p{Graph}*}.
      * @param value      parameter value
      *
      * @return  paramter builder instance for the current message
      */
-    @Contract("_, _ -> this")
+    @Contract(value = "_, _ -> this", mutates = "this")
     default @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, double value) {
       return with(parameter, Double.valueOf(value));
     }
@@ -742,17 +779,18 @@ public interface Protocol<M> extends ProtocolQueryable
 
     /**
      * <p>
-     *   Associate the provided {@code parameter} and {@code value} with this message. If a parameter with the same
-     *   name already has a value, it will be overridden.
+     *   Associate the provided {@code parameter} and {@code value} with this message.
+     *   If a parameter with the same name already has a value, it will be overridden.
      * </p>
      *
-     * @param parameter  parameter name, not {@code null} or empty. although there are no restrictions, it is
-     *                   recommended that the parameter name matches regular expression {@code \p{Alnum}\p{Graph}*}.
+     * @param parameter  parameter name, not {@code null} or empty. although there are no
+     *                   restrictions, it is recommended that the parameter name matches regular
+     *                   expression {@code \p{Alnum}\p{Graph}*}.
      * @param value      parameter value
      *
      * @return  paramter builder instance for the current message
      */
-    @Contract("_, _ -> this")
+    @Contract(value = "_, _ -> this", mutates = "this")
     @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, Object value);
   }
 
@@ -760,8 +798,8 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
   /**
-   * The most generic representation of a message, providing the internal representation of the message and parameter
-   * values to be used for formatting the message.
+   * The most generic representation of a message, providing the internal representation of the
+   * message and parameter values to be used for formatting the message.
    *
    * @param <M>  internal message object type
    */
@@ -804,8 +842,8 @@ public interface Protocol<M> extends ProtocolQueryable
      *   <li>a parameter name (map key) must have a length of at least 1</li>
      *   <li>additional parameters are allowed to those which are required to format the message</li>
      *   <li>
-     *     if a parameter required by the message is missing, the behaviour depends on the message formatter
-     *     implementation; it may choose a default or throw an exception
+     *     if a parameter required by the message is missing, the behaviour depends on the message
+     *     formatter implementation; it may choose a default or throw an exception
      *   </li>
      * </ul>
      *
@@ -813,6 +851,7 @@ public interface Protocol<M> extends ProtocolQueryable
      *
      * @see #getMessage()
      */
+    @UnmodifiableView
     @Contract(pure = true, value = "-> new")
     @NotNull Map<String,Object> getParameterValues();
   }
@@ -862,6 +901,7 @@ public interface Protocol<M> extends ProtocolQueryable
      *
      * @since 0.7.0
      */
+    @Unmodifiable
     @Contract(pure = true, value = "-> new")
     @NotNull Set<String> getTagNames();
 
@@ -882,6 +922,19 @@ public interface Protocol<M> extends ProtocolQueryable
    */
   interface Group<M>
   {
+    /**
+     * Returns the unique name for this group. The name can be used to find a group from a parent
+     * protocol instance.
+     *
+     * @return  unique name for this group or {@code null} if no name is set.
+     *
+     * @see Protocol#getGroupByName(String)
+     * @see Protocol#forEachGroupByRegex(String, Consumer)
+     */
+    @Contract(pure = true)
+    String getName();
+
+
     /**
      * Returns the group header message.
      *

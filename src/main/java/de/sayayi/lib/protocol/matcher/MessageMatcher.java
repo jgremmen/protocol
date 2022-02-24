@@ -16,7 +16,7 @@
 package de.sayayi.lib.protocol.matcher;
 
 import de.sayayi.lib.protocol.Level;
-import de.sayayi.lib.protocol.Protocol.Message;
+import de.sayayi.lib.protocol.ProtocolEntry.Message;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -42,6 +42,12 @@ public interface MessageMatcher
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
         return MessageMatcher.this.matches(levelLimit, message);
+      }
+
+
+      @Override
+      public String toString() {
+        return MessageMatcher.this.toString();
       }
     };
   }

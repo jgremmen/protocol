@@ -16,6 +16,7 @@
 package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.Level;
+import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor.MessageWithId;
 import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
@@ -38,18 +39,23 @@ import static java.util.stream.Collectors.joining;
  * @author Jeroen Gremmen
  * @since 0.1.0
  */
-final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements InternalProtocolEntry.Message<M>
+final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M>
+    implements InternalProtocolEntry.Message<M>
 {
+  @Getter private final @NotNull Protocol<M> protocol;
   @Getter private final @NotNull Level level;
   private final @NotNull Set<String> tagNames;
   @Getter private final Throwable throwable;
 
 
-  ProtocolMessageEntry(@NotNull Level level, @NotNull Set<String> tagNames, Throwable throwable,
-                       @NotNull MessageWithId<M> messageWithId, @NotNull ParameterMap parentParameterMap)
+  ProtocolMessageEntry(@NotNull Protocol<M> protocol, @NotNull Level level,
+                       @NotNull Set<String> tagNames, Throwable throwable,
+                       @NotNull MessageWithId<M> messageWithId,
+                       @NotNull ParameterMap parentParameterMap)
   {
     super(messageWithId, parentParameterMap);
 
+    this.protocol = protocol;
     this.level = level;
     this.tagNames = tagNames;
     this.throwable = throwable;
@@ -81,14 +87,14 @@ final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements
 
 
   @Override
-  public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive, @NotNull MessageMatcher matcher) {
+  public int getVisibleEntryCount0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher) {
     return matches0(levelLimit, matcher) ? 1 : 0;
   }
 
 
   @Override
-  public int getVisibleEntryCount(boolean recursive, @NotNull MessageMatcher matcher) {
-    return getVisibleEntryCount0(HIGHEST, recursive, matcher);
+  public int getVisibleEntryCount(@NotNull MessageMatcher matcher) {
+    return getVisibleEntryCount0(HIGHEST, matcher);
   }
 
 

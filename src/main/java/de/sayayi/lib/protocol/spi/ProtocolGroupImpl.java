@@ -124,7 +124,7 @@ final class ProtocolGroupImpl<M>
           return matches0(levelLimit, matcher);
 
         case FLATTEN_ON_SINGLE_ENTRY:
-          return super.getVisibleEntryCount0(min(this.levelLimit, levelLimit),true, matcher) > 1;
+          return super.getVisibleEntryCount0(min(this.levelLimit, levelLimit), matcher) > 1;
       }
 
     return false;
@@ -172,11 +172,11 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public @NotNull List<ProtocolEntry<M>> getEntries0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
+  public @NotNull List<ProtocolEntry<M>> getEntries0(@NotNull Level levelLimit,
+                                                     @NotNull MessageMatcher matcher)
   {
-    levelLimit = min(this.levelLimit, levelLimit);
-
-    return getEffectiveVisibility().isShowEntries() ? super.getEntries(levelLimit, matcher) : emptyList();
+    return getEffectiveVisibility().isShowEntries()
+        ? super.getEntries(min(this.levelLimit, levelLimit), matcher) : emptyList();
   }
 
 
@@ -187,15 +187,14 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive, @NotNull MessageMatcher matcher)
+  public int getVisibleEntryCount0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
     val effectiveVisibility = getEffectiveVisibility();
     if (effectiveVisibility == SHOW_HEADER_ONLY)
       return 1;
 
-    val recursiveEntryCount = super.getVisibleEntryCount0(min(this.levelLimit, levelLimit),
-        true, matcher);
-    val entryCountWithHeader = recursive ? recursiveEntryCount + 1 : 1;
+    val entryCount = super.getVisibleEntryCount0(min(this.levelLimit, levelLimit), matcher);
+    val entryCountWithHeader = 1 + entryCount;
 
     switch(effectiveVisibility)
     {
@@ -203,33 +202,32 @@ final class ProtocolGroupImpl<M>
         return entryCountWithHeader;
 
       case SHOW_HEADER_IF_NOT_EMPTY:
-        return recursiveEntryCount == 0 ? 0 : entryCountWithHeader;
+        return entryCount == 0 ? 0 : entryCountWithHeader;
 
       case FLATTEN_ON_SINGLE_ENTRY:
-        return recursiveEntryCount > 1 ? entryCountWithHeader : recursiveEntryCount;
+        return entryCount > 1 ? entryCountWithHeader : entryCount;
 
       case FLATTEN:
-        return recursiveEntryCount;
+        return entryCount;
 
       default:
-        break;
+        return 0;
     }
-
-    return 0;
   }
 
 
   @Override
-  public int getVisibleEntryCount(boolean recursive, @NotNull MessageMatcher matcher) {
-    return getVisibleEntryCount0(levelLimit, recursive, matcher);
+  public int getVisibleEntryCount(@NotNull MessageMatcher matcher) {
+    return getVisibleEntryCount0(levelLimit, matcher);
   }
 
 
   @Override
-  public int getVisibleGroupEntryMessageCount0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
+  public int getVisibleGroupEntryMessageCount0(@NotNull Level levelLimit,
+                                               @NotNull MessageMatcher matcher)
   {
     return getEffectiveVisibility().isShowEntries()
-        ? super.getVisibleEntryCount0(min(this.levelLimit, levelLimit), false, matcher) : 0;
+        ? super.getVisibleEntryCount0(min(this.levelLimit, levelLimit), matcher) : 0;
   }
 
 
@@ -298,7 +296,7 @@ final class ProtocolGroupImpl<M>
   @Override
   @SuppressWarnings("unchecked")
   public @NotNull Protocol<M> getRootProtocol() {
-    return parent instanceof ProtocolGroup ? ((ProtocolGroup<M>)parent).getRootProtocol() : parent;
+    return parent.isProtocolGroup() ? ((ProtocolGroup<M>)parent).getRootProtocol() : parent;
   }
 
 

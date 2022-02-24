@@ -469,8 +469,10 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
     @Override
-    public Spliterator<String> spliterator() {
-      return Spliterators.spliterator(iterator(), super.size(), ORDERED | SORTED | DISTINCT | NONNULL);
+    public Spliterator<String> spliterator()
+    {
+      return Spliterators.spliterator(iterator(), super.size(),
+          ORDERED | SORTED | DISTINCT | NONNULL);
     }
   }
 

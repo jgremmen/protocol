@@ -29,9 +29,10 @@ import java.util.UUID;
 
 /**
  *
- * @param <M>  Internal message object type. Messages are added by providing a string. The factory converts this
- *             string in the appropriate internal format (see {@link MessageProcessor}), allowing for various
- *             message retrieval/formatting libraries to be used.
+ * @param <M>  Internal message object type. Messages are added by providing a string. The factory
+ *             converts this string in the appropriate internal format
+ *             (see {@link MessageProcessor}), allowing for various message retrieval/formatting
+ *             libraries to be used.
  *
  * @author Jeroen Gremmen
  * @since 0.1.0
@@ -175,7 +176,8 @@ public interface ProtocolFactory<M>
 
 
     /**
-     * Returns the id from an already processed message. The default implementation generates a unique UUID.
+     * Returns the id from an already processed message. The default implementation generates a
+     * unique UUID.
      *
      * @param message  processed message, not {@code null}
      *

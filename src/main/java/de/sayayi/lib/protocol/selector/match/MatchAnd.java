@@ -62,6 +62,6 @@ public final class MatchAnd extends AbstractTagSelectorBuilder implements Select
   {
     return selectors.length == 1
         ? selectors[0].toString()
-        : "and(" + Arrays.stream(selectors).map(TagSelector::toString).collect(joining(",")) + ')';
+        : "and(" + Arrays.stream(selectors).map(Object::toString).collect(joining(",")) + ')';
   }
 }

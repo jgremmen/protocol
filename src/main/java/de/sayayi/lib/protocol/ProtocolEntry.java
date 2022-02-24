@@ -36,25 +36,32 @@ import java.util.List;
 public interface ProtocolEntry<M> extends ProtocolQueryable
 {
   /**
-   *
    * @param <M>  internal message object type
    */
-  interface Message<M> extends ProtocolEntry<M>, Protocol.Message<M> {
+  interface Message<M> extends ProtocolEntry<M>, Protocol.Message<M>
+  {
+    /**
+     * Returns the protocol which contains this message.
+     *
+     * @return  protocol which contains this message, never {@code null}
+     *
+     * @since 1.1.0
+     */
+    @NotNull Protocol<M> getProtocol();
   }
 
 
 
 
   /**
-   *
    * @param <M>  internal message object type
    */
   @SuppressWarnings("squid:S2176")
   interface Group<M> extends ProtocolEntry<M>, Protocol.Group<M>
   {
     /**
-     * Returns a list of protocol entries provided by this protocol object for the given {@code level} and
-     * {@code tagSelector}.
+     * Returns a list of protocol entries provided by this protocol object for the given
+     * {@code level} and {@code tagSelector}.
      *
      * @param matcher  message matcher, not {@code null}
      *
@@ -67,7 +74,7 @@ public interface ProtocolEntry<M> extends ProtocolQueryable
 
 
     /**
-     * Tells if, for the given {@code level} and {@code tagSelector}, the group header message is visible.
+     * Tells if, for the given {@code matcher}, the group header message is visible.
      *
      * @param matcher  message matcher, not {@code null}
      *
@@ -81,15 +88,15 @@ public interface ProtocolEntry<M> extends ProtocolQueryable
 
     /**
      * <p>
-     *   Returns the level of the group header message for the given {@code level} and {@code tagSelector}.
+     *   Returns the level of the group header message for the given {@code matcher}.
      * </p>
      * <p>
-     *   The group header message level is defined as the highest (= most severe) level of all containing messages
-     *   and sub-groups which are visible for the given {@code level} and {@code tagSelector}.
+     *   The group header message level is defined as the highest (= most severe) level of all
+     *   containing messages and sub-groups which are visible for the given {@code matcher}.
      * </p>
      * <p>
-     *   If the group does not contain any messages, the returned value will be a level with the lowest possible
-     *   severity.
+     *   If the group does not contain any messages, the returned value will be a level with the
+     *   lowest possible severity.
      * </p>
      *
      * @param matcher  message matcher, not {@code null}

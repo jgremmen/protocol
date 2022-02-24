@@ -22,6 +22,7 @@ import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolGroup;
+import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupEndEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
@@ -53,7 +54,8 @@ import static java.util.Spliterator.SORTED;
  * @author Jeroen Gremmen
  */
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, doNotUseGetters = true, callSuper = false)
-abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implements Protocol<M>, InternalProtocolQueryable
+abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
+    implements Protocol<M>, InternalProtocolQueryable
 {
   private static final AtomicInteger PROTOCOL_ID = new AtomicInteger(0);
 
@@ -107,17 +109,24 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   }
 
 
-  @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
+  @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level levelLimit,
+                                             @NotNull MessageMatcher matcher)
   {
     val filteredEntries = new ArrayList<ProtocolEntry<M>>();
 
-    for(final InternalProtocolEntry<M> entry: entries)
+    for(val entry: entries)
       if (entry.matches0(levelLimit, matcher))
       {
         if (entry instanceof InternalProtocolEntry.Group)
-          filteredEntries.add(ProtocolGroupEntryAdapter.from(levelLimit, (InternalProtocolEntry.Group<M>)entry));
+        {
+          filteredEntries.add(ProtocolGroupEntryAdapter.from(levelLimit,
+              (InternalProtocolEntry.Group<M>)entry));
+        }
         else
-          filteredEntries.add(ProtocolMessageEntryAdapter.from(levelLimit, (InternalProtocolEntry.Message<M>)entry));
+        {
+          filteredEntries.add(ProtocolMessageEntryAdapter.from(levelLimit,
+              (InternalProtocolEntry.Message<M>)entry));
+        }
       }
 
     return filteredEntries;
@@ -125,12 +134,12 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
 
   @Override
-  public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive, @NotNull MessageMatcher matcher)
+  public int getVisibleEntryCount0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
     var count = 0;
 
     for(val entry: entries)
-      count += entry.getVisibleEntryCount0(levelLimit, recursive, matcher);
+      count += entry.getVisibleEntryCount0(levelLimit, matcher);
 
     return count;
   }
@@ -169,14 +178,22 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
 
 
   @Override
+  public @NotNull Spliterator<DepthEntry<M>> spliterator(@NotNull MessageMatcher matcher) {
+    return new ProtocolSpliterator<>(iterator(matcher));
+  }
+
+
+  @Override
   public @NotNull Iterator<ProtocolGroup<M>> groupIterator() {
     return new GroupIterator();
   }
 
 
   @Override
-  public @NotNull Spliterator<ProtocolGroup<M>> groupSpliterator() {
-    return Spliterators.spliterator(groupIterator(), entries.size(), DISTINCT | ORDERED | SORTED | NONNULL);
+  public @NotNull Spliterator<ProtocolGroup<M>> groupSpliterator()
+  {
+    return Spliterators.spliterator(groupIterator(), entries.size(),
+        DISTINCT | ORDERED | SORTED | NONNULL);
   }
 
 
@@ -185,19 +202,19 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>> implement
   {
     // initialize formatter
     formatter.init(factory, matcher,
-        countGroupDepth() + ((this instanceof ProtocolGroupImpl) ? 1 : 0));
+        countGroupDepth() + (isProtocolGroup() ? 1 : 0));
 
     iterator(matcher).forEachRemaining(entry -> {
-      if (entry instanceof ProtocolStart)
-        formatter.protocolStart();
-      else if (entry instanceof ProtocolEnd)
-        formatter.protocolEnd();
-      else if (entry instanceof MessageEntry)
+      if (entry instanceof MessageEntry)
         formatter.message((MessageEntry<M>)entry);
       else if (entry instanceof GroupStartEntry)
         formatter.groupStart((GroupStartEntry<M>)entry);
       else if (entry instanceof GroupEndEntry)
         formatter.groupEnd((GroupEndEntry<M>)entry);
+      else if (entry instanceof ProtocolStart)
+        formatter.protocolStart();
+      else if (entry instanceof ProtocolEnd)
+        formatter.protocolEnd();
     });
 
     return formatter.getResult();

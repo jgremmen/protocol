@@ -66,6 +66,12 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
 
 
   @Override
+  public String getName() {
+    return group.getName();
+  }
+
+
+  @Override
   public Protocol.GenericMessage<M> getGroupMessage() {
     return group.getGroupMessage();
   }
@@ -78,8 +84,8 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
 
 
   @Override
-  public int getVisibleEntryCount(boolean recursive, @NotNull MessageMatcher matcher) {
-    return group.getVisibleEntryCount0(levelLimit, recursive, matcher);
+  public int getVisibleEntryCount(@NotNull MessageMatcher matcher) {
+    return group.getVisibleEntryCount0(levelLimit, matcher);
   }
 
 
@@ -102,7 +108,8 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
 
 
   @Override
-  public @NotNull List<ProtocolEntry<M>> getEntries0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher) {
+  public @NotNull List<ProtocolEntry<M>> getEntries0(@NotNull Level levelLimit,
+                                                     @NotNull MessageMatcher matcher) {
     return group.getEntries0(levelLimit, matcher);
   }
 
@@ -120,7 +127,8 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
 
 
   @Override
-  public int getVisibleGroupEntryMessageCount0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher) {
+  public int getVisibleGroupEntryMessageCount0(@NotNull Level levelLimit,
+                                               @NotNull MessageMatcher matcher) {
     return group.getVisibleGroupEntryMessageCount0(levelLimit, matcher);
   }
 
@@ -132,8 +140,8 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
 
 
   @Override
-  public int getVisibleEntryCount0(@NotNull Level levelLimit, boolean recursive, @NotNull MessageMatcher matcher) {
-    return group.getVisibleEntryCount0(levelLimit, recursive, matcher);
+  public int getVisibleEntryCount0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher) {
+    return group.getVisibleEntryCount0(levelLimit, matcher);
   }
 
 
