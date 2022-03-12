@@ -66,7 +66,8 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
 
   final @NotNull ParameterMap parameterMap;
   final @NotNull List<InternalProtocolEntry<M>> entries;
-  final @NotNull Map<TagSelector,Set<String>> tagPropagationMap;
+
+  Map<TagSelector,Set<String>> tagPropagationMap;
 
 
   protected AbstractProtocol(@NotNull ProtocolFactory<M> factory, ParameterMap parentParameterMap)
@@ -76,13 +77,12 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
     id = PROTOCOL_ID.incrementAndGet();
     parameterMap = new ParameterMap(parentParameterMap);
     entries = new ArrayList<>(8);
-    tagPropagationMap = new HashMap<>(8);
   }
 
 
   protected @NotNull Set<String> getPropagatedTags(@NotNull Set<String> tags)
   {
-    if (tagPropagationMap.isEmpty())
+    if (tagPropagationMap == null || tagPropagationMap.isEmpty())
       return tags;
 
     val collectedPropagatedTagDefs = new TreeSet<>(tags);

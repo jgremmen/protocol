@@ -25,6 +25,7 @@ import lombok.val;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.TreeSet;
 
 
@@ -53,6 +54,9 @@ abstract class AbstractPropagationBuilder<M,B extends ProtocolMessageBuilder<M>>
   {
     if (!protocol.factory.isValidTagName(targetTagName))
       throw new IllegalArgumentException("invalid target tag name '" + targetTagName + "'");
+
+    if (protocol.tagPropagationMap == null)
+      protocol.tagPropagationMap = new HashMap<>(8);
 
     protocol.tagPropagationMap.computeIfAbsent(tagSelector, k -> new TreeSet<>()).add(targetTagName);
 
