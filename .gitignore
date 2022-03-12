@@ -8,3 +8,4 @@
 *.tokens
 *.interp
 gen/
+/gradle.properties
