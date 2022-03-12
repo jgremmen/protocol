@@ -97,6 +97,10 @@ publishing {
 
   repositories {
     maven {
+      name = "mavenTemp"
+      url = "${rootProject.buildDir}/repository"
+    }
+    maven {
       // maven central
       url = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
       credentials {

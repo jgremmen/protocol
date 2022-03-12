@@ -1,8 +1,10 @@
-build/
+.build/
 .gradle/
 .DS_Store
-.idea/libraries/
-.idea/modules/
-.idea/modules.xml
-.idea/sonarlint
-/.build/
+/.idea/libraries/
+/.idea/modules/
+/.idea/modules.xml
+/.idea/sonarlint
+*.tokens
+*.interp
+gen/

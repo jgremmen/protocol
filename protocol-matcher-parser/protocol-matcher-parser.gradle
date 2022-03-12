@@ -1,0 +1,88 @@
+plugins {
+  id 'antlr'
+  id 'idea'
+  id 'maven-publish'
+  id 'nebula.optional-base' version '7.0.0'
+  id 'jacoco'
+  id 'signing'
+  id "org.sonarqube" version "3.0"
+  id 'io.franzbecker.gradle-lombok' version '5.0.0'
+}
+
+
+description 'Protocol Library Message Matcher Parser'
+
+
+lombok {
+  version = lombokVersion
+  sha256 = ""
+}
+
+
+import io.franzbecker.gradle.lombok.task.DelombokTask
+
+task delombok(type: DelombokTask, dependsOn: compileJava) {
+  javaLauncher.set(javaToolchains.launcherFor {
+    languageVersion = JavaLanguageVersion.of(8)
+  })
+
+  ext.outputDir = file("$buildDir/delombok")
+  outputs.dir(outputDir)
+
+  sourceSets.main.java.srcDirs.each {
+    inputs.dir(it)
+    args(it, "-d", outputDir)
+  }
+
+  doFirst {
+    outputDir.deleteDir();
+  }
+}
+
+
+configurations {
+  compile {
+    extendsFrom = extendsFrom.findAll { it != configurations.antlr }
+  }
+}
+
+
+def antlrVersion = "4.9.3"
+
+
+apply from: file('../gradle/javadoc.gradle')
+apply from: file('../gradle/quality.gradle')
+apply from: file('../gradle/publishing.gradle')
+
+
+dependencies {
+  // java
+  api project(':protocol-core')
+
+  implementation "org.antlr:antlr4-runtime:${antlrVersion}"
+
+  antlr "org.antlr:antlr4:${antlrVersion}"
+}
+
+
+generateGrammarSource {
+  outputDirectory = file("${buildDir}/generated-src/antlr/main/de/sayayi/lib/protocol/matcher")
+  arguments += [ '-package', 'de.sayayi.lib.protocol.matcher' ]
+}
+
+
+compileJava.dependsOn generateGrammarSource
+
+
+sourcesJar {
+  dependsOn generateGrammarSource
+
+  exclude "**/*.tokens"
+  exclude "**/*.g4"
+}
+
+
+javadoc {
+  exclude '**/*.tokens'
+  exclude '**/*.interp'
+}
