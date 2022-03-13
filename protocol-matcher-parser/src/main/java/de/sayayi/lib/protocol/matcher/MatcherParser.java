@@ -18,15 +18,7 @@ package de.sayayi.lib.protocol.matcher;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.exception.MatcherParserException;
-import org.antlr.v4.runtime.ANTLRErrorStrategy;
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.BaseErrorListener;
-import org.antlr.v4.runtime.BufferedTokenStream;
-import org.antlr.v4.runtime.DefaultErrorStrategy;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.RecognitionException;
-import org.antlr.v4.runtime.Recognizer;
-import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -143,6 +135,12 @@ public class MatcherParser
     public Lexer(@NotNull String matcherText) {
       super(new ANTLRInputStream(matcherText));
     }
+
+
+    @Override
+    public Vocabulary getVocabulary() {
+      return MatcherVocabulary.INSTANCE;
+    }
   }
 
 
@@ -161,6 +159,12 @@ public class MatcherParser
       // fix ANTLR bug
       if (!getErrorHandler().inErrorRecoveryMode(this))
         super.exitRule();
+    }
+
+
+    @Override
+    public Vocabulary getVocabulary() {
+      return MatcherVocabulary.INSTANCE;
     }
   }
 

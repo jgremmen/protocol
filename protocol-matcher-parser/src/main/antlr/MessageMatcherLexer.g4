@@ -73,9 +73,6 @@ IN_GROUP_REGEX
 IN_ROOT
         : 'in-root'
         ;
-IN_PROTOCOL
-        : 'in-protocol'
-        ;
 AND
         : 'and'
         ;
@@ -94,7 +91,7 @@ COMMA
         ;
 
 STRING
-        : '\'' LetterOrDigit*  '\''
+        : '\'' LetterOrDigit* '\''
         ;
 
 QUALIFIED_NAME
