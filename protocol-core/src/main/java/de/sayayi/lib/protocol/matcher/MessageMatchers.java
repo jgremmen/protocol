@@ -49,21 +49,18 @@ import static lombok.AccessLevel.PRIVATE;
 @NoArgsConstructor(access = PRIVATE)
 public final class MessageMatchers
 {
-  // any
   @Contract(pure = true)
   public static @NotNull Junction any() {
     return ANY;
   }
 
 
-  // none
   @Contract(pure = true)
   public static @NotNull Junction none() {
     return NONE;
   }
 
 
-  // not(...)
   @Contract(pure = true)
   public static @NotNull Junction not(@NotNull MessageMatcher matcher) {
     return Negation.of(matcher);
@@ -84,14 +81,12 @@ public final class MessageMatchers
   };
 
 
-  // hasThrowable
   @Contract(pure = true)
   public static @NotNull Junction hasThrowable() {
     return HAS_THROWABLE_MATCHER;
   }
 
 
-  // hasThrowable(<class>)
   @Contract(pure = true)
   public static @NotNull Junction hasThrowable(@NotNull Class<? extends Throwable> type)
   {
@@ -119,7 +114,6 @@ public final class MessageMatchers
   }
 
 
-  // hasTag('tag')
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction hasTag(@NotNull String tagName)
   {
@@ -149,7 +143,6 @@ public final class MessageMatchers
   }
 
 
-  // hasAnyOf('...', '...')
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction hasAnyOf(@NotNull Collection<String> tagNames)
   {
@@ -173,7 +166,6 @@ public final class MessageMatchers
   }
 
 
-  // hasAllOf('...', '...')
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction hasAllOf(@NotNull Collection<String> tagNames)
   {
@@ -191,7 +183,6 @@ public final class MessageMatchers
   }
 
 
-  // hasAllOf('...', '...')
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction hasAllOf(@NotNull String... tagNames) {
     return hasAllOf(asList(tagNames));
@@ -204,7 +195,6 @@ public final class MessageMatchers
   }
 
 
-  // hasNoneOf('...', '...')
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction hasNoneOf(@NotNull String... tagNames) {
     return hasNoneOf(asList(tagNames));
@@ -241,7 +231,6 @@ public final class MessageMatchers
   }
 
 
-  // hasParam('...')
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction hasParam(@NotNull String parameterName)
   {
@@ -263,7 +252,6 @@ public final class MessageMatchers
   }
 
 
-  // hasParamValue('...')
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction hasParamValue(@NotNull String parameterName)
   {
@@ -311,7 +299,6 @@ public final class MessageMatchers
   }
 
 
-  // isDebug
   /**
    * Create a matcher which checks for messages with a level which is at least {@code DEBUG}.
    *
@@ -327,7 +314,6 @@ public final class MessageMatchers
   }
 
 
-  // isInfo
   /**
    * Create a matcher which checks for messages with a level which is at least {@code INFO}.
    *
@@ -343,7 +329,6 @@ public final class MessageMatchers
   }
 
 
-  // isWarn
   /**
    * Create a matcher which checks for messages with a level which is at least {@code WARN}.
    *
@@ -359,7 +344,6 @@ public final class MessageMatchers
   }
 
 
-  // isError
   /**
    * Create a matcher which checks for messages with a level which is at least {@code ERROR}.
    *
@@ -375,7 +359,6 @@ public final class MessageMatchers
   }
 
 
-  // isLevel('...')
   /**
    * Create a matcher which checks for messages with a level which is at least {@code level}.
    *
@@ -390,7 +373,6 @@ public final class MessageMatchers
   }
 
 
-  // hasMessage('...')
   /**
    * Create a matcher which checks for messages with the given {@code messageId}.
    *
@@ -434,7 +416,6 @@ public final class MessageMatchers
   };
 
 
-  // inGroup
   /**
    * Create a matcher which checks for messages that are contained in a protocol group.
    *
@@ -451,7 +432,6 @@ public final class MessageMatchers
   }
 
 
-  // inGroup('...')
   /**
    * <p>
    *   Create a matcher which checks for messages that are contained in a protocol group with
@@ -550,7 +530,6 @@ public final class MessageMatchers
   };
 
 
-  // inRoot
   /**
    * Create a matcher which checks for messages that are in the root protocol.
    *
@@ -565,9 +544,8 @@ public final class MessageMatchers
   }
 
 
-  // inProtocol
   /**
-   * Create a matcher which checks for messages that are contained in a specific protocol instance.
+   * Create a matcher which checks for messages which are contained in a specific protocol instance.
    *
    * @param protocol  protocol instance to match, not {@code null}
    *
