@@ -82,6 +82,17 @@ public interface MessageMatcher
   }
 
 
+  /**
+   * <p>
+   *   Converts a message matcher to a matcher which implements the {@link Junction} interface.
+   * </p>
+   * <p>
+   *   If this message matcher already implements the {@code Junction} interface, it will return
+   *   same object. Otherwise it will wrap the matcher.
+   * </p>
+   *
+   * @return  message matcher which implements {@code Junction} interface, never {@code null}
+   */
   @Contract(pure = true)
   default @NotNull Junction asJunction() {
     return this instanceof Junction ? (Junction)this : new JunctionAdapter(this);
@@ -90,6 +101,9 @@ public interface MessageMatcher
 
 
 
+  /**
+   * This interface allows for message matchers to be combined (conjunction and disjunction).
+   */
   interface Junction extends MessageMatcher
   {
     @Contract(pure = true)

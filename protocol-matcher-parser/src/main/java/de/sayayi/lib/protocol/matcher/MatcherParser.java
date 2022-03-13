@@ -255,7 +255,7 @@ public class MatcherParser
 
 
     @Override
-    public void exitTagsMatcher(TagsMatcherContext ctx) {
+    public void exitTagMatcher(TagMatcherContext ctx) {
       ctx.matcher = ctx.tagMatcherAtom().matcher;
     }
 

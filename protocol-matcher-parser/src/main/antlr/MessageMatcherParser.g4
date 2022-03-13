@@ -50,7 +50,7 @@ matcherAtom returns [MessageMatcher matcher]
         : ANY                                                                     #booleanMatcher
         | NONE                                                                    #booleanMatcher
         | THROWABLE ( L_PAREN QUALIFIED_NAME R_PAREN )?                           #throwableMatcher
-        | tagMatcherAtom                                                          #tagsMatcher
+        | tagMatcherAtom                                                          #tagMatcher
         | HAS_PARAM L_PAREN string R_PAREN                                        #paramMatcher
         | HAS_PARAM_VALUE L_PAREN string R_PAREN                                  #paramMatcher
         | DEBUG                                                                   #levelMatcher
