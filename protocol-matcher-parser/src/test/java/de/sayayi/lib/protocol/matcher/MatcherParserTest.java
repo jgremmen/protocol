@@ -18,7 +18,6 @@ package de.sayayi.lib.protocol.matcher;
 import de.sayayi.lib.protocol.ProtocolEntry.Message;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import org.junit.jupiter.api.Test;
-import org.mockito.Answers;
 
 import lombok.val;
 import lombok.var;
@@ -30,10 +29,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
+import static de.sayayi.lib.protocol.matcher.MessageMatchers.none;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Answers.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -62,14 +64,44 @@ class MatcherParserTest
 
     assertTrue(matcher.isTagSelector());
 
-    val message = (Message<Object>)mock(Message.class, Answers.CALLS_REAL_METHODS);
+    val message = (Message<Object>)mock(Message.class, CALLS_REAL_METHODS);
     when(message.getTagNames()).thenReturn(asTagNameSet("system", "ticket"));
     assertTrue(matcher.matches(HIGHEST, message));
 
-    // tag('')
+    // tag('') = none()
     matcher = PARSER.parse("tag('')");
 
-    assertSame(MessageMatchers.none(), matcher);
+    assertSame(none(), matcher);
+    assertTrue(matcher.isTagSelector());
+  }
+
+
+  @Test
+  @SuppressWarnings("unchecked")
+  void testAnyOfAtom()
+  {
+    // any-of(default,default) = any()
+    var matcher = PARSER.parse("any-of('default', default)");
+
+    assertSame(MessageMatchers.any(), matcher);
+    assertTrue(matcher.isTagSelector());
+
+    // any-of(system,ticket)
+    matcher = PARSER.parse("any-of ( system, ticket ) ");
+
+    assertTrue(matcher.isTagSelector());
+
+    val message = (Message<Object>)mock(Message.class, CALLS_REAL_METHODS);
+    when(message.getTagNames()).thenReturn(asTagNameSet("something"));
+    assertFalse(matcher.matches(HIGHEST, message));
+
+    when(message.getTagNames()).thenReturn(asTagNameSet("ticket"));
+    assertTrue(matcher.matches(HIGHEST, message));
+
+    // any-of('','') = none()
+    matcher = PARSER.parse("any-of('','')");
+
+    assertSame(none(), matcher);
     assertTrue(matcher.isTagSelector());
   }
 

@@ -29,7 +29,7 @@ options {
 }
 
 
-parseMatcher returns [MessageMatcher.Junction matcher]
+parseMatcher returns [MessageMatcher matcher]
         : compoundMatcher EOF
         ;
 
@@ -38,31 +38,31 @@ parseTagSelector returns [TagSelector selector]
         ;
 
 compoundMatcher returns [MessageMatcher.Junction matcher]
-        : compoundMatcher AND compoundMatcher                             #andMatcher
-        | AND L_PAREN compoundMatcher ( COMMA compoundMatcher )+ R_PAREN  #andMatcher
-        | compoundMatcher OR compoundMatcher                              #orMatcher
-        | OR L_PAREN compoundMatcher ( COMMA compoundMatcher )+ R_PAREN   #orMatcher
-        | NOT? L_PAREN compoundMatcher R_PAREN                            #notMatcher
-        | matcherAtom                                                     #toMatcher
+        : compoundMatcher AND compoundMatcher                                     #andMatcher
+        | AND L_PAREN compoundMatcher ( COMMA compoundMatcher )+ R_PAREN          #andMatcher
+        | compoundMatcher OR compoundMatcher                                      #orMatcher
+        | OR L_PAREN compoundMatcher ( COMMA compoundMatcher )+ R_PAREN           #orMatcher
+        | NOT? L_PAREN compoundMatcher R_PAREN                                    #notMatcher
+        | matcherAtom                                                             #toMatcher
         ;
 
 matcherAtom returns [MessageMatcher matcher]
-        : ANY                                                             #booleanMatcher
-        | NONE                                                            #booleanMatcher
-        | THROWABLE ( L_PAREN QUALIFIED_NAME R_PAREN )?                   #throwableMatcher
-        | tagMatcherAtom                                                  #tagsMatcher
-        | HAS_PARAM L_PAREN string R_PAREN                                #paramMatcher
-        | HAS_PARAM_VALUE L_PAREN string R_PAREN                          #paramMatcher
-        | DEBUG                                                           #levelMatcher
-        | INFO                                                            #levelMatcher
-        | WARN                                                            #levelMatcher
-        | ERROR                                                           #levelMatcher
-        | LEVEL L_PAREN level R_PAREN                                     #levelMatcher
-        | MESSAGE L_PAREN string R_PAREN                                  #messageMatcher
-        | IN_GROUP L_PAREN string R_PAREN                                 #inGroupMatcher
-        | IN_GROUP_REGEX L_PAREN string R_PAREN                           #inGroupMatcher
-        | IN_GROUP                                                        #depthMatcher
-        | IN_ROOT                                                         #depthMatcher
+        : ANY                                                                     #booleanMatcher
+        | NONE                                                                    #booleanMatcher
+        | THROWABLE ( L_PAREN QUALIFIED_NAME R_PAREN )?                           #throwableMatcher
+        | tagMatcherAtom                                                          #tagsMatcher
+        | HAS_PARAM L_PAREN string R_PAREN                                        #paramMatcher
+        | HAS_PARAM_VALUE L_PAREN string R_PAREN                                  #paramMatcher
+        | DEBUG                                                                   #levelMatcher
+        | INFO                                                                    #levelMatcher
+        | WARN                                                                    #levelMatcher
+        | ERROR                                                                   #levelMatcher
+        | LEVEL L_PAREN level R_PAREN                                             #levelMatcher
+        | MESSAGE L_PAREN string R_PAREN                                          #messageMatcher
+        | IN_GROUP L_PAREN string R_PAREN                                         #inGroupMatcher
+        | IN_GROUP_REGEX L_PAREN string R_PAREN                                   #inGroupMatcher
+        | IN_GROUP                                                                #depthMatcher
+        | IN_ROOT                                                                 #depthMatcher
         ;
 
 compoundTagSelector returns [MessageMatcher.Junction matcher]
@@ -88,7 +88,7 @@ tagMatcherAtom returns [MessageMatcher matcher]
         ;
 
 tagNameList returns [List<String> tags]
-        : tagName ( COMMA tagName )*
+        : tagName ( COMMA tagName )+
         ;
 
 tagName returns [String tag]
