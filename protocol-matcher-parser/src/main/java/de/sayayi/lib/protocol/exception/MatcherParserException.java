@@ -51,4 +51,10 @@ public final class MatcherParserException extends ProtocolException
     this.startIndex = startIndex;
     this.endIndex = endIndex;
   }
+
+
+  @Override
+  public synchronized RecognitionException getCause() {
+    return (RecognitionException)super.getCause();
+  }
 }
