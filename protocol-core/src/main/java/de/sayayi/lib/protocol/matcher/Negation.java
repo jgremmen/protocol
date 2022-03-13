@@ -48,6 +48,12 @@ final class Negation implements Junction
 
 
   @Override
+  public boolean isTagSelector() {
+    return matcher.isTagSelector();
+  }
+
+
+  @Override
   public String toString() {
     return "not(" + matcher + ')';
   }

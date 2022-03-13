@@ -55,6 +55,12 @@ final class LevelMatcher implements Junction
 
 
   @Override
+  public boolean isTagSelector() {
+    return false;
+  }
+
+
+  @Override
   public String toString() {
     return "is(" + level + ')';
   }

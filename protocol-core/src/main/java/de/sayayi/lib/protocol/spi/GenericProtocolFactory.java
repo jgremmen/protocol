@@ -18,7 +18,6 @@ package de.sayayi.lib.protocol.spi;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolFactory;
-import de.sayayi.lib.protocol.Tag;
 import de.sayayi.lib.protocol.TagDef;
 import de.sayayi.lib.protocol.TagDef.MatchCondition;
 import de.sayayi.lib.protocol.TagSelector;
@@ -31,6 +30,7 @@ import lombok.val;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -341,8 +341,21 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 
 
     @Override
-    public @NotNull TagSelector asSelector() {
-      return Tag.of(name);
+    public @NotNull TagSelector asSelector()
+    {
+      return new TagSelector()
+      {
+        @Override
+        public boolean match(@NotNull Collection<String> tagNames) {
+          return tagNames.contains(name);
+        }
+
+
+        @Override
+        public String toString() {
+          return TagDefImpl.this.toString();
+        }
+      };
     }
 
 

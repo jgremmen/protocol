@@ -17,9 +17,12 @@ package de.sayayi.lib.protocol.matcher;
 
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.ProtocolEntry.Message;
+import de.sayayi.lib.protocol.TagSelector;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
 
 
 /**
@@ -32,16 +35,42 @@ public interface MessageMatcher
   <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message);
 
 
+  /**
+   * Tells whether this message matcher is a tag only selector.
+   *
+   * @return  {@code true} if this matcher is a tag selector, {@code false} otherwise
+   *
+   * @see #asTagSelector()
+   *
+   * @since 1.2.0
+   */
   @Contract(pure = true)
-  default @NotNull Junction asJunction()
-  {
-    if (this instanceof Junction)
-      return (Junction)this;
+  default boolean isTagSelector() {
+    return false;
+  }
 
-    return new Junction() {
+
+  /**
+   * Convert this message matcher into a tag only selector.
+   *
+   * @return  tag selector, never {@code null}
+   *
+   * @throws UnsupportedOperationException  in case this message matcher is not a tag only matcher
+   *
+   * @see #isTagSelector()
+   *
+   * @since 1.2.0
+   */
+  @Contract(pure = true)
+  default @NotNull TagSelector asTagSelector()
+  {
+    if (!isTagSelector())
+      throw new UnsupportedOperationException();
+
+    return new TagSelector() {
       @Override
-      public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
-        return MessageMatcher.this.matches(levelLimit, message);
+      public boolean match(@NotNull Collection<String> tagNames) {
+        return matches(Level.Shared.HIGHEST, new TagSelectorMessageAdapter(tagNames));
       }
 
 
@@ -50,6 +79,12 @@ public interface MessageMatcher
         return MessageMatcher.this.toString();
       }
     };
+  }
+
+
+  @Contract(pure = true)
+  default @NotNull Junction asJunction() {
+    return this instanceof Junction ? (Junction)this : new JunctionAdapter(this);
   }
 
 

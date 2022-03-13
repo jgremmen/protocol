@@ -59,6 +59,12 @@ final class Conjunction implements Junction
 
 
   @Override
+  public boolean isTagSelector() {
+    return matchers.stream().allMatch(MessageMatcher::isTagSelector);
+  }
+
+
+  @Override
   public String toString()
   {
     return matchers.stream()

@@ -136,6 +136,12 @@ public final class MessageMatchers
 
 
       @Override
+      public boolean isTagSelector() {
+        return true;
+      }
+
+
+      @Override
       public String toString() {
         return "hasTag(" + tagName + ')';
       }
@@ -212,6 +218,18 @@ public final class MessageMatchers
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
         return tagSelector.match(message.getTagNames());
+      }
+
+
+      @Override
+      public boolean isTagSelector() {
+        return true;
+      }
+
+
+      @Override
+      public @NotNull TagSelector asTagSelector() {
+        return tagSelector;
       }
 
 
@@ -477,7 +495,6 @@ public final class MessageMatchers
   }
 
 
-  // inGroupRegex('...')
   /**
    * <p>
    *   Create a matcher which checks for messages that are contained in a protocol group with

@@ -15,24 +15,13 @@
  */
 package de.sayayi.lib.protocol;
 
-import de.sayayi.lib.protocol.exception.ProtocolException;
-import org.junit.jupiter.api.Test;
-
-import lombok.val;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 
 /**
  * @author Jeroen Gremmen
  */
 public class TagTest
 {
+/*
   @Test
   public void testOf()
   {
@@ -191,4 +180,5 @@ public class TagTest
     assertFalse(selector.match(asList("system", "warning")));
     assertFalse(selector.match(asList("system", "warning", "fatal", "info")));
   }
+*/
 }

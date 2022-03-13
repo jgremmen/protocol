@@ -17,63 +17,78 @@ parser grammar MessageMatcherParser;
 
 
 options {
-    language = Java;
-    tokenVocab = MessageMatcherLexer;
+  language = Java;
+  tokenVocab = MessageMatcherLexer;
 }
 
 
 @header {
-import de.sayayi.lib.protocol.matcher.MessageMatcher;
-import de.sayayi.lib.protocol.Level;
+  import de.sayayi.lib.protocol.matcher.MessageMatcher;
+  import de.sayayi.lib.protocol.Level;
+  import de.sayayi.lib.protocol.TagSelector;
 }
 
 
 parseMatcher returns [MessageMatcher.Junction matcher]
-        : parExpression EOF
+        : compoundMatcher EOF
         ;
 
-parExpression returns [MessageMatcher.Junction matcher]
-        : parExpression AND parExpression
-        | parExpression OR parExpression
-        | L_PAREN parExpression R_PAREN
-        | expression
+parseTagSelector returns [TagSelector selector]
+        : compoundTagSelector EOF
         ;
 
-expression returns [MessageMatcher.Junction matcher]
-        : AND parExpressionList                          #andExpression
-        | OR parExpressionList                           #orExpression
-        | NOT L_PAREN parExpression R_PAREN              #notExpression
-        | ANY                                            #booleanExpression
-        | NONE                                           #booleanExpression
-        | THROWABLE ( L_PAREN QUALIFIED_NAME R_PAREN )?  #throwableExpression
-        | TAG L_PAREN tagName R_PAREN                    #tagsExpression
-        | ANY_OF parTagNames                             #tagsExpression
-        | ALL_OF parTagNames                             #tagsExpression
-        | NONE_OF parTagNames                            #tagsExpression
-        | HAS_PARAM parString                            #paramExpression
-        | HAS_PARAM_VALUE parString                      #paramExpression
-        | DEBUG                                          #levelExpression
-        | INFO                                           #levelExpression
-        | WARN                                           #levelExpression
-        | ERROR                                          #levelExpression
-        | LEVEL L_PAREN level R_PAREN                    #levelExpression
-        | MESSAGE parString                              #messageExpression
-        | IN_GROUP parString                             #inGroupExpression
-        | IN_GROUP_REGEX parString                       #inGroupExpression
-        | IN_GROUP                                       #depthExpression
-        | IN_ROOT                                        #depthExpression
+compoundMatcher returns [MessageMatcher.Junction matcher]
+        : compoundMatcher AND compoundMatcher                             #andMatcher
+        | AND L_PAREN compoundMatcher ( COMMA compoundMatcher )+ R_PAREN  #andMatcher
+        | compoundMatcher OR compoundMatcher                              #orMatcher
+        | OR L_PAREN compoundMatcher ( COMMA compoundMatcher )+ R_PAREN   #orMatcher
+        | NOT? L_PAREN compoundMatcher R_PAREN                            #notMatcher
+        | matcherAtom                                                     #toMatcher
         ;
 
-parExpressionList returns [List<MessageMatcher.Junction> matchers]
-        : L_PAREN parExpression ( COMMA parExpression )* R_PAREN
+matcherAtom returns [MessageMatcher matcher]
+        : ANY                                                             #booleanMatcher
+        | NONE                                                            #booleanMatcher
+        | THROWABLE ( L_PAREN QUALIFIED_NAME R_PAREN )?                   #throwableMatcher
+        | tagMatcherAtom                                                  #tagsMatcher
+        | HAS_PARAM L_PAREN string R_PAREN                                #paramMatcher
+        | HAS_PARAM_VALUE L_PAREN string R_PAREN                          #paramMatcher
+        | DEBUG                                                           #levelMatcher
+        | INFO                                                            #levelMatcher
+        | WARN                                                            #levelMatcher
+        | ERROR                                                           #levelMatcher
+        | LEVEL L_PAREN level R_PAREN                                     #levelMatcher
+        | MESSAGE L_PAREN string R_PAREN                                  #messageMatcher
+        | IN_GROUP L_PAREN string R_PAREN                                 #inGroupMatcher
+        | IN_GROUP_REGEX L_PAREN string R_PAREN                           #inGroupMatcher
+        | IN_GROUP                                                        #depthMatcher
+        | IN_ROOT                                                         #depthMatcher
         ;
 
-parTagNames returns [List<String> tags]
-        : L_PAREN tagName ( COMMA tagName )* R_PAREN
+compoundTagSelector returns [MessageMatcher.Junction matcher]
+        : compoundTagSelector AND compoundTagSelector                             #andTagSelector
+        | AND L_PAREN compoundTagSelector ( COMMA compoundTagSelector )+ R_PAREN  #andTagSelector
+        | compoundTagSelector OR compoundTagSelector                              #orTagSelector
+        | OR L_PAREN compoundTagSelector ( COMMA compoundTagSelector )+ R_PAREN   #orTagSelector
+        | NOT? L_PAREN compoundTagSelector R_PAREN                                #notTagSelector
+        | tagSelectorAtom                                                         #toTagSelector
         ;
 
-parString returns [String str]
-        : L_PAREN string R_PAREN
+tagSelectorAtom returns [MessageMatcher matcher]
+        : ANY
+        | NONE
+        | tagMatcherAtom
+        ;
+
+tagMatcherAtom returns [MessageMatcher matcher]
+        : TAG L_PAREN tagName R_PAREN
+        | ANY_OF L_PAREN tagNameList R_PAREN
+        | ALL_OF L_PAREN tagNameList R_PAREN
+        | NONE_OF L_PAREN tagNameList R_PAREN
+        ;
+
+tagNameList returns [List<String> tags]
+        : tagName ( COMMA tagName )*
         ;
 
 tagName returns [String tag]

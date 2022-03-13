@@ -16,6 +16,7 @@
 package de.sayayi.lib.protocol.matcher;
 
 import de.sayayi.lib.protocol.Level;
+import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.exception.MatcherParserException;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BaseErrorListener;
@@ -35,6 +36,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
+import static de.sayayi.lib.protocol.matcher.MessageMatchers.inGroup;
+import static de.sayayi.lib.protocol.matcher.MessageMatchers.inGroupRegex;
 import static java.util.Arrays.fill;
 import static java.util.stream.Collectors.toList;
 
@@ -57,6 +60,11 @@ public class MatcherParser
     return new Parser(matcherText).parseMatcher().matcher;
   }
 
+
+  @Contract(pure = true)
+  public @NotNull TagSelector parseTagSelector(@NotNull String matcherText) {
+    return new Parser(matcherText).parseTagSelector().selector;
+  }
 
 
 
@@ -144,56 +152,60 @@ public class MatcherParser
     {
       @Override
       public void exitParseMatcher(ParseMatcherContext ctx) {
-        ctx.matcher = ctx.parExpression().matcher;
+        ctx.matcher = ctx.compoundMatcher().matcher;
       }
 
 
       @Override
-      public void exitParExpression(ParExpressionContext ctx)
+      public void exitParseTagSelector(ParseTagSelectorContext ctx) {
+        ctx.selector = ctx.compoundTagSelector().matcher.asTagSelector();
+      }
+
+
+      @Override
+      public void exitAndMatcher(AndMatcherContext ctx)
       {
-        if (ctx.getChildCount() == 1)
-          ctx.matcher = ctx.expression().matcher;
-        else
-        {
-          val expressions = ctx.parExpression();
-          if (expressions.size() == 1)
-            ctx.matcher = expressions.get(0).matcher;
-          else
-          {
-            ctx.matcher = ctx.AND() != null
-                ? Conjunction.of(expressions.get(0).matcher, expressions.get(1).matcher)
-                : Disjunction.of(expressions.get(0).matcher, expressions.get(1).matcher);
-          }
-        }
+        ctx.matcher = Conjunction.of(
+            ctx.compoundMatcher()
+                .stream()
+                .map(ec -> ec.matcher)
+                .toArray(MessageMatcher[]::new));
       }
 
 
       @Override
-      public void exitAndExpression(AndExpressionContext ctx) {
-        ctx.matcher = Conjunction.of(ctx.parExpressionList().matchers.toArray(new MessageMatcher[0]));
+      public void exitOrMatcher(OrMatcherContext ctx)
+      {
+        ctx.matcher = Disjunction.of(
+            ctx.compoundMatcher()
+                .stream()
+                .map(ec -> ec.matcher)
+                .toArray(MessageMatcher[]::new));
       }
 
 
       @Override
-      public void exitOrExpression(OrExpressionContext ctx) {
-        ctx.matcher = Disjunction.of(ctx.parExpressionList().matchers.toArray(new MessageMatcher[0]));
+      public void exitNotMatcher(NotMatcherContext ctx)
+      {
+        val expr = ctx.compoundMatcher().matcher;
+        ctx.matcher = ctx.NOT() != null ? Negation.of(expr) : expr;
       }
 
 
       @Override
-      public void exitNotExpression(NotExpressionContext ctx) {
-        ctx.matcher = Negation.of(ctx.matcher);
+      public void exitToMatcher(ToMatcherContext ctx) {
+        ctx.matcher = ctx.matcherAtom().matcher.asJunction();
       }
 
 
       @Override
-      public void exitBooleanExpression(BooleanExpressionContext ctx) {
+      public void exitBooleanMatcher(BooleanMatcherContext ctx) {
         ctx.matcher = ctx.ANY() != null ? BooleanMatcher.ANY : BooleanMatcher.NONE;
       }
 
 
       @Override
-      public void exitThrowableExpression(ThrowableExpressionContext ctx)
+      public void exitThrowableMatcher(ThrowableMatcherContext ctx)
       {
         final TerminalNode qualifiedName = ctx.QUALIFIED_NAME();
 
@@ -220,33 +232,15 @@ public class MatcherParser
 
 
       @Override
-      public void exitTagsExpression(TagsExpressionContext ctx)
-      {
-        switch(((TerminalNode)ctx.getChild(0)).getSymbol().getType())
-        {
-          case  TAG:
-            ctx.matcher = MessageMatchers.hasTag(ctx.tagName().tag);
-            break;
-
-          case ANY_OF:
-            ctx.matcher = MessageMatchers.hasAnyOf(ctx.parTagNames().tags);
-            break;
-
-          case ALL_OF:
-            ctx.matcher = MessageMatchers.hasAllOf(ctx.parTagNames().tags);
-            break;
-
-          case NONE_OF:
-            ctx.matcher = MessageMatchers.hasNoneOf(ctx.parTagNames().tags);
-            break;
-        }
+      public void exitTagsMatcher(TagsMatcherContext ctx) {
+        ctx.matcher = ctx.tagMatcherAtom().matcher;
       }
 
 
       @Override
-      public void exitParamExpression(ParamExpressionContext ctx)
+      public void exitParamMatcher(ParamMatcherContext ctx)
       {
-        val paramName = ctx.parString().str;
+        val paramName = ctx.string().str;
 
         ctx.matcher = ctx.HAS_PARAM() != null
             ? MessageMatchers.hasParam(paramName)
@@ -255,7 +249,7 @@ public class MatcherParser
 
 
       @Override
-      public void exitLevelExpression(LevelExpressionContext ctx)
+      public void exitLevelMatcher(LevelMatcherContext ctx)
       {
         switch(((TerminalNode)ctx.getChild(0)).getSymbol().getType())
         {
@@ -283,41 +277,62 @@ public class MatcherParser
 
 
       @Override
-      public void exitMessageExpression(MessageExpressionContext ctx) {
-        ctx.matcher = MessageMatchers.hasMessage(ctx.parString().str);
+      public void exitMessageMatcher(MessageMatcherContext ctx) {
+        ctx.matcher = MessageMatchers.hasMessage(ctx.string().str);
       }
 
 
       @Override
-      public void exitInGroupExpression(InGroupExpressionContext ctx)
+      public void exitInGroupMatcher(InGroupMatcherContext ctx)
       {
-        ctx.matcher = ctx.IN_GROUP() != null
-            ? MessageMatchers.inGroup(ctx.parString().str)
-            : MessageMatchers.inGroupRegex(ctx.parString().str);
+        val groupName = ctx.string().str;
+        ctx.matcher = ctx.IN_GROUP() != null ? inGroup(groupName) : inGroupRegex(groupName);
       }
 
 
       @Override
-      public void exitDepthExpression(DepthExpressionContext ctx) {
-        ctx.matcher = ctx.IN_GROUP() != null ? MessageMatchers.inGroup() : MessageMatchers.inRoot();
+      public void exitDepthMatcher(DepthMatcherContext ctx) {
+        ctx.matcher = ctx.IN_GROUP() != null ? inGroup() : MessageMatchers.inRoot();
       }
 
 
       @Override
-      public void exitParExpressionList(ParExpressionListContext ctx) {
-        ctx.matchers = ctx.parExpression().stream().map(ec -> ec.matcher).collect(toList());
+      public void exitTagSelectorAtom(TagSelectorAtomContext ctx)
+      {
+        val tagExpression = ctx.tagMatcherAtom();
+
+        ctx.matcher = tagExpression != null ? tagExpression.matcher
+            : ctx.ANY() != null ? BooleanMatcher.ANY : BooleanMatcher.NONE;
       }
 
 
       @Override
-      public void exitParTagNames(ParTagNamesContext ctx) {
+      public void exitTagMatcherAtom(TagMatcherAtomContext ctx)
+      {
+        switch(((TerminalNode)ctx.getChild(0)).getSymbol().getType())
+        {
+          case TAG:
+            ctx.matcher = MessageMatchers.hasTag(ctx.tagName().tag);
+            break;
+
+          case ANY_OF:
+            ctx.matcher = MessageMatchers.hasAnyOf(ctx.tagNameList().tags);
+            break;
+
+          case ALL_OF:
+            ctx.matcher = MessageMatchers.hasAllOf(ctx.tagNameList().tags);
+            break;
+
+          case NONE_OF:
+            ctx.matcher = MessageMatchers.hasNoneOf(ctx.tagNameList().tags);
+            break;
+        }
+      }
+
+
+      @Override
+      public void exitTagNameList(TagNameListContext ctx) {
         ctx.tags = ctx.tagName().stream().map(tnc -> tnc.tag).collect(toList());
-      }
-
-
-      @Override
-      public void exitParString(ParStringContext ctx) {
-        ctx.str = ctx.string().str;
       }
 
 

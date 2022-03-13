@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Jeroen Gremmen
+ * Copyright 2022 Jeroen Gremmen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,65 +18,44 @@ package de.sayayi.lib.protocol.matcher;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.ProtocolEntry.Message;
 import de.sayayi.lib.protocol.TagSelector;
-import de.sayayi.lib.protocol.matcher.MessageMatcher.Junction;
 
-import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-
-import static lombok.AccessLevel.PRIVATE;
+import static lombok.AccessLevel.PACKAGE;
 
 
 /**
  * @author Jeroen Gremmen
- * @since 1.0.0
+ * @since 1.2.0
  */
-@RequiredArgsConstructor(access = PRIVATE)
-@EqualsAndHashCode(callSuper = false)
-final class BooleanMatcher implements Junction
+@RequiredArgsConstructor(access = PACKAGE)
+public final class JunctionAdapter implements MessageMatcher.Junction
 {
-  static final BooleanMatcher ANY = new BooleanMatcher(true);
-  static final BooleanMatcher NONE = new BooleanMatcher(false);
-
-  private final boolean matches;
+  private final MessageMatcher matcher;
 
 
   @Override
   public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
-    return matches;
+    return matcher.matches(levelLimit, message);
   }
 
 
   @Override
   public boolean isTagSelector() {
-    return true;
+    return matcher.isTagSelector();
   }
 
 
   @Override
-  public @NotNull TagSelector asTagSelector()
-  {
-    return new TagSelector()
-    {
-      @Override
-      public boolean match(@NotNull Collection<String> tagNames) {
-        return matches;
-      }
-
-
-      @Override
-      public String toString() {
-        return BooleanMatcher.this.toString();
-      }
-    };
+  public @NotNull TagSelector asTagSelector() {
+    return matcher.asTagSelector();
   }
 
 
   @Override
   public String toString() {
-    return matches ? "any()" : "none()";
+    return matcher.toString();
   }
 }
