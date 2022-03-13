@@ -15,6 +15,7 @@
  */
 package de.sayayi.lib.protocol.matcher;
 
+import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolEntry.Message;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
+import static de.sayayi.lib.protocol.matcher.MessageMatchers.any;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.none;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;
@@ -56,7 +58,7 @@ class MatcherParserTest
     // tag(default) = any()
     var matcher = PARSER.parse("tag('default')");
 
-    assertSame(MessageMatchers.any(), matcher);
+    assertSame(any(), matcher);
     assertTrue(matcher.isTagSelector());
 
     // tag(system)
@@ -83,7 +85,7 @@ class MatcherParserTest
     // any-of(default,default) = any()
     var matcher = PARSER.parse("any-of('default', default)");
 
-    assertSame(MessageMatchers.any(), matcher);
+    assertSame(any(), matcher);
     assertTrue(matcher.isTagSelector());
 
     // any-of(system,ticket)
@@ -103,6 +105,88 @@ class MatcherParserTest
 
     assertSame(none(), matcher);
     assertTrue(matcher.isTagSelector());
+  }
+
+
+  @Test
+  @SuppressWarnings("unchecked")
+  void testAllOfAtom()
+  {
+    // all-of(default,default) = any()
+    var matcher = PARSER.parse("all-of('default', default)");
+
+    assertSame(any(), matcher);
+    assertTrue(matcher.isTagSelector());
+
+    // all-of(system,ticket)
+    matcher = PARSER.parse("all-of ( system, ticket ) ");
+
+    assertTrue(matcher.isTagSelector());
+
+    val message = (Message<Object>)mock(Message.class, CALLS_REAL_METHODS);
+    when(message.getTagNames()).thenReturn(asTagNameSet("something", "ticket", "system"));
+    assertTrue(matcher.matches(HIGHEST, message));
+
+    when(message.getTagNames()).thenReturn(asTagNameSet("ticket"));
+    assertFalse(matcher.matches(HIGHEST, message));
+
+    // all-of('','') = none()
+    matcher = PARSER.parse("all-of('','')");
+
+    assertSame(none(), matcher);
+    assertTrue(matcher.isTagSelector());
+  }
+
+
+  @Test
+  @SuppressWarnings("unchecked")
+  void testNoneOfAtom()
+  {
+    // none-of(default,default) = none()
+    var matcher = PARSER.parse("none-of('default', default)");
+
+    assertSame(none(), matcher);
+    assertTrue(matcher.isTagSelector());
+
+    // none-of(system,ticket)
+    matcher = PARSER.parse("none-of ( system, ticket ) ");
+
+    assertTrue(matcher.isTagSelector());
+
+    val message = (Message<Object>)mock(Message.class, CALLS_REAL_METHODS);
+    when(message.getTagNames()).thenReturn(asTagNameSet("something", "different"));
+    assertTrue(matcher.matches(HIGHEST, message));
+
+    when(message.getTagNames()).thenReturn(asTagNameSet("ticket"));
+    assertFalse(matcher.matches(HIGHEST, message));
+
+    // none-of('','') = any()
+    matcher = PARSER.parse("none-of('','')");
+
+    assertSame(any(), matcher);
+    assertTrue(matcher.isTagSelector());
+  }
+
+
+  @Test
+  @SuppressWarnings("unchecked")
+  void testInRootAtom()
+  {
+    var matcher = PARSER.parse("in-root");
+
+    assertFalse(matcher.isTagSelector());
+
+    val protocol = mock(Protocol.class);
+    val message = (Message<Object>)mock(Message.class, CALLS_REAL_METHODS);
+    when(message.getProtocol()).thenReturn(protocol);
+
+    // no parent (= in root)
+    when(protocol.getParent()).thenReturn(null);
+    assertTrue(matcher.matches(HIGHEST, message));
+
+    // with parent (= not in root)
+    when(protocol.getParent()).thenReturn(mock(Protocol.class));
+    assertFalse(matcher.matches(HIGHEST, message));
   }
 
 
