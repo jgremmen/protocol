@@ -29,6 +29,7 @@ import lombok.var;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -39,6 +40,7 @@ import static de.sayayi.lib.protocol.Level.Shared.WARN;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.any;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.none;
 import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -363,6 +365,24 @@ class MatcherParserTest
 
     assertThrowsExactly(MatcherParserException.class,
         () -> PARSER.parse("throwable(aa.bb.cc.dd.ee.Class)"));
+  }
+
+
+  @Test
+  @SuppressWarnings("unchecked")
+  void testHasParamAtom()
+  {
+    val message = (Message<Object>)mock(Message.class);
+    when(message.getParameterValues()).thenReturn(unmodifiableMap(new HashMap<String,Object>() {{
+      put("visible", true);
+      put("msg-null", null);
+      put("msg", "message");
+    }}));
+
+    assertTrue(PARSER.parse("has-param('msg-null')").matches(HIGHEST, message));
+    assertTrue(PARSER.parse("has-param('msg')").matches(HIGHEST, message));
+    assertFalse(PARSER.parse("has-param('text')").matches(HIGHEST, message));
+    assertSame(none(), PARSER.parse("has-param('')"));
   }
 
 
