@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import static de.sayayi.lib.protocol.Level.Shared.DEBUG;
 import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
 import static de.sayayi.lib.protocol.Level.Shared.INFO;
 import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
@@ -401,6 +402,29 @@ class MatcherParserTest
     assertTrue(PARSER.parse("has-param-value('msg')").matches(HIGHEST, message));
     assertFalse(PARSER.parse("has-param-value('text')").matches(HIGHEST, message));
     assertSame(none(), PARSER.parse("has-param-value('')"));
+  }
+
+
+  @Test
+  @SuppressWarnings("unchecked")
+  void testCompoundAnd()
+  {
+    var matcher = PARSER.parse("throwable and error and message('ID')");
+
+    val message = (Message<Object>)mock(Message.class, CALLS_REAL_METHODS);
+
+    // throwable, error, message id
+    when(message.getThrowable()).thenReturn(new NullPointerException());
+    when(message.getLevel()).thenReturn(Level.Shared.ERROR);
+    when(message.getMessageId()).thenReturn("ID");
+    assertTrue(matcher.matches(HIGHEST, message));
+    assertFalse(matcher.matches(DEBUG, message));
+
+    matcher = PARSER.parse("and(throwable, message('ID'))");
+    assertTrue(matcher.matches(HIGHEST, message));
+
+    when(message.getMessageId()).thenReturn("??");
+    assertFalse(matcher.matches(HIGHEST, message));
   }
 
 
