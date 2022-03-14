@@ -32,8 +32,8 @@ allprojects {
     jetbrainsAnnotationsVersion = "23.0.0"
     junitVersion = "5.8.2"
     lombokVersion = "1.18.22"
-    messageFormatVersion = "0.6.1"
-    mockitoVersion = "4.3.1"
+    messageFormatVersion = "0.6.2"
+    mockitoVersion = "4.4.0"
     unbescapeVersion = "1.1.6.RELEASE"
   }
 
