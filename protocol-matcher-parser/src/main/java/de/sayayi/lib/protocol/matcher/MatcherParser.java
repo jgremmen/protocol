@@ -157,15 +157,6 @@ public class MatcherParser
 
 
     @Override
-    public void exitRule()
-    {
-      // fix ANTLR bug
-      if (!getErrorHandler().inErrorRecoveryMode(this))
-        super.exitRule();
-    }
-
-
-    @Override
     public Vocabulary getVocabulary() {
       return MatcherVocabulary.INSTANCE;
     }
