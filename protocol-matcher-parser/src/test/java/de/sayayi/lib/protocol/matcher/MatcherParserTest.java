@@ -264,6 +264,26 @@ class MatcherParserTest
   }
 
 
+  @Test
+  @SuppressWarnings("unchecked")
+  void testMessageAtom()
+  {
+    assertSame(none(), PARSER.parse("message('')"));
+
+    val matcher = PARSER.parse("message('MSG-001')");
+
+    assertFalse(matcher.isTagSelector());
+
+    val message = (Message<Object>)mock(Message.class, CALLS_REAL_METHODS);
+
+    when(message.getMessageId()).thenReturn("MSG-0010");
+    assertFalse(matcher.matches(HIGHEST, message));
+
+    when(message.getMessageId()).thenReturn("MSG-001");
+    assertTrue(matcher.matches(HIGHEST, message));
+  }
+
+
   @Unmodifiable
   private static @NotNull Set<String> asTagNameSet(@NotNull String ... s)
   {
