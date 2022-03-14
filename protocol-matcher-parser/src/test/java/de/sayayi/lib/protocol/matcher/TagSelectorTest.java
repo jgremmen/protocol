@@ -49,6 +49,68 @@ class TagSelectorTest
   }
 
 
+  @Test
+  void testTagAtom()
+  {
+    assertTrue(PARSER.parseTagSelector("tag('default')")
+        .match(asTagNameSet("test")));
+
+    assertTrue(PARSER.parseTagSelector("tag(system)")
+        .match(asTagNameSet("system", "ticket")));
+
+    assertFalse(PARSER.parseTagSelector("tag('')")
+        .match(asTagNameSet("ticket")));
+  }
+
+
+  @Test
+  void testAnyOfAtom()
+  {
+    assertTrue(PARSER.parseTagSelector("any-of('default', default)")
+            .match(asTagNameSet("mytag")));
+
+    assertTrue(PARSER.parseTagSelector("any-of ( system, ticket ) ")
+        .match(asTagNameSet("ticket")));
+
+    assertFalse(PARSER.parseTagSelector("any-of('','')")
+        .match(asTagNameSet("ticket")));
+  }
+
+
+  @Test
+  void testAllOfAtom()
+  {
+    assertTrue(PARSER.parseTagSelector("all-of('default', default)")
+        .match(asTagNameSet("mytag")));
+
+    assertTrue(PARSER.parseTagSelector("all-of ( system, ticket ) ")
+        .match(asTagNameSet("mytag", "ticket", "system", "develop")));
+
+    assertFalse(PARSER.parseTagSelector("all-of ( system, ticket2 ) ")
+        .match(asTagNameSet("mytag", "ticket", "system", "develop")));
+
+    assertFalse(PARSER.parseTagSelector("all-of('','')")
+        .match(asTagNameSet("ticket")));
+  }
+
+
+  @Test
+  void testNoneOfAtom()
+  {
+    assertFalse(PARSER.parseTagSelector("none-of('default', default)")
+        .match(asTagNameSet("mytag")));
+
+    assertTrue(PARSER.parseTagSelector("none-of ( system, ticket ) ")
+        .match(asTagNameSet("mytag")));
+
+    assertFalse(PARSER.parseTagSelector("none-of ( 'syst\\u0065m', ticket ) ")
+        .match(asTagNameSet("mytag", "system")));
+
+    assertTrue(PARSER.parseTagSelector("none-of('','')")
+        .match(asTagNameSet("ticket")));
+  }
+
+
   @Unmodifiable
   private static @NotNull Set<String> asTagNameSet(@NotNull String ... s)
   {
