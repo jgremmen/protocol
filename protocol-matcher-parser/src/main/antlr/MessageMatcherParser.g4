@@ -59,10 +59,9 @@ matcherAtom returns [MessageMatcher matcher]
         | ERROR                                                                   #levelMatcher
         | LEVEL L_PAREN level R_PAREN                                             #levelMatcher
         | MESSAGE L_PAREN string R_PAREN                                          #messageMatcher
-        | IN_GROUP L_PAREN string R_PAREN                                         #inGroupMatcher
+        | IN_GROUP ( L_PAREN string R_PAREN )?                                    #inGroupMatcher
         | IN_GROUP_REGEX L_PAREN string R_PAREN                                   #inGroupMatcher
-        | IN_GROUP                                                                #depthMatcher
-        | IN_ROOT                                                                 #depthMatcher
+        | IN_ROOT                                                                 #inRootMatcher
         ;
 
 compoundTagSelector returns [MessageMatcher.Junction matcher]

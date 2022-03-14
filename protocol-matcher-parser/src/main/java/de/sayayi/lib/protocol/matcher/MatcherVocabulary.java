@@ -3,7 +3,6 @@ package de.sayayi.lib.protocol.matcher;
 import org.antlr.v4.runtime.Vocabulary;
 
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -16,7 +15,6 @@ import static lombok.AccessLevel.PRIVATE;
  * @author Jeroen Gremmen
  * @since 1.2.0
  */
-@NoArgsConstructor(access = PRIVATE)
 enum MatcherVocabulary implements Vocabulary
 {
   INSTANCE;

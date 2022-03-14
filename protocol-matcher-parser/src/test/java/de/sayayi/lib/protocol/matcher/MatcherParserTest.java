@@ -18,6 +18,7 @@ package de.sayayi.lib.protocol.matcher;
 import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolEntry.Message;
 import de.sayayi.lib.protocol.ProtocolFactory;
+import de.sayayi.lib.protocol.ProtocolGroup;
 import org.junit.jupiter.api.Test;
 
 import lombok.val;
@@ -186,6 +187,79 @@ class MatcherParserTest
 
     // with parent (= not in root)
     when(protocol.getParent()).thenReturn(mock(Protocol.class));
+    assertFalse(matcher.matches(HIGHEST, message));
+  }
+
+
+  @Test
+  @SuppressWarnings("unchecked")
+  void testInGroupAtom()
+  {
+    val matcher = PARSER.parse("in-group");
+
+    assertFalse(matcher.isTagSelector());
+
+    val message = (Message<Object>)mock(Message.class, CALLS_REAL_METHODS);
+
+    // no group
+    when(message.getProtocol()).thenReturn(mock(Protocol.class, CALLS_REAL_METHODS));
+    assertFalse(matcher.matches(HIGHEST, message));
+
+    // group
+    when(message.getProtocol()).thenReturn(mock(ProtocolGroup.class, CALLS_REAL_METHODS));
+    assertTrue(matcher.matches(HIGHEST, message));
+  }
+
+
+  @Test
+  @SuppressWarnings("unchecked")
+  void testInGroupNameAtom()
+  {
+    val matcher = PARSER.parse("in-group('mygroup')");
+
+    assertFalse(matcher.isTagSelector());
+
+    val message = (Message<Object>)mock(Message.class, CALLS_REAL_METHODS);
+
+    // no group
+    when(message.getProtocol()).thenReturn(mock(Protocol.class, CALLS_REAL_METHODS));
+    assertFalse(matcher.matches(HIGHEST, message));
+
+    // group
+    val protocolGroup = mock(ProtocolGroup.class, CALLS_REAL_METHODS);
+    when(message.getProtocol()).thenReturn(protocolGroup);
+
+    when(protocolGroup.getName()).thenReturn("mygroup");
+    assertTrue(matcher.matches(HIGHEST, message));
+
+    when(protocolGroup.getName()).thenReturn("test");
+    assertFalse(matcher.matches(HIGHEST, message));
+  }
+
+
+  @Test
+  @SuppressWarnings("unchecked")
+  void testInGroupRegexAtom()
+  {
+    val matcher = PARSER.parse("in-group-regex('my\\x2e*')");
+
+    assertFalse(matcher.isTagSelector());
+
+    val message = (Message<Object>)mock(Message.class, CALLS_REAL_METHODS);
+
+    // no group
+    when(message.getProtocol()).thenReturn(mock(Protocol.class, CALLS_REAL_METHODS));
+    assertFalse(matcher.matches(HIGHEST, message));
+
+    val protocolGroup = mock(ProtocolGroup.class, CALLS_REAL_METHODS);
+    when(message.getProtocol()).thenReturn(protocolGroup);
+
+    // group 'mygroup' = success
+    when(protocolGroup.getName()).thenReturn("mygroup");
+    assertTrue(matcher.matches(HIGHEST, message));
+
+    // group 'test' = fail
+    when(protocolGroup.getName()).thenReturn("test");
     assertFalse(matcher.matches(HIGHEST, message));
   }
 

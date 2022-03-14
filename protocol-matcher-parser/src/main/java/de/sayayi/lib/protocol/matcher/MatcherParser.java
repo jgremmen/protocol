@@ -26,6 +26,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import lombok.var;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +36,7 @@ import java.util.function.Function;
 import static de.sayayi.lib.protocol.matcher.MessageMatcherParser.*;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.inGroup;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.inGroupRegex;
+import static java.lang.Character.digit;
 import static java.util.Arrays.fill;
 import static java.util.stream.Collectors.toList;
 import static lombok.AccessLevel.PRIVATE;
@@ -312,14 +314,17 @@ public class MatcherParser
     @Override
     public void exitInGroupMatcher(InGroupMatcherContext ctx)
     {
-      val groupName = ctx.string().str;
-      ctx.matcher = ctx.IN_GROUP() != null ? inGroup(groupName) : inGroupRegex(groupName);
+      val groupName = ctx.string();
+
+      ctx.matcher = groupName == null
+          ? MessageMatchers.inGroup()
+          : ctx.IN_GROUP() != null ? inGroup(groupName.str) : inGroupRegex(groupName.str);
     }
 
 
     @Override
-    public void exitDepthMatcher(DepthMatcherContext ctx) {
-      ctx.matcher = ctx.IN_GROUP() != null ? inGroup() : MessageMatchers.inRoot();
+    public void exitInRootMatcher(InRootMatcherContext ctx) {
+      ctx.matcher = MessageMatchers.inRoot();
     }
 
 
@@ -398,8 +403,33 @@ public class MatcherParser
     @Override
     public void exitString(StringContext ctx)
     {
-      val s = ctx.STRING().getText();
-      ctx.str = s.substring(1, s.length() - 1);
+      val quotedString = ctx.STRING().getText();
+      val str = quotedString.substring(1, quotedString.length() - 1).toCharArray();
+      val s = new StringBuilder();
+
+      for(int i = 0, n = str.length; i < n; i++)
+      {
+        var c = str[i];
+
+        if (c == '\\')
+          switch(c = str[++i])
+          {
+            case 'x':
+              c = (char)(digit(str[i + 1], 16) * 16 + digit(str[i + 2], 16));
+              i += 2;
+              break;
+
+            case 'u':
+              c = (char)(digit(str[i + 1], 16) * 4096 + digit(str[i + 2], 16) * 256 +
+                         digit(str[i + 3], 16) * 16 + digit(str[i + 4], 16));
+              i += 4;
+              break;
+          }
+
+        s.append(c);
+      }
+
+      ctx.str = s.toString();
     }
 
 
