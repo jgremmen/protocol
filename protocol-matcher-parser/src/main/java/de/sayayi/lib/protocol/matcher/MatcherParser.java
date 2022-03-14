@@ -300,6 +300,42 @@ public class MatcherParser
 
 
     @Override
+    public void exitAndTagSelector(AndTagSelectorContext ctx)
+    {
+      ctx.matcher = Conjunction.of(
+          ctx.compoundTagSelector()
+              .stream()
+              .map(ec -> ec.matcher)
+              .toArray(MessageMatcher[]::new));
+    }
+
+
+    @Override
+    public void exitOrTagSelector(OrTagSelectorContext ctx)
+    {
+      ctx.matcher = Disjunction.of(
+          ctx.compoundTagSelector()
+              .stream()
+              .map(ec -> ec.matcher)
+              .toArray(MessageMatcher[]::new));
+    }
+
+
+    @Override
+    public void exitNotTagSelector(NotTagSelectorContext ctx)
+    {
+      val expr = ctx.compoundTagSelector().matcher;
+      ctx.matcher = ctx.NOT() != null ? Negation.of(expr) : expr;
+    }
+
+
+    @Override
+    public void exitToTagSelector(ToTagSelectorContext ctx) {
+      ctx.matcher = ctx.tagSelectorAtom().matcher.asJunction();
+    }
+
+
+    @Override
     public void exitTagSelectorAtom(TagSelectorAtomContext ctx)
     {
       val tagExpression = ctx.tagMatcherAtom();
