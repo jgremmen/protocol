@@ -386,6 +386,24 @@ class MatcherParserTest
   }
 
 
+  @Test
+  @SuppressWarnings("unchecked")
+  void testHasParamValueAtom()
+  {
+    val message = (Message<Object>)mock(Message.class);
+    when(message.getParameterValues()).thenReturn(unmodifiableMap(new HashMap<String,Object>() {{
+      put("visible", true);
+      put("msg-null", null);
+      put("msg", "message");
+    }}));
+
+    assertFalse(PARSER.parse("has-param-value('msg-null')").matches(HIGHEST, message));
+    assertTrue(PARSER.parse("has-param-value('msg')").matches(HIGHEST, message));
+    assertFalse(PARSER.parse("has-param-value('text')").matches(HIGHEST, message));
+    assertSame(none(), PARSER.parse("has-param-value('')"));
+  }
+
+
   @Unmodifiable
   private static @NotNull Set<String> asTagNameSet(@NotNull String ... s)
   {
