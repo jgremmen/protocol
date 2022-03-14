@@ -64,6 +64,24 @@ class MatcherParserTest
 
   @Test
   @SuppressWarnings("unchecked")
+  void testBooleanAtom()
+  {
+    var matcher = PARSER.parse("any");
+
+    assertSame(any(), matcher);
+    assertTrue(matcher.isTagSelector());
+    assertTrue(matcher.matches(HIGHEST, mock(Message.class)));
+
+    matcher = PARSER.parse("none");
+
+    assertSame(none(), matcher);
+    assertTrue(matcher.isTagSelector());
+    assertFalse(matcher.matches(HIGHEST, mock(Message.class)));
+  }
+
+
+  @Test
+  @SuppressWarnings("unchecked")
   void testTagAtom()
   {
     // tag(default) = any()
