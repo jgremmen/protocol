@@ -40,6 +40,7 @@ import static java.util.Arrays.fill;
 import static java.util.Locale.ROOT;
 import static java.util.stream.Collectors.toList;
 import static lombok.AccessLevel.PRIVATE;
+import static org.antlr.v4.runtime.Token.EOF;
 
 
 /**
@@ -68,14 +69,14 @@ public class MatcherParser
 
 
   @Contract(pure = true)
-  public @NotNull TagSelector parseTagSelector(@NotNull String matcherText)
+  public @NotNull TagSelector parseTagSelector(@NotNull String tagSelectorText)
   {
-    val matcherParseTree =
-        createParser(matcherText).parseTagSelector();
+    val tagSelectorParseTree =
+        createParser(tagSelectorText).parseTagSelector();
 
-    walk(new ParserListener(matcherText), matcherParseTree);
+    walk(new ParserListener(tagSelectorText), tagSelectorParseTree);
 
-    return matcherParseTree.selector;
+    return tagSelectorParseTree.selector;
   }
 
 
@@ -104,8 +105,8 @@ public class MatcherParser
     {
       val children = ((ParserRuleContext)parseTree).children;
       if (children != null)
-        for(val tc: children)
-          walk(listener, tc);
+        for(val parseTreeChild: children)
+          walk(listener, parseTreeChild);
 
       ((ParserRuleContext)parseTree).exitRule(listener);
     }
@@ -118,7 +119,7 @@ public class MatcherParser
   {
     val text = new StringBuilder(errorMsg).append(":\n").append(matcherText).append('\n');
     val startIndex = token.getStartIndex();
-    val stopIndex = token.getType() == Token.EOF ? startIndex : token.getStopIndex();
+    val stopIndex = token.getType() == EOF ? startIndex : token.getStopIndex();
     val marker = new char[stopIndex + 1];
 
     fill(marker, 0, startIndex, ' ');  // leading spaces
@@ -445,7 +446,7 @@ public class MatcherParser
     @Override
     protected String getTokenErrorDisplay(Token t)
     {
-      return t != null && t.getType() == Token.EOF
+      return t != null && t.getType() == EOF
           ? "end of message matcher"
           : super.getTokenErrorDisplay(t);
     }
