@@ -428,6 +428,34 @@ class MatcherParserTest
   }
 
 
+  @Test
+  @SuppressWarnings("unchecked")
+  void testCompoundOr()
+  {
+    var matcher = PARSER.parse("throwable or error or message('ID')");
+
+    val message = (Message<Object>)mock(Message.class, CALLS_REAL_METHODS);
+
+    // throwable, error, message id
+    when(message.getThrowable()).thenReturn(new NullPointerException());
+    when(message.getLevel()).thenReturn(Level.Shared.ERROR);
+    when(message.getMessageId()).thenReturn("ID");
+    assertTrue(matcher.matches(HIGHEST, message));
+
+    when(message.getThrowable()).thenReturn(null);
+    assertTrue(matcher.matches(HIGHEST, message));
+    assertTrue(matcher.matches(DEBUG, message));
+
+    matcher = PARSER.parse("or(error, message('ID'))");
+    assertTrue(matcher.matches(HIGHEST, message));
+    assertTrue(matcher.matches(DEBUG, message));
+
+    when(message.getMessageId()).thenReturn("??");
+    assertTrue(matcher.matches(HIGHEST, message));
+    assertFalse(matcher.matches(DEBUG, message));
+  }
+
+
   @Unmodifiable
   private static @NotNull Set<String> asTagNameSet(@NotNull String ... s)
   {
