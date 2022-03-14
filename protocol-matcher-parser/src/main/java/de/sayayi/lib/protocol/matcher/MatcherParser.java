@@ -26,7 +26,6 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import lombok.var;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -237,8 +236,7 @@ public class MatcherParser
     @Override
     public void exitThrowableMatcher(ThrowableMatcherContext ctx)
     {
-      final TerminalNode qualifiedName = ctx.QUALIFIED_NAME();
-
+      val qualifiedName = ctx.QUALIFIED_NAME();
       if (qualifiedName == null)
         ctx.matcher = MessageMatchers.hasThrowable();
       else
@@ -361,7 +359,6 @@ public class MatcherParser
     public void exitLevel(LevelContext ctx)
     {
       val levelShared = ctx.levelShared();
-
       if (levelShared != null)
         ctx.lvl = levelShared.lvl;
       else
@@ -404,7 +401,7 @@ public class MatcherParser
 
       for(int i = 0, n = str.length; i < n; i++)
       {
-        var c = str[i];
+        char c = str[i];
 
         if (c == '\\')
           switch(c = str[++i])

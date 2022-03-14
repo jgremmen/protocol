@@ -20,6 +20,7 @@ import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolEntry.Message;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolGroup;
+import de.sayayi.lib.protocol.exception.MatcherParserException;
 import org.junit.jupiter.api.Test;
 
 import lombok.val;
@@ -41,6 +42,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Answers.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
@@ -290,7 +292,7 @@ class MatcherParserTest
 
 
   @Test
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "unchecked", "ResultOfMethodCallIgnored" })
   void testLevelAtom()
   {
     val parser = new MatcherParser(null, l -> "trace".equalsIgnoreCase(l) ? TRACE : null);
@@ -324,6 +326,43 @@ class MatcherParserTest
     when(message.getLevel()).thenReturn(Level.Shared.ERROR);
     assertTrue(matcher.matches(HIGHEST, message));
     assertFalse(matcher.matches(WARN, message));
+
+    assertThrowsExactly(MatcherParserException.class,
+        () -> parser.parse("level(tracer)"));
+  }
+
+
+  @Test
+  @SuppressWarnings({ "unchecked", "ResultOfMethodCallIgnored" })
+  void testThrowableAtom()
+  {
+    var matcher = PARSER.parse("throwable");
+
+    assertFalse(matcher.isTagSelector());
+
+    val message = (Message<Object>)mock(Message.class, CALLS_REAL_METHODS);
+
+    // no throwable
+    when(message.getThrowable()).thenReturn(null);
+    assertFalse(matcher.matches(HIGHEST, message));
+
+    // NPE
+    when(message.getThrowable()).thenReturn(new NullPointerException());
+    assertTrue(matcher.matches(HIGHEST, message));
+
+    matcher = PARSER.parse("throwable(java.lang.Exception)");
+
+    when(message.getThrowable()).thenReturn(new NullPointerException());
+    assertTrue(matcher.matches(HIGHEST, message));
+
+    when(message.getThrowable()).thenReturn(new OutOfMemoryError());
+    assertFalse(matcher.matches(HIGHEST, message));
+
+    assertThrowsExactly(MatcherParserException.class,
+        () -> PARSER.parse("throwable(java.lang.String)"));
+
+    assertThrowsExactly(MatcherParserException.class,
+        () -> PARSER.parse("throwable(aa.bb.cc.dd.ee.Class)"));
   }
 
 
