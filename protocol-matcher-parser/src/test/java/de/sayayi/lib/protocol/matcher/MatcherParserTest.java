@@ -429,7 +429,7 @@ class MatcherParserTest
   {
     var matcher = PARSER.parse("throwable and error and message('ID')");
 
-    val message = (Message<Object>)mock(Message.class, CALLS_REAL_METHODS);
+    val message = (Message<Object>)mock(Message.class);
 
     // throwable, error, message id
     when(message.getThrowable()).thenReturn(new NullPointerException());
@@ -452,7 +452,7 @@ class MatcherParserTest
   {
     var matcher = PARSER.parse("throwable or error or message('ID')");
 
-    val message = (Message<Object>)mock(Message.class, CALLS_REAL_METHODS);
+    val message = (Message<Object>)mock(Message.class);
 
     // throwable, error, message id
     when(message.getThrowable()).thenReturn(new NullPointerException());
@@ -470,6 +470,29 @@ class MatcherParserTest
 
     when(message.getMessageId()).thenReturn("??");
     assertTrue(matcher.matches(HIGHEST, message));
+    assertFalse(matcher.matches(DEBUG, message));
+  }
+
+
+  @Test
+  @SuppressWarnings("unchecked")
+  void testCompoundNot()
+  {
+    var matcher = PARSER.parse("not(throwable)");
+
+    val message = (Message<Object>)mock(Message.class);
+
+    when(message.getThrowable()).thenReturn(new NullPointerException());
+    assertFalse(matcher.matches(HIGHEST, message));
+
+    when(message.getThrowable()).thenReturn(null);
+    assertTrue(matcher.matches(HIGHEST, message));
+
+    matcher = PARSER.parse("(info)");
+
+    when(message.getLevel()).thenReturn(WARN);
+    assertTrue(matcher.matches(HIGHEST, message));
+    assertTrue(matcher.matches(INFO, message));
     assertFalse(matcher.matches(DEBUG, message));
   }
 

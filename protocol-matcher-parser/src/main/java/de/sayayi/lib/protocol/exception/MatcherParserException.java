@@ -54,7 +54,7 @@ public final class MatcherParserException extends ProtocolException
 
 
   @Override
-  public synchronized RecognitionException getCause() {
+  public RecognitionException getCause() {
     return (RecognitionException)super.getCause();
   }
 }
