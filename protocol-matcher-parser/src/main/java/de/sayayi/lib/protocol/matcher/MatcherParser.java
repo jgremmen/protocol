@@ -38,6 +38,7 @@ import static de.sayayi.lib.protocol.matcher.MessageMatchers.inGroup;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.inGroupRegex;
 import static java.lang.Character.digit;
 import static java.util.Arrays.fill;
+import static java.util.Locale.ROOT;
 import static java.util.stream.Collectors.toList;
 import static lombok.AccessLevel.PRIVATE;
 
@@ -280,28 +281,8 @@ public class MatcherParser
     @Override
     public void exitLevelMatcher(LevelMatcherContext ctx)
     {
-      switch(((TerminalNode)ctx.getChild(0)).getSymbol().getType())
-      {
-        case DEBUG:
-          ctx.matcher = LevelMatcher.DEBUG;
-          break;
-
-        case INFO:
-          ctx.matcher = LevelMatcher.INFO;
-          break;
-
-        case WARN:
-          ctx.matcher = LevelMatcher.WARN;
-          break;
-
-        case ERROR:
-          ctx.matcher = LevelMatcher.ERROR;
-          break;
-
-        case LEVEL:
-          ctx.matcher = LevelMatcher.of(ctx.level().lvl);
-          break;
-      }
+      val levelShared = ctx.levelShared();
+      ctx.matcher = LevelMatcher.of(levelShared != null ? levelShared.lvl : ctx.level().lvl);
     }
 
 
@@ -379,24 +360,38 @@ public class MatcherParser
     @Override
     public void exitLevel(LevelContext ctx)
     {
-      val stringContext = ctx.string();
-      val name = stringContext != null ? stringContext.str : ctx.getChild(0).getText();
+      val levelShared = ctx.levelShared();
 
-      try {
-        ctx.lvl = levelResolver == null ? null : levelResolver.apply(name);
-      } catch(Exception ignored) {
-      }
-
-      if (ctx.lvl == null)
+      if (levelShared != null)
+        ctx.lvl = levelShared.lvl;
+      else
       {
-        for(val level: Level.Shared.values())
-          if (level.name().equals(name)) {
-            ctx.lvl = level;
-            return;
-          }
+        val stringContext = ctx.string();
+        val name = stringContext != null ? stringContext.str : ctx.getChild(0).getText();
 
-        reportError("unknown level '" + name + "'", ctx);
+        try {
+          ctx.lvl = levelResolver == null ? null : levelResolver.apply(name);
+        } catch(Exception ignored) {
+        }
+
+        if (ctx.lvl == null)
+        {
+          for(val level: Level.Shared.values())
+            if (level.name().equalsIgnoreCase(name))
+            {
+              ctx.lvl = level;
+              return;
+            }
+
+          reportError("unknown level '" + name + "'", ctx);
+        }
       }
+    }
+
+
+    @Override
+    public void exitLevelShared(LevelSharedContext ctx) {
+      ctx.lvl = Level.Shared.valueOf(ctx.getChild(0).getText().toUpperCase(ROOT));
     }
 
 

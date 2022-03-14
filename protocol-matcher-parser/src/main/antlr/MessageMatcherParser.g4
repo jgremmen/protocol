@@ -53,10 +53,7 @@ matcherAtom returns [MessageMatcher matcher]
         | tagMatcherAtom                                                          #tagMatcher
         | HAS_PARAM L_PAREN string R_PAREN                                        #paramMatcher
         | HAS_PARAM_VALUE L_PAREN string R_PAREN                                  #paramMatcher
-        | DEBUG                                                                   #levelMatcher
-        | INFO                                                                    #levelMatcher
-        | WARN                                                                    #levelMatcher
-        | ERROR                                                                   #levelMatcher
+        | levelShared                                                             #levelMatcher
         | LEVEL L_PAREN level R_PAREN                                             #levelMatcher
         | MESSAGE L_PAREN string R_PAREN                                          #messageMatcher
         | IN_GROUP ( L_PAREN string R_PAREN )?                                    #inGroupMatcher
@@ -96,8 +93,16 @@ tagName returns [String tag]
         ;
 
 level returns [Level lvl]
-        : string
+        : levelShared
+        | string
         | IDENTIFIER
+        ;
+
+levelShared returns [Level.Shared lvl]
+        : DEBUG
+        | INFO
+        | WARN
+        | ERROR
         ;
 
 string returns [String str]

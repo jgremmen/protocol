@@ -15,6 +15,7 @@
  */
 package de.sayayi.lib.protocol.matcher;
 
+import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolEntry.Message;
 import de.sayayi.lib.protocol.ProtocolFactory;
@@ -31,6 +32,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
+import static de.sayayi.lib.protocol.Level.Shared.INFO;
+import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
+import static de.sayayi.lib.protocol.Level.Shared.WARN;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.any;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.none;
 import static java.util.Arrays.asList;
@@ -50,6 +54,7 @@ import static org.mockito.Mockito.when;
 class MatcherParserTest
 {
   private static final MatcherParser PARSER = MatcherParser.INSTANCE;
+  private static final Level TRACE = () -> 50;
 
 
   @Test
@@ -281,6 +286,44 @@ class MatcherParserTest
 
     when(message.getMessageId()).thenReturn("MSG-001");
     assertTrue(matcher.matches(HIGHEST, message));
+  }
+
+
+  @Test
+  @SuppressWarnings("unchecked")
+  void testLevelAtom()
+  {
+    val parser = new MatcherParser(null, l -> "trace".equalsIgnoreCase(l) ? TRACE : null);
+
+    var matcher = parser.parse("level(TrAcE)");
+
+    assertFalse(matcher.isTagSelector());
+
+    val message = (Message<Object>)mock(Message.class, CALLS_REAL_METHODS);
+
+    when(message.getLevel()).thenReturn(Level.Shared.DEBUG);
+    assertTrue(matcher.matches(HIGHEST, message));
+    assertTrue(matcher.matches(TRACE, message));
+    assertFalse(matcher.matches(LOWEST, message));
+
+    matcher = parser.parse("level(info)");
+
+    when(message.getLevel()).thenReturn(Level.Shared.INFO);
+    assertTrue(matcher.matches(HIGHEST, message));
+    assertFalse(matcher.matches(TRACE, message));
+
+    matcher = parser.parse("level(WARN)");
+
+    when(message.getLevel()).thenReturn(Level.Shared.ERROR);
+    assertTrue(matcher.matches(HIGHEST, message));
+    assertTrue(matcher.matches(WARN, message));
+    assertFalse(matcher.matches(INFO, message));
+
+    matcher = parser.parse("error");
+
+    when(message.getLevel()).thenReturn(Level.Shared.ERROR);
+    assertTrue(matcher.matches(HIGHEST, message));
+    assertFalse(matcher.matches(WARN, message));
   }
 
 
