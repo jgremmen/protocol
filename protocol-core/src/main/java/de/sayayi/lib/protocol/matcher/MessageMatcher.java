@@ -70,7 +70,7 @@ public interface MessageMatcher
     return new TagSelector() {
       @Override
       public boolean match(@NotNull Collection<String> tagNames) {
-        return matches(Level.Shared.HIGHEST, new TagSelectorMessageAdapter(tagNames));
+        return matches(Level.Shared.HIGHEST, new TagNamesMessageAdapter(tagNames));
       }
 
 

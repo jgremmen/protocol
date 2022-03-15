@@ -67,7 +67,7 @@ class TagSelectorTest
   void testAnyOfAtom()
   {
     assertTrue(PARSER.parseTagSelector("any-of('default', default)")
-            .match(asTagNameSet("mytag")));
+        .match(asTagNameSet("mytag")));
 
     assertTrue(PARSER.parseTagSelector("any-of ( system, ticket ) ")
         .match(asTagNameSet("ticket")));

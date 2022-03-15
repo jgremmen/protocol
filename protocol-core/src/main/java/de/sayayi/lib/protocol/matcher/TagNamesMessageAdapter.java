@@ -21,7 +21,6 @@ import de.sayayi.lib.protocol.ProtocolEntry.Message;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
-import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -36,12 +35,12 @@ import static java.util.Collections.unmodifiableSet;
  * @author Jeroen Gremmen
  * @since 1.2.0
  */
-final class TagSelectorMessageAdapter implements Message<Object>
+final class TagNamesMessageAdapter implements Message<Object>
 {
   private final Set<String> tagNames;
 
 
-  TagSelectorMessageAdapter(@NotNull Collection<String> tagNames) {
+  TagNamesMessageAdapter(@NotNull Collection<String> tagNames) {
     this.tagNames = unmodifiableSet(new HashSet<>(tagNames));
   }
 
@@ -71,7 +70,7 @@ final class TagSelectorMessageAdapter implements Message<Object>
 
 
   @Override
-  public @UnmodifiableView @NotNull Map<String,Object> getParameterValues() {
+  public @NotNull Map<String,Object> getParameterValues() {
     return emptyMap();
   }
 
