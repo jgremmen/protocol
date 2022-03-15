@@ -95,7 +95,7 @@ STRING
         | '"' (~["\\] | EscapeSequence)* '"'
         ;
 
-QUALIFIED_NAME
+QUALIFIED_CLASS_NAME
         : IDENTIFIER ('.' IDENTIFIER)+
         ;
 

@@ -50,7 +50,7 @@ enum MatcherVocabulary implements Vocabulary
     add(R_PAREN, "')'", "R_PAREN");
     add(COMMA, "','", "COMMA");
     add(STRING, "<string>", "STRING");
-    add(QUALIFIED_NAME, "<qualified name>", "QUALIFIED_NAME");
+    add(QUALIFIED_CLASS_NAME, "<qualified class name>", "QUALIFIED_CLASS_NAME");
     add(IDENTIFIER, "<identifier>", "IDENTIFIER");
     add(WS, "' '", "WS");
   }
@@ -75,8 +75,10 @@ enum MatcherVocabulary implements Vocabulary
 
 
   @Override
-  public String getDisplayName(int tokenType) {
-    return !VOCABULARY.containsKey(tokenType) ? Integer.toString(tokenType) : VOCABULARY.get(tokenType).literal;
+  public String getDisplayName(int tokenType)
+  {
+    return !VOCABULARY.containsKey(tokenType)
+        ? Integer.toString(tokenType) : VOCABULARY.get(tokenType).literal;
   }
 
 
