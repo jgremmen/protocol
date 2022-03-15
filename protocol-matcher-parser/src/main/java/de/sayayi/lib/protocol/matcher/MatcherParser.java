@@ -18,7 +18,14 @@ package de.sayayi.lib.protocol.matcher;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.exception.MatcherParserException;
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.BaseErrorListener;
+import org.antlr.v4.runtime.BufferedTokenStream;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.Recognizer;
+import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.Vocabulary;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -93,7 +100,7 @@ public class MatcherParser
 
     parser.removeErrorListeners();
     parser.addErrorListener(errorListener);
-    parser.setErrorHandler(ERROR_HANDLER);
+    parser.setErrorHandler(MatcherErrorStrategy.INSTANCE);
 
     return parser;
   }
@@ -465,17 +472,4 @@ public class MatcherParser
       syntaxError(matcherText, offendingToken, msg, null);
     }
   }
-
-
-
-
-  private static final ANTLRErrorStrategy ERROR_HANDLER = new DefaultErrorStrategy() {
-    @Override
-    protected String getTokenErrorDisplay(Token t)
-    {
-      return t != null && t.getType() == EOF
-          ? "end of message matcher"
-          : super.getTokenErrorDisplay(t);
-    }
-  };
 }

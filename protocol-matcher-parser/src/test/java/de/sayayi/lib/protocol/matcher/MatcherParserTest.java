@@ -497,6 +497,17 @@ class MatcherParserTest
   }
 
 
+  @Test
+  @SuppressWarnings("ResultOfMethodCallIgnored")
+  void testParserError()
+  {
+    assertThrowsExactly(MatcherParserException.class, () -> PARSER.parse(""));
+
+    assertTrue(assertThrowsExactly(MatcherParserException.class,
+        () -> PARSER.parse("all-of(")).getMessage().startsWith("incomplete matcher"));
+  }
+
+
   @Unmodifiable
   private static @NotNull Set<String> asTagNameSet(@NotNull String ... s)
   {
