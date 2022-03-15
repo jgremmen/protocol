@@ -48,11 +48,23 @@ class MatcherErrorStrategy extends DefaultErrorStrategy
       }
       else
         recognizer.notifyErrorListeners(offendingToken, "incomplete matcher", ex);
-
-      return;
     }
+    else
+    {
+      val offendingTokenText = getTokenErrorDisplay(offendingToken);
 
-    super.reportInputMismatch(recognizer, ex);
+      if (expectedTokens.size() <= 3)
+      {
+        recognizer.notifyErrorListeners(offendingToken,
+            "mismatched input " + offendingTokenText + "; expecting " +
+            tokenList(expectedTokens, recognizer.getVocabulary()), ex);
+      }
+      else
+      {
+        recognizer.notifyErrorListeners(offendingToken,
+            "mismatched input " + offendingTokenText, ex);
+      }
+    }
   }
 
 

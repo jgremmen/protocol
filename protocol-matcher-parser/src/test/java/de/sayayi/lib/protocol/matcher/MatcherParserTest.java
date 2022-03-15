@@ -504,7 +504,12 @@ class MatcherParserTest
     assertThrowsExactly(MatcherParserException.class, () -> PARSER.parse(""));
 
     assertTrue(assertThrowsExactly(MatcherParserException.class,
-        () -> PARSER.parse("all-of(")).getMessage().startsWith("incomplete matcher"));
+        () -> PARSER.parse("all-of("))
+        .getMessage().startsWith("incomplete matcher"));
+
+    assertTrue(assertThrowsExactly(MatcherParserException.class,
+        () -> PARSER.parse("all-of(all-of)"))
+        .getMessage().startsWith("mismatched input"));
   }
 
 
