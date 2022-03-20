@@ -39,8 +39,8 @@ class MatcherErrorStrategy extends DefaultErrorStrategy
 
     if (isEOFToken(offendingToken))
     {
-      // don't confuse user with long list of tokens
-      if (expectedTokens.size() <= 3)
+      // don't confuse user with a long list of tokens
+      if (expectedTokens.size() <= 4)
       {
         recognizer.notifyErrorListeners(offendingToken,
             "incomplete matcher; expecting " +
@@ -53,7 +53,7 @@ class MatcherErrorStrategy extends DefaultErrorStrategy
     {
       val offendingTokenText = getTokenErrorDisplay(offendingToken);
 
-      if (expectedTokens.size() <= 3)
+      if (expectedTokens.size() <= 4)
       {
         recognizer.notifyErrorListeners(offendingToken,
             "mismatched input " + offendingTokenText + "; expecting " +

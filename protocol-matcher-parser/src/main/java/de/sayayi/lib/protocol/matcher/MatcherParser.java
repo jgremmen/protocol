@@ -21,6 +21,7 @@ import de.sayayi.lib.protocol.exception.MatcherParserException;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.BufferedTokenStream;
+import org.antlr.v4.runtime.LexerNoViableAltException;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
@@ -89,7 +90,9 @@ public class MatcherParser
 
   private @NotNull Parser createParser(@NotNull String matcherText)
   {
-    val parser = new Parser(matcherText);
+    val lexer = new Lexer(matcherText);
+    val parser = new Parser(lexer);
+
     val errorListener = new BaseErrorListener() {
       @Override
       public void syntaxError(Recognizer<?,?> recognizer, Object offendingSymbol, int line,
@@ -97,6 +100,9 @@ public class MatcherParser
         MatcherParser.this.syntaxError(matcherText, (Token)offendingSymbol, msg, ex);
       }
     };
+
+    lexer.removeErrorListeners();
+    lexer.addErrorListener(errorListener);
 
     parser.removeErrorListeners();
     parser.addErrorListener(errorListener);
@@ -151,6 +157,19 @@ public class MatcherParser
     public Vocabulary getVocabulary() {
       return MatcherVocabulary.INSTANCE;
     }
+
+
+    @Override
+    public void notifyListeners(LexerNoViableAltException ex)
+    {
+      val token = getTokenFactory().create(_tokenFactorySourcePair, SKIP, null,
+          _channel, _tokenStartCharIndex, _input.index(), _tokenStartLine,
+          _tokenStartCharPositionInLine);
+      val msg = "unexpected input at: "+ getErrorDisplay(token.getText());
+
+      getErrorListenerDispatch().syntaxError(this, token, _tokenStartLine,
+          _tokenStartCharPositionInLine, msg, ex);
+    }
   }
 
 
@@ -158,8 +177,8 @@ public class MatcherParser
 
   private static final class Parser extends MessageMatcherParser
   {
-    private Parser(@NotNull String matcherText) {
-      super(new BufferedTokenStream(new Lexer(matcherText)));
+    private Parser(@NotNull Lexer lexer) {
+      super(new BufferedTokenStream(lexer));
     }
 
 

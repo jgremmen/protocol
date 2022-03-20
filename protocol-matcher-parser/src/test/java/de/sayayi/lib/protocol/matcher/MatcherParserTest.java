@@ -499,6 +499,16 @@ class MatcherParserTest
 
   @Test
   @SuppressWarnings("ResultOfMethodCallIgnored")
+  void testLexerError()
+  {
+    assertTrue(assertThrowsExactly(MatcherParserException.class,
+        () -> PARSER.parse("all-of%("))
+        .getMessage().startsWith("unexpected input"));
+  }
+
+
+  @Test
+  @SuppressWarnings("ResultOfMethodCallIgnored")
   void testParserError()
   {
     assertThrowsExactly(MatcherParserException.class, () -> PARSER.parse(""));
