@@ -165,10 +165,10 @@ public class MatcherParser
       val token = getTokenFactory().create(_tokenFactorySourcePair, SKIP, null,
           _channel, _tokenStartCharIndex, _input.index(), _tokenStartLine,
           _tokenStartCharPositionInLine);
-      val msg = "unexpected input at: "+ getErrorDisplay(token.getText());
 
       getErrorListenerDispatch().syntaxError(this, token, _tokenStartLine,
-          _tokenStartCharPositionInLine, msg, ex);
+          _tokenStartCharPositionInLine,
+          "unexpected input at: " + getErrorDisplay(token.getText()), ex);
     }
   }
 
