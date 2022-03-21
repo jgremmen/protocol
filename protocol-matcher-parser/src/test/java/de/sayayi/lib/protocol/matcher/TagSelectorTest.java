@@ -19,6 +19,7 @@ import de.sayayi.lib.protocol.ProtocolFactory;
 import org.junit.jupiter.api.Test;
 
 import lombok.val;
+import lombok.var;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
@@ -52,7 +53,7 @@ class TagSelectorTest
   @Test
   void testTagAtom()
   {
-    assertTrue(PARSER.parseTagSelector("tag('default')")
+    assertTrue(PARSER.parseTagSelector("default")
         .match(asTagNameSet("test")));
 
     assertTrue(PARSER.parseTagSelector("tag(system)")
@@ -108,6 +109,30 @@ class TagSelectorTest
 
     assertTrue(PARSER.parseTagSelector("none-of('','')")
         .match(asTagNameSet("ticket")));
+  }
+
+
+  @Test
+  void testCompoundAnd()
+  {
+    var matcher =
+        PARSER.parseTagSelector("system and not(ticket)");
+
+    assertTrue(matcher.match(asTagNameSet("mytag", "system")));
+    assertFalse(matcher.match(asTagNameSet("ticket", "system")));
+    assertFalse(matcher.match(asTagNameSet("ticket")));
+  }
+
+
+  @Test
+  void testCompoundOr()
+  {
+    var matcher =
+        PARSER.parseTagSelector("system or not(ticket)");
+
+    assertTrue(matcher.match(asTagNameSet("mytag", "system")));
+    assertFalse(matcher.match(asTagNameSet("ticket")));
+    assertTrue(matcher.match(asTagNameSet("mytag")));
   }
 
 
