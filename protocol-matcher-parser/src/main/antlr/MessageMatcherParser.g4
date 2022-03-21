@@ -49,7 +49,7 @@ compoundMatcher returns [MessageMatcher.Junction matcher]
 matcherAtom returns [MessageMatcher matcher]
         : ANY                                                                     #booleanMatcher
         | NONE                                                                    #booleanMatcher
-        | THROWABLE ( L_PAREN QUALIFIED_NAME R_PAREN )?                           #throwableMatcher
+        | THROWABLE ( L_PAREN QUALIFIED_CLASS_NAME R_PAREN )?                     #throwableMatcher
         | tagMatcherAtom                                                          #tagMatcher
         | HAS_PARAM L_PAREN string R_PAREN                                        #paramMatcher
         | HAS_PARAM_VALUE L_PAREN string R_PAREN                                  #paramMatcher
@@ -78,6 +78,7 @@ tagSelectorAtom returns [MessageMatcher matcher]
 
 tagMatcherAtom returns [MessageMatcher matcher]
         : TAG L_PAREN tagName R_PAREN
+        | tagName
         | ANY_OF L_PAREN tagNameList R_PAREN
         | ALL_OF L_PAREN tagNameList R_PAREN
         | NONE_OF L_PAREN tagNameList R_PAREN

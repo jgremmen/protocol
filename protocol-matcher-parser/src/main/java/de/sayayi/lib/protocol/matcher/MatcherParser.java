@@ -254,7 +254,7 @@ public class MatcherParser
     @Override
     public void exitThrowableMatcher(ThrowableMatcherContext ctx)
     {
-      val qualifiedName = ctx.QUALIFIED_NAME();
+      val qualifiedName = ctx.QUALIFIED_CLASS_NAME();
       if (qualifiedName == null)
         ctx.matcher = MessageMatchers.hasThrowable();
       else
@@ -374,23 +374,27 @@ public class MatcherParser
     @Override
     public void exitTagMatcherAtom(TagMatcherAtomContext ctx)
     {
-      switch(((TerminalNode)ctx.getChild(0)).getSymbol().getType())
+      val tagName = ctx.tagName();
+      if (tagName != null)
+        ctx.matcher = MessageMatchers.hasTag(tagName.tag);
+      else
       {
-        case TAG:
-          ctx.matcher = MessageMatchers.hasTag(ctx.tagName().tag);
-          break;
+        val tagNameList = ctx.tagNameList().tags;
 
-        case ANY_OF:
-          ctx.matcher = MessageMatchers.hasAnyOf(ctx.tagNameList().tags);
-          break;
+        switch(((TerminalNode)ctx.getChild(0)).getSymbol().getType())
+        {
+          case ANY_OF:
+            ctx.matcher = MessageMatchers.hasAnyOf(tagNameList);
+            break;
 
-        case ALL_OF:
-          ctx.matcher = MessageMatchers.hasAllOf(ctx.tagNameList().tags);
-          break;
+          case ALL_OF:
+            ctx.matcher = MessageMatchers.hasAllOf(tagNameList);
+            break;
 
-        case NONE_OF:
-          ctx.matcher = MessageMatchers.hasNoneOf(ctx.tagNameList().tags);
-          break;
+          case NONE_OF:
+            ctx.matcher = MessageMatchers.hasNoneOf(tagNameList);
+            break;
+        }
       }
     }
 
