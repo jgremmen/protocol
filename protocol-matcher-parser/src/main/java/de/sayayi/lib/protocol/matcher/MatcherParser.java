@@ -453,15 +453,13 @@ public class MatcherParser
     @Override
     public void exitString(StringContext ctx)
     {
-      val quotedString = ctx.STRING().getText();
-      val str = quotedString.substring(1, quotedString.length() - 1).toCharArray();
+      val str = ctx.STRING().getText().toCharArray();
       val s = new StringBuilder();
+      char c;
 
-      for(int i = 0, n = str.length; i < n; i++)
+      for(int i = 1, n = str.length - 1; i < n; i++)
       {
-        char c = str[i];
-
-        if (c == '\\')
+        if ((c = str[i]) == '\\')
           switch(c = str[++i])
           {
             case 'x':
