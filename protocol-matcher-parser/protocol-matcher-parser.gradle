@@ -71,7 +71,9 @@ sourcesJar {
   dependsOn generateGrammarSource
 
   exclude "**/*.tokens"
+  exclude "**/*.interp"
   exclude "**/*.g4"
+  exclude "gen/**"
 }
 
 
