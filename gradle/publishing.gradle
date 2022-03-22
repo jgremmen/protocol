@@ -65,8 +65,8 @@ publishing {
       }
 
       pom {
-        name = 'Java Protocol Library'
-        description = 'Collect protocol information which can be extracted based on severity level and target audience'
+        name = project.name
+        description = project.description
         url = 'https://github.com/jgremmen/protocol'
         inceptionYear = '2019'
 

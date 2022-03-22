@@ -57,7 +57,7 @@ apply from: file('../gradle/publishing.gradle')
 
 dependencies {
   // java
-  api project(':protocol-core')
+  implementation project(':protocol-core')
 
   implementation "org.antlr:antlr4-runtime:${antlrVersion}"
 
