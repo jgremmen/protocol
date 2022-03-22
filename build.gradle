@@ -19,6 +19,10 @@ description = 'Protocol Library Projects'
 
 allprojects {
   apply plugin: "java-library"
+  apply plugin: "maven-publish"
+  apply plugin: "signing"
+  apply plugin: "jacoco"
+  apply plugin: "idea"
 
   buildDir = ".build"
 
@@ -72,17 +76,5 @@ allprojects {
     testCompileOnly "org.jetbrains:annotations:${jetbrainsAnnotationsVersion}"
 
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
-  }
-}
-
-
-clean {
-  subprojects.each {
-    it.afterEvaluate {
-      def cleanTask = it.tasks.findByName('clean')
-      if (cleanTask) {
-        dependsOn(cleanTask)
-      }
-    }
   }
 }
