@@ -64,9 +64,6 @@ generateGrammarSource {
 }
 
 
-compileJava.dependsOn generateGrammarSource
-
-
 sourcesJar {
   dependsOn generateGrammarSource
 
@@ -80,4 +77,13 @@ sourcesJar {
 javadoc {
   exclude '**/*.tokens'
   exclude '**/*.interp'
+}
+
+
+clean {
+  delete file("src/main/antlr/gen")
+  delete file("src/main/gen")
+  delete fileTree("src/main/antlr").matching {
+    include "**/*.tokens"
+  }
 }

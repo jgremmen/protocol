@@ -23,9 +23,9 @@ options {
 
 
 @header {
-  import de.sayayi.lib.protocol.matcher.MessageMatcher;
-  import de.sayayi.lib.protocol.Level;
-  import de.sayayi.lib.protocol.TagSelector;
+import de.sayayi.lib.protocol.matcher.MessageMatcher;
+import de.sayayi.lib.protocol.Level;
+import de.sayayi.lib.protocol.TagSelector;
 }
 
 
