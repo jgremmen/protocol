@@ -20,7 +20,7 @@ import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolEntry.Message;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolGroup;
-import de.sayayi.lib.protocol.exception.MatcherParserException;
+import de.sayayi.lib.protocol.exception.MessageMatcherParserException;
 import org.junit.jupiter.api.Test;
 
 import lombok.val;
@@ -56,9 +56,9 @@ import static org.mockito.Mockito.when;
  * @author Jeroen Gremmen
  * @since 1.2.0
  */
-class MatcherParserTest
+class MessageMatcherParserTest
 {
-  private static final MatcherParser PARSER = MatcherParser.INSTANCE;
+  private static final MessageMatcherParser PARSER = MessageMatcherParser.INSTANCE;
   private static final Level TRACE = () -> 50;
 
 
@@ -316,7 +316,7 @@ class MatcherParserTest
   @SuppressWarnings({ "unchecked", "ResultOfMethodCallIgnored" })
   void testLevelAtom()
   {
-    val parser = new MatcherParser(null, l -> "trace".equalsIgnoreCase(l) ? TRACE : null);
+    val parser = new MessageMatcherParser(null, l -> "trace".equalsIgnoreCase(l) ? TRACE : null);
 
     var matcher = parser.parse("level(TrAcE)");
 
@@ -348,7 +348,7 @@ class MatcherParserTest
     assertTrue(matcher.matches(HIGHEST, message));
     assertFalse(matcher.matches(WARN, message));
 
-    assertThrowsExactly(MatcherParserException.class,
+    assertThrowsExactly(MessageMatcherParserException.class,
         () -> parser.parse("level(tracer)"));
   }
 
@@ -379,10 +379,10 @@ class MatcherParserTest
     when(message.getThrowable()).thenReturn(new OutOfMemoryError());
     assertFalse(matcher.matches(HIGHEST, message));
 
-    assertThrowsExactly(MatcherParserException.class,
+    assertThrowsExactly(MessageMatcherParserException.class,
         () -> PARSER.parse("throwable(java.lang.String)"));
 
-    assertThrowsExactly(MatcherParserException.class,
+    assertThrowsExactly(MessageMatcherParserException.class,
         () -> PARSER.parse("throwable(aa.bb.cc.dd.ee.Class)"));
   }
 
@@ -501,7 +501,7 @@ class MatcherParserTest
   @SuppressWarnings("ResultOfMethodCallIgnored")
   void testLexerError()
   {
-    assertTrue(assertThrowsExactly(MatcherParserException.class,
+    assertTrue(assertThrowsExactly(MessageMatcherParserException.class,
         () -> PARSER.parse("all-of%("))
         .getMessage().startsWith("unexpected input"));
   }
@@ -511,13 +511,13 @@ class MatcherParserTest
   @SuppressWarnings("ResultOfMethodCallIgnored")
   void testParserError()
   {
-    assertThrowsExactly(MatcherParserException.class, () -> PARSER.parse(""));
+    assertThrowsExactly(MessageMatcherParserException.class, () -> PARSER.parse(""));
 
-    assertTrue(assertThrowsExactly(MatcherParserException.class,
+    assertTrue(assertThrowsExactly(MessageMatcherParserException.class,
         () -> PARSER.parse("all-of("))
         .getMessage().startsWith("incomplete matcher"));
 
-    assertTrue(assertThrowsExactly(MatcherParserException.class,
+    assertTrue(assertThrowsExactly(MessageMatcherParserException.class,
         () -> PARSER.parse("all-of(all-of)"))
         .getMessage().startsWith("mismatched input"));
   }

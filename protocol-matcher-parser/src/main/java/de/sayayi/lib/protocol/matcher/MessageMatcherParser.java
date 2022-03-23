@@ -17,10 +17,9 @@ package de.sayayi.lib.protocol.matcher;
 
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.TagSelector;
-import de.sayayi.lib.protocol.exception.MatcherParserException;
+import de.sayayi.lib.protocol.exception.MessageMatcherParserException;
 import de.sayayi.lib.protocol.matcher.antlr.MessageMatcherBaseListener;
 import de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer;
-import de.sayayi.lib.protocol.matcher.antlr.MessageMatcherParser;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.BufferedTokenStream;
@@ -41,10 +40,40 @@ import lombok.val;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.function.Function;
 
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.inGroup;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.inGroupRegex;
+import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.ALL_OF;
+import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.AND;
+import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.ANY;
+import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.ANY_OF;
+import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.COMMA;
+import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.DEBUG;
+import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.ERROR;
+import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.HAS_PARAM;
+import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.HAS_PARAM_VALUE;
+import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.IDENTIFIER;
+import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.INFO;
+import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.IN_GROUP;
+import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.IN_GROUP_REGEX;
+import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.IN_ROOT;
+import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.LEVEL;
+import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.L_PAREN;
+import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.MESSAGE;
+import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.NONE;
+import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.NONE_OF;
+import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.NOT;
+import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.OR;
+import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.QUALIFIED_CLASS_NAME;
+import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.R_PAREN;
+import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.STRING;
+import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.TAG;
+import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.THROWABLE;
+import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.WARN;
+import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.WS;
 import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherParser.*;
 import static java.lang.Character.digit;
 import static java.util.Arrays.fill;
@@ -59,9 +88,9 @@ import static org.antlr.v4.runtime.Token.EOF;
  * @since 1.2.0
  */
 @AllArgsConstructor
-public class MatcherParser
+public class MessageMatcherParser
 {
-  public static final MatcherParser INSTANCE = new MatcherParser(null, null);
+  public static final MessageMatcherParser INSTANCE = new MessageMatcherParser(null, null);
 
   protected final ClassLoader classLoader;
   protected final Function<String,Level> levelResolver;
@@ -100,7 +129,7 @@ public class MatcherParser
       @Override
       public void syntaxError(Recognizer<?,?> recognizer, Object offendingSymbol, int line,
                               int charPositionInLine, String msg, RecognitionException ex) {
-        MatcherParser.this.syntaxError(matcherText, (Token)offendingSymbol, msg, ex);
+        MessageMatcherParser.this.syntaxError(matcherText, (Token)offendingSymbol, msg, ex);
       }
     };
 
@@ -109,7 +138,7 @@ public class MatcherParser
 
     parser.removeErrorListeners();
     parser.addErrorListener(errorListener);
-    parser.setErrorHandler(MatcherErrorStrategy.INSTANCE);
+    parser.setErrorHandler(MessageMatcherErrorStrategy.INSTANCE);
 
     return parser;
   }
@@ -141,7 +170,7 @@ public class MatcherParser
     fill(marker, 0, startIndex, ' ');  // leading spaces
     fill(marker, startIndex, stopIndex + 1, '^');  // marker
 
-    throw new MatcherParserException(matcherText, startIndex, stopIndex,
+    throw new MessageMatcherParserException(matcherText, startIndex, stopIndex,
         text.append(marker).toString(), ex);
   }
 
@@ -178,7 +207,7 @@ public class MatcherParser
 
 
 
-  private static final class Parser extends MessageMatcherParser
+  private static final class Parser extends de.sayayi.lib.protocol.matcher.antlr.MessageMatcherParser
   {
     private Parser(@NotNull Lexer lexer) {
       super(new BufferedTokenStream(lexer));
@@ -494,6 +523,91 @@ public class MatcherParser
     @SuppressWarnings("SameParameterValue")
     private void reportError(@NotNull String msg, @NotNull Token offendingToken) {
       syntaxError(matcherText, offendingToken, msg, null);
+    }
+  }
+
+
+
+
+  private enum MatcherVocabulary implements Vocabulary
+  {
+    INSTANCE;
+
+
+    private static final SortedMap<Integer,Name> VOCABULARY = new TreeMap<>();
+
+
+    static
+    {
+      add(ANY, "'any'", "ANY");
+      add(NONE, "'none'", "NONE");
+      add(NOT, "'not'", "NOT");
+      add(THROWABLE, "'throwable'", "THROWABLE");
+      add(TAG, "'tag'", "TAG");
+      add(ANY_OF, "'any-of'", "ANY_OF");
+      add(ALL_OF, "'all-of'", "ALL_OF");
+      add(NONE_OF, "'none-of'", "NONE_OF");
+      add(HAS_PARAM, "'has-param'", "HAS_PARAM");
+      add(HAS_PARAM_VALUE, "'has-param-value'", "HAS_PARAM_VALUE");
+      add(DEBUG, "'debug'", "DEBUG");
+      add(INFO, "'info'", "INFO");
+      add(WARN, "'warn'", "WARN");
+      add(ERROR, "'error'", "ERROR");
+      add(LEVEL, "'level'", "LEVEL");
+      add(MESSAGE, "'message'", "MESSAGE");
+      add(IN_GROUP, "'in-group'", "IN_GROUP");
+      add(IN_GROUP_REGEX, "'in-group-regex'", "IN_GROUP_REGEX");
+      add(IN_ROOT, "'in-root'", "IN_ROOT");
+      add(AND, "'and'", "AND");
+      add(OR, "'or'", "OR");
+      add(L_PAREN, "'('", "L_PAREN");
+      add(R_PAREN, "')'", "R_PAREN");
+      add(COMMA, "','", "COMMA");
+      add(STRING, "<string>", "STRING");
+      add(QUALIFIED_CLASS_NAME, "<qualified class name>", "QUALIFIED_CLASS_NAME");
+      add(IDENTIFIER, "<identifier>", "IDENTIFIER");
+      add(WS, "' '", "WS");
+    }
+
+
+    @Override
+    public int getMaxTokenType() {
+      return VOCABULARY.lastKey();
+    }
+
+
+    @Override
+    public String getLiteralName(int tokenType) {
+      return VOCABULARY.containsKey(tokenType) ? VOCABULARY.get(tokenType).literal : null;
+    }
+
+
+    @Override
+    public String getSymbolicName(int tokenType) {
+      return VOCABULARY.containsKey(tokenType) ? VOCABULARY.get(tokenType).symbol : null;
+    }
+
+
+    @Override
+    public String getDisplayName(int tokenType)
+    {
+      return !VOCABULARY.containsKey(tokenType)
+          ? Integer.toString(tokenType) : VOCABULARY.get(tokenType).literal;
+    }
+
+
+    private static void add(int tokenType, String literal, String symbolic) {
+      VOCABULARY.put(tokenType, new Name(literal, symbolic));
+    }
+
+
+
+
+    @AllArgsConstructor(access = PRIVATE)
+    private static final class Name
+    {
+      final String literal;
+      final String symbol;
     }
   }
 }

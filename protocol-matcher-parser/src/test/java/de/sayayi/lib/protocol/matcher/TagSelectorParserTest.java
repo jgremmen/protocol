@@ -37,9 +37,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Jeroen Gremmen
  * @since 1.2.0
  */
-class TagSelectorTest
+class TagSelectorParserTest
 {
-  private static final MatcherParser PARSER = MatcherParser.INSTANCE;
+  private static final MessageMatcherParser PARSER = MessageMatcherParser.INSTANCE;
 
 
   @Test

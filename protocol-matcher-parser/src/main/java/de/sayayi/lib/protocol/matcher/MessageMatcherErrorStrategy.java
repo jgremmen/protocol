@@ -43,9 +43,9 @@ import static org.antlr.v4.runtime.Token.EOF;
  * @since 1.2.0
  */
 @NoArgsConstructor(access = PACKAGE)
-class MatcherErrorStrategy extends DefaultErrorStrategy
+class MessageMatcherErrorStrategy extends DefaultErrorStrategy
 {
-  static final ANTLRErrorStrategy INSTANCE = new MatcherErrorStrategy();
+  static final ANTLRErrorStrategy INSTANCE = new MessageMatcherErrorStrategy();
 
   private static final String EOF_DISPLAY_NAME = "end of matcher";
 

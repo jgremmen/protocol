@@ -35,15 +35,15 @@ import org.jetbrains.annotations.NotNull;
  * @since 1.2.0
  */
 @Getter
-public final class MatcherParserException extends ProtocolException
+public final class MessageMatcherParserException extends ProtocolException
 {
   private final @NotNull String matcher;
   private final int startIndex;
   private final int endIndex;
 
 
-  public MatcherParserException(@NotNull String matcher, int startIndex, int endIndex,
-                                @NotNull String formattedMessage, RecognitionException ex)
+  public MessageMatcherParserException(@NotNull String matcher, int startIndex, int endIndex,
+                                       @NotNull String formattedMessage, RecognitionException ex)
   {
     super(formattedMessage, ex);
 
