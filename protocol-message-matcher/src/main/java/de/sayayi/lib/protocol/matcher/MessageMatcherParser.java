@@ -97,12 +97,12 @@ public class MessageMatcherParser
 
 
   @Contract(pure = true)
-  public @NotNull MessageMatcher parse(@NotNull String matcherText)
+  public @NotNull MessageMatcher parseMessageMatcher(@NotNull String messageMatcherText)
   {
     val matcherParseTree =
-        createParser(matcherText).parseMatcher();
+        createParser(messageMatcherText).parseMatcher();
 
-    walk(new Listener(matcherText), matcherParseTree);
+    walk(new Listener(messageMatcherText), matcherParseTree);
 
     return matcherParseTree.matcher;
   }

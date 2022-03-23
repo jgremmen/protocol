@@ -66,13 +66,13 @@ class MessageMatcherParserTest
   @SuppressWarnings("unchecked")
   void testBooleanAtom()
   {
-    var matcher = PARSER.parse("any");
+    var matcher = PARSER.parseMessageMatcher("any");
 
     assertSame(any(), matcher);
     assertTrue(matcher.isTagSelector());
     assertTrue(matcher.matches(HIGHEST, mock(Message.class)));
 
-    matcher = PARSER.parse("none");
+    matcher = PARSER.parseMessageMatcher("none");
 
     assertSame(none(), matcher);
     assertTrue(matcher.isTagSelector());
@@ -85,13 +85,13 @@ class MessageMatcherParserTest
   void testTagAtom()
   {
     // tag(default) = any()
-    var matcher = PARSER.parse("tag('default')");
+    var matcher = PARSER.parseMessageMatcher("tag('default')");
 
     assertSame(any(), matcher);
     assertTrue(matcher.isTagSelector());
 
     // tag(system)
-    matcher = PARSER.parse("tag(system)");
+    matcher = PARSER.parseMessageMatcher("tag(system)");
 
     assertTrue(matcher.isTagSelector());
 
@@ -100,7 +100,7 @@ class MessageMatcherParserTest
     assertTrue(matcher.matches(HIGHEST, message));
 
     // tag('') = none()
-    matcher = PARSER.parse("tag('')");
+    matcher = PARSER.parseMessageMatcher("tag('')");
 
     assertSame(none(), matcher);
     assertTrue(matcher.isTagSelector());
@@ -112,13 +112,13 @@ class MessageMatcherParserTest
   void testAnyOfAtom()
   {
     // any-of(default,default) = any()
-    var matcher = PARSER.parse("any-of('default', default)");
+    var matcher = PARSER.parseMessageMatcher("any-of('default', default)");
 
     assertSame(any(), matcher);
     assertTrue(matcher.isTagSelector());
 
     // any-of(system,ticket)
-    matcher = PARSER.parse("any-of ( system, ticket ) ");
+    matcher = PARSER.parseMessageMatcher("any-of ( system, ticket ) ");
 
     assertTrue(matcher.isTagSelector());
 
@@ -130,7 +130,7 @@ class MessageMatcherParserTest
     assertTrue(matcher.matches(HIGHEST, message));
 
     // any-of('','') = none()
-    matcher = PARSER.parse("any-of('','')");
+    matcher = PARSER.parseMessageMatcher("any-of('','')");
 
     assertSame(none(), matcher);
     assertTrue(matcher.isTagSelector());
@@ -142,13 +142,13 @@ class MessageMatcherParserTest
   void testAllOfAtom()
   {
     // all-of(default,default) = any()
-    var matcher = PARSER.parse("all-of('default', default)");
+    var matcher = PARSER.parseMessageMatcher("all-of('default', default)");
 
     assertSame(any(), matcher);
     assertTrue(matcher.isTagSelector());
 
     // all-of(system,ticket)
-    matcher = PARSER.parse("all-of ( system, ticket ) ");
+    matcher = PARSER.parseMessageMatcher("all-of ( system, ticket ) ");
 
     assertTrue(matcher.isTagSelector());
 
@@ -160,7 +160,7 @@ class MessageMatcherParserTest
     assertFalse(matcher.matches(HIGHEST, message));
 
     // all-of('','') = none()
-    matcher = PARSER.parse("all-of('','')");
+    matcher = PARSER.parseMessageMatcher("all-of('','')");
 
     assertSame(none(), matcher);
     assertTrue(matcher.isTagSelector());
@@ -172,13 +172,13 @@ class MessageMatcherParserTest
   void testNoneOfAtom()
   {
     // none-of(default,default) = none()
-    var matcher = PARSER.parse("none-of('default', default)");
+    var matcher = PARSER.parseMessageMatcher("none-of('default', default)");
 
     assertSame(none(), matcher);
     assertTrue(matcher.isTagSelector());
 
     // none-of(system,ticket)
-    matcher = PARSER.parse("none-of ( system, ticket ) ");
+    matcher = PARSER.parseMessageMatcher("none-of ( system, ticket ) ");
 
     assertTrue(matcher.isTagSelector());
 
@@ -190,7 +190,7 @@ class MessageMatcherParserTest
     assertFalse(matcher.matches(HIGHEST, message));
 
     // none-of('','') = any()
-    matcher = PARSER.parse("none-of('','')");
+    matcher = PARSER.parseMessageMatcher("none-of('','')");
 
     assertSame(any(), matcher);
     assertTrue(matcher.isTagSelector());
@@ -201,7 +201,7 @@ class MessageMatcherParserTest
   @SuppressWarnings("unchecked")
   void testInRootAtom()
   {
-    var matcher = PARSER.parse("in-root");
+    var matcher = PARSER.parseMessageMatcher("in-root");
 
     assertFalse(matcher.isTagSelector());
 
@@ -223,7 +223,7 @@ class MessageMatcherParserTest
   @SuppressWarnings("unchecked")
   void testInGroupAtom()
   {
-    val matcher = PARSER.parse("in-group");
+    val matcher = PARSER.parseMessageMatcher("in-group");
 
     assertFalse(matcher.isTagSelector());
 
@@ -243,7 +243,7 @@ class MessageMatcherParserTest
   @SuppressWarnings("unchecked")
   void testInGroupNameAtom()
   {
-    val matcher = PARSER.parse("in-group('mygroup')");
+    val matcher = PARSER.parseMessageMatcher("in-group('mygroup')");
 
     assertFalse(matcher.isTagSelector());
 
@@ -269,7 +269,7 @@ class MessageMatcherParserTest
   @SuppressWarnings("unchecked")
   void testInGroupRegexAtom()
   {
-    val matcher = PARSER.parse("in-group-regex('my\\x2e*')");
+    val matcher = PARSER.parseMessageMatcher("in-group-regex('my\\x2e*')");
 
     assertFalse(matcher.isTagSelector());
 
@@ -296,9 +296,9 @@ class MessageMatcherParserTest
   @SuppressWarnings("unchecked")
   void testMessageAtom()
   {
-    assertSame(none(), PARSER.parse("message('')"));
+    assertSame(none(), PARSER.parseMessageMatcher("message('')"));
 
-    val matcher = PARSER.parse("message('MSG-001')");
+    val matcher = PARSER.parseMessageMatcher("message('MSG-001')");
 
     assertFalse(matcher.isTagSelector());
 
@@ -318,7 +318,7 @@ class MessageMatcherParserTest
   {
     val parser = new MessageMatcherParser(null, l -> "trace".equalsIgnoreCase(l) ? TRACE : null);
 
-    var matcher = parser.parse("level(TrAcE)");
+    var matcher = parser.parseMessageMatcher("level(TrAcE)");
 
     assertFalse(matcher.isTagSelector());
 
@@ -329,27 +329,27 @@ class MessageMatcherParserTest
     assertTrue(matcher.matches(TRACE, message));
     assertFalse(matcher.matches(LOWEST, message));
 
-    matcher = parser.parse("level(info)");
+    matcher = parser.parseMessageMatcher("level(info)");
 
     when(message.getLevel()).thenReturn(Level.Shared.INFO);
     assertTrue(matcher.matches(HIGHEST, message));
     assertFalse(matcher.matches(TRACE, message));
 
-    matcher = parser.parse("level(WARN)");
+    matcher = parser.parseMessageMatcher("level(WARN)");
 
     when(message.getLevel()).thenReturn(Level.Shared.ERROR);
     assertTrue(matcher.matches(HIGHEST, message));
     assertTrue(matcher.matches(WARN, message));
     assertFalse(matcher.matches(INFO, message));
 
-    matcher = parser.parse("error");
+    matcher = parser.parseMessageMatcher("error");
 
     when(message.getLevel()).thenReturn(Level.Shared.ERROR);
     assertTrue(matcher.matches(HIGHEST, message));
     assertFalse(matcher.matches(WARN, message));
 
     assertThrowsExactly(MessageMatcherParserException.class,
-        () -> parser.parse("level(tracer)"));
+        () -> parser.parseMessageMatcher("level(tracer)"));
   }
 
 
@@ -357,7 +357,7 @@ class MessageMatcherParserTest
   @SuppressWarnings({ "unchecked", "ResultOfMethodCallIgnored" })
   void testThrowableAtom()
   {
-    var matcher = PARSER.parse("throwable");
+    var matcher = PARSER.parseMessageMatcher("throwable");
 
     assertFalse(matcher.isTagSelector());
 
@@ -371,7 +371,7 @@ class MessageMatcherParserTest
     when(message.getThrowable()).thenReturn(new NullPointerException());
     assertTrue(matcher.matches(HIGHEST, message));
 
-    matcher = PARSER.parse("throwable(java.lang.Exception)");
+    matcher = PARSER.parseMessageMatcher("throwable(java.lang.Exception)");
 
     when(message.getThrowable()).thenReturn(new NullPointerException());
     assertTrue(matcher.matches(HIGHEST, message));
@@ -380,10 +380,10 @@ class MessageMatcherParserTest
     assertFalse(matcher.matches(HIGHEST, message));
 
     assertThrowsExactly(MessageMatcherParserException.class,
-        () -> PARSER.parse("throwable(java.lang.String)"));
+        () -> PARSER.parseMessageMatcher("throwable(java.lang.String)"));
 
     assertThrowsExactly(MessageMatcherParserException.class,
-        () -> PARSER.parse("throwable(aa.bb.cc.dd.ee.Class)"));
+        () -> PARSER.parseMessageMatcher("throwable(aa.bb.cc.dd.ee.Class)"));
   }
 
 
@@ -398,10 +398,10 @@ class MessageMatcherParserTest
       put("msg", "message");
     }}));
 
-    assertTrue(PARSER.parse("has-param('msg-null')").matches(HIGHEST, message));
-    assertTrue(PARSER.parse("has-param('msg')").matches(HIGHEST, message));
-    assertFalse(PARSER.parse("has-param('text')").matches(HIGHEST, message));
-    assertSame(none(), PARSER.parse("has-param('')"));
+    assertTrue(PARSER.parseMessageMatcher("has-param('msg-null')").matches(HIGHEST, message));
+    assertTrue(PARSER.parseMessageMatcher("has-param('msg')").matches(HIGHEST, message));
+    assertFalse(PARSER.parseMessageMatcher("has-param('text')").matches(HIGHEST, message));
+    assertSame(none(), PARSER.parseMessageMatcher("has-param('')"));
   }
 
 
@@ -416,10 +416,10 @@ class MessageMatcherParserTest
       put("msg", "message");
     }}));
 
-    assertFalse(PARSER.parse("has-param-value('msg-null')").matches(HIGHEST, message));
-    assertTrue(PARSER.parse("has-param-value('msg')").matches(HIGHEST, message));
-    assertFalse(PARSER.parse("has-param-value('text')").matches(HIGHEST, message));
-    assertSame(none(), PARSER.parse("has-param-value('')"));
+    assertFalse(PARSER.parseMessageMatcher("has-param-value('msg-null')").matches(HIGHEST, message));
+    assertTrue(PARSER.parseMessageMatcher("has-param-value('msg')").matches(HIGHEST, message));
+    assertFalse(PARSER.parseMessageMatcher("has-param-value('text')").matches(HIGHEST, message));
+    assertSame(none(), PARSER.parseMessageMatcher("has-param-value('')"));
   }
 
 
@@ -427,7 +427,7 @@ class MessageMatcherParserTest
   @SuppressWarnings("unchecked")
   void testCompoundAnd()
   {
-    var matcher = PARSER.parse("throwable and error and message('ID')");
+    var matcher = PARSER.parseMessageMatcher("throwable and error and message('ID')");
 
     val message = (Message<Object>)mock(Message.class);
 
@@ -438,7 +438,7 @@ class MessageMatcherParserTest
     assertTrue(matcher.matches(HIGHEST, message));
     assertFalse(matcher.matches(DEBUG, message));
 
-    matcher = PARSER.parse("and(throwable, message('ID'))");
+    matcher = PARSER.parseMessageMatcher("and(throwable, message('ID'))");
     assertTrue(matcher.matches(HIGHEST, message));
 
     when(message.getMessageId()).thenReturn("??");
@@ -450,7 +450,7 @@ class MessageMatcherParserTest
   @SuppressWarnings("unchecked")
   void testCompoundOr()
   {
-    var matcher = PARSER.parse("throwable or error or message('ID')");
+    var matcher = PARSER.parseMessageMatcher("throwable or error or message('ID')");
 
     val message = (Message<Object>)mock(Message.class);
 
@@ -464,7 +464,7 @@ class MessageMatcherParserTest
     assertTrue(matcher.matches(HIGHEST, message));
     assertTrue(matcher.matches(DEBUG, message));
 
-    matcher = PARSER.parse("or(error, message('ID'))");
+    matcher = PARSER.parseMessageMatcher("or(error, message('ID'))");
     assertTrue(matcher.matches(HIGHEST, message));
     assertTrue(matcher.matches(DEBUG, message));
 
@@ -478,7 +478,7 @@ class MessageMatcherParserTest
   @SuppressWarnings("unchecked")
   void testCompoundNot()
   {
-    var matcher = PARSER.parse("not(throwable)");
+    var matcher = PARSER.parseMessageMatcher("not(throwable)");
 
     val message = (Message<Object>)mock(Message.class);
 
@@ -488,7 +488,7 @@ class MessageMatcherParserTest
     when(message.getThrowable()).thenReturn(null);
     assertTrue(matcher.matches(HIGHEST, message));
 
-    matcher = PARSER.parse("(info)");
+    matcher = PARSER.parseMessageMatcher("(info)");
 
     when(message.getLevel()).thenReturn(WARN);
     assertTrue(matcher.matches(HIGHEST, message));
@@ -502,7 +502,7 @@ class MessageMatcherParserTest
   void testLexerError()
   {
     assertTrue(assertThrowsExactly(MessageMatcherParserException.class,
-        () -> PARSER.parse("all-of%("))
+        () -> PARSER.parseMessageMatcher("all-of%("))
         .getMessage().startsWith("unexpected input"));
   }
 
@@ -511,14 +511,14 @@ class MessageMatcherParserTest
   @SuppressWarnings("ResultOfMethodCallIgnored")
   void testParserError()
   {
-    assertThrowsExactly(MessageMatcherParserException.class, () -> PARSER.parse(""));
+    assertThrowsExactly(MessageMatcherParserException.class, () -> PARSER.parseMessageMatcher(""));
 
     assertTrue(assertThrowsExactly(MessageMatcherParserException.class,
-        () -> PARSER.parse("all-of("))
+        () -> PARSER.parseMessageMatcher("all-of("))
         .getMessage().startsWith("incomplete matcher"));
 
     assertTrue(assertThrowsExactly(MessageMatcherParserException.class,
-        () -> PARSER.parse("all-of(all-of)"))
+        () -> PARSER.parseMessageMatcher("all-of(all-of)"))
         .getMessage().startsWith("mismatched input"));
   }
 
