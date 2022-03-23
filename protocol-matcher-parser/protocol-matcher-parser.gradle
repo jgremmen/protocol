@@ -58,12 +58,6 @@ dependencies {
 }
 
 
-generateGrammarSource {
-  outputDirectory = file("${buildDir}/generated-src/antlr/main/de/sayayi/lib/protocol/matcher")
-  arguments += [ '-package', 'de.sayayi.lib.protocol.matcher' ]
-}
-
-
 sourcesJar {
   dependsOn generateGrammarSource
 
@@ -91,6 +85,6 @@ clean {
 
 idea {
   module {
-    sourceDirs += file("${buildDir}/generated-src/antlr/main")
+    sourceDirs += generateGrammarSource.outputDirectory
   }
 }
