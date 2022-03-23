@@ -1,5 +1,5 @@
 include "protocol-core"
-include "protocol-matcher-parser"
+include "protocol-message-matcher"
 
 rootProject.name = 'protocol'
 rootProject.children.each {project ->
