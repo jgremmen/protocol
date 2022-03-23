@@ -30,7 +30,7 @@ task delombok(type: DelombokTask, dependsOn: compileJava) {
   }
 
   doFirst {
-    outputDir.deleteDir();
+    outputDir.deleteDir()
   }
 }
 
@@ -87,6 +87,6 @@ clean {
 
 idea {
   module {
-    sourceDirs += generateGrammarSource.outputDirectory
+    generatedSourceDirs += generateGrammarSource.outputDirectory
   }
 }
