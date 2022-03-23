@@ -87,3 +87,10 @@ clean {
     include "**/*.tokens"
   }
 }
+
+
+idea {
+  module {
+    sourceDirs += file("${buildDir}/generated-src/antlr/main")
+  }
+}

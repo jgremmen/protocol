@@ -70,7 +70,7 @@ public class MatcherParser
     val matcherParseTree =
         createParser(matcherText).parseMatcher();
 
-    walk(new ParserListener(matcherText), matcherParseTree);
+    walk(new Listener(matcherText), matcherParseTree);
 
     return matcherParseTree.matcher;
   }
@@ -82,7 +82,7 @@ public class MatcherParser
     val tagSelectorParseTree =
         createParser(tagSelectorText).parseTagSelector();
 
-    walk(new ParserListener(tagSelectorText), tagSelectorParseTree);
+    walk(new Listener(tagSelectorText), tagSelectorParseTree);
 
     return tagSelectorParseTree.selector;
   }
@@ -192,7 +192,7 @@ public class MatcherParser
 
 
   @RequiredArgsConstructor(access = PRIVATE)
-  private final class ParserListener extends MessageMatcherParserBaseListener
+  private final class Listener extends MessageMatcherBaseListener
   {
     private final String matcherText;
 

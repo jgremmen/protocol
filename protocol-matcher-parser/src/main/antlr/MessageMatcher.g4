@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-parser grammar MessageMatcherParser;
+grammar MessageMatcher;
 
 
 options {
   language = Java;
-  tokenVocab = MessageMatcherLexer;
 }
 
 
@@ -28,6 +27,8 @@ import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.TagSelector;
 }
 
+
+// parser
 
 parseMatcher returns [MessageMatcher matcher]
         : compoundMatcher EOF
@@ -108,4 +109,119 @@ levelShared returns [Level.Shared lvl]
 
 string returns [String str]
         : STRING
+        ;
+
+
+// lexer
+
+ANY
+        : 'any'
+        ;
+NONE
+        : 'none'
+        ;
+NOT
+        : 'not'
+        ;
+THROWABLE
+        : 'throwable'
+        ;
+TAG
+        : 'tag'
+        ;
+ANY_OF
+        : 'any-of'
+        ;
+ALL_OF
+        : 'all-of'
+        ;
+NONE_OF
+        : 'none-of'
+        ;
+HAS_PARAM
+        : 'has-param'
+        ;
+HAS_PARAM_VALUE
+        : 'has-param-value'
+        ;
+DEBUG
+        : 'debug'
+        ;
+INFO
+        : 'info'
+        ;
+WARN
+        : 'warn'
+        ;
+ERROR
+        : 'error'
+        ;
+LEVEL
+        : 'level'
+        ;
+MESSAGE
+        : 'message'
+        ;
+IN_GROUP
+        : 'in-group'
+        ;
+IN_GROUP_REGEX
+        : 'in-group-regex'
+        ;
+IN_ROOT
+        : 'in-root'
+        ;
+AND
+        : 'and'
+        ;
+OR
+        : 'or'
+        ;
+
+L_PAREN
+        : '('
+        ;
+R_PAREN
+        : ')'
+        ;
+COMMA
+        : ','
+        ;
+
+STRING
+        : '\'' (~['\\] | EscapeSequence)* '\''
+        | '"' (~["\\] | EscapeSequence)* '"'
+        ;
+
+QUALIFIED_CLASS_NAME
+        : IDENTIFIER ('.' IDENTIFIER)+
+        ;
+
+IDENTIFIER
+        : Letter LetterOrDigit*
+        ;
+
+WS
+        : ' '+ -> skip
+        ;
+
+fragment LetterOrDigit
+        : Letter
+        | [0-9]
+        ;
+
+fragment Letter
+        : [a-zA-Z$_]                      // these are the "identifier letters" below 0x7F
+        | ~[\u0000-\u007F\uD800-\uDBFF]   // covers all characters above 0x7F which are not a surrogate
+        | [\uD800-\uDBFF] [\uDC00-\uDFFF] // covers UTF-16 surrogate pairs encodings for U+10000 to U+10FFFF
+        ;
+
+fragment EscapeSequence
+        : '\\' ["'\\]
+        | '\\x' Hex Hex
+        | '\\u' Hex Hex Hex Hex
+        ;
+
+fragment Hex
+        : [0-9a-fA-F]
         ;
