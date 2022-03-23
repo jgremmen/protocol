@@ -18,6 +18,9 @@ package de.sayayi.lib.protocol.matcher;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.exception.MatcherParserException;
+import de.sayayi.lib.protocol.matcher.antlr.MessageMatcherBaseListener;
+import de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer;
+import de.sayayi.lib.protocol.matcher.antlr.MessageMatcherParser;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.BufferedTokenStream;
@@ -40,9 +43,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
-import static de.sayayi.lib.protocol.matcher.MessageMatcherParser.*;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.inGroup;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.inGroupRegex;
+import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherParser.*;
 import static java.lang.Character.digit;
 import static java.util.Arrays.fill;
 import static java.util.Locale.ROOT;

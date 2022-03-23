@@ -61,9 +61,11 @@ dependencies {
 sourcesJar {
   dependsOn generateGrammarSource
 
+  include "**/*.g4"
+  include "**/*.java"
+
   exclude "**/*.tokens"
   exclude "**/*.interp"
-  exclude "**/*.g4"
   exclude "gen/**"
 }
 

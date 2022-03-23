@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import static de.sayayi.lib.protocol.matcher.MessageMatcherLexer.*;
+import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.*;
 import static lombok.AccessLevel.PRIVATE;
 
 

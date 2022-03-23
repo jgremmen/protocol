@@ -22,7 +22,7 @@ options {
 
 
 @header {
-package de.sayayi.lib.protocol.matcher;
+package de.sayayi.lib.protocol.matcher.antlr;
 
 import de.sayayi.lib.protocol.matcher.MessageMatcher;
 import de.sayayi.lib.protocol.Level;
