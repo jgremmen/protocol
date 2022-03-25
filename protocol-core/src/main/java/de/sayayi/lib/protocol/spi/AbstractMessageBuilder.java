@@ -18,7 +18,6 @@ package de.sayayi.lib.protocol.spi;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol.MessageParameterBuilder;
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
-import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor.MessageWithId;
 
 import lombok.val;
@@ -28,8 +27,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
+import static de.sayayi.lib.protocol.ProtocolFactory.DEFAULT_TAG_NAME;
 import static java.util.Objects.requireNonNull;
 
 
@@ -40,7 +39,8 @@ import static java.util.Objects.requireNonNull;
  * @since 0.1.0
  */
 @SuppressWarnings({"unchecked", "java:S100"})
-abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P extends MessageParameterBuilder<M>>
+abstract class AbstractMessageBuilder
+    <M,B extends ProtocolMessageBuilder<M>,P extends MessageParameterBuilder<M>>
     extends AbstractBuilder<M,B>
     implements ProtocolMessageBuilder<M>
 {
@@ -56,8 +56,8 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
 
     this.level = level;
 
-    tags = new HashSet<>();
-    tags.add(ProtocolFactory.DEFAULT_TAG_NAME);
+    tags = new HashSet<>(8);
+    tags.add(DEFAULT_TAG_NAME);
   }
 
 
@@ -68,10 +68,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   @Override
   public @NotNull B forTag(@NotNull String tagName)
   {
-    val tagDef = protocol.getFactory().getTagByName(tagName);
-
-    if (tagDef.matches(level))
-      tags.add(tagName);
+    tags.add(requireNonNull(tagName, "tagName must not be null"));
 
     return (B)this;
   }
@@ -90,7 +87,7 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   @Override
   public @NotNull B withThrowable(@NotNull Throwable throwable)
   {
-    this.throwable = throwable;
+    this.throwable = requireNonNull(throwable, "throwable must not be null");
 
     return (B)this;
   }
@@ -107,7 +104,8 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   @Override
   public @NotNull P withMessage(@NotNull M message)
   {
-    val msg = new ProtocolMessageEntry<>(protocol, level, message0_resolveTagNames(), throwable,
+    val msg = new ProtocolMessageEntry<>(protocol, level, protocol.getPropagatedTags(tags),
+        throwable,
         new GenericMessageWithId<>(
             protocol.getFactory().getMessageProcessor().getIdFromMessage(message),
             requireNonNull(message, "message must not be null")),
@@ -122,24 +120,11 @@ abstract class AbstractMessageBuilder<M,B extends ProtocolMessageBuilder<M>,P ex
   @SuppressWarnings("squid:S2583")
   private @NotNull P message0(@NotNull MessageWithId<M> messageWithId)
   {
-    val msg = new ProtocolMessageEntry<>(protocol, level, message0_resolveTagNames(), throwable,
-        messageWithId, protocol.parameterMap);
+    val msg = new ProtocolMessageEntry<>(protocol, level, protocol.getPropagatedTags(tags),
+        throwable, messageWithId, protocol.parameterMap);
 
     protocol.entries.add(msg);
 
     return createMessageParameterBuilder(msg);
-  }
-
-
-  private @NotNull Set<String> message0_resolveTagNames()
-  {
-    val resolvedTags = new TreeSet<String>();
-
-    for(val tag: protocol.getPropagatedTags(tags))
-      for(val impliedTagDef: protocol.getFactory().getTagByName(tag).getImpliedTags())
-        if (impliedTagDef.matches(level))
-          resolvedTags.add(impliedTagDef.getName());
-
-    return resolvedTags;
   }
 }

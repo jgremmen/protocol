@@ -68,11 +68,10 @@ public class MessageMatchersTest
   {
     val factory = StringProtocolFactory.createPlainTextFactory();
     val protocol = factory.createProtocol();
-    val tagGui = factory.createTag("gui").getTagDef();
 
     protocol.debug().forTag("gui").message("Test");
 
-    assertTrue(protocol.matches(hasTag(tagGui)));
+    assertTrue(protocol.matches(hasTag("gui")));
     assertTrue(protocol.matches(hasTag(DEFAULT_TAG_NAME)));
     assertFalse(protocol.matches(hasTag("support")));
   }

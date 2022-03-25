@@ -15,12 +15,11 @@
  */
 package de.sayayi.lib.protocol;
 
+import de.sayayi.lib.protocol.matcher.MessageMatchers;
 import org.junit.jupiter.api.Test;
 
 import lombok.val;
 
-import static de.sayayi.lib.protocol.Level.Shared.INFO;
-import static de.sayayi.lib.protocol.TagDef.MatchCondition.AT_LEAST;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.hasTag;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.isDebug;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.isError;
@@ -36,15 +35,14 @@ public class TagPropagationTest
   public void testProtocolPropagation()
   {
     val factory = StringProtocolFactory.createPlainTextFactory();
-    val uiTagDef = factory.createTag("ui").match(AT_LEAST, INFO).getTagDef();
 
     val protocol = factory.createProtocol()
-        .propagate(factory.getDefaultTag().asSelector()).to("ui");
+        .propagate(MessageMatchers.any().asTagSelector()).to("ui");
 
     protocol.debug().message("debug")
-            .warn().message("error");
+            .warn().message("warn");
 
-    assertEquals(0, protocol.getVisibleEntryCount(isError().and(hasTag(uiTagDef))));
-    assertEquals(1, protocol.getVisibleEntryCount(isDebug().and(hasTag(uiTagDef))));
+    assertEquals(0, protocol.getVisibleEntryCount(isError().and(hasTag("ui"))));
+    assertEquals(2, protocol.getVisibleEntryCount(isDebug().and(hasTag("ui"))));
   }
 }

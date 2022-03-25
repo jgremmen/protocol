@@ -575,8 +575,6 @@ public interface Protocol<M> extends ProtocolQueryable
      * @param tagName  tag to associate with the new message, never {@code null}
      *
      * @return  this instance
-     *
-     * @see ProtocolFactory#getTagByName(String)
      */
     @Contract("_ -> this")
     @NotNull ProtocolMessageBuilder<M> forTag(@NotNull String tagName);
@@ -590,8 +588,6 @@ public interface Protocol<M> extends ProtocolQueryable
      * @param tagNames  names of the tags to associate with the new message, never {@code null}
      *
      * @return  this instance
-     *
-     * @see ProtocolFactory#getTagByName(String)
      */
     @Contract("_ -> this")
     @NotNull ProtocolMessageBuilder<M> forTags(@NotNull String ... tagNames);

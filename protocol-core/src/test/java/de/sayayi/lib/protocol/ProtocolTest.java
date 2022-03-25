@@ -22,7 +22,6 @@ import lombok.val;
 
 import static de.sayayi.lib.protocol.Level.Shared.DEBUG;
 import static de.sayayi.lib.protocol.Level.Shared.INFO;
-import static de.sayayi.lib.protocol.TagDef.MatchCondition.AT_LEAST;
 
 
 /**
@@ -35,10 +34,6 @@ public class ProtocolTest
   public void testBasics()
   {
     val factory = new StringProtocolFactory(ToStringMessageFormatter.IDENTITY);
-
-    factory.createTag("ui").match(AT_LEAST, INFO)
-           .createTag("technical").dependsOn("ui").implies("system");
-
     val protocol = factory.createProtocol();
 
     protocol.add(DEBUG).message("Just sayin'")

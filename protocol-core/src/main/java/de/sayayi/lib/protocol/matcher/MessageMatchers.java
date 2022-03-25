@@ -19,7 +19,6 @@ import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolEntry.Message;
 import de.sayayi.lib.protocol.ProtocolGroup;
-import de.sayayi.lib.protocol.TagDef;
 import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.matcher.MessageMatcher.Junction;
 
@@ -105,12 +104,6 @@ public final class MessageMatchers
         return "hasThrowable(" + type.getName() + ')';
       }
     };
-  }
-
-
-  @Contract(value = "_ -> new", pure = true)
-  public static @NotNull Junction hasTag(@NotNull TagDef tag) {
-    return hasTag(tag.getName());
   }
 
 

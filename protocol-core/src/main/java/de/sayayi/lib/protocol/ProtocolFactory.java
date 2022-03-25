@@ -16,14 +16,12 @@
 package de.sayayi.lib.protocol;
 
 import de.sayayi.lib.protocol.Protocol.GenericMessage;
-import de.sayayi.lib.protocol.TagDef.MatchCondition;
 import de.sayayi.lib.protocol.message.processor.ResourceBundleMessageProcessor;
 import de.sayayi.lib.protocol.message.processor.StringMessageProcessor;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Set;
 import java.util.UUID;
 
 
@@ -42,8 +40,6 @@ public interface ProtocolFactory<M>
 {
   /**
    * Name of the default tag.
-   *
-   * @see #getDefaultTag()
    */
   String DEFAULT_TAG_NAME = "default";
 
@@ -77,83 +73,6 @@ public interface ProtocolFactory<M>
    */
   @Contract("-> new")
   @NotNull Protocol<M> createProtocol();
-
-
-  @Contract(value = "null -> false", pure = true)
-  boolean isValidTagName(String tagName);
-
-
-  @Contract(value = "_ -> new", mutates = "this")
-  @NotNull TagBuilder<M> createTag(@NotNull String name);
-
-
-  @Contract(pure = true, value = "_ -> new")
-  @NotNull TagBuilder<M> modifyTag(@NotNull String name);
-
-
-  @Contract(pure = true)
-  @NotNull TagDef getTagByName(@NotNull String name);
-
-
-  @Contract(value = "null -> false", pure = true)
-  boolean hasTag(String name);
-
-
-  /**
-   * Returns a set of all tag names registered with this factory.
-   *
-   * @return  set of all tag names registered with this factory, never {@code null}
-   */
-  @Contract(pure = true, value = "-> new")
-  @NotNull Set<String> getTagNames();
-
-
-  /**
-   * Returns a set of all tags registered with this factory.
-   *
-   * @return  set of all tags registered with this factory, never {@code null}
-   */
-  @Contract(pure = true, value = "-> new")
-  @NotNull Set<TagDef> getTagDefs();
-
-
-  /**
-   * Returns the default tag which is used for each message protocolled.
-   *
-   * @return  default tag, never {@code null}
-   */
-  @Contract(pure = true)
-  @NotNull TagDef getDefaultTag();
-
-
-
-
-  /**
-   * @param <M>  internal message object type
-   */
-  @SuppressWarnings("UnusedReturnValue")
-  interface TagBuilder<M> extends ProtocolFactory<M>
-  {
-    @Contract("_ -> this")
-    @NotNull TagBuilder<M> dependsOn(@NotNull String ... tagNames);
-
-
-    @Contract("_ -> this")
-    @NotNull TagBuilder<M> implies(@NotNull String ... tagNames);
-
-
-    @Contract("_, _ -> this")
-    @NotNull TagBuilder<M> match(@NotNull MatchCondition matchCondition, @NotNull Level matchLevel);
-
-
-    /**
-     * Returns the tag definition instance build by this builder.
-     *
-     * @return  tag definition instance
-     */
-    @Contract(pure = true)
-    @NotNull TagDef getTagDef();
-  }
 
 
 
