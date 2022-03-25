@@ -505,7 +505,7 @@ final class ProtocolGroupImpl<M>
       extends AbstractPropagationBuilder<M,ProtocolGroup.ProtocolMessageBuilder<M>>
       implements ProtocolGroup.TargetTagBuilder<M>
   {
-    PropagationBuilder(TagSelector tagSelector) {
+    PropagationBuilder(@NotNull TagSelector tagSelector) {
       super(ProtocolGroupImpl.this, tagSelector);
     }
 
