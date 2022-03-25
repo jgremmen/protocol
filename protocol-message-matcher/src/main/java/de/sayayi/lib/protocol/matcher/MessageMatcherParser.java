@@ -18,6 +18,7 @@ package de.sayayi.lib.protocol.matcher;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.exception.MessageMatcherParserException;
+import de.sayayi.lib.protocol.matcher.antlr.AbstractVocabulary;
 import de.sayayi.lib.protocol.matcher.antlr.MessageMatcherBaseListener;
 import de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer;
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -40,8 +41,6 @@ import lombok.val;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.function.Function;
 
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.inGroup;
@@ -158,6 +157,13 @@ public class MessageMatcherParser
   }
 
 
+  @Contract("_, _, _ -> fail")
+  private void syntaxError(@NotNull String matcherText, @NotNull ParserRuleContext ctx,
+                           @NotNull String errorMsg) {
+    syntaxError(matcherText, ctx.getStart(), errorMsg, null);
+  }
+
+
   @Contract("_, _, _, _ -> fail")
   private void syntaxError(@NotNull String matcherText, @NotNull Token token,
                            @NotNull String errorMsg, RecognitionException ex)
@@ -187,7 +193,7 @@ public class MessageMatcherParser
 
     @Override
     public Vocabulary getVocabulary() {
-      return MatcherVocabulary.INSTANCE;
+      return VOC;
     }
 
 
@@ -216,7 +222,7 @@ public class MessageMatcherParser
 
     @Override
     public Vocabulary getVocabulary() {
-      return MatcherVocabulary.INSTANCE;
+      return VOC;
     }
   }
 
@@ -301,7 +307,10 @@ public class MessageMatcherParser
         }
 
         if (clazz == null || !Throwable.class.isAssignableFrom(clazz))
-          reportError("class not found or not of type Throwable", qualifiedName.getSymbol());
+        {
+          syntaxError(matcherText, qualifiedName.getSymbol(),
+              "class not found or not of type Throwable", null);
+        }
 
         //noinspection unchecked
         ctx.matcher = MessageMatchers.hasThrowable((Class<? extends Throwable>)clazz);
@@ -470,7 +479,7 @@ public class MessageMatcherParser
               return;
             }
 
-          reportError("unknown level '" + name + "'", ctx);
+          syntaxError(matcherText, ctx, "unknown level '" + name + "'");
         }
       }
     }
@@ -511,33 +520,14 @@ public class MessageMatcherParser
 
       ctx.str = s.toString();
     }
-
-
-    @Contract(value = "_, _ -> fail")
-    private void reportError(@NotNull String msg, @NotNull ParserRuleContext ctx) {
-      syntaxError(matcherText, ctx.getStart(), msg, null);
-    }
-
-
-    @Contract("_, _ -> fail")
-    @SuppressWarnings("SameParameterValue")
-    private void reportError(@NotNull String msg, @NotNull Token offendingToken) {
-      syntaxError(matcherText, offendingToken, msg, null);
-    }
   }
 
 
 
 
-  private enum MatcherVocabulary implements Vocabulary
-  {
-    INSTANCE;
-
-
-    private static final SortedMap<Integer,Name> VOCABULARY = new TreeMap<>();
-
-
-    static
+  private static final Vocabulary VOC = new AbstractVocabulary() {
+    @Override
+    protected void addTokens()
     {
       add(ANY, "'any'", "ANY");
       add(NONE, "'none'", "NONE");
@@ -568,46 +558,5 @@ public class MessageMatcherParser
       add(IDENTIFIER, "<identifier>", "IDENTIFIER");
       add(WS, "' '", "WS");
     }
-
-
-    @Override
-    public int getMaxTokenType() {
-      return VOCABULARY.lastKey();
-    }
-
-
-    @Override
-    public String getLiteralName(int tokenType) {
-      return VOCABULARY.containsKey(tokenType) ? VOCABULARY.get(tokenType).literal : null;
-    }
-
-
-    @Override
-    public String getSymbolicName(int tokenType) {
-      return VOCABULARY.containsKey(tokenType) ? VOCABULARY.get(tokenType).symbol : null;
-    }
-
-
-    @Override
-    public String getDisplayName(int tokenType)
-    {
-      return !VOCABULARY.containsKey(tokenType)
-          ? Integer.toString(tokenType) : VOCABULARY.get(tokenType).literal;
-    }
-
-
-    private static void add(int tokenType, String literal, String symbolic) {
-      VOCABULARY.put(tokenType, new Name(literal, symbolic));
-    }
-
-
-
-
-    @AllArgsConstructor(access = PRIVATE)
-    private static final class Name
-    {
-      final String literal;
-      final String symbol;
-    }
-  }
+  };
 }

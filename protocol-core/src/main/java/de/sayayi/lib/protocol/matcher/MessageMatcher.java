@@ -24,6 +24,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
+import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
+
 
 /**
  * @author Jeroen Gremmen
@@ -70,7 +72,7 @@ public interface MessageMatcher
     return new TagSelector() {
       @Override
       public boolean match(@NotNull Collection<String> tagNames) {
-        return matches(Level.Shared.HIGHEST, new TagNamesMessageAdapter(tagNames));
+        return matches(HIGHEST, new TagNamesMessageAdapter(tagNames));
       }
 
 
