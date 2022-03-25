@@ -243,7 +243,7 @@ public class MessageMatcherParser
 
     @Override
     public void exitParseTagSelector(ParseTagSelectorContext ctx) {
-      ctx.selector = ctx.compoundTagSelector().matcher.asTagSelector();
+      ctx.selector = ctx.compoundTagSelector().selector.asTagSelector();
     }
 
 
@@ -369,10 +369,10 @@ public class MessageMatcherParser
     @Override
     public void exitAndTagSelector(AndTagSelectorContext ctx)
     {
-      ctx.matcher = Conjunction.of(
+      ctx.selector = Conjunction.of(
           ctx.compoundTagSelector()
               .stream()
-              .map(ec -> ec.matcher)
+              .map(ec -> ec.selector)
               .toArray(MessageMatcher[]::new));
     }
 
@@ -380,10 +380,10 @@ public class MessageMatcherParser
     @Override
     public void exitOrTagSelector(OrTagSelectorContext ctx)
     {
-      ctx.matcher = Disjunction.of(
+      ctx.selector = Disjunction.of(
           ctx.compoundTagSelector()
               .stream()
-              .map(ec -> ec.matcher)
+              .map(ec -> ec.selector)
               .toArray(MessageMatcher[]::new));
     }
 
@@ -391,14 +391,14 @@ public class MessageMatcherParser
     @Override
     public void exitNotTagSelector(NotTagSelectorContext ctx)
     {
-      val expr = ctx.compoundTagSelector().matcher;
-      ctx.matcher = ctx.NOT() != null ? Negation.of(expr) : expr;
+      val expr = ctx.compoundTagSelector().selector;
+      ctx.selector = ctx.NOT() != null ? Negation.of(expr) : expr;
     }
 
 
     @Override
     public void exitToTagSelector(ToTagSelectorContext ctx) {
-      ctx.matcher = ctx.tagSelectorAtom().matcher.asJunction();
+      ctx.selector = ctx.tagSelectorAtom().selector.asJunction();
     }
 
 
@@ -407,7 +407,7 @@ public class MessageMatcherParser
     {
       val tagExpression = ctx.tagMatcherAtom();
 
-      ctx.matcher = tagExpression != null ? tagExpression.matcher
+      ctx.selector = tagExpression != null ? tagExpression.matcher
           : ctx.ANY() != null ? BooleanMatcher.ANY : BooleanMatcher.NONE;
     }
 

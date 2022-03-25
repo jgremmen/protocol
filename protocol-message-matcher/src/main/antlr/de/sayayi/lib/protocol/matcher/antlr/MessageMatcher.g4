@@ -64,7 +64,7 @@ matcherAtom returns [MessageMatcher matcher]
         | IN_ROOT                                                                 #inRootMatcher
         ;
 
-compoundTagSelector returns [MessageMatcher.Junction matcher]
+compoundTagSelector returns [MessageMatcher.Junction selector]
         : compoundTagSelector AND compoundTagSelector                             #andTagSelector
         | AND L_PAREN compoundTagSelector ( COMMA compoundTagSelector )+ R_PAREN  #andTagSelector
         | compoundTagSelector OR compoundTagSelector                              #orTagSelector
@@ -73,7 +73,7 @@ compoundTagSelector returns [MessageMatcher.Junction matcher]
         | tagSelectorAtom                                                         #toTagSelector
         ;
 
-tagSelectorAtom returns [MessageMatcher matcher]
+tagSelectorAtom returns [MessageMatcher selector]
         : ANY
         | NONE
         | tagMatcherAtom
