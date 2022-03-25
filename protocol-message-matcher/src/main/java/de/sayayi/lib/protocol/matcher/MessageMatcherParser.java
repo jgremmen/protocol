@@ -17,21 +17,14 @@ package de.sayayi.lib.protocol.matcher;
 
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.TagSelector;
-import de.sayayi.lib.protocol.exception.MessageMatcherParserException;
+import de.sayayi.lib.protocol.matcher.antlr.AbstractAntlr4Compiler;
 import de.sayayi.lib.protocol.matcher.antlr.AbstractVocabulary;
 import de.sayayi.lib.protocol.matcher.antlr.MessageMatcherBaseListener;
 import de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer;
 import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.LexerNoViableAltException;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.RecognitionException;
-import org.antlr.v4.runtime.Recognizer;
-import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.Vocabulary;
-import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import lombok.AllArgsConstructor;
@@ -45,6 +38,7 @@ import java.util.function.Function;
 
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.inGroup;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.inGroupRegex;
+import static de.sayayi.lib.protocol.matcher.antlr.AbstractAntlr4Compiler.Walker.WALK_EXITS_ONLY;
 import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.ALL_OF;
 import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.AND;
 import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.ANY;
@@ -75,11 +69,9 @@ import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.WARN;
 import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.WS;
 import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherParser.*;
 import static java.lang.Character.digit;
-import static java.util.Arrays.fill;
 import static java.util.Locale.ROOT;
 import static java.util.stream.Collectors.toList;
 import static lombok.AccessLevel.PRIVATE;
-import static org.antlr.v4.runtime.Token.EOF;
 
 
 /**
@@ -87,9 +79,10 @@ import static org.antlr.v4.runtime.Token.EOF;
  * @since 1.2.0
  */
 @AllArgsConstructor
-public class MessageMatcherParser
+public class MessageMatcherParser extends AbstractAntlr4Compiler
 {
-  public static final MessageMatcherParser INSTANCE = new MessageMatcherParser(null, null);
+  public static final MessageMatcherParser INSTANCE =
+      new MessageMatcherParser(null, null);
 
   protected final ClassLoader classLoader;
   protected final Function<String,Level> levelResolver;
@@ -98,96 +91,38 @@ public class MessageMatcherParser
   @Contract(pure = true)
   public @NotNull MessageMatcher parseMessageMatcher(@NotNull String messageMatcherText)
   {
-    val matcherParseTree =
-        createParser(messageMatcherText).parseMatcher();
-
-    walk(new Listener(messageMatcherText), matcherParseTree);
-
-    return matcherParseTree.matcher;
+    return compile(new Lexer(messageMatcherText), Parser::new, Parser::parseMatcher,
+        new Listener(messageMatcherText), ctx -> ctx.matcher);
   }
 
 
   @Contract(pure = true)
   public @NotNull TagSelector parseTagSelector(@NotNull String tagSelectorText)
   {
-    val tagSelectorParseTree =
-        createParser(tagSelectorText).parseTagSelector();
-
-    walk(new Listener(tagSelectorText), tagSelectorParseTree);
-
-    return tagSelectorParseTree.selector;
+    return compile(new Lexer(tagSelectorText), Parser::new, Parser::parseTagSelector,
+        new Listener(tagSelectorText), ctx -> ctx.selector);
   }
 
 
-  private @NotNull Parser createParser(@NotNull String matcherText)
+
+
+  private static final class Lexer extends MessageMatcherLexer implements CompilerInputSupplier
   {
-    val lexer = new Lexer(matcherText);
-    val parser = new Parser(lexer);
-
-    val errorListener = new BaseErrorListener() {
-      @Override
-      public void syntaxError(Recognizer<?,?> recognizer, Object offendingSymbol, int line,
-                              int charPositionInLine, String msg, RecognitionException ex) {
-        MessageMatcherParser.this.syntaxError(matcherText, (Token)offendingSymbol, msg, ex);
-      }
-    };
-
-    lexer.removeErrorListeners();
-    lexer.addErrorListener(errorListener);
-
-    parser.removeErrorListeners();
-    parser.addErrorListener(errorListener);
-    parser.setErrorHandler(MessageMatcherErrorStrategy.INSTANCE);
-
-    return parser;
-  }
+    private final @NotNull String matcherText;
 
 
-  private void walk(@NotNull ParseTreeListener listener, @NotNull ParseTree parseTree)
-  {
-    if (parseTree instanceof ParserRuleContext)
-    {
-      val children = ((ParserRuleContext)parseTree).children;
-      if (children != null)
-        for(val parseTreeChild: children)
-          walk(listener, parseTreeChild);
-
-      ((ParserRuleContext)parseTree).exitRule(listener);
-    }
-  }
-
-
-  @Contract("_, _, _ -> fail")
-  private void syntaxError(@NotNull String matcherText, @NotNull ParserRuleContext ctx,
-                           @NotNull String errorMsg) {
-    syntaxError(matcherText, ctx.getStart(), errorMsg, null);
-  }
-
-
-  @Contract("_, _, _, _ -> fail")
-  private void syntaxError(@NotNull String matcherText, @NotNull Token token,
-                           @NotNull String errorMsg, RecognitionException ex)
-  {
-    val text = new StringBuilder(errorMsg).append(":\n").append(matcherText).append('\n');
-    val startIndex = token.getStartIndex();
-    val stopIndex = token.getType() == EOF ? startIndex : token.getStopIndex();
-    val marker = new char[stopIndex + 1];
-
-    fill(marker, 0, startIndex, ' ');  // leading spaces
-    fill(marker, startIndex, stopIndex + 1, '^');  // marker
-
-    throw new MessageMatcherParserException(matcherText, startIndex, stopIndex,
-        text.append(marker).toString(), ex);
-  }
-
-
-
-
-  private static final class Lexer extends MessageMatcherLexer
-  {
     @SuppressWarnings("deprecation")
-    public Lexer(@NotNull String matcherText) {
+    public Lexer(@NotNull String matcherText)
+    {
       super(new ANTLRInputStream(matcherText));
+
+      this.matcherText = matcherText;
+    }
+
+
+    @Override
+    public @NotNull String getCompilerInput() {
+      return matcherText;
     }
 
 
@@ -213,10 +148,14 @@ public class MessageMatcherParser
 
 
 
-  private static final class Parser extends de.sayayi.lib.protocol.matcher.antlr.MessageMatcherParser
+  private static final class Parser
+      extends de.sayayi.lib.protocol.matcher.antlr.MessageMatcherParser
   {
-    private Parser(@NotNull Lexer lexer) {
+    private Parser(@NotNull Lexer lexer)
+    {
       super(new BufferedTokenStream(lexer));
+
+      setErrorHandler(MessageMatcherErrorStrategy.INSTANCE);
     }
 
 
@@ -230,9 +169,15 @@ public class MessageMatcherParser
 
 
   @RequiredArgsConstructor(access = PRIVATE)
-  private final class Listener extends MessageMatcherBaseListener
+  private final class Listener extends MessageMatcherBaseListener implements WalkerSupplier
   {
     private final String matcherText;
+
+
+    @Override
+    public @NotNull Walker getWalker() {
+      return WALK_EXITS_ONLY;
+    }
 
 
     @Override
