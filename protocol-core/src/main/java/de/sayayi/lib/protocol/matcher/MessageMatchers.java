@@ -75,7 +75,7 @@ public final class MessageMatchers
 
     @Override
     public String toString() {
-      return "hasThrowable()";
+      return "throwable";
     }
   };
 
@@ -101,7 +101,7 @@ public final class MessageMatchers
 
       @Override
       public String toString() {
-        return "hasThrowable(" + type.getName() + ')';
+        return "throwable(" + type.getName() + ')';
       }
     };
   }
@@ -130,7 +130,7 @@ public final class MessageMatchers
 
       @Override
       public String toString() {
-        return "hasTag(" + tagName + ')';
+        return "tag(" + tagName + ')';
       }
     };
   }
@@ -239,7 +239,7 @@ public final class MessageMatchers
 
       @Override
       public String toString() {
-        return "hasParam(" + parameterName + ')';
+        return "has-param(" + parameterName + ')';
       }
     };
   }
@@ -260,7 +260,7 @@ public final class MessageMatchers
 
       @Override
       public String toString() {
-        return "hasParamValue(" + parameterName + ')';
+        return "has-param-value(" + parameterName + ')';
       }
     };
   }
@@ -286,7 +286,7 @@ public final class MessageMatchers
 
       @Override
       public String toString() {
-        return "hasParamValue(" + parameterName + ',' + value + ')';
+        return "has-param-value(" + parameterName + ',' + value + ')';
       }
     };
   }
@@ -389,7 +389,7 @@ public final class MessageMatchers
 
       @Override
       public String toString() {
-        return "hasMessage(" + messageId + ')';
+        return "message(" + messageId + ')';
       }
     };
   }
@@ -404,7 +404,7 @@ public final class MessageMatchers
 
     @Override
     public String toString() {
-      return "inGroup()";
+      return "in-group";
     }
   };
 
@@ -462,7 +462,7 @@ public final class MessageMatchers
 
       @Override
       public String toString() {
-        return "inGroup(" + groupName + ')';
+        return "in-group('" + groupName + "')";
       }
     };
   }
@@ -503,7 +503,7 @@ public final class MessageMatchers
 
       @Override
       public String toString() {
-        return "inGroupRegex(" + groupNameRegex + ')';
+        return "in-group-regex('" + groupNameRegex + "')";
       }
     };
   }
@@ -518,7 +518,7 @@ public final class MessageMatchers
 
     @Override
     public String toString() {
-      return "inRoot()";
+      return "in-root";
     }
   };
 
@@ -561,7 +561,7 @@ public final class MessageMatchers
 
       @Override
       public String toString() {
-        return "inProtocol(" + protocolId + ')';
+        return "in-protocol(" + protocolId + ')';
       }
     };
   }

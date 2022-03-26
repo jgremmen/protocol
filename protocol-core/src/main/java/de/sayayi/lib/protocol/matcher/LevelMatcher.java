@@ -62,7 +62,7 @@ final class LevelMatcher implements Junction
 
   @Override
   public String toString() {
-    return "is(" + level + ')';
+    return "level(" + level + ')';
   }
 
 

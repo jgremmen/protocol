@@ -59,8 +59,7 @@ final class BooleanMatcher implements Junction
   @Override
   public @NotNull TagSelector asTagSelector()
   {
-    return new TagSelector()
-    {
+    return new TagSelector() {
       @Override
       public boolean match(@NotNull Collection<String> tagNames) {
         return matches;
@@ -77,6 +76,6 @@ final class BooleanMatcher implements Junction
 
   @Override
   public String toString() {
-    return matches ? "any()" : "none()";
+    return matches ? "any" : "none";
   }
 }

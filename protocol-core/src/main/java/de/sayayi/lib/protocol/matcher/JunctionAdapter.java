@@ -31,7 +31,7 @@ import static lombok.AccessLevel.PACKAGE;
  * @since 1.2.0
  */
 @RequiredArgsConstructor(access = PACKAGE)
-public final class JunctionAdapter implements MessageMatcher.Junction
+final class JunctionAdapter implements MessageMatcher.Junction
 {
   private final MessageMatcher matcher;
 

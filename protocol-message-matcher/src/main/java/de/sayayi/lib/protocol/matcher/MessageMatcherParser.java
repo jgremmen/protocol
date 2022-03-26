@@ -38,7 +38,7 @@ import java.util.function.Function;
 
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.inGroup;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.inGroupRegex;
-import static de.sayayi.lib.protocol.matcher.antlr.AbstractAntlr4Compiler.Walker.WALK_EXITS_ONLY;
+import static de.sayayi.lib.protocol.matcher.antlr.AbstractAntlr4Compiler.Walker.WALK_EXIT_RULES_ONLY;
 import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.ALL_OF;
 import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.AND;
 import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.ANY;
@@ -176,7 +176,7 @@ public class MessageMatcherParser extends AbstractAntlr4Compiler
 
     @Override
     public @NotNull Walker getWalker() {
-      return WALK_EXITS_ONLY;
+      return WALK_EXIT_RULES_ONLY;
     }
 
 

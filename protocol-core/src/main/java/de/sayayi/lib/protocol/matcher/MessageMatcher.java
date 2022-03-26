@@ -67,7 +67,7 @@ public interface MessageMatcher
   default @NotNull TagSelector asTagSelector()
   {
     if (!isTagSelector())
-      throw new UnsupportedOperationException();
+      throw new UnsupportedOperationException("matcher is not a pure tag selector");
 
     return new TagSelector() {
       @Override
