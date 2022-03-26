@@ -18,12 +18,15 @@ package de.sayayi.lib.protocol.matcher.antlr;
 import org.antlr.v4.runtime.Vocabulary;
 
 import lombok.AllArgsConstructor;
+import lombok.val;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import static java.util.stream.Collectors.joining;
 import static lombok.AccessLevel.PRIVATE;
 
 
@@ -46,8 +49,8 @@ public abstract class AbstractVocabulary implements Vocabulary
   protected abstract void addTokens();
 
 
-  protected void add(int tokenType, @NotNull String literal, @NotNull String symbolic) {
-    vocabulary.put(tokenType, new Name(literal, symbolic));
+  protected void add(int tokenType, @NotNull String literal, @NotNull String symbol) {
+    vocabulary.put(tokenType, new Name(literal, symbol));
   }
 
 
@@ -77,6 +80,21 @@ public abstract class AbstractVocabulary implements Vocabulary
   }
 
 
+  @Override
+  public String toString()
+  {
+    return vocabulary.entrySet()
+        .stream()
+        .map(this::toString_entry)
+        .collect(joining(",", "Vocabulary[", "]"));
+  }
+
+
+  private @NotNull String toString_entry(@NotNull Entry<Integer,Name> entry)
+  {
+    val name = entry.getValue();
+    return "{token=" + entry.getKey() + ",literal=" + name.literal + ",symbol=" + name.symbol + '}';
+  }
 
 
   @AllArgsConstructor(access = PRIVATE)
