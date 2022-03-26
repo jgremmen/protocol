@@ -75,6 +75,12 @@ final class BooleanMatcher implements Junction
 
 
   @Override
+  public @NotNull Junction asJunction() {
+    return this;
+  }
+
+
+  @Override
   public String toString() {
     return matches ? "any" : "none";
   }

@@ -54,6 +54,12 @@ final class Negation implements Junction
 
 
   @Override
+  public @NotNull Junction asJunction() {
+    return this;
+  }
+
+
+  @Override
   public String toString() {
     return "not(" + matcher + ')';
   }

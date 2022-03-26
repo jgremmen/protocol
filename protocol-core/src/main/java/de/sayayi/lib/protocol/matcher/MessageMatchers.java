@@ -74,6 +74,12 @@ public final class MessageMatchers
 
 
     @Override
+    public @NotNull Junction asJunction() {
+      return this;
+    }
+
+
+    @Override
     public String toString() {
       return "throwable";
     }
@@ -96,6 +102,12 @@ public final class MessageMatchers
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
         return type.isInstance(message.getThrowable());
+      }
+
+
+      @Override
+      public @NotNull Junction asJunction() {
+        return this;
       }
 
 
@@ -125,6 +137,12 @@ public final class MessageMatchers
       @Override
       public boolean isTagSelector() {
         return true;
+      }
+
+
+      @Override
+      public @NotNull Junction asJunction() {
+        return this;
       }
 
 
@@ -217,6 +235,12 @@ public final class MessageMatchers
 
 
       @Override
+      public @NotNull Junction asJunction() {
+        return this;
+      }
+
+
+      @Override
       public String toString() {
         return tagSelector.toString();
       }
@@ -238,6 +262,12 @@ public final class MessageMatchers
 
 
       @Override
+      public @NotNull Junction asJunction() {
+        return this;
+      }
+
+
+      @Override
       public String toString() {
         return "has-param(" + parameterName + ')';
       }
@@ -255,6 +285,12 @@ public final class MessageMatchers
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
         return message.getParameterValues().get(parameterName) != null;
+      }
+
+
+      @Override
+      public @NotNull Junction asJunction() {
+        return this;
       }
 
 
@@ -281,6 +317,12 @@ public final class MessageMatchers
         return value == null
             ? parameterValues.containsKey(parameterName) && parameterValues.get(parameterName) == null
             : Objects.equals(parameterValues.get(parameterName), value);
+      }
+
+
+      @Override
+      public @NotNull Junction asJunction() {
+        return this;
       }
 
 
@@ -388,6 +430,12 @@ public final class MessageMatchers
 
 
       @Override
+      public @NotNull Junction asJunction() {
+        return this;
+      }
+
+
+      @Override
       public String toString() {
         return "message(" + messageId + ')';
       }
@@ -461,6 +509,12 @@ public final class MessageMatchers
 
 
       @Override
+      public @NotNull Junction asJunction() {
+        return this;
+      }
+
+
+      @Override
       public String toString() {
         return "in-group('" + groupName + "')";
       }
@@ -502,6 +556,12 @@ public final class MessageMatchers
 
 
       @Override
+      public @NotNull Junction asJunction() {
+        return this;
+      }
+
+
+      @Override
       public String toString() {
         return "in-group-regex('" + groupNameRegex + "')";
       }
@@ -513,6 +573,12 @@ public final class MessageMatchers
     @Override
     public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
       return message.getProtocol().getParent() == null;
+    }
+
+
+    @Override
+    public @NotNull Junction asJunction() {
+      return this;
     }
 
 
@@ -556,6 +622,12 @@ public final class MessageMatchers
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
         return message.getProtocol().getId() == protocolId;
+      }
+
+
+      @Override
+      public @NotNull Junction asJunction() {
+        return this;
       }
 
 

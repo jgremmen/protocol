@@ -65,6 +65,12 @@ final class Disjunction implements Junction
 
 
   @Override
+  public @NotNull Junction asJunction() {
+    return this;
+  }
+
+
+  @Override
   public String toString()
   {
     return matchers.stream()

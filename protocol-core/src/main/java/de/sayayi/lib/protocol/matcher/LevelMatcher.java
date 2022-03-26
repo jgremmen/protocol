@@ -61,6 +61,12 @@ final class LevelMatcher implements Junction
 
 
   @Override
+  public @NotNull Junction asJunction() {
+    return this;
+  }
+
+
+  @Override
   public String toString() {
     return "level(" + level + ')';
   }
