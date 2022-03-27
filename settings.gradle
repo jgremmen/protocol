@@ -1,1 +1,7 @@
+include "protocol-core"
+include "protocol-message-matcher"
+
 rootProject.name = 'protocol'
+rootProject.children.each {project ->
+    project.buildFileName = "${project.name}.gradle"
+}

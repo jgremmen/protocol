@@ -1,0 +1,48 @@
+plugins {
+  id 'nebula.optional-base' version '7.0.0'
+  id "org.sonarqube" version "3.0"
+  id 'io.franzbecker.gradle-lombok' version '5.0.0'
+}
+
+
+description 'Protocol Library Core'
+
+
+lombok {
+  version = lombokVersion
+  sha256 = ""
+}
+
+
+import io.franzbecker.gradle.lombok.task.DelombokTask
+
+task delombok(type: DelombokTask, dependsOn: compileJava) {
+  javaLauncher.set(javaToolchains.launcherFor {
+    languageVersion = JavaLanguageVersion.of(8)
+  })
+
+  ext.outputDir = file("$buildDir/delombok")
+  outputs.dir(outputDir)
+
+  sourceSets.main.java.srcDirs.each {
+    inputs.dir(it)
+    args(it, "-d", outputDir)
+  }
+
+  doFirst {
+    outputDir.deleteDir();
+  }
+}
+
+
+apply from: file('../gradle/javadoc.gradle')
+apply from: file('../gradle/quality.gradle')
+apply from: file('../gradle/publishing.gradle')
+
+
+dependencies {
+  // java
+  implementation "org.unbescape:unbescape:${unbescapeVersion}", optional
+  implementation "de.sayayi.lib:message-format-nodep:${messageFormatVersion}", optional
+  implementation "com.google.code.gson:gson:${gsonVersion}", optional
+}
