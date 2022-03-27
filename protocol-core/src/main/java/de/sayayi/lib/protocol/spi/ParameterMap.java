@@ -140,7 +140,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
   @Override
-  public Spliterator<Entry<String,Object>> spliterator() {
+  public @NotNull Spliterator<Entry<String,Object>> spliterator() {
     return Spliterators.spliterator(iterator(), size(), ORDERED | SORTED | DISTINCT | NONNULL);
   }
 

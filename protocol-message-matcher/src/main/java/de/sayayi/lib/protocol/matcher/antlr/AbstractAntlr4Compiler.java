@@ -17,6 +17,7 @@ package de.sayayi.lib.protocol.matcher.antlr;
 
 import de.sayayi.lib.protocol.exception.MessageMatcherParserException;
 import org.antlr.v4.runtime.BaseErrorListener;
+import org.antlr.v4.runtime.ConsoleErrorListener;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -62,12 +63,12 @@ public abstract class AbstractAntlr4Compiler
       }
     };
 
-    lexer.removeErrorListeners();
+    lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
     lexer.addErrorListener(errorListener);
 
     val parser = parserSupplier.apply(lexer);
 
-    parser.removeErrorListeners();
+    parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
     parser.addErrorListener(errorListener);
 
     return executeRule.apply(parser);
@@ -93,17 +94,38 @@ public abstract class AbstractAntlr4Compiler
     if (listener instanceof WalkerSupplier)
       switch(((WalkerSupplier)listener).getWalker())
       {
-        case WALK_EXITS_ONLY:
+        case WALK_EXIT_RULES_ONLY:
           walkExitsOnly(listener, parseTree);
           return;
 
-        case WALK_NO_RECURSION:
+        case WALK_ENTRY_EXIT_RULES_ONLY:
+          walkEntryExitsOnly(listener, parseTree);
+          return;
+
+        case WALK_FULL_HEAP:
           new IterativeParseTreeWalker().walk(listener, parseTree);
           return;
       }
 
     // default walker
     ParseTreeWalker.DEFAULT.walk(listener, parseTree);
+  }
+
+
+  @Contract(mutates = "param2")
+  private void walkEntryExitsOnly(@NotNull ParseTreeListener listener, @NotNull ParseTree parseTree)
+  {
+    if (parseTree instanceof ParserRuleContext)
+    {
+      ((ParserRuleContext)parseTree).enterRule(listener);
+
+      val children = ((ParserRuleContext)parseTree).children;
+      if (children != null)
+        for(val parseTreeChild: children)
+          walkEntryExitsOnly(listener, parseTreeChild);
+
+      ((ParserRuleContext)parseTree).exitRule(listener);
+    }
   }
 
 
@@ -191,7 +213,12 @@ public abstract class AbstractAntlr4Compiler
 
 
 
-  public enum Walker {
-    WALK, WALK_NO_RECURSION, WALK_EXITS_ONLY
+
+  public enum Walker
+  {
+    WALK_FULL_RECURSIVE,
+    WALK_FULL_HEAP,
+    WALK_EXIT_RULES_ONLY,
+    WALK_ENTRY_EXIT_RULES_ONLY
   }
 }
