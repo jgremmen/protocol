@@ -22,6 +22,7 @@ import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.val;
 
 import org.jetbrains.annotations.Contract;
@@ -31,6 +32,7 @@ import java.util.ServiceLoader;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.Objects.requireNonNull;
+import static lombok.AccessLevel.PROTECTED;
 
 
 /**
@@ -47,12 +49,19 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
   @Getter private final @NotNull MessageProcessor<M> messageProcessor;
   @Getter private final @NotNull MessageFormatter<M> messageFormatter;
 
-  private final @NotNull ProtocolMessageMatcher messageMatcherDelegate;
+  private @NotNull ProtocolMessageMatcher messageMatcherDelegate;
 
 
   public GenericProtocolFactory(@NotNull MessageProcessor<M> messageProcessor,
                                 @NotNull MessageFormatter<M> messageFormatter) {
-    this(messageProcessor, messageFormatter, detectMessageMatcher());
+    this(messageProcessor, messageFormatter, Thread.currentThread().getContextClassLoader());
+  }
+
+
+  public GenericProtocolFactory(@NotNull MessageProcessor<M> messageProcessor,
+                                @NotNull MessageFormatter<M> messageFormatter,
+                                ClassLoader classLoader) {
+    this(messageProcessor, messageFormatter, detectMessageMatcher(classLoader));
   }
 
 
@@ -69,6 +78,19 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
         requireNonNull(messageMatcher, "messageMatcher must not be null");
 
     id = FACTORY_ID.incrementAndGet();
+  }
+
+
+  /**
+   * Associate a protocol message matcher with this factory,
+   * overriding the previous message matcher.
+   *
+   * @param messageMatcher   protocol message matcher instance
+   *
+   * @since 1.2.1
+   */
+  public void setMessageMatcher(@NotNull ProtocolMessageMatcher messageMatcher) {
+    messageMatcherDelegate = messageMatcher;
   }
 
 
@@ -97,27 +119,40 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 
 
   @Contract(pure = true)
-  protected static @NotNull ProtocolMessageMatcher detectMessageMatcher()
+  protected static @NotNull ProtocolMessageMatcher detectMessageMatcher(ClassLoader classLoader)
   {
     val messageMatcherIterator = ServiceLoader
-        .load(ProtocolMessageMatcher.class)
+        .load(ProtocolMessageMatcher.class, classLoader)
         .iterator();
 
+    // only 1 supported - take the first one
     if (messageMatcherIterator.hasNext())
       return messageMatcherIterator.next();
 
-    return new ProtocolMessageMatcher()
-    {
-      @Override
-      public @NotNull MessageMatcher parseMessageMatcher(@NotNull String messageMatcherExpression) {
-        throw new UnsupportedOperationException();
-      }
+    return new NotSuportedMessageMatcher();
+  }
 
 
-      @Override
-      public @NotNull TagSelector parseTagSelector(@NotNull String tagSelectorExpression) {
-        throw new UnsupportedOperationException();
-      }
-    };
+
+
+  @NoArgsConstructor(access = PROTECTED)
+  protected static final class NotSuportedMessageMatcher implements ProtocolMessageMatcher
+  {
+    @Override
+    public @NotNull MessageMatcher parseMessageMatcher(@NotNull String messageMatcherExpression) {
+      throw new UnsupportedOperationException();
+    }
+
+
+    @Override
+    public @NotNull TagSelector parseTagSelector(@NotNull String tagSelectorExpression) {
+      throw new UnsupportedOperationException();
+    }
+
+
+    @Override
+    public String toString() {
+      return "not supported";
+    }
   }
 }
