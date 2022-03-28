@@ -235,6 +235,11 @@ public interface ProtocolGroup<M> extends Protocol<M>
   @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull TagSelector tagSelector);
 
 
+  @Override
+  @Contract(value = "_ -> new", pure = true)
+  @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull String tagSelectorExpression);
+
+
   /**
    * <p>
    *   Set a parameter value.

@@ -329,6 +329,12 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
+  public @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull String tagSelectorExpression) {
+    return propagate(factory.parseTagSelector(tagSelectorExpression));
+  }
+
+
+  @Override
   public @NotNull ProtocolGroup<M> set(@NotNull String parameter, Object value)
   {
     parameterMap.put(parameter, value);
@@ -487,6 +493,12 @@ final class ProtocolGroupImpl<M>
     @Override
     public @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull TagSelector tagSelector) {
       return (ProtocolGroup.TargetTagBuilder<M>)super.propagate(tagSelector);
+    }
+
+
+    @Override
+    public @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull String tagSelectorExpression) {
+      return (ProtocolGroup.TargetTagBuilder<M>)super.propagate(tagSelectorExpression);
     }
 
 

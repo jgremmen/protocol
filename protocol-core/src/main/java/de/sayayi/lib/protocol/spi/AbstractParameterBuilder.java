@@ -187,6 +187,12 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
+  public @NotNull TargetTagBuilder<M> propagate(@NotNull String tagSelectorExpression) {
+    return protocol.propagate(tagSelectorExpression);
+  }
+
+
+  @Override
   public @NotNull Optional<ProtocolGroup<M>> getGroupByName(@NotNull String name) {
     return protocol.getGroupByName(name);
   }

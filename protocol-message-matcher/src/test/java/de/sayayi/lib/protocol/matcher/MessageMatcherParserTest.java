@@ -18,7 +18,6 @@ package de.sayayi.lib.protocol.matcher;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolEntry.Message;
-import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.exception.MessageMatcherParserException;
 import org.junit.jupiter.api.Test;
@@ -26,12 +25,7 @@ import org.junit.jupiter.api.Test;
 import lombok.val;
 import lombok.var;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
-
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 import static de.sayayi.lib.protocol.Level.Shared.DEBUG;
 import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
@@ -40,9 +34,7 @@ import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
 import static de.sayayi.lib.protocol.Level.Shared.WARN;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.any;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.none;
-import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableMap;
-import static java.util.Collections.unmodifiableSet;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
@@ -56,7 +48,7 @@ import static org.mockito.Mockito.when;
  * @author Jeroen Gremmen
  * @since 1.2.0
  */
-class MessageMatcherParserTest
+class MessageMatcherParserTest extends AbstractMatcherParserTest
 {
   private static final MessageMatcherParser PARSER = MessageMatcherParser.INSTANCE;
   private static final Level TRACE = () -> 50;
@@ -520,15 +512,5 @@ class MessageMatcherParserTest
     assertTrue(assertThrowsExactly(MessageMatcherParserException.class,
         () -> PARSER.parseMessageMatcher("all-of(all-of)"))
         .getMessage().startsWith("mismatched input"));
-  }
-
-
-  @Unmodifiable
-  private static @NotNull Set<String> asTagNameSet(@NotNull String ... s)
-  {
-    val set = new HashSet<>(asList(s));
-    set.add(ProtocolFactory.DEFAULT_TAG_NAME);
-
-    return unmodifiableSet(set);
   }
 }

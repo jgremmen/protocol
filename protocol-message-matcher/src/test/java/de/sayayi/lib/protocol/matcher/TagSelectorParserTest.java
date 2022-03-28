@@ -15,20 +15,10 @@
  */
 package de.sayayi.lib.protocol.matcher;
 
-import de.sayayi.lib.protocol.ProtocolFactory;
 import org.junit.jupiter.api.Test;
 
-import lombok.val;
 import lombok.var;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
-
-import java.util.HashSet;
-import java.util.Set;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableSet;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -37,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Jeroen Gremmen
  * @since 1.2.0
  */
-class TagSelectorParserTest
+class TagSelectorParserTest extends AbstractMatcherParserTest
 {
   private static final MessageMatcherParser PARSER = MessageMatcherParser.INSTANCE;
 
@@ -133,15 +123,5 @@ class TagSelectorParserTest
     assertTrue(matcher.match(asTagNameSet("mytag", "system")));
     assertFalse(matcher.match(asTagNameSet("ticket")));
     assertTrue(matcher.match(asTagNameSet("mytag")));
-  }
-
-
-  @Unmodifiable
-  private static @NotNull Set<String> asTagNameSet(@NotNull String ... s)
-  {
-    val set = new HashSet<>(asList(s));
-    set.add(ProtocolFactory.DEFAULT_TAG_NAME);
-
-    return unmodifiableSet(set);
   }
 }

@@ -36,7 +36,7 @@ import java.util.UUID;
  * @since 0.1.0
  */
 @SuppressWarnings("squid:S1214")
-public interface ProtocolFactory<M>
+public interface ProtocolFactory<M> extends ProtocolMessageMatcher
 {
   /**
    * Name of the default tag.

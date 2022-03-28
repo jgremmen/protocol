@@ -17,11 +17,17 @@ package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolFactory;
+import de.sayayi.lib.protocol.ProtocolMessageMatcher;
+import de.sayayi.lib.protocol.TagSelector;
+import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import lombok.Getter;
+import lombok.val;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ServiceLoader;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.Objects.requireNonNull;
@@ -40,17 +46,39 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 
   @Getter private final @NotNull MessageProcessor<M> messageProcessor;
   @Getter private final @NotNull MessageFormatter<M> messageFormatter;
+  @Getter private final @NotNull ProtocolMessageMatcher messageMatcher;
 
 
   public GenericProtocolFactory(@NotNull MessageProcessor<M> messageProcessor,
-                                @NotNull MessageFormatter<M> messageFormatter)
+                                @NotNull MessageFormatter<M> messageFormatter) {
+    this(messageProcessor, messageFormatter, detectMessageMatcher());
+  }
+
+
+  public GenericProtocolFactory(@NotNull MessageProcessor<M> messageProcessor,
+                                @NotNull MessageFormatter<M> messageFormatter,
+                                @NotNull ProtocolMessageMatcher messageMatcher)
   {
     this.messageProcessor =
         requireNonNull(messageProcessor, "messageProcessor must not be null");
     this.messageFormatter =
         requireNonNull(messageFormatter, "messageFormatter must not be null");
+    this.messageMatcher =
+        requireNonNull(messageMatcher, "messageMatcher must not be null");
 
     id = FACTORY_ID.incrementAndGet();
+  }
+
+
+  @Override
+  public @NotNull MessageMatcher parseMessageMatcher(@NotNull String messageMatcherText) {
+    return messageMatcher.parseMessageMatcher(messageMatcherText);
+  }
+
+
+  @Override
+  public @NotNull TagSelector parseTagSelector(@NotNull String tagSelectorText) {
+    return messageMatcher.parseTagSelector(tagSelectorText);
   }
 
 
@@ -63,5 +91,31 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
   @Override
   public @NotNull String toString() {
     return "ProtocolFactory[id=" + id + ']';
+  }
+
+
+  @Contract(pure = true)
+  protected static @NotNull ProtocolMessageMatcher detectMessageMatcher()
+  {
+    val messageMatcherIterator = ServiceLoader
+        .load(ProtocolMessageMatcher.class)
+        .iterator();
+
+    if (messageMatcherIterator.hasNext())
+      return messageMatcherIterator.next();
+
+    return new ProtocolMessageMatcher()
+    {
+      @Override
+      public @NotNull MessageMatcher parseMessageMatcher(@NotNull String messageMatcherText) {
+        throw new UnsupportedOperationException();
+      }
+
+
+      @Override
+      public @NotNull TagSelector parseTagSelector(@NotNull String tagSelectorText) {
+        throw new UnsupportedOperationException();
+      }
+    };
   }
 }
