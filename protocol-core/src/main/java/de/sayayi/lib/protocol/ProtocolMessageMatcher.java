@@ -27,10 +27,24 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface ProtocolMessageMatcher
 {
+  /**
+   * Create a message matcher based on a text expression.
+   *
+   * @param messageMatcherExpression  message matcher expression, not {@code null}
+   *
+   * @return  message matcher instance representing the expression, never {@code null}
+   */
   @Contract(pure = true)
-  @NotNull MessageMatcher parseMessageMatcher(@NotNull String messageMatcherText);
+  @NotNull MessageMatcher parseMessageMatcher(@NotNull String messageMatcherExpression);
 
 
+  /**
+   * Create a tag selector based on a text expression.
+   *
+   * @param tagSelectorExpression  tag selector expression, not {@code null}
+   *
+   * @return  tag selector instance representing the expression, never {@code null}
+   */
   @Contract(pure = true)
-  @NotNull TagSelector parseTagSelector(@NotNull String tagSelectorText);
+  @NotNull TagSelector parseTagSelector(@NotNull String tagSelectorExpression);
 }

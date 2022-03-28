@@ -46,7 +46,8 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 
   @Getter private final @NotNull MessageProcessor<M> messageProcessor;
   @Getter private final @NotNull MessageFormatter<M> messageFormatter;
-  @Getter private final @NotNull ProtocolMessageMatcher messageMatcher;
+
+  private final @NotNull ProtocolMessageMatcher messageMatcherDelegate;
 
 
   public GenericProtocolFactory(@NotNull MessageProcessor<M> messageProcessor,
@@ -63,7 +64,8 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
         requireNonNull(messageProcessor, "messageProcessor must not be null");
     this.messageFormatter =
         requireNonNull(messageFormatter, "messageFormatter must not be null");
-    this.messageMatcher =
+
+    messageMatcherDelegate =
         requireNonNull(messageMatcher, "messageMatcher must not be null");
 
     id = FACTORY_ID.incrementAndGet();
@@ -71,14 +73,14 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 
 
   @Override
-  public @NotNull MessageMatcher parseMessageMatcher(@NotNull String messageMatcherText) {
-    return messageMatcher.parseMessageMatcher(messageMatcherText);
+  public @NotNull MessageMatcher parseMessageMatcher(@NotNull String messageMatcherExpression) {
+    return messageMatcherDelegate.parseMessageMatcher(messageMatcherExpression);
   }
 
 
   @Override
-  public @NotNull TagSelector parseTagSelector(@NotNull String tagSelectorText) {
-    return messageMatcher.parseTagSelector(tagSelectorText);
+  public @NotNull TagSelector parseTagSelector(@NotNull String tagSelectorExpression) {
+    return messageMatcherDelegate.parseTagSelector(tagSelectorExpression);
   }
 
 
@@ -107,13 +109,13 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
     return new ProtocolMessageMatcher()
     {
       @Override
-      public @NotNull MessageMatcher parseMessageMatcher(@NotNull String messageMatcherText) {
+      public @NotNull MessageMatcher parseMessageMatcher(@NotNull String messageMatcherExpression) {
         throw new UnsupportedOperationException();
       }
 
 
       @Override
-      public @NotNull TagSelector parseTagSelector(@NotNull String tagSelectorText) {
+      public @NotNull TagSelector parseTagSelector(@NotNull String tagSelectorExpression) {
         throw new UnsupportedOperationException();
       }
     };

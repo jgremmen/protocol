@@ -509,17 +509,17 @@ public class MessageMatcherParser extends AbstractAntlr4Compiler
 
 
 
-  public static final class Default implements ProtocolMessageMatcher
+  public static final class Service implements ProtocolMessageMatcher
   {
     @Override
-    public @NotNull MessageMatcher parseMessageMatcher(@NotNull String messageMatcherText) {
-      return INSTANCE.parseMessageMatcher(messageMatcherText);
+    public @NotNull MessageMatcher parseMessageMatcher(@NotNull String messageMatcherExpression) {
+      return INSTANCE.parseMessageMatcher(messageMatcherExpression);
     }
 
 
     @Override
-    public @NotNull TagSelector parseTagSelector(@NotNull String tagSelectorText) {
-      return INSTANCE.parseTagSelector(tagSelectorText);
+    public @NotNull TagSelector parseTagSelector(@NotNull String tagSelectorExpression) {
+      return INSTANCE.parseTagSelector(tagSelectorExpression);
     }
   }
 }
