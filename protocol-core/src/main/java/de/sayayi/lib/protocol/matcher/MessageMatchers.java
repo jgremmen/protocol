@@ -213,38 +213,8 @@ public final class MessageMatchers
 
 
   @Contract(value = "_ -> new", pure = true)
-  public static @NotNull Junction is(@NotNull TagSelector tagSelector)
-  {
-    return new Junction() {
-      @Override
-      public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
-        return tagSelector.match(message.getTagNames());
-      }
-
-
-      @Override
-      public boolean isTagSelector() {
-        return true;
-      }
-
-
-      @Override
-      public @NotNull TagSelector asTagSelector() {
-        return tagSelector;
-      }
-
-
-      @Override
-      public @NotNull Junction asJunction() {
-        return this;
-      }
-
-
-      @Override
-      public String toString() {
-        return tagSelector.toString();
-      }
-    };
+  public static @NotNull Junction is(@NotNull TagSelector tagSelector) {
+    return tagSelector.asMessageMatcher().asJunction();
   }
 
 

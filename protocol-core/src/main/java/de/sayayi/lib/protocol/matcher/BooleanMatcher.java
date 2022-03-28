@@ -67,6 +67,12 @@ final class BooleanMatcher implements Junction
 
 
       @Override
+      public @NotNull MessageMatcher asMessageMatcher() {
+        return BooleanMatcher.this;
+      }
+
+
+      @Override
       public String toString() {
         return BooleanMatcher.this.toString();
       }
