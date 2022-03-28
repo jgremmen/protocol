@@ -36,7 +36,7 @@ import static lombok.AccessLevel.PRIVATE;
  */
 @RequiredArgsConstructor(access = PRIVATE)
 @EqualsAndHashCode(callSuper = false)
-final class BooleanMatcher implements Junction
+final class BooleanMatcher implements Junction, TagSelector
 {
   static final BooleanMatcher ANY = new BooleanMatcher(true);
   static final BooleanMatcher NONE = new BooleanMatcher(false);
@@ -51,32 +51,26 @@ final class BooleanMatcher implements Junction
 
 
   @Override
+  public boolean match(@NotNull Collection<String> tagNames) {
+    return matches;
+  }
+
+
+  @Override
   public boolean isTagSelector() {
     return true;
   }
 
 
   @Override
-  public @NotNull TagSelector asTagSelector()
-  {
-    return new TagSelector() {
-      @Override
-      public boolean match(@NotNull Collection<String> tagNames) {
-        return matches;
-      }
+  public @NotNull TagSelector asTagSelector() {
+    return this;
+  }
 
 
-      @Override
-      public @NotNull MessageMatcher asMessageMatcher() {
-        return BooleanMatcher.this;
-      }
-
-
-      @Override
-      public String toString() {
-        return BooleanMatcher.this.toString();
-      }
-    };
+  @Override
+  public @NotNull MessageMatcher asMessageMatcher() {
+    return this;
   }
 
 
