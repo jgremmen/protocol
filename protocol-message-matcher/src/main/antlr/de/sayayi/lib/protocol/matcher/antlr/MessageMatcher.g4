@@ -196,15 +196,19 @@ STRING
         ;
 
 QUALIFIED_CLASS_NAME
-        : IDENTIFIER ('.' IDENTIFIER)+
+        : PackageOrClassName ('.' PackageOrClassName)+
         ;
 
 IDENTIFIER
-        : Letter LetterOrDigit*
+        : Letter ('-' | LetterOrDigit+)*
         ;
 
 WS
         : ' '+ -> skip
+        ;
+
+fragment PackageOrClassName
+        : Letter LetterOrDigit*
         ;
 
 fragment LetterOrDigit
