@@ -49,6 +49,30 @@ public interface TagSelector
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
         return TagSelector.this.match(message.getTagNames());
       }
+
+
+      @Override
+      public boolean isTagSelector() {
+        return true;
+      }
+
+
+      @Override
+      public @NotNull TagSelector asTagSelector() {
+        return TagSelector.this;
+      }
+
+
+      @Override
+      public @NotNull Junction asJunction() {
+        return this;
+      }
+
+
+      @Override
+      public String toString() {
+        return TagSelector.this.toString();
+      }
     };
   }
 }
