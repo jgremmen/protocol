@@ -179,7 +179,6 @@ AND
 OR
         : 'or'
         ;
-
 L_PAREN
         : '('
         ;
@@ -189,20 +188,16 @@ R_PAREN
 COMMA
         : ','
         ;
-
 STRING
         : '\'' (~['\\] | EscapeSequence)* '\''
         | '"' (~["\\] | EscapeSequence)* '"'
         ;
-
 QUALIFIED_CLASS_NAME
         : PackageOrClassName ('.' PackageOrClassName)+
         ;
-
 IDENTIFIER
         : Letter ('-' | LetterOrDigit+)*
         ;
-
 WS
         : ' '+ -> skip
         ;

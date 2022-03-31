@@ -19,6 +19,8 @@ import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolEntry.Message;
 
+import lombok.val;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -27,6 +29,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static de.sayayi.lib.protocol.ProtocolFactory.DEFAULT_TAG_NAME;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableSet;
 
@@ -40,8 +43,13 @@ final class TagNamesMessageAdapter implements Message<Object>
   private final Set<String> tagNames;
 
 
-  TagNamesMessageAdapter(@NotNull Collection<String> tagNames) {
-    this.tagNames = unmodifiableSet(new HashSet<>(tagNames));
+  TagNamesMessageAdapter(@NotNull Collection<String> tagNames)
+  {
+    val tagNameSet = new HashSet<>(tagNames);
+
+    tagNameSet.add(DEFAULT_TAG_NAME);
+
+    this.tagNames = unmodifiableSet(tagNameSet);
   }
 
 
