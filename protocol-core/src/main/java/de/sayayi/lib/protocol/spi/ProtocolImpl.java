@@ -84,6 +84,12 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
 
 
   @Override
+  public @NotNull TargetTagBuilder<M> propagate(@NotNull String tagSelectorExpression) {
+    return propagate(factory.parseTagSelector(tagSelectorExpression));
+  }
+
+
+  @Override
   public @NotNull Protocol<M> set(@NotNull String parameter, Object value)
   {
     parameterMap.put(parameter, value);

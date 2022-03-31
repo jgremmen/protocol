@@ -16,6 +16,7 @@
 package de.sayayi.lib.protocol.matcher;
 
 import de.sayayi.lib.protocol.Level;
+import de.sayayi.lib.protocol.ProtocolMessageMatcher;
 import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.matcher.antlr.AbstractAntlr4Compiler;
 import de.sayayi.lib.protocol.matcher.antlr.AbstractVocabulary;
@@ -504,4 +505,21 @@ public class MessageMatcherParser extends AbstractAntlr4Compiler
       add(WS, "' '", "WS");
     }
   };
+
+
+
+
+  public static final class Service implements ProtocolMessageMatcher
+  {
+    @Override
+    public @NotNull MessageMatcher parseMessageMatcher(@NotNull String messageMatcherExpression) {
+      return INSTANCE.parseMessageMatcher(messageMatcherExpression);
+    }
+
+
+    @Override
+    public @NotNull TagSelector parseTagSelector(@NotNull String tagSelectorExpression) {
+      return INSTANCE.parseTagSelector(tagSelectorExpression);
+    }
+  }
 }

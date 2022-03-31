@@ -77,6 +77,12 @@ public interface MessageMatcher
 
 
       @Override
+      public @NotNull MessageMatcher asMessageMatcher() {
+        return MessageMatcher.this;
+      }
+
+
+      @Override
       public String toString() {
         return MessageMatcher.this.toString();
       }

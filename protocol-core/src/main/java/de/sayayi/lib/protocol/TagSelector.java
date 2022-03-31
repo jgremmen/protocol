@@ -15,6 +15,9 @@
  */
 package de.sayayi.lib.protocol;
 
+import de.sayayi.lib.protocol.ProtocolEntry.Message;
+import de.sayayi.lib.protocol.matcher.MessageMatcher;
+
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,4 +32,47 @@ public interface TagSelector
 {
   @Contract(pure = true)
   boolean match(@NotNull Collection<String> tagNames);
+
+
+  /**
+   * Converts this tag selector into a message matcher.
+   *
+   * @return  message matcher instance, never {@code null}
+   *
+   * @since 1.2.1
+   */
+  @Contract(pure = true)
+  default @NotNull MessageMatcher asMessageMatcher()
+  {
+    return new MessageMatcher.Junction() {
+      @Override
+      public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
+        return TagSelector.this.match(message.getTagNames());
+      }
+
+
+      @Override
+      public boolean isTagSelector() {
+        return true;
+      }
+
+
+      @Override
+      public @NotNull TagSelector asTagSelector() {
+        return TagSelector.this;
+      }
+
+
+      @Override
+      public @NotNull Junction asJunction() {
+        return this;
+      }
+
+
+      @Override
+      public String toString() {
+        return TagSelector.this.toString();
+      }
+    };
+  }
 }

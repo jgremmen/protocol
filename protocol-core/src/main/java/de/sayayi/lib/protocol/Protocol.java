@@ -125,8 +125,7 @@ public interface Protocol<M> extends ProtocolQueryable
    * </p>
    * <p>
    *   If a message is added with tag X and a propagation definition exists for X -&gt; Y then the
-   *   message will have both tags X and Y (as long as it matches the message level) as well as the
-   *   tags implicated by X and Y as defined for each tag itself.
+   *   message will have both tags X and Y.
    * </p>
    *
    * @param tagSelector  tag selector
@@ -135,6 +134,29 @@ public interface Protocol<M> extends ProtocolQueryable
    */
   @Contract(value = "_ -> new", pure = true)
   @NotNull TargetTagBuilder<M> propagate(@NotNull TagSelector tagSelector);
+
+
+  /**
+   * <p>
+   *   Prepare a tag propagation definition for this protocol.
+   * </p>
+   * <p>
+   *   Tag propagation means that a source tag automatically implies a target tag for each message
+   *   added to this protocol or its underlying protocol groups.
+   * </p>
+   * <p>
+   *   If a message is added with tag X and a propagation definition exists for X -&gt; Y then the
+   *   message will have both tags X and Y.
+   * </p>
+   *
+   * @param tagSelectorExpression  tag selector expression
+   *
+   * @return  propagation target tag builder instance, never {@code null}
+   *
+   * @since 1.2.1
+   */
+  @Contract(value = "_ -> new", pure = true)
+  @NotNull TargetTagBuilder<M> propagate(@NotNull String tagSelectorExpression);
 
 
   /**
@@ -434,8 +456,8 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
   /**
-   * Formats this protocol using the given {@code formatter} iterating over all elements matching
-   * {@code level} and {@code tagSelector}.
+   * Formats this protocol using the given {@code formatter} iterating over all elements filtered by
+   * {@code matcher}.
    *
    * @param formatter  protocol formatter to use for formatting this protocol
    * @param matcher    message matcher, never {@code null}
@@ -446,6 +468,23 @@ public interface Protocol<M> extends ProtocolQueryable
    * @since 1.0.0
    */
   <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull MessageMatcher matcher);
+
+
+  /**
+   * Formats this protocol using the given {@code formatter} iterating over all elements filtered by
+   * {@code matcher}.
+   *
+   * @param formatter          protocol formatter to use for formatting this protocol
+   * @param matcherExpression  message matcher, never {@code null}
+   * @param <R>                result type
+   *
+   * @return  formatted protocol, or {@code null}
+   *
+   * @since 1.2.1
+   */
+  default <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull String matcherExpression) {
+    return format(formatter, getFactory().parseMessageMatcher(matcherExpression));
+  }
 
 
   /**
