@@ -99,6 +99,12 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
 
 
   @Override
+  public boolean matches(@NotNull String matcher) {
+    return matches(factory.parseMessageMatcher(matcher));
+  }
+
+
+  @Override
   public boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
     for(val entry: entries)

@@ -127,6 +127,12 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
 
 
   @Override
+  public boolean matches(@NotNull String matcher) {
+    return protocol.matches(matcher);
+  }
+
+
+  @Override
   public @NotNull B add(@NotNull Level level) {
     return protocol.add(level);
   }

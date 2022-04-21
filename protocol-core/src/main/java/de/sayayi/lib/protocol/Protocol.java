@@ -116,6 +116,18 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
   /**
+   * Tells if this protocol object matches the given {@code matcher}.
+   *
+   * @param matcher  message matcher, not {@code null}
+   *
+   * @return  {@code true} if the protocol object matches, {@code false} otherwise
+   *
+   * @since 1.2.2
+   */
+  boolean matches(@NotNull String matcher);
+
+
+  /**
    * <p>
    *   Prepare a tag propagation definition for this protocol.
    * </p>
