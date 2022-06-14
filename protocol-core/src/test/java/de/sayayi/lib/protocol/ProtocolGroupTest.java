@@ -15,8 +15,12 @@
  */
 package de.sayayi.lib.protocol;
 
+import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
+import de.sayayi.lib.protocol.ProtocolIterator.ProtocolEnd;
+import de.sayayi.lib.protocol.ProtocolIterator.ProtocolStart;
 import de.sayayi.lib.protocol.exception.ProtocolException;
 import de.sayayi.lib.protocol.matcher.MessageMatcher;
+import de.sayayi.lib.protocol.matcher.MessageMatchers;
 import org.junit.jupiter.api.Test;
 
 import lombok.val;
@@ -38,6 +42,7 @@ import static de.sayayi.lib.protocol.matcher.MessageMatchers.isDebug;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.isInfo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -261,7 +266,7 @@ public class ProtocolGroupTest
         assertEquals(1, estimatedGroupDepth);
       }
 
-      @Override public void message(ProtocolIterator.@NotNull MessageEntry<String> message) {}
+      @Override public void message(@NotNull MessageEntry<String> message) {}
       @Override public Object getResult() { return null; }
     }, any());
 
@@ -272,11 +277,30 @@ public class ProtocolGroupTest
         assertEquals(1, estimatedGroupDepth);
       }
 
-      @Override public void message(ProtocolIterator.@NotNull MessageEntry<String> message) {}
+      @Override public void message(@NotNull MessageEntry<String> message) {}
       @Override public Object getResult() { return null; }
     }, any());
 
     protocol.toStringTree();
     groupProtocol.toStringTree();
+  }
+
+
+  @Test
+  public void testGroupMessageOnly()
+  {
+    val factory = StringProtocolFactory.createPlainTextFactory();
+    val protocol = factory.createProtocol();
+
+    val protocolIterator = protocol.createGroup()
+        .setVisibility(SHOW_HEADER_ALWAYS)
+        .setGroupMessage("Group message")
+        .iterator(MessageMatchers.isInfo());
+
+    assertInstanceOf(ProtocolStart.class, protocolIterator.next());
+    assertInstanceOf(MessageEntry.class, protocolIterator.next());
+    assertInstanceOf(ProtocolEnd.class, protocolIterator.next());
+
+    assertFalse(protocolIterator.hasNext());
   }
 }
