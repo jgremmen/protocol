@@ -37,6 +37,8 @@ import java.util.Optional;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
+import static java.util.Objects.requireNonNull;
+
 
 /**
  * @param <M>  internal message object type
@@ -45,7 +47,8 @@ import java.util.function.Consumer;
  * @since 0.1.0
  */
 @SuppressWarnings({ "unchecked" })
-abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B extends ProtocolMessageBuilder<M>>
+abstract class AbstractParameterBuilder
+    <M,P extends MessageParameterBuilder<M>,B extends ProtocolMessageBuilder<M>>
     extends AbstractBuilder<M,B>
     implements MessageParameterBuilder<M>
 {
@@ -64,8 +67,15 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
   @Override
   public @NotNull P with(@NotNull Map<String,Object> parameterValues)
   {
+    requireNonNull(parameterValues, "parameterValues must not be null");
+
     for(val entry: parameterValues.entrySet())
-      with(entry.getKey(), entry.getValue());
+    {
+      val key = entry.getKey();
+
+      if (key != null && !key.isEmpty())
+        with(key, entry.getValue());
+    }
 
     return (P)this;
   }
@@ -75,8 +85,8 @@ abstract class AbstractParameterBuilder<M,P extends MessageParameterBuilder<M>,B
   @Override
   public @NotNull P with(@NotNull String parameter, Object value)
   {
-    if (parameter.isEmpty())
-      throw new ProtocolException("parameter must not be empty");
+    if (requireNonNull(parameter, "parameter must not be null").isEmpty())
+      throw new IllegalArgumentException("parameter must not be empty");
 
     message.parameterMap.put(parameter, value);
 

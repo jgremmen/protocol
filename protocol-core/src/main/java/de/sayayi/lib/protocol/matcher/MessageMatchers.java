@@ -107,6 +107,8 @@ public final class MessageMatchers
    * Return a message matcher which matches every message having a throwable of the given
    * {@code type} associated with it.
    *
+   * @param type  throwable type to check for, not {@code null}
+   *
    * @return  throwable message matcher, never {@code null}
    */
   @Contract(pure = true)
