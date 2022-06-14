@@ -114,6 +114,12 @@ public interface MessageMatcher
    */
   interface Junction extends MessageMatcher
   {
+    @Override
+    default @NotNull Junction asJunction() {
+      return this;
+    }
+
+
     @Contract(pure = true)
     default @NotNull Junction and(@NotNull MessageMatcher other) {
       return Conjunction.of(this, other);

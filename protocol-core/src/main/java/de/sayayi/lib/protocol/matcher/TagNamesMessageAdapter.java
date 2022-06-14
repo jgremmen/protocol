@@ -48,6 +48,7 @@ final class TagNamesMessageAdapter implements Message<Object>
     val tagNameSet = new HashSet<>(tagNames);
 
     tagNameSet.add(DEFAULT_TAG_NAME);
+    tagNameSet.remove("");
 
     this.tagNames = unmodifiableSet(tagNameSet);
   }

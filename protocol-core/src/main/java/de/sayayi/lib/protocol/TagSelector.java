@@ -64,12 +64,6 @@ public interface TagSelector
 
 
       @Override
-      public @NotNull Junction asJunction() {
-        return this;
-      }
-
-
-      @Override
       public String toString() {
         return TagSelector.this.toString();
       }
