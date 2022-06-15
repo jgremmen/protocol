@@ -76,7 +76,8 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
   @Contract(mutates = "this")
   public void put(@NotNull String parameter, Object value)
   {
-    requireNonNull(parameter, "parameter must not be null");
+    if (requireNonNull(parameter, "parameter must not be null").isEmpty())
+      throw new IllegalArgumentException("parameter must not be empty");
 
     if (size == 0)
       entries = new ParameterEntry[] { new ParameterEntry(parameter, value), null };

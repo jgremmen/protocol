@@ -16,6 +16,7 @@
 package de.sayayi.lib.protocol.matcher;
 
 import de.sayayi.lib.protocol.Level;
+import de.sayayi.lib.protocol.Level.Shared;
 import de.sayayi.lib.protocol.ProtocolEntry.Message;
 import de.sayayi.lib.protocol.matcher.MessageMatcher.Junction;
 
@@ -40,10 +41,10 @@ import static lombok.AccessLevel.PRIVATE;
 @EqualsAndHashCode(callSuper = false)
 final class LevelMatcher implements Junction
 {
-  static final Junction DEBUG = new LevelMatcher(Level.Shared.DEBUG);
-  static final Junction INFO = new LevelMatcher(Level.Shared.INFO);
-  static final Junction WARN = new LevelMatcher(Level.Shared.WARN);
-  static final Junction ERROR = new LevelMatcher(Level.Shared.ERROR);
+  static final Junction DEBUG = new LevelMatcher(Shared.DEBUG);
+  static final Junction INFO = new LevelMatcher(Shared.INFO);
+  static final Junction WARN = new LevelMatcher(Shared.WARN);
+  static final Junction ERROR = new LevelMatcher(Shared.ERROR);
 
   private final Level level;
 
@@ -61,12 +62,6 @@ final class LevelMatcher implements Junction
 
 
   @Override
-  public @NotNull Junction asJunction() {
-    return this;
-  }
-
-
-  @Override
   public String toString() {
     return "level(" + level + ')';
   }
@@ -75,13 +70,13 @@ final class LevelMatcher implements Junction
   @Contract(pure = true)
   static Junction of(@NotNull Level level)
   {
-    if (level == Level.Shared.DEBUG)
+    if (level == Shared.DEBUG)
       return DEBUG;
-    else if (level == Level.Shared.INFO)
+    else if (level == Shared.INFO)
       return INFO;
-    else if (level == Level.Shared.WARN)
+    else if (level == Shared.WARN)
       return WARN;
-    else if (level == Level.Shared.ERROR)
+    else if (level == Shared.ERROR)
       return ERROR;
     else if (level.severity() == LOWEST.severity())
       return ANY;

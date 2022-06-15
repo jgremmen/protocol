@@ -42,18 +42,30 @@ import static lombok.AccessLevel.PRIVATE;
 
 
 /**
+ * A comprehensive collection of message matchers.
+ *
  * @author Jeroen Gremmen
  * @since 1.0.0
  */
 @NoArgsConstructor(access = PRIVATE)
 public final class MessageMatchers
 {
+  /**
+   * Return a message matcher which matches every message.
+   *
+   * @return  matcher instance which matches every message, never {@code null}
+   */
   @Contract(pure = true)
   public static @NotNull Junction any() {
     return ANY;
   }
 
 
+  /**
+   * Return a message matcher which matches no message.
+   *
+   * @return  matcher instance which matches no message, never {@code null}
+   */
   @Contract(pure = true)
   public static @NotNull Junction none() {
     return NONE;
@@ -74,24 +86,31 @@ public final class MessageMatchers
 
 
     @Override
-    public @NotNull Junction asJunction() {
-      return this;
-    }
-
-
-    @Override
     public String toString() {
       return "throwable";
     }
   };
 
 
+  /**
+   * Return a message matcher which matches every message having a throwable associated with it.
+   *
+   * @return  throwable message matcher, never {@code null}
+   */
   @Contract(pure = true)
   public static @NotNull Junction hasThrowable() {
     return HAS_THROWABLE_MATCHER;
   }
 
 
+  /**
+   * Return a message matcher which matches every message having a throwable of the given
+   * {@code type} associated with it.
+   *
+   * @param type  throwable type to check for, not {@code null}
+   *
+   * @return  throwable message matcher, never {@code null}
+   */
   @Contract(pure = true)
   public static @NotNull Junction hasThrowable(@NotNull Class<? extends Throwable> type)
   {
@@ -102,12 +121,6 @@ public final class MessageMatchers
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
         return type.isInstance(message.getThrowable());
-      }
-
-
-      @Override
-      public @NotNull Junction asJunction() {
-        return this;
       }
 
 
@@ -137,12 +150,6 @@ public final class MessageMatchers
       @Override
       public boolean isTagSelector() {
         return true;
-      }
-
-
-      @Override
-      public @NotNull Junction asJunction() {
-        return this;
       }
 
 
@@ -232,12 +239,6 @@ public final class MessageMatchers
 
 
       @Override
-      public @NotNull Junction asJunction() {
-        return this;
-      }
-
-
-      @Override
       public String toString() {
         return "has-param(" + parameterName + ')';
       }
@@ -255,12 +256,6 @@ public final class MessageMatchers
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
         return message.getParameterValues().get(parameterName) != null;
-      }
-
-
-      @Override
-      public @NotNull Junction asJunction() {
-        return this;
       }
 
 
@@ -287,12 +282,6 @@ public final class MessageMatchers
         return value == null
             ? parameterValues.containsKey(parameterName) && parameterValues.get(parameterName) == null
             : Objects.equals(parameterValues.get(parameterName), value);
-      }
-
-
-      @Override
-      public @NotNull Junction asJunction() {
-        return this;
       }
 
 
@@ -400,12 +389,6 @@ public final class MessageMatchers
 
 
       @Override
-      public @NotNull Junction asJunction() {
-        return this;
-      }
-
-
-      @Override
       public String toString() {
         return "message(" + messageId + ')';
       }
@@ -479,12 +462,6 @@ public final class MessageMatchers
 
 
       @Override
-      public @NotNull Junction asJunction() {
-        return this;
-      }
-
-
-      @Override
       public String toString() {
         return "in-group('" + groupName + "')";
       }
@@ -526,12 +503,6 @@ public final class MessageMatchers
 
 
       @Override
-      public @NotNull Junction asJunction() {
-        return this;
-      }
-
-
-      @Override
       public String toString() {
         return "in-group-regex('" + groupNameRegex + "')";
       }
@@ -543,12 +514,6 @@ public final class MessageMatchers
     @Override
     public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
       return message.getProtocol().getParent() == null;
-    }
-
-
-    @Override
-    public @NotNull Junction asJunction() {
-      return this;
     }
 
 
@@ -592,12 +557,6 @@ public final class MessageMatchers
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
         return message.getProtocol().getId() == protocolId;
-      }
-
-
-      @Override
-      public @NotNull Junction asJunction() {
-        return this;
       }
 
 

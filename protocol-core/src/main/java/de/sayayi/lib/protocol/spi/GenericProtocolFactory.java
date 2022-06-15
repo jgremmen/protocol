@@ -85,24 +85,28 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
    * Associate a protocol message matcher with this factory,
    * overriding the previous message matcher.
    *
-   * @param messageMatcher   protocol message matcher instance
+   * @param messageMatcher   protocol message matcher instance, not {@code null}
    *
    * @since 1.2.1
    */
   public void setMessageMatcher(@NotNull ProtocolMessageMatcher messageMatcher) {
-    messageMatcherDelegate = messageMatcher;
+    messageMatcherDelegate = requireNonNull(messageMatcher, "messageMatcher must not be null");
   }
 
 
   @Override
-  public @NotNull MessageMatcher parseMessageMatcher(@NotNull String messageMatcherExpression) {
-    return messageMatcherDelegate.parseMessageMatcher(messageMatcherExpression);
+  public @NotNull MessageMatcher parseMessageMatcher(@NotNull String messageMatcherExpression)
+  {
+    return messageMatcherDelegate.parseMessageMatcher(
+        requireNonNull(messageMatcherExpression, "messageMatcherExpression must not be null"));
   }
 
 
   @Override
-  public @NotNull TagSelector parseTagSelector(@NotNull String tagSelectorExpression) {
-    return messageMatcherDelegate.parseTagSelector(tagSelectorExpression);
+  public @NotNull TagSelector parseTagSelector(@NotNull String tagSelectorExpression)
+  {
+    return messageMatcherDelegate.parseTagSelector(
+        requireNonNull(tagSelectorExpression, "tagSelectorExpression must not be null"));
   }
 
 

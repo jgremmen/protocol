@@ -29,6 +29,8 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
+ * Abstract class capable of representing the protocol as a tree using ascii graphics.
+ *
  * @param <M>  internal message object type
  *
  * @author Jeroen Gremmen

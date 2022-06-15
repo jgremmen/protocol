@@ -42,6 +42,7 @@ import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
 import static de.sayayi.lib.protocol.Level.compare;
 import static de.sayayi.lib.protocol.Level.max;
 import static de.sayayi.lib.protocol.Level.min;
+import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ALWAYS;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_IF_NOT_EMPTY;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ONLY;
 import static java.util.Collections.emptyList;
@@ -303,8 +304,10 @@ final class ProtocolGroupImpl<M>
   @Override
   public boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
-    return getEffectiveVisibility().isShowEntries() &&
-           super.matches0(min(this.levelLimit, levelLimit), matcher);
+    val ev = getEffectiveVisibility();
+
+    return ev == SHOW_HEADER_ONLY || ev == SHOW_HEADER_ALWAYS ||
+           (ev.isShowEntries() && super.matches0(min(this.levelLimit, levelLimit), matcher));
   }
 
 

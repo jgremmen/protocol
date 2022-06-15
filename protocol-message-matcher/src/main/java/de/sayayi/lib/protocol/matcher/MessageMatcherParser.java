@@ -243,12 +243,13 @@ public class MessageMatcherParser extends AbstractAntlr4Compiler
         ctx.matcher = MessageMatchers.hasThrowable();
       else
       {
+        val qualifiedNameText = qualifiedName.getText();
         Class<?> clazz = null;
 
         try {
           clazz = classLoader == null
-              ? Class.forName(qualifiedName.getText())
-              : Class.forName(qualifiedName.getText(), false, classLoader);
+              ? Class.forName(qualifiedNameText)
+              : Class.forName(qualifiedNameText, false, classLoader);
         } catch(ClassNotFoundException ignored) {
         }
 

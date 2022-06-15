@@ -54,19 +54,13 @@ final class Negation implements Junction
 
 
   @Override
-  public @NotNull Junction asJunction() {
-    return this;
-  }
-
-
-  @Override
   public String toString() {
     return "not(" + matcher + ')';
   }
 
 
   @Contract(pure = true)
-  static Junction of(@NotNull MessageMatcher matcher)
+  static @NotNull Junction of(@NotNull MessageMatcher matcher)
   {
     if (matcher == ANY)
       return NONE;

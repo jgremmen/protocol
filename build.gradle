@@ -28,16 +28,16 @@ allprojects {
 
 
   group = "de.sayayi.lib"
-  version = "1.2.1"
+  version = "1.2.2"
 
 
   ext {
     gsonVersion = "2.9.0"
     jetbrainsAnnotationsVersion = "23.0.0"
     junitVersion = "5.8.2"
-    lombokVersion = "1.18.22"
+    lombokVersion = "1.18.24"
     messageFormatVersion = "0.6.2"
-    mockitoVersion = "4.4.0"
+    mockitoVersion = "4.6.1"
     unbescapeVersion = "1.1.6.RELEASE"
   }
 

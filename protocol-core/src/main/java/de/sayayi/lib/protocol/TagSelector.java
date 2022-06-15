@@ -30,6 +30,14 @@ import java.util.Collection;
  */
 public interface TagSelector
 {
+  /**
+   * Tells whether the selector matches for the provided {@code tagNames}.
+   *
+   * @param tagNames  a collection of tag names, not {@code null}
+   *
+   * @return  {@code true} if the selector matches for the collection provided,
+   *          {@code false} otherwise
+   */
   @Contract(pure = true)
   boolean match(@NotNull Collection<String> tagNames);
 
@@ -60,12 +68,6 @@ public interface TagSelector
       @Override
       public @NotNull TagSelector asTagSelector() {
         return TagSelector.this;
-      }
-
-
-      @Override
-      public @NotNull Junction asJunction() {
-        return this;
       }
 
 

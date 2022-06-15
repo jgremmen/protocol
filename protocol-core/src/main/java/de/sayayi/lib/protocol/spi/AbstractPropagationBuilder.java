@@ -19,7 +19,6 @@ import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.Protocol.TargetTagBuilder;
 import de.sayayi.lib.protocol.TagSelector;
-import de.sayayi.lib.protocol.exception.ProtocolException;
 
 import lombok.val;
 
@@ -53,7 +52,8 @@ abstract class AbstractPropagationBuilder<M,B extends ProtocolMessageBuilder<M>>
   @Override
   public @NotNull Protocol<M> to(@NotNull String targetTagName)
   {
-    protocol.tagPropagationMap.computeIfAbsent(tagSelector, k -> new TreeSet<>())
+    protocol.tagPropagationMap
+        .computeIfAbsent(tagSelector, k -> new TreeSet<>())
         .add(requireNonNull(targetTagName));
 
     return protocol;
@@ -63,8 +63,8 @@ abstract class AbstractPropagationBuilder<M,B extends ProtocolMessageBuilder<M>>
   @Override
   public @NotNull Protocol<M> to(@NotNull String... targetTagNames)
   {
-    if (targetTagNames.length == 0)
-      throw new ProtocolException("targetTagNames must not be empty");
+    if (requireNonNull(targetTagNames, "targetTagNames must not be null").length == 0)
+      throw new IllegalArgumentException("targetTagNames must not be empty");
 
     for(val targetTagName: targetTagNames)
       to(targetTagName);

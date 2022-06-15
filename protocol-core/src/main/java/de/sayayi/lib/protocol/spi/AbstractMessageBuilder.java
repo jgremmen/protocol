@@ -68,7 +68,10 @@ abstract class AbstractMessageBuilder
   @Override
   public @NotNull B forTag(@NotNull String tagName)
   {
-    tags.add(requireNonNull(tagName, "tagName must not be null"));
+    if (requireNonNull(tagName, "tagName must not be null").isEmpty())
+      throw new IllegalArgumentException("tagName must not be empty");
+
+    tags.add(tagName);
 
     return (B)this;
   }
@@ -77,7 +80,7 @@ abstract class AbstractMessageBuilder
   @Override
   public @NotNull B forTags(@NotNull String ... tagNames)
   {
-    for(val tagName: tagNames)
+    for(val tagName: requireNonNull(tagNames, "tagNames must not be null"))
       forTag(tagName);
 
     return (B)this;
