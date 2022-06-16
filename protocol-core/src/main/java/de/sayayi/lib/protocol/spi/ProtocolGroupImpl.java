@@ -122,7 +122,7 @@ final class ProtocolGroupImpl<M>
           return true;
 
         case SHOW_HEADER_IF_NOT_EMPTY:
-          return matches0(levelLimit, matcher);
+          return matches0(levelLimit, matcher, false);
 
         case FLATTEN_ON_SINGLE_ENTRY:
           return super.getVisibleEntryCount0(min(this.levelLimit, levelLimit), matcher) > 1;
@@ -302,18 +302,22 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
+  public boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher,
+                          boolean messageOnly)
   {
     val ev = getEffectiveVisibility();
 
-    return ev == SHOW_HEADER_ONLY || ev == SHOW_HEADER_ALWAYS ||
-           (ev.isShowEntries() && super.matches0(min(this.levelLimit, levelLimit), matcher));
+    if (!messageOnly && (ev == SHOW_HEADER_ONLY || ev == SHOW_HEADER_ALWAYS))
+      return true;
+
+    return ev.isShowEntries() &&
+           super.matches0(min(this.levelLimit, levelLimit), matcher, messageOnly);
   }
 
 
   @Override
   public boolean matches(@NotNull MessageMatcher matcher) {
-    return matches0(levelLimit, matcher);
+    return matches0(levelLimit, matcher, true);
   }
 
 

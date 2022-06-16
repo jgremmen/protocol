@@ -79,7 +79,7 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
 
   @Override
   public boolean matches(@NotNull MessageMatcher matcher) {
-    return group.matches0(levelLimit, matcher);
+    return group.matches0(levelLimit, matcher, true);
   }
 
 
@@ -134,8 +134,9 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
 
 
   @Override
-  public boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher) {
-    return group.matches0(levelLimit, matcher);
+  public boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher,
+                          boolean messageOnly) {
+    return group.matches0(levelLimit, matcher, messageOnly);
   }
 
 

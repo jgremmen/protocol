@@ -75,20 +75,21 @@ final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M>
 
 
   @Override
-  public boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher) {
+  public boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher,
+                          boolean messageOnly) {
     return matcher.matches(levelLimit, this);
   }
 
 
   @Override
   public boolean matches(@NotNull MessageMatcher matcher) {
-    return matches0(HIGHEST, matcher);
+    return matches0(HIGHEST, matcher, true);
   }
 
 
   @Override
   public int getVisibleEntryCount0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher) {
-    return matches0(levelLimit, matcher) ? 1 : 0;
+    return matches0(levelLimit, matcher, false) ? 1 : 0;
   }
 
 
