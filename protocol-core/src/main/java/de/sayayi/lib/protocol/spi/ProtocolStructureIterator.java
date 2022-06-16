@@ -69,7 +69,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
   private final @NotNull Level levelLimit;
   private final @NotNull MessageMatcher matcher;
-  protected final int entryCount;
+  private final int entryCount;
   @Getter @Setter(PROTECTED) private int depth;
 
   private ForGroup<M> groupIterator;
@@ -285,7 +285,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
       else if (visibility == SHOW_HEADER_IF_NOT_EMPTY)
         visibility = hasNextVisibleEntryAtSameDepth() ? SHOW_HEADER_ALWAYS : FLATTEN;
       else if (visibility == FLATTEN_ON_SINGLE_ENTRY)
-        visibility = entryCount > 1 ? SHOW_HEADER_ALWAYS : FLATTEN;
+        visibility = super.entryCount > 1 ? SHOW_HEADER_ALWAYS : FLATTEN;
 
       switch(visibility)
       {
