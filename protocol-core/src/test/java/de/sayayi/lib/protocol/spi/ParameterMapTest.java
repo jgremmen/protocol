@@ -19,8 +19,13 @@ import org.junit.jupiter.api.Test;
 
 import lombok.val;
 
+import java.util.Arrays;
+import java.util.HashSet;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -142,6 +147,14 @@ public class ParameterMapTest
 
     val um = map2.unmodifyableMap();
 
+    assertFalse(um.isEmpty());
     assertEquals(6, um.size());
+    assertEquals("a1", um.get("a"));
+    assertEquals("d2", um.get("d"));
+    assertTrue(um.containsKey("h"));
+    assertTrue(um.containsValue("f2"));
+    assertEquals(new HashSet<>(Arrays.asList("a", "b", "d", "f", "g", "h")), um.keySet());
+    assertArrayEquals(new Object[] { "a", "b", "d", "f", "g", "h" }, um.keySet().toArray());
+    assertArrayEquals(new String[] { "a", "b", "d", "f", "g", "h" }, um.keySet().toArray(new String[0]));
   }
 }
