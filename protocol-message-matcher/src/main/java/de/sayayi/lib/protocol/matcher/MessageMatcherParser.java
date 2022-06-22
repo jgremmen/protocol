@@ -15,16 +15,20 @@
  */
 package de.sayayi.lib.protocol.matcher;
 
+import de.sayayi.lib.antlr4.AbstractAntlr4Parser;
+import de.sayayi.lib.antlr4.AbstractVocabulary;
+import de.sayayi.lib.antlr4.Walker;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.ProtocolMessageMatcher;
 import de.sayayi.lib.protocol.TagSelector;
-import de.sayayi.lib.protocol.matcher.antlr.AbstractAntlr4Compiler;
-import de.sayayi.lib.protocol.matcher.antlr.AbstractVocabulary;
+import de.sayayi.lib.protocol.exception.MessageMatcherParserException;
 import de.sayayi.lib.protocol.matcher.antlr.MessageMatcherBaseListener;
 import de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.LexerNoViableAltException;
+import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.Vocabulary;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
@@ -37,9 +41,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
+import static de.sayayi.lib.antlr4.Walker.WALK_EXIT_RULES_RECURSIVE;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.inGroup;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.inGroupRegex;
-import static de.sayayi.lib.protocol.matcher.antlr.AbstractAntlr4Compiler.Walker.WALK_EXIT_RULES_ONLY;
 import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.ALL_OF;
 import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.AND;
 import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.ANY;
@@ -80,7 +84,7 @@ import static lombok.AccessLevel.PRIVATE;
  * @since 1.2.0
  */
 @AllArgsConstructor
-public class MessageMatcherParser extends AbstractAntlr4Compiler
+public class MessageMatcherParser extends AbstractAntlr4Parser
 {
   public static final MessageMatcherParser INSTANCE =
       new MessageMatcherParser(null, null);
@@ -92,7 +96,7 @@ public class MessageMatcherParser extends AbstractAntlr4Compiler
   @Contract(pure = true)
   public @NotNull MessageMatcher parseMessageMatcher(@NotNull String messageMatcherText)
   {
-    return compile(new Lexer(messageMatcherText), Parser::new, Parser::parseMatcher,
+    return parse(new Lexer(messageMatcherText), Parser::new, Parser::parseMatcher,
         new Listener(messageMatcherText), ctx -> ctx.matcher);
   }
 
@@ -100,14 +104,24 @@ public class MessageMatcherParser extends AbstractAntlr4Compiler
   @Contract(pure = true)
   public @NotNull TagSelector parseTagSelector(@NotNull String tagSelectorText)
   {
-    return compile(new Lexer(tagSelectorText), Parser::new, Parser::parseTagSelector,
+    return parse(new Lexer(tagSelectorText), Parser::new, Parser::parseTagSelector,
         new Listener(tagSelectorText), ctx -> ctx.selector);
   }
 
 
+  @Override
+  protected @NotNull RuntimeException createException(@NotNull String parserInput,
+                                                      @NotNull Token startToken,
+                                                      @NotNull Token stopToken,
+                                                      @NotNull String formattedMessage,
+                                                      @NotNull String errorMsg,
+                                                      RecognitionException ex) {
+    return new MessageMatcherParserException(parserInput, startToken.getStartIndex(),
+        stopToken.getStopIndex(), formattedMessage, ex);
+  }
 
 
-  private static final class Lexer extends MessageMatcherLexer implements CompilerInputSupplier
+  private static final class Lexer extends MessageMatcherLexer implements ParserInputSupplier
   {
     private final @NotNull String matcherText;
 
@@ -122,7 +136,7 @@ public class MessageMatcherParser extends AbstractAntlr4Compiler
 
 
     @Override
-    public @NotNull String getCompilerInput() {
+    public @NotNull String getParserInput() {
       return matcherText;
     }
 
@@ -177,7 +191,7 @@ public class MessageMatcherParser extends AbstractAntlr4Compiler
 
     @Override
     public @NotNull Walker getWalker() {
-      return WALK_EXIT_RULES_ONLY;
+      return WALK_EXIT_RULES_RECURSIVE;
     }
 
 
@@ -255,8 +269,8 @@ public class MessageMatcherParser extends AbstractAntlr4Compiler
 
         if (clazz == null || !Throwable.class.isAssignableFrom(clazz))
         {
-          syntaxError(matcherText, qualifiedName.getSymbol(),
-              "class not found or not of type Throwable", null);
+          syntaxError(matcherText, qualifiedName,
+              "class not found or not of type Throwable");
         }
 
         //noinspection unchecked
