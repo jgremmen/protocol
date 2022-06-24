@@ -143,7 +143,7 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
 
     @Override
     public Vocabulary getVocabulary() {
-      return VOC;
+      return MessageMatcherParser.VOCABULARY;
     }
 
 
@@ -176,7 +176,7 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
 
     @Override
     public Vocabulary getVocabulary() {
-      return VOC;
+      return MessageMatcherParser.VOCABULARY;
     }
   }
 
@@ -486,7 +486,7 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
 
 
 
-  private static final Vocabulary VOC = new AbstractVocabulary() {
+  private static final Vocabulary VOCABULARY = new AbstractVocabulary() {
     @Override
     protected void addTokens()
     {
