@@ -84,7 +84,7 @@ public class StringProtocolFactory extends GenericProtocolFactory<String>
    *
    * @since 0.7.0
    */
-  @Contract("-> new")
+  @Contract(value = "-> new", pure = true)
   public static @NotNull StringProtocolFactory createJavaStringFormatFactory() {
     return new StringProtocolFactory(JavaStringFormatFormatter.INSTANCE);
   }

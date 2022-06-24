@@ -457,7 +457,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
       val size = map.size();
 
       if (a.length < size)
-        a = (T[])Array.newInstance(a.getClass(), size);
+        a = (T[])Array.newInstance(a.getClass().getComponentType(), size);
       else if (a.length > size)
         a[size] = null;
 
@@ -521,7 +521,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
       val size = map.size();
 
       if (a.length < size)
-        a = (T[])Array.newInstance(a.getClass(), size);
+        a = (T[])Array.newInstance(a.getClass().getComponentType(), size);
       else if (a.length > size)
         a[size] = null;
 

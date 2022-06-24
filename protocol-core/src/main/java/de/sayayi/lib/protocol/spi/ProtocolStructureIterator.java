@@ -40,6 +40,7 @@ import java.util.Set;
 
 import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.FLATTEN;
+import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.FLATTEN_ON_SINGLE_ENTRY;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ALWAYS;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_IF_NOT_EMPTY;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ONLY;
@@ -68,6 +69,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
   private final @NotNull Level levelLimit;
   private final @NotNull MessageMatcher matcher;
+  private final int entryCount;
   @Getter @Setter(PROTECTED) private int depth;
 
   private ForGroup<M> groupIterator;
@@ -93,6 +95,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     this.depth = depth;
     this.rootProtocol = rootProtocol;
 
+    entryCount = protocolEntries.size();
     iterator = new VisibleEntryIterator(protocolEntries.iterator());
 
     if (rootProtocol)
@@ -281,6 +284,8 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
         visibility = SHOW_HEADER_ONLY;
       else if (visibility == SHOW_HEADER_IF_NOT_EMPTY)
         visibility = hasNextVisibleEntryAtSameDepth() ? SHOW_HEADER_ALWAYS : FLATTEN;
+      else if (visibility == FLATTEN_ON_SINGLE_ENTRY)
+        visibility = super.entryCount > 1 ? SHOW_HEADER_ALWAYS : FLATTEN;
 
       switch(visibility)
       {
@@ -303,7 +308,6 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
         case HIDDEN:
           // no header, no messages
-          assert !hasNext();
           break;
 
         default:

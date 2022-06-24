@@ -552,7 +552,9 @@ public interface ProtocolGroup<M> extends Protocol<M>
      */
     public @NotNull Visibility forAbsentHeader()
     {
-      if (this == SHOW_HEADER_ALWAYS || this == SHOW_HEADER_IF_NOT_EMPTY)
+      if (this == SHOW_HEADER_ALWAYS ||
+          this == SHOW_HEADER_IF_NOT_EMPTY ||
+          this == FLATTEN_ON_SINGLE_ENTRY)
         return FLATTEN;
       else if (this == SHOW_HEADER_ONLY)
         return HIDDEN;

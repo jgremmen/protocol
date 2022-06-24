@@ -33,7 +33,7 @@ import static java.lang.Integer.MAX_VALUE;
 interface InternalProtocolQueryable extends ProtocolQueryable
 {
   @Contract(pure = true)
-  boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher);
+  boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher, boolean messageOnly);
 
 
   @Contract(pure = true)

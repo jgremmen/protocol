@@ -105,10 +105,11 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
 
 
   @Override
-  public boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
+  public boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher,
+                          boolean messageOnly)
   {
     for(val entry: entries)
-      if (entry.matches0(levelLimit, matcher))
+      if (entry.matches0(levelLimit, matcher, messageOnly))
         return true;
 
     return false;
@@ -121,7 +122,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
     val filteredEntries = new ArrayList<ProtocolEntry<M>>();
 
     for(val entry: entries)
-      if (entry.matches0(levelLimit, matcher))
+      if (entry.matches0(levelLimit, matcher, false))
       {
         if (entry instanceof InternalProtocolEntry.Group)
         {

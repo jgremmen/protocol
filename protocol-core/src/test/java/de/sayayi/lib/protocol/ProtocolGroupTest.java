@@ -15,12 +15,13 @@
  */
 package de.sayayi.lib.protocol;
 
+import de.sayayi.lib.protocol.ProtocolIterator.GroupEndEntry;
+import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.ProtocolEnd;
 import de.sayayi.lib.protocol.ProtocolIterator.ProtocolStart;
 import de.sayayi.lib.protocol.exception.ProtocolException;
 import de.sayayi.lib.protocol.matcher.MessageMatcher;
-import de.sayayi.lib.protocol.matcher.MessageMatchers;
 import org.junit.jupiter.api.Test;
 
 import lombok.val;
@@ -39,6 +40,7 @@ import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ONLY;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.any;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.is;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.isDebug;
+import static de.sayayi.lib.protocol.matcher.MessageMatchers.isError;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.isInfo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -157,7 +159,7 @@ public class ProtocolGroupTest
     assertEquals(HIDDEN, gp.setVisibility(SHOW_HEADER_ONLY).getEffectiveVisibility());
     assertEquals(FLATTEN, gp.setVisibility(SHOW_HEADER_ALWAYS).getEffectiveVisibility());
     assertEquals(FLATTEN, gp.setVisibility(SHOW_HEADER_IF_NOT_EMPTY).getEffectiveVisibility());
-    assertEquals(FLATTEN_ON_SINGLE_ENTRY, gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).getEffectiveVisibility());
+    assertEquals(FLATTEN, gp.setVisibility(FLATTEN_ON_SINGLE_ENTRY).getEffectiveVisibility());
     assertEquals(HIDDEN, gp.setVisibility(HIDDEN).getEffectiveVisibility());
     assertEquals(FLATTEN, gp.setVisibility(FLATTEN).getEffectiveVisibility());
 
@@ -295,12 +297,83 @@ public class ProtocolGroupTest
     val protocolIterator = protocol.createGroup()
         .setVisibility(SHOW_HEADER_ALWAYS)
         .setGroupMessage("Group message")
-        .iterator(MessageMatchers.isInfo());
+        .iterator(isInfo());
 
+    assertFalse(protocol.matches(isInfo()));
     assertInstanceOf(ProtocolStart.class, protocolIterator.next());
     assertInstanceOf(MessageEntry.class, protocolIterator.next());
     assertInstanceOf(ProtocolEnd.class, protocolIterator.next());
 
     assertFalse(protocolIterator.hasNext());
+  }
+
+
+  @Test
+  public void testFlattenOnSingleEntry1()
+  {
+    val factory = StringProtocolFactory.createPlainTextFactory();
+    val protocol = factory.createProtocol();
+
+    val group = protocol.createGroup()
+        .setGroupMessage("Group")
+        .setVisibility(FLATTEN_ON_SINGLE_ENTRY);
+
+    group.info().message("msg1");
+
+    assertTrue(protocol.matches(isInfo()));
+
+    val iterator1 = protocol.iterator(isInfo());
+    assertInstanceOf(ProtocolStart.class, iterator1.next());
+    assertInstanceOf(MessageEntry.class, iterator1.next());
+    assertInstanceOf(ProtocolEnd.class, iterator1.next());
+
+    group.error().message("msg2");
+
+    assertTrue(protocol.matches(isInfo()));
+    assertTrue(protocol.matches(isError()));
+
+    val iterator2 = protocol.iterator(isInfo());
+    assertInstanceOf(ProtocolStart.class, iterator2.next());
+    assertInstanceOf(GroupStartEntry.class, iterator2.next());
+    assertInstanceOf(MessageEntry.class, iterator2.next());
+    assertInstanceOf(MessageEntry.class, iterator2.next());
+    assertInstanceOf(GroupEndEntry.class, iterator2.next());
+    assertInstanceOf(ProtocolEnd.class, iterator2.next());
+  }
+
+
+  @Test
+  public void testFlattenOnSingleEntry2()
+  {
+    val factory = StringProtocolFactory.createPlainTextFactory();
+    val protocol = factory.createProtocol();
+
+    val group = protocol.createGroup()
+        .setGroupMessage("Group")
+        .setVisibility(FLATTEN_ON_SINGLE_ENTRY);
+
+    group.info().message("msg1");
+
+    assertTrue(protocol.matches(isInfo()));
+
+    val iterator1 = protocol.iterator(isInfo());
+    assertInstanceOf(ProtocolStart.class, iterator1.next());
+    assertInstanceOf(MessageEntry.class, iterator1.next());
+    assertInstanceOf(ProtocolEnd.class, iterator1.next());
+
+    group.createGroup()
+        .setGroupMessage("Subgroup")
+        .setVisibility(SHOW_HEADER_ALWAYS);
+
+    assertTrue(protocol.matches(isInfo()));
+    assertFalse(protocol.matches(isError()));
+
+    val iterator2 = protocol.iterator(isInfo());
+    assertInstanceOf(ProtocolStart.class, iterator2.next());
+    assertInstanceOf(GroupStartEntry.class, iterator2.next());
+    assertInstanceOf(MessageEntry.class, iterator2.next());
+    assertInstanceOf(MessageEntry.class, iterator2.next());
+    assertInstanceOf(GroupEndEntry.class, iterator2.next());
+    assertInstanceOf(ProtocolEnd.class, iterator2.next());
   }
 }

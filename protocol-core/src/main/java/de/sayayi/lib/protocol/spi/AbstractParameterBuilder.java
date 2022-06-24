@@ -24,7 +24,6 @@ import de.sayayi.lib.protocol.ProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.TagSelector;
-import de.sayayi.lib.protocol.exception.ProtocolException;
 import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import lombok.val;

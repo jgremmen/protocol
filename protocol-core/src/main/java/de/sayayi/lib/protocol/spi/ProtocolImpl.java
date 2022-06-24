@@ -61,7 +61,7 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
 
   @Override
   public boolean matches(@NotNull MessageMatcher matcher) {
-    return matches0(HIGHEST, matcher);
+    return matches0(HIGHEST, matcher, true);
   }
 
 

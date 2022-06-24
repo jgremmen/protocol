@@ -97,7 +97,7 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
 
   @Override
   public boolean matches(@NotNull MessageMatcher matcher) {
-    return message.matches0(levelLimit, matcher);
+    return message.matches0(levelLimit, matcher, true);
   }
 
 
