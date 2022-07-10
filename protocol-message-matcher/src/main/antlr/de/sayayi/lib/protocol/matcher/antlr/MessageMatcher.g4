@@ -58,6 +58,7 @@ matcherAtom returns [MessageMatcher matcher]
         | HAS_PARAM_VALUE L_PAREN string R_PAREN                                  #paramMatcher
         | levelShared                                                             #levelMatcher
         | LEVEL L_PAREN level R_PAREN                                             #levelMatcher
+        | BETWEEN L_PAREN level COMMA level R_PAREN                               #betweenMatcher
         | MESSAGE L_PAREN string R_PAREN                                          #messageMatcher
         | IN_GROUP ( L_PAREN string R_PAREN )?                                    #inGroupMatcher
         | IN_GROUP_REGEX L_PAREN string R_PAREN                                   #inGroupMatcher
@@ -161,6 +162,9 @@ ERROR
 LEVEL
         : 'level'
         ;
+BETWEEN
+        : 'between'
+        ;
 MESSAGE
         : 'message'
         ;
@@ -193,7 +197,7 @@ STRING
         | '"' (~["\\] | EscapeSequence)* '"'
         ;
 QUALIFIED_CLASS_NAME
-        : PackageOrClassName ('.' PackageOrClassName)+
+        : PackageOrClassName ('.' PackageOrClassName)*
         ;
 IDENTIFIER
         : Letter ('-' | LetterOrDigit+)*

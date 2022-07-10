@@ -305,6 +305,14 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
 
 
     @Override
+    public void exitBetweenMatcher(BetweenMatcherContext ctx)
+    {
+      val levels = ctx.level();
+      ctx.matcher = MessageMatchers.between(levels.get(0).lvl, levels.get(1).lvl);
+    }
+
+
+    @Override
     public void exitMessageMatcher(MessageMatcherContext ctx) {
       ctx.matcher = MessageMatchers.hasMessage(ctx.string().str);
     }
