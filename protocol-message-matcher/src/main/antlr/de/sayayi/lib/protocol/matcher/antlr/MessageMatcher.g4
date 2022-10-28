@@ -197,7 +197,7 @@ STRING
         | '"' (~["\\] | EscapeSequence)* '"'
         ;
 QUALIFIED_CLASS_NAME
-        : PackageOrClassName ('.' PackageOrClassName)*
+        : PackageOrClassName ('.' PackageOrClassName)+
         ;
 IDENTIFIER
         : Letter ('-' | LetterOrDigit+)*
