@@ -33,6 +33,9 @@ import java.util.Objects;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
+import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
+import static de.sayayi.lib.protocol.Level.compare;
+import static de.sayayi.lib.protocol.Level.min;
 import static de.sayayi.lib.protocol.ProtocolFactory.DEFAULT_TAG_NAME;
 import static de.sayayi.lib.protocol.matcher.BooleanMatcher.ANY;
 import static de.sayayi.lib.protocol.matcher.BooleanMatcher.NONE;
@@ -364,6 +367,39 @@ public final class MessageMatchers
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction is(@NotNull Level level) {
     return LevelMatcher.of(level);
+  }
+
+
+  /**
+   * Create a matcher which checks for messages with a level between {@code levelLow} and
+   * {@code levelHigh}.
+   *
+   * @param levelLow   lowest level to match, not {@code null}
+   * @param levelHigh  highest level to match, not {@code null}
+   *
+   * @return  matcher instance which checks for messages with level between {@code levelLow}
+   *          and {@code levelHigh}
+   */
+  @Contract(value = "_, _ -> new", pure = true)
+  public static @NotNull Junction between(@NotNull Level levelLow, @NotNull Level levelHigh)
+  {
+    if (Level.equals(levelHigh, HIGHEST))
+      return is(levelLow);
+
+    return new Junction() {
+      @Override
+      public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message)
+      {
+        val messageLevel = min(message.getLevel(), levelLimit);
+        return compare(messageLevel, levelLow) >= 0 && compare(messageLevel, levelHigh) <= 0;
+      }
+
+
+      @Override
+      public String toString() {
+        return "between(" + levelLow + "," + levelHigh + ')';
+      }
+    };
   }
 
 

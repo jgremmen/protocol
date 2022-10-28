@@ -92,6 +92,12 @@ public interface Level
   }
 
 
+  @Contract(pure = true)
+  static boolean equals(@NotNull Level l1, @NotNull Level l2) {
+    return l1.severity() == l2.severity();
+  }
+
+
 
 
   /**

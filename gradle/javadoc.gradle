@@ -32,6 +32,8 @@ javadoc {
     group("Protocol Tag Selectors", ["de.sayayi.lib.protocol.selector"])
 
     noQualifiers 'java.util', 'java.lang'
+
+    addStringOption('Xdoclint:-missing', '-quiet')
   }
 
   dependsOn delombok
