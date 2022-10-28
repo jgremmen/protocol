@@ -52,7 +52,7 @@ apply from: file('../gradle/publishing.gradle')
 
 dependencies {
   implementation project(':protocol-core')
-  implementation("de.sayayi.lib:antlr4-runtime:0.1.0") {
+  implementation("de.sayayi.lib:antlr4-runtime-ext:0.2.0") {
     exclude group: 'org.antlr', module: 'antlr4'
   }
 

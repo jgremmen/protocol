@@ -17,7 +17,7 @@ package de.sayayi.lib.protocol.matcher;
 
 import de.sayayi.lib.antlr4.AbstractAntlr4Parser;
 import de.sayayi.lib.antlr4.AbstractVocabulary;
-import de.sayayi.lib.antlr4.Walker;
+import de.sayayi.lib.antlr4.walker.Walker;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.ProtocolMessageMatcher;
 import de.sayayi.lib.protocol.TagSelector;
@@ -41,7 +41,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
-import static de.sayayi.lib.antlr4.Walker.WALK_EXIT_RULES_RECURSIVE;
+import static de.sayayi.lib.antlr4.walker.Walker.WALK_EXIT_RULES_RECURSIVE;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.inGroup;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.inGroupRegex;
 import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.ALL_OF;
