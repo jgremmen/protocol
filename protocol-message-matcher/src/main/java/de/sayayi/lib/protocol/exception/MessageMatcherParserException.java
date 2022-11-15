@@ -17,42 +17,20 @@ package de.sayayi.lib.protocol.exception;
 
 import org.antlr.v4.runtime.RecognitionException;
 
-import lombok.Getter;
-
-import org.jetbrains.annotations.NotNull;
+import lombok.experimental.StandardException;
 
 
 /**
  * <p>
  *   Matcher parser related exception.
  * </p>
- * <p>
- *   Methods {@link #getStartIndex()} and {@link #getEndIndex()} provide information on which part
- *   of the matcher has a syntactical problem.
- * </p>
  *
  * @author Jeroen Gremmen
  * @since 1.2.0
  */
-@Getter
+@StandardException
 public final class MessageMatcherParserException extends ProtocolException
 {
-  private final @NotNull String matcher;
-  private final int startIndex;
-  private final int endIndex;
-
-
-  public MessageMatcherParserException(@NotNull String matcher, int startIndex, int endIndex,
-                                       @NotNull String formattedMessage, RecognitionException ex)
-  {
-    super(formattedMessage, ex);
-
-    this.matcher = matcher;
-    this.startIndex = startIndex;
-    this.endIndex = endIndex;
-  }
-
-
   @Override
   public RecognitionException getCause() {
     return (RecognitionException)super.getCause();
