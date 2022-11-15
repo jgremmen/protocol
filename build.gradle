@@ -32,7 +32,7 @@ allprojects {
 
 
   ext {
-    gsonVersion = "2.9.0"
+    gsonVersion = "2.10.0"
     jetbrainsAnnotationsVersion = "23.0.0"
     junitVersion = "5.9.0"
     lombokVersion = "1.18.24"

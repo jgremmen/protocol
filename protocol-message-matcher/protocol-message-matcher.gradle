@@ -42,7 +42,10 @@ configurations {
 }
 
 
-def antlrVersion = "4.9.3"
+ext {
+  antlrVersion = "4.9.3"
+  antlrExtVersion = "0.3.0"
+}
 
 
 apply from: file('../gradle/javadoc.gradle')
@@ -52,7 +55,8 @@ apply from: file('../gradle/publishing.gradle')
 
 dependencies {
   implementation project(':protocol-core')
-  implementation("de.sayayi.lib:antlr4-runtime-ext:0.3.0") {
+
+  implementation("de.sayayi.lib:antlr4-runtime-ext:${antlrExtVersion}") {
     exclude group: 'org.antlr', module: 'antlr4'
   }
 
