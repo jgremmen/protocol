@@ -34,10 +34,10 @@ allprojects {
   ext {
     gsonVersion = "2.10"
     jetbrainsAnnotationsVersion = "23.0.0"
-    junitVersion = "5.9.0"
+    junitVersion = "5.9.1"
     lombokVersion = "1.18.24"
-    messageFormatVersion = "0.6.3"
-    mockitoVersion = "4.8.0"
+    messageFormatVersion = "0.7.0"
+    mockitoVersion = "4.9.0"
     unbescapeVersion = "1.1.6.RELEASE"
   }
 

@@ -30,7 +30,7 @@ task delombok(type: DelombokTask, dependsOn: compileJava) {
   }
 
   doFirst {
-    outputDir.deleteDir();
+    outputDir.deleteDir()
   }
 }
 
@@ -43,6 +43,6 @@ apply from: file('../gradle/publishing.gradle')
 dependencies {
   // java
   implementation "org.unbescape:unbescape:${unbescapeVersion}", optional
-  implementation "de.sayayi.lib:message-format-nodep:${messageFormatVersion}", optional
+  implementation "de.sayayi.lib:message-format:${messageFormatVersion}", optional
   implementation "com.google.code.gson:gson:${gsonVersion}", optional
 }
