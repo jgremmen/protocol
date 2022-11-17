@@ -17,6 +17,7 @@ package de.sayayi.lib.protocol.matcher;
 
 import de.sayayi.lib.antlr4.AbstractAntlr4Parser;
 import de.sayayi.lib.antlr4.AbstractVocabulary;
+import de.sayayi.lib.antlr4.syntax.GenericSyntaxErrorFormatter;
 import de.sayayi.lib.antlr4.walker.Walker;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.ProtocolMessageMatcher;
@@ -24,16 +25,15 @@ import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.exception.MessageMatcherParserException;
 import de.sayayi.lib.protocol.matcher.antlr.MessageMatcherBaseListener;
 import de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer;
-import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BufferedTokenStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.LexerNoViableAltException;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.Vocabulary;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.val;
 
 import org.jetbrains.annotations.Contract;
@@ -41,7 +41,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
-import static de.sayayi.lib.antlr4.walker.Walker.WALK_EXIT_RULES_RECURSIVE;
+import static de.sayayi.lib.antlr4.walker.Walker.WALK_EXIT_RULES_HEAP;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.inGroup;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.inGroupRegex;
 import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.ALL_OF;
@@ -83,7 +83,6 @@ import static lombok.AccessLevel.PRIVATE;
  * @author Jeroen Gremmen
  * @since 1.2.0
  */
-@AllArgsConstructor
 public class MessageMatcherParser extends AbstractAntlr4Parser
 {
   public static final MessageMatcherParser INSTANCE =
@@ -93,11 +92,20 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
   protected final Function<String,Level> levelResolver;
 
 
+  public MessageMatcherParser(ClassLoader classLoader, Function<String,Level> levelResolver)
+  {
+    super(ErrorFormatter.INSTANCE);
+
+    this.classLoader = classLoader;
+    this.levelResolver = levelResolver;
+  }
+
+
   @Contract(pure = true)
   public @NotNull MessageMatcher parseMessageMatcher(@NotNull String messageMatcherText)
   {
     return parse(new Lexer(messageMatcherText), Parser::new, Parser::parseMatcher,
-        new Listener(messageMatcherText), ctx -> ctx.matcher);
+        new Listener(), ctx -> ctx.matcher);
   }
 
 
@@ -105,39 +113,26 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
   public @NotNull TagSelector parseTagSelector(@NotNull String tagSelectorText)
   {
     return parse(new Lexer(tagSelectorText), Parser::new, Parser::parseTagSelector,
-        new Listener(tagSelectorText), ctx -> ctx.selector);
+        new Listener(), ctx -> ctx.selector);
   }
 
 
   @Override
-  protected @NotNull RuntimeException createException(@NotNull String parserInput,
-                                                      @NotNull Token startToken,
+  protected @NotNull RuntimeException createException(@NotNull Token startToken,
                                                       @NotNull Token stopToken,
                                                       @NotNull String formattedMessage,
                                                       @NotNull String errorMsg,
                                                       RecognitionException ex) {
-    return new MessageMatcherParserException(parserInput, startToken.getStartIndex(),
-        stopToken.getStopIndex(), formattedMessage, ex);
+    return new MessageMatcherParserException(formattedMessage, ex);
   }
 
 
-  private static final class Lexer extends MessageMatcherLexer implements ParserInputSupplier
+
+
+  private static final class Lexer extends MessageMatcherLexer
   {
-    private final @NotNull String matcherText;
-
-
-    @SuppressWarnings("deprecation")
-    public Lexer(@NotNull String matcherText)
-    {
-      super(new ANTLRInputStream(matcherText));
-
-      this.matcherText = matcherText;
-    }
-
-
-    @Override
-    public @NotNull String getParserInput() {
-      return matcherText;
+    private Lexer(@NotNull String matcherText) {
+      super(CharStreams.fromString(matcherText));
     }
 
 
@@ -183,15 +178,12 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
 
 
 
-  @RequiredArgsConstructor(access = PRIVATE)
+  @NoArgsConstructor(access = PRIVATE)
   private final class Listener extends MessageMatcherBaseListener implements WalkerSupplier
   {
-    private final String matcherText;
-
-
     @Override
     public @NotNull Walker getWalker() {
-      return WALK_EXIT_RULES_RECURSIVE;
+      return WALK_EXIT_RULES_HEAP;
     }
 
 
@@ -268,10 +260,7 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
         }
 
         if (clazz == null || !Throwable.class.isAssignableFrom(clazz))
-        {
-          syntaxError(matcherText, qualifiedName,
-              "class not found or not of type Throwable");
-        }
+          syntaxError(qualifiedName, "class not found or not of type Throwable");
 
         //noinspection unchecked
         ctx.matcher = MessageMatchers.hasThrowable((Class<? extends Throwable>)clazz);
@@ -448,7 +437,7 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
               return;
             }
 
-          syntaxError(matcherText, ctx, "unknown level '" + name + "'");
+          syntaxError(ctx, "unknown level '" + name + "'");
         }
       }
     }
@@ -488,6 +477,25 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
       }
 
       ctx.str = s.toString();
+    }
+  }
+
+
+
+
+  private static final class ErrorFormatter extends GenericSyntaxErrorFormatter
+  {
+    private static final ErrorFormatter INSTANCE = new ErrorFormatter();
+
+
+    private ErrorFormatter() {
+      super(1, 0, 0);
+    }
+
+
+    @Override
+    protected @NotNull String getLineFormat(int lines, int stopLine) {
+      return "> ";
     }
   }
 
