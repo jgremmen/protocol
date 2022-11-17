@@ -494,8 +494,7 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
 
 
     @Override
-    protected @NotNull String getLineFormat(int lines, @NotNull Token startToken,
-                                            @NotNull Token stopToken) {
+    protected @NotNull String getLineFormat(int lines, int stopLine) {
       return "> ";
     }
   }
