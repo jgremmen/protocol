@@ -71,7 +71,7 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
                    int estimatedGroupDepth)
   {
     messageFormatter = factory.getMessageFormatter();
-    html.delete(0, html.length());
+    html.setLength(0);
   }
 
 

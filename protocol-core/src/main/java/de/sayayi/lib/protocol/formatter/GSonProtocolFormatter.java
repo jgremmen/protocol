@@ -79,7 +79,7 @@ public class GSonProtocolFormatter<M> implements ProtocolFormatter<M,String>
     }
 
     val buffer = json.getBuffer();
-    buffer.delete(0, buffer.length());
+    buffer.setLength(0);
 
     jsonWriter = new JsonWriter(json);
 
