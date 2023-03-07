@@ -9,3 +9,4 @@
 *.interp
 gen/
 /gradle.properties
+out/
