@@ -32,12 +32,12 @@ allprojects {
 
 
   ext {
-    gsonVersion = "2.10"
-    jetbrainsAnnotationsVersion = "23.0.0"
-    junitVersion = "5.9.1"
-    lombokVersion = "1.18.24"
+    gsonVersion = "2.10.1"
+    jetbrainsAnnotationsVersion = "24.0.1"
+    junitVersion = "5.9.2"
+    lombokVersion = "1.18.26"
     messageFormatVersion = "0.7.0"
-    mockitoVersion = "4.9.0"
+    mockitoVersion = "4.11.0"
     unbescapeVersion = "1.1.6.RELEASE"
   }
 
