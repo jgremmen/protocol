@@ -36,6 +36,7 @@ import org.jetbrains.annotations.NotNull;
  * @author Jeroen Gremmen
  * @since 0.1.0
  */
+@SuppressWarnings("UnnecessaryUnicodeEscape")
 public abstract class AbstractTreeProtocolFormatter<M> implements ProtocolFormatter<M,String>
 {
   private static final String GRAPH_ROOT_NODE_PREFIX = "\u25a0\u2500\u2500";
@@ -63,7 +64,7 @@ public abstract class AbstractTreeProtocolFormatter<M> implements ProtocolFormat
   public void init(@NotNull ProtocolFactory<M> factory, @NotNull MessageMatcher matcher,
                    int estimatedGroupDepth)
   {
-    result.delete(0, result.length());
+    result.setLength(0);
 
     messageFormatter = factory.getMessageFormatter();
 
