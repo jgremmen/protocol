@@ -34,7 +34,7 @@ dependencies {
 
 
 asciidoctorj {
-  //requires './src/docs/ruby/rouge-adapter.rb'
+  requires './src/docs/ruby/rouge-adapter.rb'
 }
 
 
