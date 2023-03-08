@@ -82,7 +82,10 @@ public class MessageBundleMessageProcessor implements MessageProcessor<Message>
       return new GenericMessageWithId<>(message.getCode(), message);
 
     if (!parserFallback)
-      throw new ProtocolException("missing message in bundle for code '" + codeOrMessageFormat + "'");
+    {
+      throw new ProtocolException("missing message in bundle for code '" +
+                                  codeOrMessageFormat + "'");
+    }
 
     return MessageFormatMessageProcessor.INSTANCE.processMessage(codeOrMessageFormat);
   }

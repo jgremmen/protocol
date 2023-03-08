@@ -24,6 +24,7 @@ import lombok.var;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import static java.lang.Integer.parseInt;
 import static java.util.Arrays.copyOf;
 
 
@@ -41,24 +42,29 @@ import static java.util.Arrays.copyOf;
 public abstract class AbstractIndexedMessageFormatter<M> implements MessageFormatter<M>
 {
   @Override
-  @SuppressWarnings("java:S108")
   public final @NotNull String formatMessage(@NotNull GenericMessage<M> message)
   {
-    var parameters = new Object[0];
+    var parameters = new Object[4];
 
     for(val parametersEntry: message.getParameterValues().entrySet())
     {
       var i = -1;
 
       try {
-        i = Integer.parseInt(parametersEntry.getKey());
+        i = parseInt(parametersEntry.getKey());
       } catch(NumberFormatException ignored) {
       }
 
       if (i >> 6 == 0)  // 0..31
       {
         if (i >= parameters.length)
+        {
+          i |= i >> 1;
+          i |= i >> 2;
+          i |= i >> 4;
+
           parameters = copyOf(parameters, i + 1);
+        }
 
         parameters[i] = parametersEntry.getValue();
       }
@@ -78,7 +84,7 @@ public abstract class AbstractIndexedMessageFormatter<M> implements MessageForma
    *   found + 1. In order to prevent large numbers leading to allocating huge amounts of memory,
    *   the maximum index taken into account is {@code 31}.
    *   <br>
-   *   Missing indices will be initialized as {@code null} in the resulting array.
+   *   Missing indices will be initialized with {@code null} in the resulting array.
    * </p>
    *
    * @param message     message to format, never {@code null}
