@@ -1,7 +1,8 @@
 plugins {
   id 'antlr'
-  id "org.sonarqube" version "3.0"
+  id "org.sonarqube" version "4.0.0.2929"
   id 'io.franzbecker.gradle-lombok' version '5.0.0'
+  id 'de.sayayi.plugin.gradle.libapi' version "1.0-SNAPSHOT"
 }
 
 
