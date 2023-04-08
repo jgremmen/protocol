@@ -33,11 +33,6 @@ dependencies {
 }
 
 
-asciidoctorj {
-  requires './src/docs/ruby/rouge-adapter.rb'
-}
-
-
 libdocs {
   title = 'Protocol Library'
   email = 'protocol@reg.sayayi.de'
@@ -45,12 +40,8 @@ libdocs {
   gitHubUrl = uri('https://github.com/jgremmen/protocol/')
 
   javadocs {
-    //useDefaultCss = true
+    useDefaultCss = true
 
     exclude '**/antlr/MessageMatcher*.java'
-  }
-
-  userManual {
-    highlighter = 'rouge'
   }
 }
