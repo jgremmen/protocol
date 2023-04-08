@@ -18,6 +18,8 @@ cache:
 
 build:
   stage: build
+  tags:
+    - docker
   script: ./gradlew clean build
   artifacts:
     name: "protocol-artifacts"
