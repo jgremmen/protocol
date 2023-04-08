@@ -6,7 +6,7 @@ stages:
 
 variables:
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
-  GRADLE_USER_HOME: ".gradle"
+  GRADLE_USER_HOME: ".gradle-cache"
 
 before_script:
   - chmod +x ./gradlew
