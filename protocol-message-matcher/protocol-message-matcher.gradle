@@ -17,7 +17,9 @@ lombok {
 
 import io.franzbecker.gradle.lombok.task.DelombokTask
 
-task delombok(type: DelombokTask, dependsOn: compileJava) {
+tasks.register('delombok', DelombokTask) {
+  dependsOn compileJava
+
   javaLauncher.set(javaToolchains.launcherFor {
     languageVersion = JavaLanguageVersion.of(8)
   })

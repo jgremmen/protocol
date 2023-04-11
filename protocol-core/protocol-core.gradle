@@ -1,3 +1,4 @@
+//file:noinspection DependencyNotationArgument
 plugins {
   id 'com.netflix.nebula.optional-base' version '9.0.0'
   id "org.sonarqube" version "4.0.0.2929"
@@ -17,7 +18,9 @@ lombok {
 
 import io.franzbecker.gradle.lombok.task.DelombokTask
 
-task delombok(type: DelombokTask, dependsOn: compileJava) {
+tasks.register('delombok', DelombokTask) {
+  dependsOn compileJava
+
   javaLauncher.set(javaToolchains.launcherFor {
     languageVersion = JavaLanguageVersion.of(8)
   })
