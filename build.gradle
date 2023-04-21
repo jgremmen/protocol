@@ -82,12 +82,13 @@ configure(subprojects.findAll { it.name.startsWith("protocol-") }) {
 
   dependencies {
     // java
-    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
-
-    compileOnlyApi "org.projectlombok:lombok:${lombokVersion}"
-    compileOnlyApi "org.jetbrains:annotations:${jetbrainsAnnotationsVersion}"
+    compileOnlyApi "org.jetbrains:annotations-java5:${jetbrainsAnnotationsVersion}"
 
     // test
+    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     testImplementation "org.mockito:mockito-core:${mockitoVersion}"
 

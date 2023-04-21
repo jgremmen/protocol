@@ -22,12 +22,7 @@ import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
 import de.sayayi.lib.protocol.matcher.MessageMatcher;
 import de.sayayi.lib.protocol.matcher.MessageMatchers;
 
-import lombok.AllArgsConstructor;
-import lombok.val;
-
 import org.jetbrains.annotations.NotNull;
-
-import static lombok.AccessLevel.PRIVATE;
 
 
 /**
@@ -37,12 +32,15 @@ import static lombok.AccessLevel.PRIVATE;
  * @since 0.1.0
  */
 @SuppressWarnings("unused")
-@AllArgsConstructor(access = PRIVATE)
 public final class TechnicalProtocolFormatter<M> extends AbstractTreeProtocolFormatter<M>
     implements ConfiguredProtocolFormatter<M,String>
 {
   private static final ConfiguredProtocolFormatter<?,String> INSTANCE =
       new TechnicalProtocolFormatter<>();
+
+
+  private TechnicalProtocolFormatter() {
+  }
 
 
   @Override
@@ -54,7 +52,7 @@ public final class TechnicalProtocolFormatter<M> extends AbstractTreeProtocolFor
   @Override
   protected String format(@NotNull GenericMessageWithLevel<M> message)
   {
-    val s = new StringBuilder(super.format(message)).append("  {level=")
+    final StringBuilder s = new StringBuilder(super.format(message)).append("  {level=")
         .append(message.getLevel());
 
     if (message instanceof Message)

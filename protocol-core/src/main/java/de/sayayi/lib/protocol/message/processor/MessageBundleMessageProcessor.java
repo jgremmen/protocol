@@ -21,9 +21,6 @@ import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
 import de.sayayi.lib.protocol.exception.ProtocolException;
 import de.sayayi.lib.protocol.spi.GenericMessageWithId;
 
-import lombok.AllArgsConstructor;
-import lombok.val;
-
 import org.jetbrains.annotations.NotNull;
 
 import static java.util.Objects.requireNonNull;
@@ -35,11 +32,18 @@ import static java.util.Objects.requireNonNull;
  *
  * @see MessageFormatMessageProcessor
  */
-@AllArgsConstructor
 public class MessageBundleMessageProcessor implements MessageProcessor<Message>
 {
   private final MessageBundle messageBundle;
   private final boolean parserFallback;
+
+
+  public MessageBundleMessageProcessor(@NotNull MessageBundle messageBundle,
+                                       boolean parserFallback)
+  {
+    this.messageBundle = messageBundle;
+    this.parserFallback = parserFallback;
+  }
 
 
   @SuppressWarnings("unused")
@@ -76,7 +80,7 @@ public class MessageBundleMessageProcessor implements MessageProcessor<Message>
   {
     requireNonNull(codeOrMessageFormat, "codeOrMessageFormat must not be null");
 
-    val message = isInvalidMessageCode(codeOrMessageFormat)
+    final Message.WithCode message = isInvalidMessageCode(codeOrMessageFormat)
         ? null : messageBundle.getByCode(codeOrMessageFormat);
     if (message != null)
       return new GenericMessageWithId<>(message.getCode(), message);

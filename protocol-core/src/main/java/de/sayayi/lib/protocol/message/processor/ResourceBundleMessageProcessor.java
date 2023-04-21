@@ -19,8 +19,6 @@ import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
 import de.sayayi.lib.protocol.exception.ProtocolException;
 import de.sayayi.lib.protocol.spi.GenericMessageWithId;
 
-import lombok.AllArgsConstructor;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ResourceBundle;
@@ -32,10 +30,14 @@ import static java.util.Objects.requireNonNull;
  * @author Jeroen Gremmen
  * @since 0.7.0
  */
-@AllArgsConstructor
 public final class ResourceBundleMessageProcessor implements MessageProcessor<String>
 {
   private final ResourceBundle resourceBundle;
+
+
+  public ResourceBundleMessageProcessor(@NotNull ResourceBundle resourceBundle) {
+    this.resourceBundle = resourceBundle;
+  }
 
 
   @Override

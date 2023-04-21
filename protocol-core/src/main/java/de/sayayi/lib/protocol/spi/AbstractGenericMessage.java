@@ -18,8 +18,6 @@ package de.sayayi.lib.protocol.spi;
 import de.sayayi.lib.protocol.Protocol.GenericMessage;
 import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor.MessageWithId;
 
-import lombok.Getter;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -32,7 +30,7 @@ import java.util.Map;
  */
 abstract class AbstractGenericMessage<M> implements GenericMessage<M>
 {
-  @Getter final long timeMillis;
+  final long timeMillis;
 
   protected final @NotNull MessageWithId<M> messageWithId;
   protected final @NotNull ParameterMap parameterMap;
@@ -45,6 +43,12 @@ abstract class AbstractGenericMessage<M> implements GenericMessage<M>
 
     timeMillis = System.currentTimeMillis();
     parameterMap = new ParameterMap(parentParameterMap);
+  }
+
+
+  @Override
+  public long getTimeMillis() {
+    return timeMillis;
   }
 
 

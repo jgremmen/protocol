@@ -18,11 +18,7 @@ package de.sayayi.lib.protocol.message.formatter;
 import de.sayayi.lib.protocol.Protocol.GenericMessage;
 import de.sayayi.lib.protocol.ProtocolFactory.MessageFormatter;
 
-import lombok.NoArgsConstructor;
-
 import org.jetbrains.annotations.NotNull;
-
-import static lombok.AccessLevel.PRIVATE;
 
 
 /**
@@ -31,7 +27,6 @@ import static lombok.AccessLevel.PRIVATE;
  * @author Jeroen Gremmen
  * @since 0.7.0
  */
-@NoArgsConstructor(access = PRIVATE)
 public final class ToStringMessageFormatter<M> implements MessageFormatter<M>
 {
   private static final MessageFormatter<Object> INSTANCE = new ToStringMessageFormatter<>();
@@ -41,6 +36,10 @@ public final class ToStringMessageFormatter<M> implements MessageFormatter<M>
    * This formatter returns the internal string message as is.
    */
   public static final MessageFormatter<String> IDENTITY = GenericMessage::getMessage;
+
+
+  private ToStringMessageFormatter() {
+  }
 
 
   @Override

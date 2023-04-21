@@ -18,11 +18,10 @@ package de.sayayi.lib.protocol.message.formatter;
 import de.sayayi.lib.protocol.Protocol.GenericMessage;
 import de.sayayi.lib.protocol.ProtocolFactory.MessageFormatter;
 
-import lombok.val;
-import lombok.var;
-
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map.Entry;
 
 import static java.lang.Integer.parseInt;
 import static java.util.Arrays.copyOf;
@@ -44,11 +43,11 @@ public abstract class AbstractIndexedMessageFormatter<M> implements MessageForma
   @Override
   public final @NotNull String formatMessage(@NotNull GenericMessage<M> message)
   {
-    var parameters = new Object[4];
+    Object[] parameters = new Object[4];
 
-    for(val parametersEntry: message.getParameterValues().entrySet())
+    for(final Entry<String,Object> parametersEntry: message.getParameterValues().entrySet())
     {
-      var i = -1;
+      int i = -1;
 
       try {
         i = parseInt(parametersEntry.getKey());

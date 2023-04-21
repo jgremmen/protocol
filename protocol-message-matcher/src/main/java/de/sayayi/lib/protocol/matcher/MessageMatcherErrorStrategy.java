@@ -23,9 +23,6 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.Vocabulary;
 import org.antlr.v4.runtime.misc.IntervalSet;
 
-import lombok.NoArgsConstructor;
-import lombok.val;
-
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,7 +31,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toCollection;
-import static lombok.AccessLevel.PACKAGE;
 import static org.antlr.v4.runtime.Token.EOF;
 
 
@@ -42,7 +38,6 @@ import static org.antlr.v4.runtime.Token.EOF;
  * @author Jeroen Gremmen
  * @since 1.2.0
  */
-@NoArgsConstructor(access = PACKAGE)
 class MessageMatcherErrorStrategy extends DefaultErrorStrategy
 {
   static final ANTLRErrorStrategy INSTANCE = new MessageMatcherErrorStrategy();
@@ -50,11 +45,15 @@ class MessageMatcherErrorStrategy extends DefaultErrorStrategy
   private static final String EOF_DISPLAY_NAME = "end of matcher";
 
 
+  MessageMatcherErrorStrategy() {
+  }
+
+
   @Override
   protected void reportInputMismatch(Parser recognizer, InputMismatchException ex)
   {
-    val expectedTokens = ex.getExpectedTokens();
-    val offendingToken = ex.getOffendingToken();
+    final IntervalSet expectedTokens = ex.getExpectedTokens();
+    final Token offendingToken = ex.getOffendingToken();
 
     if (isEOFToken(offendingToken))
     {
@@ -70,7 +69,7 @@ class MessageMatcherErrorStrategy extends DefaultErrorStrategy
     }
     else
     {
-      val offendingTokenText = getTokenErrorDisplay(offendingToken);
+      final String offendingTokenText = getTokenErrorDisplay(offendingToken);
 
       if (expectedTokens.size() <= 4)
       {
@@ -103,12 +102,12 @@ class MessageMatcherErrorStrategy extends DefaultErrorStrategy
   private @NotNull String tokenList(@NotNull IntervalSet tokens,
                                     @NotNull Vocabulary vocabulary)
   {
-    val list = new StringBuilder();
+    final StringBuilder list = new StringBuilder();
 
     for(Iterator<String> tokenNameIterator = getTokenDisplayNames(tokens, vocabulary).iterator();
         tokenNameIterator.hasNext();)
     {
-      val tokenName = tokenNameIterator.next();
+      final String tokenName = tokenNameIterator.next();
 
       if (list.length() > 0)
         list.append(tokenNameIterator.hasNext() ? ", " : " or ");

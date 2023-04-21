@@ -17,8 +17,6 @@ package de.sayayi.lib.protocol.exception;
 
 import org.antlr.v4.runtime.RecognitionException;
 
-import lombok.experimental.StandardException;
-
 
 /**
  * <p>
@@ -28,9 +26,18 @@ import lombok.experimental.StandardException;
  * @author Jeroen Gremmen
  * @since 1.2.0
  */
-@StandardException
 public final class MessageMatcherParserException extends ProtocolException
 {
+  public MessageMatcherParserException(String message) {
+    super(message);
+  }
+
+
+  public MessageMatcherParserException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
+
   @Override
   public RecognitionException getCause() {
     return (RecognitionException)super.getCause();

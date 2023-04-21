@@ -31,14 +31,11 @@ import de.sayayi.lib.protocol.ProtocolIterator.ProtocolStart;
 import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.val;
-import lombok.var;
-
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -53,16 +50,14 @@ import static java.util.Spliterator.SORTED;
  *
  * @author Jeroen Gremmen
  */
-@EqualsAndHashCode(onlyExplicitlyIncluded = true, doNotUseGetters = true, callSuper = false)
 abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
     implements Protocol<M>, InternalProtocolQueryable
 {
   private static final AtomicInteger PROTOCOL_ID = new AtomicInteger(0);
 
-  @EqualsAndHashCode.Include
-  @Getter private final int id;
+  private final int id;
 
-  @Getter final @NotNull ProtocolFactory<M> factory;
+  final @NotNull ProtocolFactory<M> factory;
 
   final @NotNull ParameterMap parameterMap;
   final @NotNull List<InternalProtocolEntry<M>> entries;
@@ -80,14 +75,26 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   }
 
 
+  @Contract(pure = true)
+  public int getId() {
+    return id;
+  }
+
+
+  @Contract(pure = true)
+  public @NotNull ProtocolFactory<M> getFactory() {
+    return factory;
+  }
+
+
   protected @NotNull Set<String> getPropagatedTags(@NotNull Set<String> tags)
   {
     if (tagPropagationMap.isEmpty())
       return tags;
 
-    val collectedPropagatedTagDefs = new TreeSet<>(tags);
+    final Set<String> collectedPropagatedTagDefs = new TreeSet<>(tags);
 
-    for(val tagPropagation: tagPropagationMap.entrySet())
+    for(final Entry<TagSelector,Set<String>> tagPropagation: tagPropagationMap.entrySet())
       if (tagPropagation.getKey().match(collectedPropagatedTagDefs))
         collectedPropagatedTagDefs.addAll(tagPropagation.getValue());
 
@@ -108,7 +115,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   public boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher,
                           boolean messageOnly)
   {
-    for(val entry: entries)
+    for(final InternalProtocolEntry<M> entry: entries)
       if (entry.matches0(levelLimit, matcher, messageOnly))
         return true;
 
@@ -119,9 +126,9 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level levelLimit,
                                              @NotNull MessageMatcher matcher)
   {
-    val filteredEntries = new ArrayList<ProtocolEntry<M>>();
+    final List<ProtocolEntry<M>> filteredEntries = new ArrayList<>();
 
-    for(val entry: entries)
+    for(final InternalProtocolEntry<M> entry: entries)
       if (entry.matches0(levelLimit, matcher, false))
       {
         if (entry instanceof InternalProtocolEntry.Group)
@@ -143,9 +150,9 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   @Override
   public int getVisibleEntryCount0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
-    var count = 0;
+    int count = 0;
 
-    for(val entry: entries)
+    for(final InternalProtocolEntry<M> entry: entries)
       count += entry.getVisibleEntryCount0(levelLimit, matcher);
 
     return count;
@@ -157,7 +164,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   {
     for(final Iterator<ProtocolGroup<M>> groupIterator = groupIterator(); groupIterator.hasNext();)
     {
-      val result = groupIterator.next().getGroupByName(name);
+      final Optional<ProtocolGroup<M>> result = groupIterator.next().getGroupByName(name);
       if (result.isPresent())
         return result;
     }
@@ -176,7 +183,8 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   public @NotNull ProtocolGroup<M> createGroup()
   {
     @SuppressWarnings("unchecked")
-    val group = new ProtocolGroupImpl<>((AbstractProtocol<M,ProtocolMessageBuilder<M>>)this);
+    final ProtocolGroupImpl<M> group =
+        new ProtocolGroupImpl<>((AbstractProtocol<M,ProtocolMessageBuilder<M>>)this);
 
     entries.add(group);
 
@@ -230,13 +238,25 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
 
   int countGroupDepth()
   {
-    var depth = 0;
+    int depth = 0;
 
-    for(val entry: entries)
+    for(final InternalProtocolEntry<M> entry: entries)
       if (entry instanceof ProtocolGroupImpl)
         depth = Math.max(depth, 1 + ((ProtocolGroupImpl<M>)entry).countGroupDepth());
 
     return depth;
+  }
+
+
+  @Override
+  public boolean equals(Object o) {
+    return this == o || o instanceof AbstractProtocol && id == ((AbstractProtocol<?,?>)o).id;
+  }
+
+
+  @Override
+  public int hashCode() {
+    return Integer.hashCode(id);
   }
 
 
@@ -262,7 +282,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
     {
       while(iterator.hasNext())
       {
-        val entry = iterator.next();
+        final InternalProtocolEntry<M> entry = iterator.next();
         if (entry instanceof ProtocolGroup)
         {
           //noinspection unchecked
@@ -287,7 +307,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
       if (!hasNext())
         throw new NoSuchElementException();
 
-      val nextGroup = next;
+      final ProtocolGroup<M> nextGroup = next;
       findNext();
 
       return nextGroup;

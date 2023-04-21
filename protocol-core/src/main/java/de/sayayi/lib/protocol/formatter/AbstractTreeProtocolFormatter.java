@@ -23,8 +23,6 @@ import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
-import lombok.val;
-
 import org.jetbrains.annotations.NotNull;
 
 
@@ -81,13 +79,13 @@ public abstract class AbstractTreeProtocolFormatter<M> implements ProtocolFormat
   @Override
   public void message(@NotNull MessageEntry<M> message)
   {
-    val depth = message.getDepth();
+    final int depth = message.getDepth();
 
     if (depth == 0 && message.isFirst())
       result.append(GRAPH_ROOT_NODE_PREFIX);
     else
     {
-      val prefix = prefixes[depth];
+      final String prefix = prefixes[depth];
 
       result.append(prefix).append(GRAPH_VERTICAL_BAR)
             .append(prefix).append(message.isLast() ? GRAPH_LAST_NODE_PREFIX : GRAPH_MIDDLE_NODE_PREFIX);
@@ -100,8 +98,8 @@ public abstract class AbstractTreeProtocolFormatter<M> implements ProtocolFormat
   @Override
   public void groupStart(@NotNull GroupStartEntry<M> group)
   {
-    val depth = group.getDepth();
-    val prefix = prefixes[depth - 1];
+    final int depth = group.getDepth();
+    final String prefix = prefixes[depth - 1];
 
     if (depth == 1 && group.isFirst())
       result.append(GRAPH_ROOT_NODE_PREFIX);

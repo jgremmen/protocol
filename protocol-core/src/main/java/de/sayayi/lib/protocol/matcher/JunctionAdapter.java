@@ -19,21 +19,21 @@ import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.ProtocolEntry.Message;
 import de.sayayi.lib.protocol.TagSelector;
 
-import lombok.RequiredArgsConstructor;
-
 import org.jetbrains.annotations.NotNull;
-
-import static lombok.AccessLevel.PACKAGE;
 
 
 /**
  * @author Jeroen Gremmen
  * @since 1.2.0
  */
-@RequiredArgsConstructor(access = PACKAGE)
 final class JunctionAdapter implements MessageMatcher.Junction
 {
   private final MessageMatcher matcher;
+
+
+  JunctionAdapter(@NotNull MessageMatcher matcher) {
+    this.matcher = matcher;
+  }
 
 
   @Override

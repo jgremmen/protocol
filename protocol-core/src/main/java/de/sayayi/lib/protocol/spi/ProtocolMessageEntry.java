@@ -20,9 +20,6 @@ import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor.MessageWithId;
 import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
-import lombok.Getter;
-import lombok.val;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map.Entry;
@@ -42,10 +39,10 @@ import static java.util.stream.Collectors.joining;
 final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M>
     implements InternalProtocolEntry.Message<M>
 {
-  @Getter private final @NotNull Protocol<M> protocol;
-  @Getter private final @NotNull Level level;
+  private final @NotNull Protocol<M> protocol;
+  private final @NotNull Level level;
   private final @NotNull Set<String> tagNames;
-  @Getter private final Throwable throwable;
+  private final Throwable throwable;
 
 
   ProtocolMessageEntry(@NotNull Protocol<M> protocol, @NotNull Level level,
@@ -63,8 +60,26 @@ final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M>
 
 
   @Override
+  public @NotNull Protocol<M> getProtocol() {
+    return protocol;
+  }
+
+
+  @Override
+  public @NotNull Level getLevel() {
+    return level;
+  }
+
+
+  @Override
   public @NotNull Set<String> getTagNames() {
     return unmodifiableSet(tagNames);
+  }
+
+
+  @Override
+  public Throwable getThrowable() {
+    return throwable;
   }
 
 
@@ -102,7 +117,7 @@ final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M>
   @Override
   public String toString()
   {
-    val s = new StringBuilder("Message[level=").append(level).append(",tags={")
+    final StringBuilder s = new StringBuilder("Message[level=").append(level).append(",tags={")
         .append(String.join(",", tagNames)).append("},id=").append(getMessageId())
         .append(",message=").append(getMessage());
 

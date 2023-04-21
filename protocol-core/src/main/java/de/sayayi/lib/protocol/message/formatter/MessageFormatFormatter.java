@@ -20,8 +20,6 @@ import de.sayayi.lib.message.MessageContext;
 import de.sayayi.lib.protocol.Protocol.GenericMessage;
 import de.sayayi.lib.protocol.ProtocolFactory.MessageFormatter;
 
-import lombok.AllArgsConstructor;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -33,10 +31,14 @@ import java.util.Map;
  *
  * @see Message#format(MessageContext, Map)
  */
-@AllArgsConstructor
 public final class MessageFormatFormatter implements MessageFormatter<Message>
 {
   private final @NotNull MessageContext messageContext;
+
+
+  public MessageFormatFormatter(@NotNull MessageContext messageContext) {
+    this.messageContext = messageContext;
+  }
 
 
   @Override

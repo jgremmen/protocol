@@ -15,13 +15,6 @@
  */
 package de.sayayi.lib.protocol.spi;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-import lombok.var;
-
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,7 +34,6 @@ import static java.util.Spliterator.DISTINCT;
 import static java.util.Spliterator.NONNULL;
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterator.SORTED;
-import static lombok.AccessLevel.PRIVATE;
 
 
 /**
@@ -83,14 +75,14 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
       entries = new ParameterEntry[] { new ParameterEntry(parameter, value), null };
     else
     {
-      var low = 0;
-      var high = size - 1;
+      int low = 0;
+      int high = size - 1;
 
       while(low <= high)
       {
-        val mid = (low + high) >>> 1;
-        val entry = entries[mid];
-        val cmp = entry.key.compareTo(parameter);
+        final int mid = (low + high) >>> 1;
+        final ParameterEntry entry = entries[mid];
+        final int cmp = entry.key.compareTo(parameter);
 
         if (cmp < 0)
           low = mid + 1;
@@ -129,7 +121,9 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
   @Contract(pure = true)
   public Object get(@NotNull String parameter)
   {
-    val entry = getEntry(requireNonNull(parameter, "parameter must not be null"));
+    final ParameterEntry entry =
+        getEntry(requireNonNull(parameter, "parameter must not be null"));
+
     return entry == null ? null : entry.value;
   }
 
@@ -155,14 +149,14 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
   @Contract(pure = true)
   private ParameterEntry getEntry(@NotNull String parameter)
   {
-    var low = 0;
-    var high = size - 1;
+    int low = 0;
+    int high = size - 1;
 
     while(low <= high)
     {
-      val mid = (low + high) >>> 1;
-      val entry = entries[mid];
-      val cmp = entry.key.compareTo(parameter);
+      final int mid = (low + high) >>> 1;
+      final ParameterEntry entry = entries[mid];
+      final int cmp = entry.key.compareTo(parameter);
 
       if (cmp < 0)
         low = mid + 1;
@@ -179,7 +173,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
   @Contract(pure = true)
   public int size()
   {
-    var n = 0;
+    int n = 0;
 
     for(Iterator<Entry<String,Object>> iterator = iterator(); iterator.hasNext(); iterator.next())
       n++;
@@ -203,11 +197,11 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
   @Override
   public String toString()
   {
-    val iterator = iterator();
+    final Iterator<Entry<String,Object>> iterator = iterator();
     if (!iterator.hasNext())
       return "[]";
 
-    val s = new StringJoiner(",", "[", "]");
+    final StringJoiner s = new StringJoiner(",", "[", "]");
 
     iterator.forEachRemaining(e -> s.add(e.toString()));
 
@@ -217,7 +211,6 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
 
-  @RequiredArgsConstructor(access = PRIVATE)
   private static final class UnmodifyableMap implements Map<String,Object>
   {
     private final @NotNull ParameterMap map;
@@ -225,6 +218,11 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     private Set<String> keySet;
     private Set<Entry<String,Object>> entrySet;
     private Collection<Object> valueCollection;
+
+
+    private UnmodifyableMap(@NotNull ParameterMap map) {
+      this.map = map;
+    }
 
 
     @Override
@@ -314,10 +312,8 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
 
-  @EqualsAndHashCode(doNotUseGetters = true, onlyExplicitlyIncluded = true)
   private abstract static class AbstractUnmodifyableCollection<T> implements Collection<T>
   {
-    @EqualsAndHashCode.Include
     protected final @NotNull ParameterMap map;
 
 
@@ -382,7 +378,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
     public boolean containsAll(Collection<?> c)
     {
-      for(val e: c)
+      for(final Object e: c)
         if (!contains(e))
           return false;
 
@@ -390,13 +386,27 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     }
 
 
+    @Override
+    public boolean equals(Object o)
+    {
+      return this == o || o instanceof AbstractUnmodifyableCollection &&
+                          map.equals(((AbstractUnmodifyableCollection<?>)o).map);
+    }
+
+
+    @Override
+    public int hashCode() {
+      return map.hashCode();
+    }
+
+
     public String toString()
     {
-      val iterator = this.iterator();
+      final Iterator<T> iterator = this.iterator();
       if (!iterator.hasNext())
         return "[]";
 
-      val s = new StringJoiner(", ", "[", "]");
+      final StringJoiner s = new StringJoiner(", ", "[", "]");
 
       iterator.forEachRemaining(e -> s.add(e.toString()));
 
@@ -407,7 +417,6 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
 
-  @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
   private static final class UnmodifyableKeySet
       extends AbstractUnmodifyableCollection<String>
       implements Set<String>
@@ -426,7 +435,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     @Override
     public @NotNull Iterator<String> iterator()
     {
-      val iterator = map.iterator();
+      final Iterator<Entry<String,Object>> iterator = map.iterator();
 
       return new Iterator<String>() {
         @Override
@@ -445,16 +454,16 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
     @Override
-    public Object @NotNull [] toArray() {
+    public @NotNull Object[] toArray() {
       return map.stream().map(Entry::getKey).toArray();
     }
 
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T @NotNull [] toArray(T @NotNull [] a)
+    public @NotNull <T> T[] toArray(@NotNull T[] a)
     {
-      val size = map.size();
+      final int size = map.size();
 
       if (a.length < size)
         a = (T[])Array.newInstance(a.getClass().getComponentType(), size);
@@ -475,12 +484,17 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
       return Spliterators.spliterator(iterator(), super.size(),
           ORDERED | SORTED | DISTINCT | NONNULL);
     }
+
+
+    @Override
+    public boolean equals(Object o) {
+      return super.equals(o) && o instanceof UnmodifyableKeySet;
+    }
   }
 
 
 
 
-  @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
   private static final class UnmodifyableEntrySet
       extends AbstractUnmodifyableCollection<Entry<String,Object>>
       implements Set<Entry<String,Object>>
@@ -494,7 +508,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     public boolean contains(Object o)
     {
       if (o instanceof Entry)
-        for(val entry: map)
+        for(final Entry<String,Object> entry: map)
           if (Objects.equals(entry, o))
             return true;
 
@@ -509,16 +523,16 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
     @Override
-    public Object @NotNull [] toArray() {
+    public @NotNull Object[] toArray() {
       return map.stream().toArray();
     }
 
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T @NotNull [] toArray(T @NotNull [] a)
+    public @NotNull <T> T[] toArray(@NotNull T[] a)
     {
-      val size = map.size();
+      final int size = map.size();
 
       if (a.length < size)
         a = (T[])Array.newInstance(a.getClass().getComponentType(), size);
@@ -537,12 +551,17 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     public Spliterator<Entry<String,Object>> spliterator() {
       return map.spliterator();
     }
+
+
+    @Override
+    public boolean equals(Object o) {
+      return super.equals(o) && o instanceof UnmodifyableEntrySet;
+    }
   }
 
 
 
 
-  @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
   private static final class UnmodifyableValueCollection
       extends AbstractUnmodifyableCollection<Object>
       implements Collection<Object>
@@ -555,7 +574,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     @Override
     public boolean contains(Object o)
     {
-      for(val entry: map)
+      for(final Entry<String,Object> entry: map)
         if (Objects.equals(entry.getValue(), o))
           return true;
 
@@ -566,7 +585,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     @Override
     public @NotNull Iterator<Object> iterator()
     {
-      val iterator = map.iterator();
+      final Iterator<Entry<String,Object>> iterator = map.iterator();
 
       return new Iterator<Object>() {
         @Override
@@ -591,25 +610,49 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
     @Override
-    public Object @NotNull [] toArray() {
+    public @NotNull Object[] toArray() {
       return map.stream().map(Entry::getValue).toArray();
     }
 
 
     @Override
-    public <T> T @NotNull [] toArray(T @NotNull [] a) {
+    public @NotNull <T> T[] toArray(@NotNull T[] a) {
       throw new UnsupportedOperationException();
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+      return super.equals(o) && o instanceof UnmodifyableValueCollection;
     }
   }
 
 
 
 
-  @AllArgsConstructor(access = PRIVATE)
   private static final class ParameterEntry implements Entry<String,Object>
   {
-    @Getter final @NotNull String key;
-    @Getter Object value;
+    final @NotNull String key;
+    Object value;
+
+
+    private ParameterEntry(@NotNull String key, Object value)
+    {
+      this.key = key;
+      this.value = value;
+    }
+
+
+    @Contract(pure = true)
+    public @NotNull String getKey() {
+      return key;
+    }
+
+
+    @Contract(pure = true)
+    public Object getValue() {
+      return value;
+    }
 
 
     @Override
@@ -626,7 +669,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
       if (!(o instanceof ParameterEntry))
         return false;
 
-      val that = (ParameterEntry)o;
+      final ParameterEntry that = (ParameterEntry)o;
 
       return key.equals(that.key) && Objects.equals(value, that.value);
     }
@@ -647,7 +690,6 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
 
-  @AllArgsConstructor(access = PRIVATE)
   private final class ParameterIterator implements Iterator<Entry<String,Object>>
   {
     private final @NotNull Iterator<Entry<String,Object>> parentIterator;
@@ -682,8 +724,8 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
       }
       else
       {
-        val entry = entries[n];
-        var cmp = 1;
+        final ParameterEntry entry = entries[n];
+        int cmp = 1;
 
         if (nextParentEntry != null && (cmp = nextParentEntry.getKey().compareTo(entry.key)) < 0)
         {
@@ -717,7 +759,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
       if (nextEntry == null)
         throw new NoSuchElementException();
 
-      val next = nextEntry;
+      final Entry<String,Object> next = nextEntry;
 
       prepareNext();
 

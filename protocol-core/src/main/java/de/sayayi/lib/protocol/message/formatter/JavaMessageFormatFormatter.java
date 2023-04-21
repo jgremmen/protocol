@@ -17,8 +17,6 @@ package de.sayayi.lib.protocol.message.formatter;
 
 import de.sayayi.lib.protocol.Protocol.GenericMessage;
 
-import lombok.AllArgsConstructor;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.text.MessageFormat;
@@ -31,13 +29,17 @@ import java.util.Locale;
  *
  * @see MessageFormat#format(String, Object...)
  */
-@AllArgsConstructor
 public final class JavaMessageFormatFormatter extends AbstractIndexedMessageFormatter<String>
 {
   public static final JavaMessageFormatFormatter INSTANCE =
       new JavaMessageFormatFormatter(Locale.getDefault());
 
   private final Locale locale;
+
+
+  public JavaMessageFormatFormatter(@NotNull Locale locale) {
+    this.locale = locale;
+  }
 
 
   @Override

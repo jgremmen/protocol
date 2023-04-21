@@ -22,8 +22,6 @@ import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
 import de.sayayi.lib.protocol.exception.ProtocolException;
 import de.sayayi.lib.protocol.spi.GenericMessageWithId;
 
-import lombok.AllArgsConstructor;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -37,7 +35,6 @@ import static java.util.Objects.requireNonNull;
  *
  * @see MessageBundleMessageProcessor
  */
-@AllArgsConstructor
 public class MessageFormatMessageProcessor implements MessageProcessor<Message>
 {
   public static final MessageFormatMessageProcessor INSTANCE =
@@ -45,6 +42,11 @@ public class MessageFormatMessageProcessor implements MessageProcessor<Message>
 
 
   private final @NotNull MessageFactory messageFactory;
+
+
+  public MessageFormatMessageProcessor(@NotNull MessageFactory messageFactory) {
+    this.messageFactory = messageFactory;
+  }
 
 
   @Override

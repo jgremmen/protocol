@@ -17,8 +17,6 @@ package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
 
-import lombok.RequiredArgsConstructor;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
@@ -26,7 +24,6 @@ import java.util.Spliterator;
 import java.util.function.Consumer;
 
 import static java.lang.Long.MAX_VALUE;
-import static lombok.AccessLevel.PACKAGE;
 
 
 /**
@@ -38,10 +35,14 @@ import static lombok.AccessLevel.PACKAGE;
  *
  * @since 1.1.0
  */
-@RequiredArgsConstructor(access = PACKAGE)
 final class ProtocolSpliterator<M> implements Spliterator<DepthEntry<M>>
 {
   private final @NotNull Iterator<DepthEntry<M>> iterator;
+
+
+  ProtocolSpliterator(@NotNull Iterator<DepthEntry<M>> iterator) {
+    this.iterator = iterator;
+  }
 
 
   @Override

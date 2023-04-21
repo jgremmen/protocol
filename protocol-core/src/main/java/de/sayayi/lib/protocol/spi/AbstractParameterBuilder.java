@@ -26,12 +26,11 @@ import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
-import lombok.val;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.function.Consumer;
@@ -68,9 +67,9 @@ abstract class AbstractParameterBuilder
   {
     requireNonNull(parameterValues, "parameterValues must not be null");
 
-    for(val entry: parameterValues.entrySet())
+    for(final Entry<String,Object> entry: parameterValues.entrySet())
     {
-      val key = entry.getKey();
+      final String key = entry.getKey();
 
       if (key != null && !key.isEmpty())
         with(key, entry.getValue());

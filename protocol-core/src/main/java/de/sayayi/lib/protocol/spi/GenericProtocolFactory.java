@@ -21,18 +21,14 @@ import de.sayayi.lib.protocol.ProtocolMessageMatcher;
 import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.val;
-
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Iterator;
 import java.util.ServiceLoader;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.Objects.requireNonNull;
-import static lombok.AccessLevel.PROTECTED;
 
 
 /**
@@ -46,8 +42,8 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 
   private final int id;
 
-  @Getter private final @NotNull MessageProcessor<M> messageProcessor;
-  @Getter private final @NotNull MessageFormatter<M> messageFormatter;
+  private final @NotNull MessageProcessor<M> messageProcessor;
+  private final @NotNull MessageFormatter<M> messageFormatter;
 
   private @NotNull ProtocolMessageMatcher messageMatcherDelegate;
 
@@ -78,6 +74,18 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
         requireNonNull(messageMatcher, "messageMatcher must not be null");
 
     id = FACTORY_ID.incrementAndGet();
+  }
+
+
+  @Override
+  public @NotNull MessageProcessor<M> getMessageProcessor() {
+    return messageProcessor;
+  }
+
+
+  @Override
+  public @NotNull MessageFormatter<M> getMessageFormatter() {
+    return messageFormatter;
   }
 
 
@@ -125,7 +133,7 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
   @Contract(pure = true)
   protected static @NotNull ProtocolMessageMatcher detectMessageMatcher(ClassLoader classLoader)
   {
-    val messageMatcherIterator = ServiceLoader
+    final Iterator<ProtocolMessageMatcher> messageMatcherIterator = ServiceLoader
         .load(ProtocolMessageMatcher.class, classLoader)
         .iterator();
 
@@ -139,9 +147,12 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 
 
 
-  @NoArgsConstructor(access = PROTECTED)
   protected static final class NotSuportedMessageMatcher implements ProtocolMessageMatcher
   {
+    private NotSuportedMessageMatcher() {
+    }
+
+
     @Override
     public @NotNull MessageMatcher parseMessageMatcher(@NotNull String messageMatcherExpression) {
       throw new UnsupportedOperationException();

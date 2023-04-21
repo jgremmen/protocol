@@ -28,8 +28,6 @@ import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.exception.ProtocolException;
 import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
-import lombok.val;
-
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,6 +41,7 @@ import java.io.StringWriter;
  * @author Jeroen Gremmen
  * @since 1.0.2
  */
+@SuppressWarnings("UnstableApiUsage")
 public class GSonProtocolFormatter<M> implements ProtocolFormatter<M,String>
 {
   private final StringWriter json;
@@ -78,7 +77,7 @@ public class GSonProtocolFormatter<M> implements ProtocolFormatter<M,String>
       }
     }
 
-    val buffer = json.getBuffer();
+    final StringBuffer buffer = json.getBuffer();
     buffer.setLength(0);
 
     jsonWriter = new JsonWriter(json);
@@ -134,13 +133,13 @@ public class GSonProtocolFormatter<M> implements ProtocolFormatter<M,String>
 
         // tags (all in one line)
         jsonWriter.name("tags").beginArray();
-        for(val tag: message.getTagNames())
+        for(final String tag: message.getTagNames())
           jsonWriter.value(tag);
         jsonWriter.endArray();
       }
 
       // level
-      val level = message.getLevel();
+      final Level level = message.getLevel();
       jsonWriter.name("level-severity").value(level.severity());
       jsonWriter.name("level-name").value(levelName(level));
 
@@ -154,7 +153,7 @@ public class GSonProtocolFormatter<M> implements ProtocolFormatter<M,String>
   @Contract(mutates = "param1")
   private void formatTimestamp(@NotNull JsonWriter writer, long timestamp) throws IOException
   {
-    val value = formatTimestamp(timestamp);
+    final Object value = formatTimestamp(timestamp);
 
     if (value instanceof Number)
       writer.value((Number)value);
@@ -183,7 +182,7 @@ public class GSonProtocolFormatter<M> implements ProtocolFormatter<M,String>
     try {
       jsonWriter.beginObject();
 
-      val message = group.getGroupMessage();
+      final GenericMessageWithLevel<M> message = group.getGroupMessage();
 
       jsonWriter.name("id").value(message.getMessageId());
       formatTimestamp(jsonWriter.name("timestamp"), message.getTimeMillis());
@@ -193,7 +192,7 @@ public class GSonProtocolFormatter<M> implements ProtocolFormatter<M,String>
       jsonWriter.name("group-message").value(formatMessage(message));
 
       // level
-      val level = message.getLevel();
+      final Level level = message.getLevel();
       jsonWriter.name("level-severity").value(level.severity());
       jsonWriter.name("level-name").value(levelName(level));
 

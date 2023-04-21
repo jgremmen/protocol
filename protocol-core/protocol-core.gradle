@@ -2,41 +2,11 @@
 plugins {
   id 'com.netflix.nebula.optional-base' version '9.0.0'
   id "org.sonarqube" version "4.0.0.2929"
-  id 'io.franzbecker.gradle-lombok' version '5.0.0'
   id 'de.sayayi.plugin.gradle.libapi' version "1.0-SNAPSHOT"
 }
 
 
 description 'Protocol Library Core'
-
-
-lombok {
-  version = lombokVersion
-  sha256 = ""
-}
-
-
-import io.franzbecker.gradle.lombok.task.DelombokTask
-
-tasks.register('delombok', DelombokTask) {
-  dependsOn compileJava
-
-  javaLauncher.set(javaToolchains.launcherFor {
-    languageVersion = JavaLanguageVersion.of(8)
-  })
-
-  ext.outputDir = file("$buildDir/delombok")
-  outputs.dir(outputDir)
-
-  sourceSets.main.java.srcDirs.each {
-    inputs.dir(it)
-    args(it, "-d", outputDir)
-  }
-
-  doFirst {
-    outputDir.deleteDir()
-  }
-}
 
 
 apply from: file('../gradle/javadoc.gradle')

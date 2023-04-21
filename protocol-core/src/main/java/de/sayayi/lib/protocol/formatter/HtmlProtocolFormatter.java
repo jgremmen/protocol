@@ -25,14 +25,11 @@ import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
-import lombok.val;
-import lombok.var;
-
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -43,6 +40,7 @@ import static de.sayayi.lib.protocol.Level.Shared.INFO;
 import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
 import static de.sayayi.lib.protocol.Level.Shared.WARN;
 import static de.sayayi.lib.protocol.Level.compare;
+import static java.util.Arrays.fill;
 import static java.util.Collections.unmodifiableMap;
 import static org.unbescape.html.HtmlEscape.escapeHtml5;
 
@@ -85,7 +83,7 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
   @Override
   public void protocolStart()
   {
-    val divClasses = new String[] { "protocol", protocolStartDivClass() };
+    final String[] divClasses = new String[] { "protocol", protocolStartDivClass() };
 
     html.append("<div").append(classFromArray(divClasses)).append(">\n")
         .append("  <ul").append(classFromArray("depth-0", protocolStartUlClass())).append(">\n");
@@ -115,14 +113,14 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
   @Override
   public void message(@NotNull MessageEntry<M> message)
   {
-    val msg = messageFormatter.formatMessage(message);
+    final String msg = messageFormatter.formatMessage(message);
 
     indent(message.getDepth());
 
-    val liClasses = new String[] {
+    final String[] liClasses = new String[] {
         "level-" + levelToHtmlClass(message.getLevel()), messageLiClass(message)
     };
-    val liSpanClasses = new String[] {
+    final String[] liSpanClasses = new String[] {
         message.isGroupMessage() ? "group-message" : null, "message", messageSpanClass(message)
     };
 
@@ -162,16 +160,16 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
   @Override
   public void groupStart(@NotNull GroupStartEntry<M> group)
   {
-    val depth = group.getDepth();
-    val message = group.getGroupMessage();
-    val msg = messageFormatter.formatMessage(group.getGroupMessage());
+    final int depth = group.getDepth();
+    final GenericMessageWithLevel<M> message = group.getGroupMessage();
+    final String msg = messageFormatter.formatMessage(group.getGroupMessage());
 
     indent(depth - 1);
 
-    val liClasses = new String[] {
+    final String[] liClasses = new String[] {
         "level-" + levelToHtmlClass(message.getLevel()), groupHeaderLiClass(message)
     };
-    val liSpanClasses = new String[] { "group", groupHeaderLiSpanClass(message) };
+    final String[] liSpanClasses = new String[] { "group", groupHeaderLiSpanClass(message) };
 
     html.append("<li").append(classFromArray(liClasses)).append('>')
         .append(groupHeaderPrefixHtml(message))
@@ -182,7 +180,7 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
 
     indent(depth - 1);
 
-    val ulClasses = new String[] { "depth-" + depth, "group", groupStartUlClass(group) };
+    final String[] ulClasses = new String[] { "depth-" + depth, "group", groupStartUlClass(group) };
 
     html.append("<ul").append(classFromArray(ulClasses)).append(">\n");
   }
@@ -238,10 +236,10 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
   {
     if (classNames != null && classNames.length > 0)
     {
-      val cls = new StringBuilder(" class=\"");
-      var n = 0;
+      final StringBuilder cls = new StringBuilder(" class=\"");
+      int n = 0;
 
-      for(val className: classNames)
+      for(final String className: classNames)
         if (className != null && !className.trim().isEmpty())
         {
           if (n != 0)
@@ -262,8 +260,8 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
   @Contract(pure = true)
   protected void indent(int depth)
   {
-    val spaces = new char[(depth + 2) * 2];
-    Arrays.fill(spaces, ' ');
+    final char[] spaces = new char[(depth + 2) * 2];
+    fill(spaces, ' ');
 
     html.append(spaces);
   }
@@ -318,7 +316,7 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
 
     static
     {
-      val fa4LevelIconClassMap = new TreeMap<Level,String>(SORT_DESCENDING);
+      final Map<Level,String> fa4LevelIconClassMap = new TreeMap<>(SORT_DESCENDING);
       fa4LevelIconClassMap.put(ERROR, "fa fa-times");
       fa4LevelIconClassMap.put(WARN, "fa fa-exclamation-triangle");
       fa4LevelIconClassMap.put(INFO, "fa fa-info-circle");
@@ -326,7 +324,7 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
       fa4LevelIconClassMap.put(LOWEST, "fa fa-wrench");
       FA4_LEVEL_ICON_CLASSES = unmodifiableMap(fa4LevelIconClassMap);
 
-      val fa5LevelIconClassMap = new TreeMap<Level,String>(SORT_DESCENDING);
+      final Map<Level,String> fa5LevelIconClassMap = new TreeMap<>(SORT_DESCENDING);
       fa5LevelIconClassMap.put(ERROR, "fas fa-times");
       fa5LevelIconClassMap.put(WARN, "fas fa-exclamation-triangle");
       fa5LevelIconClassMap.put(INFO, "fas fa-info-circle");
@@ -379,13 +377,13 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
     @Contract(pure = true)
     protected String getIconClassName(@NotNull GenericMessageWithLevel<M> message)
     {
-      val level = message.getLevel();
-      val iconClassName = levelIconMap.get(level);
+      final Level level = message.getLevel();
+      final String iconClassName = levelIconMap.get(level);
 
       if (iconClassName != null)
         return iconClassName;
 
-      for(val levelIconClassEntry: levelIconMap.entrySet())
+      for(final Entry<Level,String> levelIconClassEntry: levelIconMap.entrySet())
         if (compare(level, levelIconClassEntry.getKey()) >= 0)
           return levelIconClassEntry.getValue();
 
