@@ -23,8 +23,6 @@ import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
-import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -894,11 +892,10 @@ public interface Protocol<M> extends ProtocolQueryable
      *   </li>
      * </ul>
      *
-     * @return  parameter values, never {@code null}
+     * @return  unmodifyable map with parameter values, never {@code null}
      *
      * @see #getMessage()
      */
-    @UnmodifiableView
     @Contract(pure = true, value = "-> new")
     @NotNull Map<String,Object> getParameterValues();
   }
@@ -944,11 +941,10 @@ public interface Protocol<M> extends ProtocolQueryable
     /**
      * Returns a set containing all tag names defined for this message.
      *
-     * @return  set containing all tag names, never {@code null}
+     * @return  unmodifyable set containing all tag names, never {@code null}
      *
      * @since 0.7.0
      */
-    @Unmodifiable
     @Contract(pure = true, value = "-> new")
     @NotNull Set<String> getTagNames();
 

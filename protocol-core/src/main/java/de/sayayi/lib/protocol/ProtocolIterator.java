@@ -21,11 +21,8 @@ import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Range;
 
 import java.util.Iterator;
-
-import static java.lang.Integer.MAX_VALUE;
 
 
 /**
@@ -71,10 +68,9 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
      *   <li>Message 4 (depth = 0)</li>
      * </ul>
      *
-     * @return  entry depth
+     * @return  entry depth &gt;= 0
      */
     @Contract(pure = true)
-    @Range(from = 0, to = MAX_VALUE)
     int getDepth();
   }
 
@@ -246,7 +242,6 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
      * @see #getDepth()
      */
     @Contract(pure = true)
-    @Range(from = 1, to = MAX_VALUE)
     int getMessageCount();
   }
 
