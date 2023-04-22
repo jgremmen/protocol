@@ -34,13 +34,11 @@ import java.util.Iterator;
 public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
 {
   /**
-   * <p>
-   *   This class is the basis for every entry produced by the protocol iterator. It provides the
-   *   group depth (starting with {@code 0}) for each entry. Every {@link GroupStartEntry}
-   *   increases the depth and every {@link GroupEndEntry} decreases the depth. This information
-   *   can be used by {@linkplain ProtocolFormatter ProtocolFormatters} to format the protocol in
-   *   a structural form (eg. a tree).
-   * </p>
+   * This class is the basis for every entry produced by the protocol iterator. It provides the
+   * group depth (starting with {@code 0}) for each entry. Every {@link GroupStartEntry}
+   * increases the depth and every {@link GroupEndEntry} decreases the depth. This information
+   * can be used by {@linkplain ProtocolFormatter ProtocolFormatters} to format the protocol in
+   * a structural form (eg. a tree).
    *
    * @param <M>  internal message object type
    */
@@ -78,10 +76,8 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
 
 
   /**
-   * <p>
-   *   In addition to {@link DepthEntry} this type provides information about the position, with
-   *   respect to its depth, it is listed in.
-   * </p>
+   * In addition to {@link DepthEntry} this type provides information about the position, with
+   * respect to its depth, it is listed in.
    *
    * @param <M>  internal message object type
    */

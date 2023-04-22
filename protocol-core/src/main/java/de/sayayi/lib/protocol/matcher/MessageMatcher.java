@@ -33,6 +33,15 @@ import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
  */
 public interface MessageMatcher
 {
+  /**
+   * Checks whether this matcher matches the given {@code message}.
+   *
+   * @param levelLimit  the maximum level to be considered when matching, not {@code null}. This
+   *                    level takes precedence over the level provided by the message
+   * @param message     message to check, not {@code null}
+   *
+   * @return  {@code true} if the given message matches, {@code false} otherwise
+   */
   @Contract(pure = true)
   <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message);
 

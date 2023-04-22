@@ -26,23 +26,21 @@ import java.util.function.Consumer;
 
 
 /**
+ * A protocol group provides the same functionality as a {@link Protocol}. In addition, a
+ * protocol group can be assigned a group header message and the visibility of the protocol
+ * entries in the group can be controlled by setting the {@link Visibility}.
  * <p>
- *   A protocol group provides the same functionality as a {@link Protocol}. In addition, a
- *   protocol group can be assigned a group header message and the visibility of the protocol
- *   entries in the group can be controlled by setting the {@link Visibility}.
- * </p>
- * <p>
- *   ProtocolGroup instances are not thread safe. It is however possible to use separate protocol
- *   groups for each thread, created by the same parent protocol as long as the parent is not used
- *   for formatting/querying operations during the time other threads are protocolling on their
- *   group.
- * </p>
+ * ProtocolGroup instances are not thread safe. It is however possible to use separate protocol
+ * groups for each thread, created by the same parent protocol as long as the parent is not used
+ * for formatting/querying operations during the time other threads are protocolling on their
+ * group.
  *
  * @param <M>  internal message object type
  *
  * @author Jeroen Gremmen
  * @since 0.1.0
  */
+@SuppressWarnings("UnstableApiUsage")
 public interface ProtocolGroup<M> extends Protocol<M>
 {
   /**
@@ -94,20 +92,16 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
   /**
+   * Sets the highest level for this protocol group. The default setting is
+   * {@link Level.Shared#HIGHEST}.
    * <p>
-   *   Sets the highest level for this protocol group. The default setting is
-   *   {@link Level.Shared#HIGHEST}.
-   * </p>
+   * The severity for messages in this protocol group are limited to {@code level}. If a message
+   * has a higher severity its level will equal to the limit set by this method. If a message has
+   * a lower severity level, the level is not modified.
    * <p>
-   *   The severity for messages in this protocol group are limited to {@code level}. If a message
-   *   has a higher severity its level will equal to the limit set by this method. If a message has
-   *   a lower severity level, the level is not modified.
-   * </p>
-   * <p>
-   *   Messages returned by the protocol iterator or passed to formatting methods during formatting,
-   *   will respect the limit set by this method. References to the message itself however will
-   *   show the real severity level.
-   * </p>
+   * Messages returned by the protocol iterator or passed to formatting methods during formatting,
+   * will respect the limit set by this method. References to the message itself however will
+   * show the real severity level.
    *
    * @param level  the highest level propagated for messages in this group, never {@code null}
    *
@@ -159,10 +153,8 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
   /**
-   * <p>
-   *   Sets a unique name for this group. If {@code name} is {@code null} or an empty string the
-   *   group name will be removed.
-   * </p>
+   * Sets a unique name for this group. If {@code name} is {@code null} or an empty string the
+   * group name will be removed.
    *
    * @param name  unique name or {@code null}
    *
@@ -241,13 +233,10 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
   /**
+   * Set a parameter value.
    * <p>
-   *   Set a parameter value.
-   * </p>
-   * <p>
-   *   Parameter values set for this protocol are available for both messages and groups added to
-   *   this protocol.
-   * </p>
+   * Parameter values set for this protocol are available for both messages and groups added to
+   * this protocol.
    *
    * @param parameter  name of the parameter to set, never {@code null}
    * @param b          parameter value
@@ -264,13 +253,10 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
   /**
+   * Set a parameter value.
    * <p>
-   *   Set a parameter value.
-   * </p>
-   * <p>
-   *   Parameter values set for this protocol are available for both messages and groups added to
-   *   this protocol.
-   * </p>
+   * Parameter values set for this protocol are available for both messages and groups added to
+   * this protocol.
    *
    * @param parameter  name of the parameter to set, never {@code null}
    * @param i          parameter value
@@ -287,13 +273,10 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
   /**
+   * Set a parameter value.
    * <p>
-   *   Set a parameter value.
-   * </p>
-   * <p>
-   *   Parameter values set for this protocol are available for both messages and groups added to
-   *   this protocol.
-   * </p>
+   * Parameter values set for this protocol are available for both messages and groups added to
+   * this protocol.
    *
    * @param parameter  name of the parameter to set, never {@code null}
    * @param l          parameter value
@@ -310,13 +293,10 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
   /**
+   * Set a parameter value.
    * <p>
-   *   Set a parameter value.
-   * </p>
-   * <p>
-   *   Parameter values set for this protocol are available for both messages and groups added to
-   *   this protocol.
-   * </p>
+   * Parameter values set for this protocol are available for both messages and groups added to
+   * this protocol.
    *
    * @param parameter  name of the parameter to set, never {@code null}
    * @param f          parameter value
@@ -333,13 +313,10 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
   /**
+   * Set a parameter value.
    * <p>
-   *   Set a parameter value.
-   * </p>
-   * <p>
-   *   Parameter values set for this protocol are available for both messages and groups added to
-   *   this protocol.
-   * </p>
+   * Parameter values set for this protocol are available for both messages and groups added to
+   * this protocol.
    *
    * @param parameter  name of the parameter to set, never {@code null}
    * @param d          parameter value
@@ -356,13 +333,10 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
   /**
+   * Set a parameter value.
    * <p>
-   *   Set a parameter value.
-   * </p>
-   * <p>
-   *   Parameter values set for this protocol are available for both messages and groups added to
-   *   this protocol.
-   * </p>
+   * Parameter values set for this protocol are available for both messages and groups added to
+   * this protocol.
    *
    * @param parameter  name of the parameter to set, never {@code null}
    * @param value      parameter value
@@ -481,12 +455,9 @@ public interface ProtocolGroup<M> extends Protocol<M>
   enum Visibility
   {
     /**
+     * Show the group header message, regardless whether the group contains visible entries or not.
      * <p>
-     *   Show the group header message, regardless whether the group contains visible entries or not.
-     * </p>
-     * <p>
-     *   If no group header message is set, the effective visibility is {@link #FLATTEN}.
-     * </p>
+     * If no group header message is set, the effective visibility is {@link #FLATTEN}.
      *
      * @see ProtocolGroup#getEffectiveVisibility()
      */
@@ -494,12 +465,9 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
     /**
+     * Show the group header message only if the group contains one or more visible entries.
      * <p>
-     *   Show the group header message only if the group contains one or more visible entries.
-     * </p>
-     * <p>
-     *   If no group header message is set, the effective visibility is {@link #FLATTEN}.
-     * </p>
+     * If no group header message is set, the effective visibility is {@link #FLATTEN}.
      *
      * @see ProtocolGroup#getEffectiveVisibility()
      */
@@ -507,12 +475,9 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
     /**
+     * Show the group header message only. If the group contains visible entries, they are ignored.
      * <p>
-     *   Show the group header message only. If the group contains visible entries, they are ignored.
-     * </p>
-     * <p>
-     *   If no group header message is set, the effective visibility is {@link #HIDDEN}.
-     * </p>
+     * If no group header message is set, the effective visibility is {@link #HIDDEN}.
      *
      * @see ProtocolGroup#getEffectiveVisibility()
      */
@@ -520,14 +485,11 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
     /**
+     * Do not show the group header message, regardless of the number of visible entries
+     * contained in the group.
      * <p>
-     *   Do not show the group header message, regardless of the number of visible entries
-     *   contained in the group.
-     * </p>
-     * <p>
-     *   All group entries are merged with the parent as if the messages had been added to the
-     *   parent protocol directly.
-     * </p>
+     * All group entries are merged with the parent as if the messages had been added to the
+     * parent protocol directly.
      */
     FLATTEN,
 

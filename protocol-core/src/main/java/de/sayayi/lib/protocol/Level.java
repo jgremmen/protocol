@@ -22,15 +22,12 @@ import java.util.Comparator;
 
 
 /**
+ * Describes the level at which messages are protocolled.
  * <p>
- *   Describes the level at which messages are protocolled.
- * </p>
- * <p>
- *   Similar to various logging libraries, the {@linkplain Shared Shared} enumeration provides
- *   regularly used protocol levels like {@code DEBUG} and {@code ERROR}. In addition to that
- *   (or even as a replacement) you can define your own set of protocol levels and use them to
- *   {@linkplain Protocol#add(Level) protocol} messages.
- * </p>
+ * Similar to various logging libraries, the {@linkplain Shared Shared} enumeration provides
+ * regularly used protocol levels like {@code DEBUG} and {@code ERROR}. In addition to that
+ * (or even as a replacement) you can define your own set of protocol levels and use them to
+ * {@linkplain Protocol#add(Level) protocol} messages.
  *
  * @author Jeroen Gremmen
  * @since 0.1.0
@@ -55,12 +52,9 @@ public interface Level
 
 
   /**
+   * Returns the severity for this level.
    * <p>
-   *   Returns the severity for this level.
-   * </p>
-   * <p>
-   *   A higher severity number indicates a more severe problem.
-   * </p>
+   * A higher severity number indicates a more severe problem.
    *
    * @return  severity number
    *
@@ -97,8 +91,9 @@ public interface Level
 
 
   /**
-   * Level constants for the {@linkplain Protocol#debug() debug()}, {@linkplain Protocol#info() info()},
-   * {@linkplain Protocol#warn() warn()} and {@linkplain Protocol#error() error()} protocol methods.
+   * Level constants for the {@linkplain Protocol#debug() debug()},
+   * {@linkplain Protocol#info() info()}, {@linkplain Protocol#warn() warn()} and
+   * {@linkplain Protocol#error() error()} protocol methods.
    *
    * @since 0.1.0
    */
