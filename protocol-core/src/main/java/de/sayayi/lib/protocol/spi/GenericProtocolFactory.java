@@ -126,7 +126,7 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 
   @Override
   public @NotNull String toString() {
-    return "ProtocolFactory[id=" + id + ']';
+    return "ProtocolFactory(id=" + id + ')';
   }
 
 

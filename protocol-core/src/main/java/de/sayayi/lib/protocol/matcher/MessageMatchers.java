@@ -78,7 +78,7 @@ public final class MessageMatchers
 
   @Contract(pure = true)
   public static @NotNull Junction not(@NotNull MessageMatcher matcher) {
-    return Negation.of(matcher);
+    return Negation.of(requireNonNull(matcher));
   }
 
 
@@ -367,7 +367,7 @@ public final class MessageMatchers
    */
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction is(@NotNull Level level) {
-    return LevelMatcher.of(level);
+    return LevelMatcher.of(requireNonNull(level));
   }
 
 

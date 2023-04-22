@@ -119,6 +119,6 @@ final class TagNamesMessageAdapter implements Message<Object>
 
   @Override
   public String toString() {
-    return "Message[tags={" + String.join(",", tagNames) + "}]";
+    return "Message(tags={" + String.join(",", tagNames) + "})";
   }
 }

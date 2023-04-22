@@ -62,6 +62,6 @@ public final class GenericMessageWithId<M> implements MessageWithId<M>
 
   @Override
   public String toString() {
-    return "MessageWithId[id=" + id + ",message=" + message + ']';
+    return "MessageWithId(id=" + id + ",message=" + message + ')';
   }
 }

@@ -113,7 +113,7 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
   @Override
   public String toString()
   {
-    final StringBuilder s = new StringBuilder("Message[level=").append(levelLimit)
+    final StringBuilder s = new StringBuilder("Message(level=").append(levelLimit)
         .append(",tags={").append(String.join(",", getTagNames())).append("},id=")
         .append(getMessageId()).append(",message=").append(message.getMessage());
 
@@ -124,7 +124,7 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
           joining(",", ",params={", "}")));
     }
 
-    return s.append(']').toString();
+    return s.append(')').toString();
   }
 
 

@@ -380,7 +380,7 @@ final class ProtocolGroupImpl<M>
   @Override
   public String toString()
   {
-    final StringBuilder s = new StringBuilder("ProtocolGroup[id=").append(getId())
+    final StringBuilder s = new StringBuilder("ProtocolGroup(id=").append(getId())
         .append(",visibility=").append(visibility);
 
     if (compare(levelLimit, HIGHEST) < 0)
@@ -393,7 +393,7 @@ final class ProtocolGroupImpl<M>
           .collect(joining(",", "{", "}")));
     }
 
-    return s.append(']').toString();
+    return s.append(')').toString();
   }
 
 
@@ -428,7 +428,7 @@ final class ProtocolGroupImpl<M>
     @Override
     public String toString()
     {
-      final StringBuilder s = new StringBuilder("GroupMessage[id=").append(getMessageId())
+      final StringBuilder s = new StringBuilder("GroupMessage(id=").append(getMessageId())
           .append(",message=").append(getMessage());
 
       if (!parameterMap.isEmpty())
@@ -437,7 +437,7 @@ final class ProtocolGroupImpl<M>
             .collect(joining(",", "{", "}")));
       }
 
-      return s.append(']').toString();
+      return s.append(')').toString();
     }
   }
 

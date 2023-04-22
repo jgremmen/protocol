@@ -34,14 +34,14 @@ import static java.util.Objects.requireNonNull;
  */
 public class MessageBundleMessageProcessor implements MessageProcessor<Message>
 {
-  private final MessageBundle messageBundle;
+  private final @NotNull MessageBundle messageBundle;
   private final boolean parserFallback;
 
 
   public MessageBundleMessageProcessor(@NotNull MessageBundle messageBundle,
                                        boolean parserFallback)
   {
-    this.messageBundle = messageBundle;
+    this.messageBundle = requireNonNull(messageBundle);
     this.parserFallback = parserFallback;
   }
 

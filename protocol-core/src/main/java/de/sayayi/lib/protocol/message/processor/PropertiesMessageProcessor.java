@@ -32,11 +32,11 @@ import static java.util.Objects.requireNonNull;
  */
 public final class PropertiesMessageProcessor implements MessageProcessor<String>
 {
-  private final Properties properties;
+  private final @NotNull Properties properties;
 
 
   public PropertiesMessageProcessor(@NotNull Properties properties) {
-    this.properties = properties;
+    this.properties = requireNonNull(properties);
   }
 
 

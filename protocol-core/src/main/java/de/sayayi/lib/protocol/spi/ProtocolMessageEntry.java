@@ -117,7 +117,7 @@ final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M>
   @Override
   public String toString()
   {
-    final StringBuilder s = new StringBuilder("Message[level=").append(level).append(",tags={")
+    final StringBuilder s = new StringBuilder("Message(level=").append(level).append(",tags={")
         .append(String.join(",", tagNames)).append("},id=").append(getMessageId())
         .append(",message=").append(getMessage());
 
@@ -127,6 +127,6 @@ final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M>
           joining(",", ",params={", "}")));
     }
 
-    return s.append(']').toString();
+    return s.append(')').toString();
   }
 }

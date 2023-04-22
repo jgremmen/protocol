@@ -21,6 +21,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 
+import static java.util.Objects.requireNonNull;
+
 
 /**
  * @author Jeroen Gremmen
@@ -37,7 +39,7 @@ public final class JavaStringFormatFormatter extends AbstractIndexedMessageForma
 
 
   public JavaStringFormatFormatter(@NotNull Locale locale) {
-    this.locale = locale;
+    this.locale = requireNonNull(locale);
   }
 
 

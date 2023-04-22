@@ -45,7 +45,7 @@ public class MessageFormatMessageProcessor implements MessageProcessor<Message>
 
 
   public MessageFormatMessageProcessor(@NotNull MessageFactory messageFactory) {
-    this.messageFactory = messageFactory;
+    this.messageFactory = requireNonNull(messageFactory);
   }
 
 

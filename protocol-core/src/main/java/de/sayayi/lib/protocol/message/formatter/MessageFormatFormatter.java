@@ -24,6 +24,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
+import static java.util.Objects.requireNonNull;
+
 
 /**
  * @author Jeroen Gremmen
@@ -37,7 +39,7 @@ public final class MessageFormatFormatter implements MessageFormatter<Message>
 
 
   public MessageFormatFormatter(@NotNull MessageContext messageContext) {
-    this.messageContext = messageContext;
+    this.messageContext = requireNonNull(messageContext);
   }
 
 

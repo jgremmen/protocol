@@ -32,11 +32,11 @@ import static java.util.Objects.requireNonNull;
  */
 public final class ResourceBundleMessageProcessor implements MessageProcessor<String>
 {
-  private final ResourceBundle resourceBundle;
+  private final @NotNull ResourceBundle resourceBundle;
 
 
   public ResourceBundleMessageProcessor(@NotNull ResourceBundle resourceBundle) {
-    this.resourceBundle = resourceBundle;
+    this.resourceBundle = requireNonNull(resourceBundle);
   }
 
 

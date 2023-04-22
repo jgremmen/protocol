@@ -98,7 +98,7 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
   @Override
   public String toString()
   {
-    final StringBuilder s = new StringBuilder("Protocol[id=").append(getId());
+    final StringBuilder s = new StringBuilder("Protocol(id=").append(getId());
 
     if (!parameterMap.isEmpty())
     {
@@ -106,7 +106,7 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
           .collect(joining(",", "{", "}")));
     }
 
-    return s.append(']').toString();
+    return s.append(')').toString();
   }
 
 

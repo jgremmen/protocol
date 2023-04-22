@@ -229,7 +229,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
   @Override
   public String toString() {
-    return "Iterator[matcher=" + matcher + ",depth=" + depth + ']';
+    return "Iterator(matcher=" + matcher + ",depth=" + depth + ')';
   }
 
 
@@ -470,8 +470,10 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
     @Override
-    public String toString() {
-      return "MessageEntry[depth=" + depth + ",first=" + first + ",last=" + last + ',' + message + ']';
+    public String toString()
+    {
+      return "MessageEntry(depth=" + depth + ",first=" + first + ",last=" + last + ',' +
+             message + ')';
     }
   }
 
@@ -542,8 +544,8 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     @Override
     public String toString()
     {
-      return "GroupMessageEntry[depth=" + depth + ",first=" + first + ",last=" + last +
-             ",level=" + level + ',' + groupMessage + ']';
+      return "GroupMessageEntry(depth=" + depth + ",first=" + first + ",last=" + last +
+             ",level=" + level + ',' + groupMessage + ')';
     }
   }
 
@@ -644,8 +646,8 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     @Override
     public String toString()
     {
-      return "GroupStartEntry[depth=" + depth + ",first=" + first + ",last=" + last +
-             ",level=" + groupMessage.getLevel() + ",messages=" + messageCount + ']';
+      return "GroupStartEntry(depth=" + depth + ",first=" + first + ",last=" + last +
+             ",level=" + groupMessage.getLevel() + ",messages=" + messageCount + ')';
     }
   }
 
@@ -661,7 +663,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
     @Override
     public String toString() {
-      return "GroupEndEntry[depth=" + depth + ']';
+      return "GroupEndEntry(depth=" + depth + ')';
     }
   }
 }
