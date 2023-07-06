@@ -40,7 +40,7 @@ import static java.util.Spliterator.SORTED;
  * @author Jeroen Gremmen
  * @since 1.0.0
  */
-@SuppressWarnings("java:S1192")
+@SuppressWarnings({ "java:S1192", "UnstableApiUsage" })
 public final class ParameterMap implements Iterable<Entry<String,Object>>
 {
   private final ParameterMap parent;
