@@ -17,7 +17,7 @@ configurations {
 
 ext {
   antlrVersion = "4.9.3"
-  antlrExtVersion = "0.3.0"
+  antlrExtVersion = "0.3.1"
 }
 
 
