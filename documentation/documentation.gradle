@@ -25,7 +25,12 @@ repositories {
 
 
 dependencies {
-  runtimeOnly project(":protocol-core")
+  runtimeOnly(project(":protocol-core")) {
+    capabilities {
+      requireCapability 'de.sayayi.lib:protocol-core-optional'
+    }
+  }
+
   runtimeOnly project(":protocol-message-matcher")
 
   runtimeOnly "org.projectlombok:lombok:${lombokVersion}"

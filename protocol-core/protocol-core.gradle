@@ -1,6 +1,4 @@
-//file:noinspection DependencyNotationArgument
 plugins {
-  id 'com.netflix.nebula.optional-base' version '9.0.0'
   id "org.sonarqube" version "4.0.0.2929"
   id 'de.sayayi.plugin.gradle.libapi' version "1.0-SNAPSHOT"
 }
@@ -14,9 +12,31 @@ apply from: file('../gradle/quality.gradle')
 apply from: file('../gradle/publishing.gradle')
 
 
+java {
+  registerFeature('optional') {
+    usingSourceSet sourceSets.main
+  }
+}
+
+
 dependencies {
   // java
-  implementation "org.unbescape:unbescape:${unbescapeVersion}", optional
-  implementation "de.sayayi.lib:message-format:${messageFormatVersion}", optional
-  implementation "com.google.code.gson:gson:${gsonVersion}", optional
+  optionalImplementation "org.unbescape:unbescape:${unbescapeVersion}"
+
+  optionalImplementation("de.sayayi.lib:message-format:${messageFormatVersion}") {
+    exclude group: 'org.antlr', module: 'antlr4'
+    exclude group: 'javax.cache', module: 'cache-api'
+  }
+
+  optionalImplementation "com.google.code.gson:gson:${gsonVersion}"
+}
+
+
+publishing {
+  publications {
+    maven(MavenPublication) {
+      suppressPomMetadataWarningsFor 'optionalApiElements'
+      suppressPomMetadataWarningsFor 'optionalRuntimeElements'
+    }
+  }
 }
