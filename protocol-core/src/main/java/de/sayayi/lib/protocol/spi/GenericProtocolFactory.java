@@ -141,27 +141,27 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
     if (messageMatcherIterator.hasNext())
       return messageMatcherIterator.next();
 
-    return new NotSuportedMessageMatcher();
+    return new NotSupportedMessageMatcher();
   }
 
 
 
 
-  protected static final class NotSuportedMessageMatcher implements ProtocolMessageMatcher
+  protected static final class NotSupportedMessageMatcher implements ProtocolMessageMatcher
   {
-    private NotSuportedMessageMatcher() {
+    private NotSupportedMessageMatcher() {
     }
 
 
     @Override
     public @NotNull MessageMatcher parseMessageMatcher(@NotNull String messageMatcherExpression) {
-      throw new UnsupportedOperationException();
+      throw new UnsupportedOperationException("parseMessageMatcher");
     }
 
 
     @Override
     public @NotNull TagSelector parseTagSelector(@NotNull String tagSelectorExpression) {
-      throw new UnsupportedOperationException();
+      throw new UnsupportedOperationException("parseTagSelector");
     }
 
 
