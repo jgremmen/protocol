@@ -18,7 +18,6 @@ package de.sayayi.lib.protocol.matcher;
 import lombok.val;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -34,7 +33,6 @@ import static java.util.Collections.unmodifiableSet;
  */
 abstract class AbstractMatcherParserTest
 {
-  @Unmodifiable
   protected static @NotNull Set<String> asTagNameSet(@NotNull String ... s)
   {
     val set = new HashSet<>(asList(s));
