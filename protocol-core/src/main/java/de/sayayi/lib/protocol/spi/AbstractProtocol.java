@@ -131,16 +131,9 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
     for(final InternalProtocolEntry<M> entry: entries)
       if (entry.matches0(levelLimit, matcher, false))
       {
-        if (entry instanceof InternalProtocolEntry.Group)
-        {
-          filteredEntries.add(ProtocolGroupEntryAdapter.from(levelLimit,
-              (InternalProtocolEntry.Group<M>)entry));
-        }
-        else
-        {
-          filteredEntries.add(ProtocolMessageEntryAdapter.from(levelLimit,
-              (InternalProtocolEntry.Message<M>)entry));
-        }
+        filteredEntries.add(entry instanceof InternalProtocolEntry.Group
+            ? ProtocolGroupEntryAdapter.from(levelLimit, (InternalProtocolEntry.Group<M>)entry)
+            : ProtocolMessageEntryAdapter.from(levelLimit, (InternalProtocolEntry.Message<M>)entry));
       }
 
     return filteredEntries;
