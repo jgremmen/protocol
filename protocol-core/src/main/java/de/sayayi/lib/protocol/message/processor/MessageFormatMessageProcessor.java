@@ -33,7 +33,7 @@ import static java.util.Objects.requireNonNull;
  * @author Jeroen Gremmen
  * @since 0.7.0
  *
- * @see MessageBundleMessageProcessor
+ * @see MessageSupportMessageProcessor
  */
 public class MessageFormatMessageProcessor implements MessageProcessor<Message>
 {
@@ -53,7 +53,7 @@ public class MessageFormatMessageProcessor implements MessageProcessor<Message>
   public @NotNull MessageWithId<Message> processMessage(@NotNull String messageFormat)
   {
     try {
-      return new GenericMessageWithId<>(messageFactory.parse(
+      return new GenericMessageWithId<>(messageFactory.parseMessage(
           requireNonNull(messageFormat, "messageFormat must not be null")));
     } catch(MessageParserException ex) {
       throw new ProtocolException("failed to process message: " + ex.getMessage(), ex);

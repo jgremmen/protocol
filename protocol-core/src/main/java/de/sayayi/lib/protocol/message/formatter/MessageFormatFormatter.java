@@ -16,13 +16,11 @@
 package de.sayayi.lib.protocol.message.formatter;
 
 import de.sayayi.lib.message.Message;
-import de.sayayi.lib.message.MessageContext;
+import de.sayayi.lib.message.MessageSupport;
 import de.sayayi.lib.protocol.Protocol.GenericMessage;
 import de.sayayi.lib.protocol.ProtocolFactory.MessageFormatter;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
 
@@ -31,20 +29,24 @@ import static java.util.Objects.requireNonNull;
  * @author Jeroen Gremmen
  * @since 0.7.0
  *
- * @see Message#format(MessageContext, Map)
+ * @see Message#format(MessageSupport.MessageAccessor, Message.Parameters)
  */
 public final class MessageFormatFormatter implements MessageFormatter<Message>
 {
-  private final @NotNull MessageContext messageContext;
+  private final @NotNull MessageSupport messageSupport;
 
 
-  public MessageFormatFormatter(@NotNull MessageContext messageContext) {
-    this.messageContext = requireNonNull(messageContext);
+  public MessageFormatFormatter(@NotNull MessageSupport messageSupport) {
+    this.messageSupport = requireNonNull(messageSupport);
   }
 
 
   @Override
-  public @NotNull String formatMessage(@NotNull GenericMessage<Message> message) {
-    return message.getMessage().format(messageContext, message.getParameterValues());
+  public @NotNull String formatMessage(@NotNull GenericMessage<Message> message)
+  {
+    return messageSupport
+        .message(message.getMessage())
+        .with(message.getParameterValues())
+        .format();
   }
 }

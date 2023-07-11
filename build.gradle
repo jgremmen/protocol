@@ -27,7 +27,7 @@ allprojects {
 
   ext.jetbrainsAnnotationsVersion = "24.0.1"
   ext.junitVersion = "5.9.3"
-  ext.lombokVersion = "1.18.26"
+  ext.lombokVersion = "1.18.28"
 }
 
 
@@ -41,7 +41,7 @@ configure(subprojects.findAll { it.name.startsWith("protocol-") }) {
 
   ext {
     gsonVersion = "2.10.1"
-    messageFormatVersion = "0.7.0"
+    messageFormatVersion = "0.8.0"
     mockitoVersion = "4.11.0"
     unbescapeVersion = "1.1.6.RELEASE"
   }
