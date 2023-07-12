@@ -17,9 +17,6 @@ package de.sayayi.lib.protocol.spi;
 
 import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor.MessageWithId;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 import org.jetbrains.annotations.NotNull;
 
 import static java.util.UUID.randomUUID;
@@ -33,8 +30,6 @@ import static java.util.UUID.randomUUID;
  * @author Jeroen Gremmen
  * @since 1.0.0
  */
-@Getter
-@AllArgsConstructor
 public final class GenericMessageWithId<M> implements MessageWithId<M>
 {
   private final @NotNull String id;
@@ -46,8 +41,27 @@ public final class GenericMessageWithId<M> implements MessageWithId<M>
   }
 
 
+  public GenericMessageWithId(@NotNull String id, @NotNull M message)
+  {
+    this.id = id;
+    this.message = message;
+  }
+
+
+  @Override
+  public @NotNull String getId() {
+    return id;
+  }
+
+
+  @Override
+  public @NotNull M getMessage() {
+    return message;
+  }
+
+
   @Override
   public String toString() {
-    return "MessageWithId[id=" + id + ",message=" + message + ']';
+    return "MessageWithId(id=" + id + ",message=" + message + ')';
   }
 }

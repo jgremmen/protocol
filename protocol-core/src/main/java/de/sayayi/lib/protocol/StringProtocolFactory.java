@@ -28,10 +28,8 @@ import java.text.MessageFormat;
 
 
 /**
- * <p>
- *   Generic protocol factory for text messages where the messages are stored internally as
- *   {@code String} objects.
- * </p>
+ * Generic protocol factory for text messages where the messages are stored internally as
+ * {@code String} objects.
  *
  * @author Jeroen Gremmen
  * @since 0.1.0
@@ -44,9 +42,7 @@ public class StringProtocolFactory extends GenericProtocolFactory<String>
 
 
   /**
-   * <p>
-   *   This string protocol factory formats messages as is without parameter substitution.
-   * </p>
+   * This string protocol factory formats messages as is without parameter substitution.
    *
    * @return  plain text protocol factory, never {@code null}
    *
@@ -59,10 +55,8 @@ public class StringProtocolFactory extends GenericProtocolFactory<String>
 
 
   /**
-   * <p>
-   *   This string protocol factory formats messages using
-   *   {@link MessageFormat#format(String, Object...)}.
-   * </p>
+   * This string protocol factory formats messages using
+   * {@link MessageFormat#format(String, Object...)}.
    *
    * @return  java message format protocol factory, never {@code null}
    *
@@ -75,10 +69,7 @@ public class StringProtocolFactory extends GenericProtocolFactory<String>
 
 
   /**
-   * <p>
-   *   This string protocol factory formats messages using
-   *   {@link String#format(String, Object...)}.
-   * </p>
+   * This string protocol factory formats messages using {@link String#format(String, Object...)}.
    *
    * @return  java string format protocol factory, never {@code null}
    *

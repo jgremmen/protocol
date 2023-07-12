@@ -19,13 +19,12 @@ import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
 import de.sayayi.lib.protocol.exception.ProtocolException;
 import de.sayayi.lib.protocol.spi.GenericMessageWithId;
 
-import lombok.AllArgsConstructor;
-import lombok.val;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.TreeMap;
 
+import static java.util.Collections.unmodifiableMap;
 import static java.util.Objects.requireNonNull;
 
 
@@ -35,16 +34,20 @@ import static java.util.Objects.requireNonNull;
  * @author Jeroen Gremmen
  * @since 0.7.0
  */
-@AllArgsConstructor
 public final class MapMessageProcessor<M> implements MessageProcessor<M>
 {
   private final Map<String,M> map;
 
 
+  public MapMessageProcessor(@NotNull Map<String,M> map) {
+    this.map = unmodifiableMap(new TreeMap<>(map));
+  }
+
+
   @Override
   public @NotNull MessageWithId<M> processMessage(@NotNull String key)
   {
-    val message = map.get(requireNonNull(key, "key must not be null"));
+    final M message = map.get(requireNonNull(key, "key must not be null"));
     if (message == null)
       throw new ProtocolException("missing mapped message for key '" + key + "'");
 

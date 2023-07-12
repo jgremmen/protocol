@@ -33,12 +33,10 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.Vocabulary;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import lombok.NoArgsConstructor;
-import lombok.val;
-
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.function.Function;
 
 import static de.sayayi.lib.antlr4.walker.Walker.WALK_EXIT_RULES_HEAP;
@@ -76,7 +74,6 @@ import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherParser.*;
 import static java.lang.Character.digit;
 import static java.util.Locale.ROOT;
 import static java.util.stream.Collectors.toList;
-import static lombok.AccessLevel.PRIVATE;
 
 
 /**
@@ -145,7 +142,7 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
     @Override
     public void notifyListeners(LexerNoViableAltException ex)
     {
-      val token = getTokenFactory().create(_tokenFactorySourcePair, SKIP, null,
+      final Token token = getTokenFactory().create(_tokenFactorySourcePair, SKIP, null,
           _channel, _tokenStartCharIndex, _input.index(), _tokenStartLine,
           _tokenStartCharPositionInLine);
 
@@ -178,9 +175,12 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
 
 
 
-  @NoArgsConstructor(access = PRIVATE)
   private final class Listener extends MessageMatcherBaseListener implements WalkerSupplier
   {
+    private Listener() {
+    }
+
+
     @Override
     public @NotNull Walker getWalker() {
       return WALK_EXIT_RULES_HEAP;
@@ -224,7 +224,7 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
     @Override
     public void exitNotMatcher(NotMatcherContext ctx)
     {
-      val expr = ctx.compoundMatcher().matcher;
+      final MessageMatcher.Junction expr = ctx.compoundMatcher().matcher;
       ctx.matcher = ctx.NOT() != null ? Negation.of(expr) : expr;
     }
 
@@ -244,12 +244,12 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
     @Override
     public void exitThrowableMatcher(ThrowableMatcherContext ctx)
     {
-      val qualifiedName = ctx.QUALIFIED_CLASS_NAME();
+      final TerminalNode qualifiedName = ctx.QUALIFIED_CLASS_NAME();
       if (qualifiedName == null)
         ctx.matcher = MessageMatchers.hasThrowable();
       else
       {
-        val qualifiedNameText = qualifiedName.getText();
+        final String qualifiedNameText = qualifiedName.getText();
         Class<?> clazz = null;
 
         try {
@@ -277,7 +277,7 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
     @Override
     public void exitParamMatcher(ParamMatcherContext ctx)
     {
-      val paramName = ctx.string().str;
+      final String paramName = ctx.string().str;
 
       ctx.matcher = ctx.HAS_PARAM() != null
           ? MessageMatchers.hasParam(paramName)
@@ -288,7 +288,7 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
     @Override
     public void exitLevelMatcher(LevelMatcherContext ctx)
     {
-      val levelShared = ctx.levelShared();
+      final LevelSharedContext levelShared = ctx.levelShared();
       ctx.matcher = LevelMatcher.of(levelShared != null ? levelShared.lvl : ctx.level().lvl);
     }
 
@@ -296,7 +296,7 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
     @Override
     public void exitBetweenMatcher(BetweenMatcherContext ctx)
     {
-      val levels = ctx.level();
+      final List<LevelContext> levels = ctx.level();
       ctx.matcher = MessageMatchers.between(levels.get(0).lvl, levels.get(1).lvl);
     }
 
@@ -310,7 +310,7 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
     @Override
     public void exitInGroupMatcher(InGroupMatcherContext ctx)
     {
-      val groupName = ctx.string();
+      final StringContext groupName = ctx.string();
 
       ctx.matcher = groupName == null
           ? MessageMatchers.inGroup()
@@ -349,7 +349,7 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
     @Override
     public void exitNotTagSelector(NotTagSelectorContext ctx)
     {
-      val expr = ctx.compoundTagSelector().selector;
+      final MessageMatcher.Junction expr = ctx.compoundTagSelector().selector;
       ctx.selector = ctx.NOT() != null ? Negation.of(expr) : expr;
     }
 
@@ -363,7 +363,7 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
     @Override
     public void exitTagSelectorAtom(TagSelectorAtomContext ctx)
     {
-      val tagExpression = ctx.tagMatcherAtom();
+      final TagMatcherAtomContext tagExpression = ctx.tagMatcherAtom();
 
       ctx.selector = tagExpression != null ? tagExpression.matcher
           : ctx.ANY() != null ? BooleanMatcher.ANY : BooleanMatcher.NONE;
@@ -373,12 +373,12 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
     @Override
     public void exitTagMatcherAtom(TagMatcherAtomContext ctx)
     {
-      val tagName = ctx.tagName();
+      final TagNameContext tagName = ctx.tagName();
       if (tagName != null)
         ctx.matcher = MessageMatchers.hasTag(tagName.tag);
       else
       {
-        val tagNameList = ctx.tagNameList().tags;
+        final List<String> tagNameList = ctx.tagNameList().tags;
 
         switch(((TerminalNode)ctx.getChild(0)).getSymbol().getType())
         {
@@ -407,7 +407,7 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
     @Override
     public void exitTagName(TagNameContext ctx)
     {
-      val stringContext = ctx.string();
+      final StringContext stringContext = ctx.string();
       ctx.tag = stringContext != null ? stringContext.str : ctx.getChild(0).getText();
     }
 
@@ -415,13 +415,13 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
     @Override
     public void exitLevel(LevelContext ctx)
     {
-      val levelShared = ctx.levelShared();
+      final LevelSharedContext levelShared = ctx.levelShared();
       if (levelShared != null)
         ctx.lvl = levelShared.lvl;
       else
       {
-        val stringContext = ctx.string();
-        val name = stringContext != null ? stringContext.str : ctx.getChild(0).getText();
+        final StringContext stringContext = ctx.string();
+        final String name = stringContext != null ? stringContext.str : ctx.getChild(0).getText();
 
         try {
           ctx.lvl = levelResolver == null ? null : levelResolver.apply(name);
@@ -430,7 +430,7 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
 
         if (ctx.lvl == null)
         {
-          for(val level: Level.Shared.values())
+          for(final Level.Shared level: Level.Shared.values())
             if (level.name().equalsIgnoreCase(name))
             {
               ctx.lvl = level;
@@ -452,8 +452,8 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
     @Override
     public void exitString(StringContext ctx)
     {
-      val str = ctx.STRING().getText().toCharArray();
-      val s = new StringBuilder();
+      final char[] str = ctx.STRING().getText().toCharArray();
+      final StringBuilder s = new StringBuilder();
       char c;
 
       for(int i = 1, n = str.length - 1; i < n; i++)

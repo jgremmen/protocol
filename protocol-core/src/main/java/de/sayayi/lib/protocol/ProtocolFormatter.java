@@ -32,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
  * @author Jeroen Gremmen
  * @since 0.1.0
  */
+@SuppressWarnings("UnstableApiUsage")
 public interface ProtocolFormatter<M,R>
 {
   /**
@@ -55,9 +56,7 @@ public interface ProtocolFormatter<M,R>
 
 
   /**
-   * <p>
-   *   This method is invoked when the formatting process starts.
-   * </p>
+   * This method is invoked when the formatting process starts.
    *
    * @see #protocolEnd()
    */
@@ -66,9 +65,7 @@ public interface ProtocolFormatter<M,R>
 
 
   /**
-   * <p>
-   *   This method is invoked when the formatting process ends but before the result is obtained.
-   * </p>
+   * This method is invoked when the formatting process ends but before the result is obtained.
    *
    * @see #protocolStart()
    * @see #getResult()
@@ -78,14 +75,11 @@ public interface ProtocolFormatter<M,R>
 
 
   /**
+   * Format the given message.
    * <p>
-   *   Format the given message.
-   * </p>
-   * <p>
-   *   This method is used for both regular messages as well as group header messages for groups
-   *   with no containing messages. A distinction can be made by checking
-   *   {@link MessageEntry#isGroupMessage()}.
-   * </p>
+   * This method is used for both regular messages as well as group header messages for groups
+   * with no containing messages. A distinction can be made by checking
+   * {@link MessageEntry#isGroupMessage()}.
    *
    * @param message  message, never {@code null}
    *
@@ -95,12 +89,9 @@ public interface ProtocolFormatter<M,R>
 
 
   /**
+   * Format the start of a group.
    * <p>
-   *   Format the start of a group.
-   * </p>
-   * <p>
-   *   This method is invoked for a group, which has a group message as well as at least 1 message.
-   * </p>
+   * This method is invoked for a group, which has a group message as well as at least 1 message.
    *
    * @param group  group start, never {@code null}
    */
@@ -109,9 +100,7 @@ public interface ProtocolFormatter<M,R>
 
 
   /**
-   * <p>
-   *   Format the end of a group. It always has a preceding {@link GroupStartEntry}.
-   * </p>
+   * Format the end of a group. It always has a preceding {@link GroupStartEntry}.
    *
    * @param groupEnd  group end, never {@code null}
    */

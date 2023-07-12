@@ -20,8 +20,6 @@ import de.sayayi.lib.protocol.Protocol.MessageParameterBuilder;
 import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor.MessageWithId;
 
-import lombok.val;
-
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -80,7 +78,7 @@ abstract class AbstractMessageBuilder
   @Override
   public @NotNull B forTags(@NotNull String ... tagNames)
   {
-    for(val tagName: requireNonNull(tagNames, "tagNames must not be null"))
+    for(final String tagName: requireNonNull(tagNames, "tagNames must not be null"))
       forTag(tagName);
 
     return (B)this;
@@ -107,8 +105,8 @@ abstract class AbstractMessageBuilder
   @Override
   public @NotNull P withMessage(@NotNull M message)
   {
-    val msg = new ProtocolMessageEntry<>(protocol, level, protocol.getPropagatedTags(tags),
-        throwable,
+    final ProtocolMessageEntry<M> msg = new ProtocolMessageEntry<>(protocol, level,
+        protocol.getPropagatedTags(tags), throwable,
         new GenericMessageWithId<>(
             protocol.getFactory().getMessageProcessor().getIdFromMessage(message),
             requireNonNull(message, "message must not be null")),
@@ -123,8 +121,8 @@ abstract class AbstractMessageBuilder
   @SuppressWarnings("squid:S2583")
   private @NotNull P message0(@NotNull MessageWithId<M> messageWithId)
   {
-    val msg = new ProtocolMessageEntry<>(protocol, level, protocol.getPropagatedTags(tags),
-        throwable, messageWithId, protocol.parameterMap);
+    final ProtocolMessageEntry<M> msg = new ProtocolMessageEntry<>(protocol, level,
+        protocol.getPropagatedTags(tags), throwable, messageWithId, protocol.parameterMap);
 
     protocol.entries.add(msg);
 

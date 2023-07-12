@@ -20,9 +20,6 @@ import de.sayayi.lib.protocol.Level.Shared;
 import de.sayayi.lib.protocol.ProtocolEntry.Message;
 import de.sayayi.lib.protocol.matcher.MessageMatcher.Junction;
 
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
-
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,15 +27,12 @@ import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
 import static de.sayayi.lib.protocol.Level.compare;
 import static de.sayayi.lib.protocol.Level.min;
 import static de.sayayi.lib.protocol.matcher.BooleanMatcher.ANY;
-import static lombok.AccessLevel.PRIVATE;
 
 
 /**
  * @author Jeroen Gremmen
  * @since 1.0.0
  */
-@RequiredArgsConstructor(access = PRIVATE)
-@EqualsAndHashCode(callSuper = false)
 final class LevelMatcher implements Junction
 {
   static final Junction DEBUG = new LevelMatcher(Shared.DEBUG);
@@ -47,6 +41,11 @@ final class LevelMatcher implements Junction
   static final Junction ERROR = new LevelMatcher(Shared.ERROR);
 
   private final Level level;
+
+
+  private LevelMatcher(@NotNull Level level) {
+    this.level = level;
+  }
 
 
   @Override
@@ -58,6 +57,18 @@ final class LevelMatcher implements Junction
   @Override
   public boolean isTagSelector() {
     return false;
+  }
+
+
+  @Override
+  public boolean equals(Object o) {
+    return this == o || o instanceof LevelMatcher && level.equals(((LevelMatcher)o).level);
+  }
+
+
+  @Override
+  public int hashCode() {
+    return level.hashCode();
   }
 
 

@@ -22,14 +22,13 @@ import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.matcher.MessageMatcher.Junction;
 
-import lombok.NoArgsConstructor;
-import lombok.val;
-
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
@@ -41,7 +40,6 @@ import static de.sayayi.lib.protocol.matcher.BooleanMatcher.ANY;
 import static de.sayayi.lib.protocol.matcher.BooleanMatcher.NONE;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
-import static lombok.AccessLevel.PRIVATE;
 
 
 /**
@@ -50,9 +48,12 @@ import static lombok.AccessLevel.PRIVATE;
  * @author Jeroen Gremmen
  * @since 1.0.0
  */
-@NoArgsConstructor(access = PRIVATE)
 public final class MessageMatchers
 {
+  private MessageMatchers() {
+  }
+
+
   /**
    * Return a message matcher which matches every message.
    *
@@ -77,7 +78,7 @@ public final class MessageMatchers
 
   @Contract(pure = true)
   public static @NotNull Junction not(@NotNull MessageMatcher matcher) {
-    return Negation.of(matcher);
+    return Negation.of(requireNonNull(matcher));
   }
 
 
@@ -167,7 +168,7 @@ public final class MessageMatchers
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction hasAnyOf(@NotNull Collection<String> tagNames)
   {
-    val uniqueTagNames = new TreeSet<>(tagNames);
+    final Set<String> uniqueTagNames = new TreeSet<>(tagNames);
     uniqueTagNames.remove("");
 
     if (uniqueTagNames.remove(DEFAULT_TAG_NAME))
@@ -190,8 +191,8 @@ public final class MessageMatchers
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction hasAllOf(@NotNull Collection<String> tagNames)
   {
-    val uniqueTagNames = new TreeSet<>(tagNames);
-    val hasDefaultTag = uniqueTagNames.remove(DEFAULT_TAG_NAME);
+    final Set<String> uniqueTagNames = new TreeSet<>(tagNames);
+    final boolean hasDefaultTag = uniqueTagNames.remove(DEFAULT_TAG_NAME);
 
     if (uniqueTagNames.remove(""))
       return NONE;
@@ -280,7 +281,7 @@ public final class MessageMatchers
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message)
       {
-        val parameterValues = message.getParameterValues();
+        final Map<String,Object> parameterValues = message.getParameterValues();
 
         return value == null
             ? parameterValues.containsKey(parameterName) && parameterValues.get(parameterName) == null
@@ -366,7 +367,7 @@ public final class MessageMatchers
    */
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction is(@NotNull Level level) {
-    return LevelMatcher.of(level);
+    return LevelMatcher.of(requireNonNull(level));
   }
 
 
@@ -390,7 +391,7 @@ public final class MessageMatchers
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message)
       {
-        val messageLevel = min(message.getLevel(), levelLimit);
+        final Level messageLevel = min(message.getLevel(), levelLimit);
         return compare(messageLevel, levelLow) >= 0 && compare(messageLevel, levelHigh) <= 0;
       }
 
@@ -490,7 +491,7 @@ public final class MessageMatchers
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message)
       {
-        val protocol = message.getProtocol();
+        final Protocol<M> protocol = message.getProtocol();
 
         return protocol.isProtocolGroup() &&
                groupName.equals(((ProtocolGroup<M>)protocol).getName());
@@ -521,16 +522,16 @@ public final class MessageMatchers
   @Contract(pure = true)
   public static @NotNull Junction inGroupRegex(@NotNull String groupNameRegex)
   {
-    val pattern = Pattern.compile(requireNonNull(groupNameRegex));
+    final Pattern pattern = Pattern.compile(requireNonNull(groupNameRegex));
 
     return new Junction() {
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message)
       {
-        val protocol = message.getProtocol();
+        final Protocol<M> protocol = message.getProtocol();
         if (protocol.isProtocolGroup())
         {
-          val groupName = ((ProtocolGroup<M>)protocol).getName();
+          final String groupName = ((ProtocolGroup<M>)protocol).getName();
           return groupName != null && pattern.matcher(groupName).matches();
         }
 
@@ -587,7 +588,7 @@ public final class MessageMatchers
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction inProtocol(@NotNull Protocol<?> protocol)
   {
-    val protocolId = protocol.getId();
+    final int protocolId = protocol.getId();
 
     return new Junction() {
       @Override

@@ -1,38 +1,11 @@
 plugins {
   id 'antlr'
-  id "org.sonarqube" version "3.0"
-  id 'io.franzbecker.gradle-lombok' version '5.0.0'
+  id "org.sonarqube" version "4.0.0.2929"
+  id 'de.sayayi.plugin.gradle.libapi' version "1.0-SNAPSHOT"
 }
 
 
 description 'Protocol Library Message Matcher Parser'
-
-
-lombok {
-  version = lombokVersion
-  sha256 = ""
-}
-
-
-import io.franzbecker.gradle.lombok.task.DelombokTask
-
-task delombok(type: DelombokTask, dependsOn: compileJava) {
-  javaLauncher.set(javaToolchains.launcherFor {
-    languageVersion = JavaLanguageVersion.of(8)
-  })
-
-  ext.outputDir = file("$buildDir/delombok")
-  outputs.dir(outputDir)
-
-  sourceSets.main.java.srcDirs.each {
-    inputs.dir(it)
-    args(it, "-d", outputDir)
-  }
-
-  doFirst {
-    outputDir.deleteDir()
-  }
-}
 
 
 configurations {
@@ -44,7 +17,7 @@ configurations {
 
 ext {
   antlrVersion = "4.9.3"
-  antlrExtVersion = "0.3.0"
+  antlrExtVersion = "0.3.1"
 }
 
 

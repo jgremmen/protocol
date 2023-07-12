@@ -22,8 +22,6 @@ import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
 import de.sayayi.lib.protocol.exception.ProtocolException;
 import de.sayayi.lib.protocol.spi.GenericMessageWithId;
 
-import lombok.AllArgsConstructor;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -35,9 +33,8 @@ import static java.util.Objects.requireNonNull;
  * @author Jeroen Gremmen
  * @since 0.7.0
  *
- * @see MessageBundleMessageProcessor
+ * @see MessageSupportMessageProcessor
  */
-@AllArgsConstructor
 public class MessageFormatMessageProcessor implements MessageProcessor<Message>
 {
   public static final MessageFormatMessageProcessor INSTANCE =
@@ -47,11 +44,16 @@ public class MessageFormatMessageProcessor implements MessageProcessor<Message>
   private final @NotNull MessageFactory messageFactory;
 
 
+  public MessageFormatMessageProcessor(@NotNull MessageFactory messageFactory) {
+    this.messageFactory = requireNonNull(messageFactory);
+  }
+
+
   @Override
   public @NotNull MessageWithId<Message> processMessage(@NotNull String messageFormat)
   {
     try {
-      return new GenericMessageWithId<>(messageFactory.parse(
+      return new GenericMessageWithId<>(messageFactory.parseMessage(
           requireNonNull(messageFormat, "messageFormat must not be null")));
     } catch(MessageParserException ex) {
       throw new ProtocolException("failed to process message: " + ex.getMessage(), ex);

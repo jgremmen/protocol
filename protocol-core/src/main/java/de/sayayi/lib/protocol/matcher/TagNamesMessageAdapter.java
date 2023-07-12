@@ -19,10 +19,7 @@ import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolEntry.Message;
 
-import lombok.val;
-
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -45,7 +42,7 @@ final class TagNamesMessageAdapter implements Message<Object>
 
   TagNamesMessageAdapter(@NotNull Collection<String> tagNames)
   {
-    val tagNameSet = new HashSet<>(tagNames);
+    final Set<String> tagNameSet = new HashSet<>(tagNames);
 
     tagNameSet.add(DEFAULT_TAG_NAME);
     tagNameSet.remove("");
@@ -97,7 +94,7 @@ final class TagNamesMessageAdapter implements Message<Object>
 
 
   @Override
-  public @Unmodifiable @NotNull Set<String> getTagNames() {
+  public @NotNull Set<String> getTagNames() {
     return tagNames;
   }
 
@@ -122,6 +119,6 @@ final class TagNamesMessageAdapter implements Message<Object>
 
   @Override
   public String toString() {
-    return "Message[tags={" + String.join(",", tagNames) + "}]";
+    return "Message(tags={" + String.join(",", tagNames) + "})";
   }
 }

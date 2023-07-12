@@ -20,10 +20,6 @@ import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.val;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -40,11 +36,18 @@ import static java.util.stream.Collectors.joining;
  * @author Jeroen Gremmen
  * @since 0.4.1
  */
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
 {
   private final @NotNull Level levelLimit;
   private final @NotNull InternalProtocolEntry.Message<M> message;
+
+
+  private ProtocolMessageEntryAdapter(@NotNull Level levelLimit,
+                                      @NotNull InternalProtocolEntry.Message<M> message)
+  {
+    this.levelLimit = levelLimit;
+    this.message = message;
+  }
 
 
   @Override
@@ -110,18 +113,18 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
   @Override
   public String toString()
   {
-    val s = new StringBuilder("Message[level=").append(levelLimit).append(",tags={")
-        .append(String.join(",", getTagNames())).append("},id=").append(getMessageId())
-        .append(",message=").append(message.getMessage());
+    final StringBuilder s = new StringBuilder("Message(level=").append(levelLimit)
+        .append(",tags={").append(String.join(",", getTagNames())).append("},id=")
+        .append(getMessageId()).append(",message=").append(message.getMessage());
 
-    val parameterValues = getParameterValues();
+    final Map<String,Object> parameterValues = getParameterValues();
     if (!parameterValues.isEmpty())
     {
       s.append(parameterValues.entrySet().stream().map(Entry::toString).collect(
           joining(",", ",params={", "}")));
     }
 
-    return s.append(']').toString();
+    return s.append(')').toString();
   }
 
 

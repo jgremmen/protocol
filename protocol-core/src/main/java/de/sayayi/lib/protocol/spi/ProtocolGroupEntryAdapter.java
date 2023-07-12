@@ -21,9 +21,6 @@ import de.sayayi.lib.protocol.ProtocolEntry;
 import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
-import lombok.AllArgsConstructor;
-import lombok.val;
-
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,7 +28,6 @@ import java.util.List;
 
 import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
 import static de.sayayi.lib.protocol.Level.compare;
-import static lombok.AccessLevel.PRIVATE;
 
 
 /**
@@ -40,11 +36,18 @@ import static lombok.AccessLevel.PRIVATE;
  * @author Jeroen Gremmen
  * @since 0.4.1
  */
-@AllArgsConstructor(access = PRIVATE)
 final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<M>
 {
   private final @NotNull Level levelLimit;
   private final @NotNull InternalProtocolEntry.Group<M> group;
+
+
+  private ProtocolGroupEntryAdapter(@NotNull Level levelLimit,
+                                    @NotNull InternalProtocolEntry.Group<M> group)
+  {
+    this.levelLimit = levelLimit;
+    this.group = group;
+  }
 
 
   @Override
@@ -149,13 +152,13 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
   @Override
   public String toString()
   {
-    val s = new StringBuilder("ProtocolGroup[id=").append(group.getId())
+    final StringBuilder s = new StringBuilder("ProtocolGroup(id=").append(group.getId())
         .append(",visibility=").append(group.getVisibility());
 
     if (compare(levelLimit, HIGHEST) < 0)
       s.append(",levelLimit=").append(levelLimit);
 
-    return s.append(']').toString();
+    return s.append(')').toString();
   }
 
 

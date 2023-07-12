@@ -87,17 +87,13 @@ public interface ProtocolEntry<M> extends ProtocolQueryable
 
 
     /**
+     * Returns the level of the group header message for the given {@code matcher}.
      * <p>
-     *   Returns the level of the group header message for the given {@code matcher}.
-     * </p>
+     * The group header message level is defined as the highest (= most severe) level of all
+     * containing messages and sub-groups which are visible for the given {@code matcher}.
      * <p>
-     *   The group header message level is defined as the highest (= most severe) level of all
-     *   containing messages and sub-groups which are visible for the given {@code matcher}.
-     * </p>
-     * <p>
-     *   If the group does not contain any messages, the returned value will be a level with the
-     *   lowest possible severity.
-     * </p>
+     * If the group does not contain any messages, the returned value will be a level with the
+     * lowest possible severity.
      *
      * @param matcher  message matcher, not {@code null}
      *

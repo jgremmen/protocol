@@ -19,26 +19,25 @@ import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.ProtocolEntry.Message;
 import de.sayayi.lib.protocol.matcher.MessageMatcher.Junction;
 
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
-
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import static de.sayayi.lib.protocol.matcher.BooleanMatcher.ANY;
 import static de.sayayi.lib.protocol.matcher.BooleanMatcher.NONE;
-import static lombok.AccessLevel.PRIVATE;
 
 
 /**
  * @author Jeroen Gremmen
  * @since 1.0.0
  */
-@RequiredArgsConstructor(access = PRIVATE)
-@EqualsAndHashCode(callSuper = false)
 final class Negation implements Junction
 {
   private final MessageMatcher matcher;
+
+
+  private Negation(@NotNull MessageMatcher matcher) {
+    this.matcher = matcher;
+  }
 
 
   @Override
@@ -50,6 +49,18 @@ final class Negation implements Junction
   @Override
   public boolean isTagSelector() {
     return matcher.isTagSelector();
+  }
+
+
+  @Override
+  public boolean equals(Object o) {
+    return this == o || o instanceof Negation && matcher.equals(((Negation)o).matcher);
+  }
+
+
+  @Override
+  public int hashCode() {
+    return matcher.hashCode();
   }
 
 

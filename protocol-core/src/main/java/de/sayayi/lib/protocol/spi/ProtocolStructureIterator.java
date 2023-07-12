@@ -20,14 +20,9 @@ import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.Protocol.GenericMessage;
 import de.sayayi.lib.protocol.Protocol.GenericMessageWithLevel;
 import de.sayayi.lib.protocol.ProtocolEntry;
+import de.sayayi.lib.protocol.ProtocolGroup.Visibility;
 import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.matcher.MessageMatcher;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.val;
-import lombok.var;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +40,6 @@ import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ALWAYS
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_IF_NOT_EMPTY;
 import static de.sayayi.lib.protocol.ProtocolGroup.Visibility.SHOW_HEADER_ONLY;
 import static java.util.Collections.emptySet;
-import static lombok.AccessLevel.PROTECTED;
 
 
 /**
@@ -70,7 +64,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   private final @NotNull Level levelLimit;
   private final @NotNull MessageMatcher matcher;
   private final int entryCount;
-  @Getter @Setter(PROTECTED) private int depth;
+  private int depth;
 
   private ForGroup<M> groupIterator;
   private Iterator<ProtocolEntry<M>> iterator;
@@ -103,6 +97,17 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
       //noinspection unchecked
       addNextEntry((ProtocolStart<M>)PROTOCOL_START);
     }
+  }
+
+
+  @Contract(pure = true)
+  public int getDepth() {
+    return depth;
+  }
+
+
+  protected void setDepth(int depth) {
+    this.depth = depth;
   }
 
 
@@ -140,7 +145,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     if (!hasNext())
       throw new NoSuchElementException();
 
-    val entry = nextEntries[firstEntryIdx];
+    final DepthEntry<M> entry = nextEntries[firstEntryIdx];
 
     nextEntries[firstEntryIdx] = null;
     firstEntryIdx = (firstEntryIdx + 1) & 3;
@@ -205,7 +210,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
         return;
       }
 
-      val protocolEntry = iterator.next();
+      final ProtocolEntry<M> protocolEntry = iterator.next();
 
       if (protocolEntry instanceof InternalProtocolEntry.Group)
       {
@@ -224,7 +229,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
   @Override
   public String toString() {
-    return "Iterator[matcher=" + matcher + ",depth=" + depth + ']';
+    return "Iterator(matcher=" + matcher + ",depth=" + depth + ')';
   }
 
 
@@ -279,7 +284,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
       this.hasEntryAfterGroup = hasEntryAfterGroup;
 
       // normalize visibility
-      var visibility = protocol.getEffectiveVisibility();
+      Visibility visibility = protocol.getEffectiveVisibility();
       if (visibility == SHOW_HEADER_ALWAYS && !hasNextVisibleEntryAtSameDepth())
         visibility = SHOW_HEADER_ONLY;
       else if (visibility == SHOW_HEADER_IF_NOT_EMPTY)
@@ -350,15 +355,25 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
 
-  @AllArgsConstructor(access = PROTECTED)
-  abstract static class DepthEntryImpl<M> implements DepthEntry<M> {
-    @Getter final int depth;
+  abstract static class DepthEntryImpl<M> implements DepthEntry<M>
+  {
+    final int depth;
+
+
+    protected DepthEntryImpl(int depth) {
+      this.depth = depth;
+    }
+
+
+    @Override
+    public int getDepth() {
+      return depth;
+    }
   }
 
 
 
 
-  @Getter
   abstract static class BoundedDepthEntryImpl<M> extends DepthEntryImpl<M>
       implements BoundedDepthEntry<M>
   {
@@ -372,6 +387,18 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
       this.first = first;
       this.last = last;
+    }
+
+
+    @Contract(pure = true)
+    public boolean isFirst() {
+      return first;
+    }
+
+
+    @Contract(pure = true)
+    public boolean isLast() {
+      return last;
     }
   }
 
@@ -443,8 +470,10 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
     @Override
-    public String toString() {
-      return "MessageEntry[depth=" + depth + ",first=" + first + ",last=" + last + ',' + message + ']';
+    public String toString()
+    {
+      return "MessageEntry(depth=" + depth + ",first=" + first + ",last=" + last + ',' +
+             message + ')';
     }
   }
 
@@ -454,8 +483,8 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   private static class GroupMessageEntryImpl<M> extends BoundedDepthEntryImpl<M>
       implements GroupMessageEntry<M>
   {
-    @Getter final String name;
-    @Getter final Level level;
+    final String name;
+    final Level level;
     final GenericMessage<M> groupMessage;
 
 
@@ -467,6 +496,18 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
       this.name = name;
       this.level = level;
       this.groupMessage = groupMessage;
+    }
+
+
+    @Override
+    public String getName() {
+      return name;
+    }
+
+
+    @Override
+    public @NotNull Level getLevel() {
+      return level;
     }
 
 
@@ -503,8 +544,8 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     @Override
     public String toString()
     {
-      return "GroupMessageEntry[depth=" + depth + ",first=" + first + ",last=" + last +
-             ",level=" + level + ',' + groupMessage + ']';
+      return "GroupMessageEntry(depth=" + depth + ",first=" + first + ",last=" + last +
+             ",level=" + level + ',' + groupMessage + ')';
     }
   }
 
@@ -547,7 +588,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
       if (!hasNext())
         throw new NoSuchElementException();
 
-      val entry = nextEntry;
+      final ProtocolEntry<M> entry = nextEntry;
 
       prepareNextEntry();
 
@@ -561,9 +602,9 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   private static class GroupStartEntryImpl<M> extends BoundedDepthEntryImpl<M>
       implements GroupStartEntry<M>
   {
-    @Getter private final String name;
-    @Getter private final GenericMessageWithLevel<M> groupMessage;
-    @Getter private final int messageCount;
+    private final String name;
+    private final GenericMessageWithLevel<M> groupMessage;
+    private final int messageCount;
 
 
     private GroupStartEntryImpl(String name, final GenericMessage<M> groupMessage, final Level level,
@@ -585,10 +626,28 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
     @Override
+    public String getName() {
+      return name;
+    }
+
+
+    @Override
+    public @NotNull GenericMessageWithLevel<M> getGroupMessage() {
+      return groupMessage;
+    }
+
+
+    @Override
+    public int getMessageCount() {
+      return messageCount;
+    }
+
+
+    @Override
     public String toString()
     {
-      return "GroupStartEntry[depth=" + depth + ",first=" + first + ",last=" + last +
-             ",level=" + groupMessage.getLevel() + ",messages=" + messageCount + ']';
+      return "GroupStartEntry(depth=" + depth + ",first=" + first + ",last=" + last +
+             ",level=" + groupMessage.getLevel() + ",messages=" + messageCount + ')';
     }
   }
 
@@ -604,7 +663,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
     @Override
     public String toString() {
-      return "GroupEndEntry[depth=" + depth + ']';
+      return "GroupEndEntry(depth=" + depth + ')';
     }
   }
 }

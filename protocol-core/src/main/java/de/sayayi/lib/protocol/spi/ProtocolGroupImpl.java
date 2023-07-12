@@ -26,9 +26,6 @@ import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.exception.ProtocolException;
 import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
-import lombok.Getter;
-import lombok.val;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -60,12 +57,12 @@ final class ProtocolGroupImpl<M>
     extends AbstractProtocol<M,ProtocolMessageBuilder<M>>
     implements ProtocolGroup<M>, InternalProtocolEntry.Group<M>
 {
-  @Getter private final AbstractProtocol<M,Protocol.ProtocolMessageBuilder<M>> parent;
+  private final @NotNull AbstractProtocol<M,Protocol.ProtocolMessageBuilder<M>> parent;
 
-  @Getter private @NotNull Level levelLimit;
-  @Getter private @NotNull Visibility visibility;
-  @Getter private GroupMessage groupMessage;
-  @Getter private String name;
+  private @NotNull Level levelLimit;
+  private @NotNull Visibility visibility;
+  private GroupMessage groupMessage;
+  private String name;
 
 
   ProtocolGroupImpl(@NotNull AbstractProtocol<M,Protocol.ProtocolMessageBuilder<M>> parent)
@@ -76,6 +73,36 @@ final class ProtocolGroupImpl<M>
 
     levelLimit = HIGHEST;
     visibility = SHOW_HEADER_IF_NOT_EMPTY;
+  }
+
+
+  @Override
+  public @NotNull Protocol<M> getParent() {
+    return parent;
+  }
+
+
+  @Override
+  public @NotNull Level getLevelLimit() {
+    return levelLimit;
+  }
+
+
+  @Override
+  public @NotNull Visibility getVisibility() {
+    return visibility;
+  }
+
+
+  @Override
+  public GroupMessage getGroupMessage() {
+    return groupMessage;
+  }
+
+
+  @Override
+  public String getName() {
+    return name;
   }
 
 
@@ -190,12 +217,12 @@ final class ProtocolGroupImpl<M>
   @Override
   public int getVisibleEntryCount0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
-    val effectiveVisibility = getEffectiveVisibility();
+    final Visibility effectiveVisibility = getEffectiveVisibility();
     if (effectiveVisibility == SHOW_HEADER_ONLY)
       return 1;
 
-    val entryCount = super.getVisibleEntryCount0(min(this.levelLimit, levelLimit), matcher);
-    val entryCountWithHeader = 1 + entryCount;
+    final int entryCount = super.getVisibleEntryCount0(min(this.levelLimit, levelLimit), matcher);
+    final int entryCountWithHeader = 1 + entryCount;
 
     switch(effectiveVisibility)
     {
@@ -305,7 +332,7 @@ final class ProtocolGroupImpl<M>
   public boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher,
                           boolean messageOnly)
   {
-    val ev = getEffectiveVisibility();
+    final Visibility ev = getEffectiveVisibility();
 
     if (!messageOnly && (ev == SHOW_HEADER_ONLY || ev == SHOW_HEADER_ALWAYS))
       return true;
@@ -336,7 +363,8 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull String tagSelectorExpression) {
+  public @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(
+      @NotNull String tagSelectorExpression) {
     return propagate(factory.parseTagSelector(tagSelectorExpression));
   }
 
@@ -352,7 +380,7 @@ final class ProtocolGroupImpl<M>
   @Override
   public String toString()
   {
-    val s = new StringBuilder("ProtocolGroup[id=").append(getId())
+    final StringBuilder s = new StringBuilder("ProtocolGroup(id=").append(getId())
         .append(",visibility=").append(visibility);
 
     if (compare(levelLimit, HIGHEST) < 0)
@@ -365,7 +393,7 @@ final class ProtocolGroupImpl<M>
           .collect(joining(",", "{", "}")));
     }
 
-    return s.append(']').toString();
+    return s.append(')').toString();
   }
 
 
@@ -400,7 +428,7 @@ final class ProtocolGroupImpl<M>
     @Override
     public String toString()
     {
-      val s = new StringBuilder("GroupMessage[id=").append(getMessageId())
+      final StringBuilder s = new StringBuilder("GroupMessage(id=").append(getMessageId())
           .append(",message=").append(getMessage());
 
       if (!parameterMap.isEmpty())
@@ -409,7 +437,7 @@ final class ProtocolGroupImpl<M>
             .collect(joining(",", "{", "}")));
       }
 
-      return s.append(']').toString();
+      return s.append(')').toString();
     }
   }
 
@@ -462,7 +490,8 @@ final class ProtocolGroupImpl<M>
 
 
     @Override
-    public @NotNull ProtocolGroup.MessageParameterBuilder<M> setGroupMessage(@NotNull String message) {
+    public @NotNull ProtocolGroup.MessageParameterBuilder<M> setGroupMessage(
+        @NotNull String message) {
       return ProtocolGroupImpl.this.setGroupMessage(message);
     }
 
@@ -504,7 +533,8 @@ final class ProtocolGroupImpl<M>
 
 
     @Override
-    public @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull String tagSelectorExpression) {
+    public @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(
+        @NotNull String tagSelectorExpression) {
       return (ProtocolGroup.TargetTagBuilder<M>)super.propagate(tagSelectorExpression);
     }
 

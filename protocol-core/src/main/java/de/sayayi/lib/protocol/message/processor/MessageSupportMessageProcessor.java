@@ -16,13 +16,10 @@
 package de.sayayi.lib.protocol.message.processor;
 
 import de.sayayi.lib.message.Message;
-import de.sayayi.lib.message.MessageBundle;
+import de.sayayi.lib.message.MessageSupport.MessageAccessor;
 import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
 import de.sayayi.lib.protocol.exception.ProtocolException;
 import de.sayayi.lib.protocol.spi.GenericMessageWithId;
-
-import lombok.AllArgsConstructor;
-import lombok.val;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -31,20 +28,27 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * @author Jeroen Gremmen
- * @since 0.7.0
+ * @since 0.7.0 (renamed in 1.3.3)
  *
  * @see MessageFormatMessageProcessor
  */
-@AllArgsConstructor
-public class MessageBundleMessageProcessor implements MessageProcessor<Message>
+public class MessageSupportMessageProcessor implements MessageProcessor<Message>
 {
-  private final MessageBundle messageBundle;
+  private final @NotNull MessageAccessor messageAccessor;
   private final boolean parserFallback;
 
 
+  public MessageSupportMessageProcessor(@NotNull MessageAccessor messageAccessor,
+                                        boolean parserFallback)
+  {
+    this.messageAccessor = requireNonNull(messageAccessor);
+    this.parserFallback = parserFallback;
+  }
+
+
   @SuppressWarnings("unused")
-  public MessageBundleMessageProcessor(@NotNull MessageBundle messageBundle) {
-    this(messageBundle, false);
+  public MessageSupportMessageProcessor(@NotNull MessageAccessor messageAccessor) {
+    this(messageAccessor, false);
   }
 
 
@@ -76,13 +80,16 @@ public class MessageBundleMessageProcessor implements MessageProcessor<Message>
   {
     requireNonNull(codeOrMessageFormat, "codeOrMessageFormat must not be null");
 
-    val message = isInvalidMessageCode(codeOrMessageFormat)
-        ? null : messageBundle.getByCode(codeOrMessageFormat);
+    final Message.WithCode message = isInvalidMessageCode(codeOrMessageFormat)
+        ? null : messageAccessor.getMessageByCode(codeOrMessageFormat);
     if (message != null)
       return new GenericMessageWithId<>(message.getCode(), message);
 
     if (!parserFallback)
-      throw new ProtocolException("missing message in bundle for code '" + codeOrMessageFormat + "'");
+    {
+      throw new ProtocolException("missing message in bundle for code '" +
+                                  codeOrMessageFormat + "'");
+    }
 
     return MessageFormatMessageProcessor.INSTANCE.processMessage(codeOrMessageFormat);
   }

@@ -21,11 +21,8 @@ import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Range;
 
 import java.util.Iterator;
-
-import static java.lang.Integer.MAX_VALUE;
 
 
 /**
@@ -37,13 +34,11 @@ import static java.lang.Integer.MAX_VALUE;
 public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
 {
   /**
-   * <p>
-   *   This class is the basis for every entry produced by the protocol iterator. It provides the
-   *   group depth (starting with {@code 0}) for each entry. Every {@link GroupStartEntry}
-   *   increases the depth and every {@link GroupEndEntry} decreases the depth. This information
-   *   can be used by {@linkplain ProtocolFormatter ProtocolFormatters} to format the protocol in
-   *   a structural form (eg. a tree).
-   * </p>
+   * This class is the basis for every entry produced by the protocol iterator. It provides the
+   * group depth (starting with {@code 0}) for each entry. Every {@link GroupStartEntry}
+   * increases the depth and every {@link GroupEndEntry} decreases the depth. This information
+   * can be used by {@linkplain ProtocolFormatter ProtocolFormatters} to format the protocol in
+   * a structural form (eg. a tree).
    *
    * @param <M>  internal message object type
    */
@@ -71,10 +66,9 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
      *   <li>Message 4 (depth = 0)</li>
      * </ul>
      *
-     * @return  entry depth
+     * @return  entry depth &gt;= 0
      */
     @Contract(pure = true)
-    @Range(from = 0, to = MAX_VALUE)
     int getDepth();
   }
 
@@ -82,10 +76,8 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
 
 
   /**
-   * <p>
-   *   In addition to {@link DepthEntry} this type provides information about the position, with
-   *   respect to its depth, it is listed in.
-   * </p>
+   * In addition to {@link DepthEntry} this type provides information about the position, with
+   * respect to its depth, it is listed in.
    *
    * @param <M>  internal message object type
    */
@@ -246,7 +238,6 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
      * @see #getDepth()
      */
     @Contract(pure = true)
-    @Range(from = 1, to = MAX_VALUE)
     int getMessageCount();
   }
 

@@ -36,7 +36,5 @@ javadoc {
     addStringOption('Xdoclint:-missing', '-quiet')
   }
 
-  dependsOn delombok
-  source = delombok.outputDir
   failOnError false
 }

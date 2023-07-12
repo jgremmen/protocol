@@ -23,8 +23,6 @@ import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
-import lombok.val;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map.Entry;
@@ -100,7 +98,7 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
   @Override
   public String toString()
   {
-    val s = new StringBuilder("Protocol[id=").append(getId());
+    final StringBuilder s = new StringBuilder("Protocol(id=").append(getId());
 
     if (!parameterMap.isEmpty())
     {
@@ -108,7 +106,7 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
           .collect(joining(",", "{", "}")));
     }
 
-    return s.append(']').toString();
+    return s.append(')').toString();
   }
 
 

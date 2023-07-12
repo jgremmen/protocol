@@ -20,28 +20,26 @@ import de.sayayi.lib.protocol.ProtocolEntry.Message;
 import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.matcher.MessageMatcher.Junction;
 
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-
-import static lombok.AccessLevel.PRIVATE;
 
 
 /**
  * @author Jeroen Gremmen
  * @since 1.0.0
  */
-@RequiredArgsConstructor(access = PRIVATE)
-@EqualsAndHashCode(callSuper = false)
 final class BooleanMatcher implements Junction, TagSelector
 {
   static final BooleanMatcher ANY = new BooleanMatcher(true);
   static final BooleanMatcher NONE = new BooleanMatcher(false);
 
   private final boolean matches;
+
+
+  private BooleanMatcher(boolean matches) {
+    this.matches = matches;
+  }
 
 
   @Override
@@ -71,6 +69,18 @@ final class BooleanMatcher implements Junction, TagSelector
   @Override
   public @NotNull MessageMatcher asMessageMatcher() {
     return this;
+  }
+
+
+  @Override
+  public boolean equals(Object o) {
+    return this == o || o instanceof BooleanMatcher && matches == ((BooleanMatcher)o).matches;
+  }
+
+
+  @Override
+  public int hashCode() {
+    return Boolean.hashCode(matches);
   }
 
 

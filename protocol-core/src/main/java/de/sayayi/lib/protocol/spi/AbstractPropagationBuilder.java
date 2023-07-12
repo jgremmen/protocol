@@ -20,8 +20,6 @@ import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 import de.sayayi.lib.protocol.Protocol.TargetTagBuilder;
 import de.sayayi.lib.protocol.TagSelector;
 
-import lombok.val;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.TreeSet;
@@ -66,7 +64,7 @@ abstract class AbstractPropagationBuilder<M,B extends ProtocolMessageBuilder<M>>
     if (requireNonNull(targetTagNames, "targetTagNames must not be null").length == 0)
       throw new IllegalArgumentException("targetTagNames must not be empty");
 
-    for(val targetTagName: targetTagNames)
+    for(final String targetTagName: targetTagNames)
       to(targetTagName);
 
     return protocol;
