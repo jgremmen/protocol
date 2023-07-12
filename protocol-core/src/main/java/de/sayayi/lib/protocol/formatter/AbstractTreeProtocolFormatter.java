@@ -34,16 +34,15 @@ import org.jetbrains.annotations.NotNull;
  * @author Jeroen Gremmen
  * @since 0.1.0
  */
-@SuppressWarnings("UnnecessaryUnicodeEscape")
 public abstract class AbstractTreeProtocolFormatter<M> implements ProtocolFormatter<M,String>
 {
-  private static final String GRAPH_ROOT_NODE_PREFIX = "\u25a0\u2500\u2500";
-  private static final String GRAPH_MIDDLE_NODE_PREFIX = "\u251c\u2500\u2500";
-  private static final String GRAPH_LAST_NODE_PREFIX = "\u2514\u2500\u2500";
+  private static final String GRAPH_ROOT_NODE_PREFIX = "■──";
+  private static final String GRAPH_MIDDLE_NODE_PREFIX = "├──";
+  private static final String GRAPH_LAST_NODE_PREFIX = "└──";
 
-  private static final String GRAPH_VERTICAL_BAR = "\u2502\n";
+  private static final String GRAPH_VERTICAL_BAR = "│\n";
 
-  private static final String GRAPH_LEVEL_SEPARATOR_BAR = "\u2502  ";
+  private static final String GRAPH_LEVEL_SEPARATOR_BAR = "│  ";
   private static final String GRAPH_LEVEL_SEPARATOR_EMPTY = "   ";
 
   private final StringBuilder result;
