@@ -32,6 +32,7 @@ import java.util.Comparator;
  * @author Jeroen Gremmen
  * @since 0.1.0
  */
+@FunctionalInterface
 @SuppressWarnings("java:S1214")
 public interface Level
 {
