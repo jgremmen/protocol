@@ -149,6 +149,7 @@ public interface ProtocolFactory<M> extends ProtocolMessageMatcher
    * @author Jeroen Gremmen
    * @since 0.7.0
    */
+  @FunctionalInterface
   interface MessageFormatter<M>
   {
     /**
