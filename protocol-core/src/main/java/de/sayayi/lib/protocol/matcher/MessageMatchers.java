@@ -18,6 +18,7 @@ package de.sayayi.lib.protocol.matcher;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolEntry.Message;
+import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.matcher.MessageMatcher.Junction;
@@ -588,12 +589,17 @@ public final class MessageMatchers
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction inProtocol(@NotNull Protocol<?> protocol)
   {
+    final ProtocolFactory<?> protocolFactory = protocol.getFactory();
     final int protocolId = protocol.getId();
 
     return new Junction() {
       @Override
-      public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
-        return message.getProtocol().getId() == protocolId;
+      public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message)
+      {
+        final Protocol<M> protocol = message.getProtocol();
+
+        return protocol.getFactory() == protocolFactory &&
+               protocol.getId() == protocolId;
       }
 
 
