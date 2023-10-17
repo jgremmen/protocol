@@ -25,11 +25,3 @@ jacocoTestReport {
     }
   }
 }
-
-
-sonarqube {
-  properties {
-    property 'sonar.projectName', "${description} [" + (System.getenv("CI_COMMIT_REF_NAME") ?: "unknown") + "]"
-    property 'sonar.projectVersion', "${rootProject.version}"
-  }
-}
