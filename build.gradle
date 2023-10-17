@@ -28,7 +28,7 @@ allprojects {
   ext {
     jetbrainsAnnotationsVersion = "24.0.1"
     junitVersion = "5.10.+"
-    lombokVersion = "1.18.30"
+    lombokVersion = "1.18.+"
   }
 
   repositories {
@@ -55,7 +55,7 @@ configure(subprojects.findAll { it.name.startsWith("protocol-") }) {
 
   ext {
     gsonVersion = "2.10.1"
-    messageFormatVersion = "0.9.0-SNAPSHOT"
+    messageFormatVersion = "0.9.0"
     mockitoVersion = "4.11.0"
     unbescapeVersion = "1.1.6.RELEASE"
   }
