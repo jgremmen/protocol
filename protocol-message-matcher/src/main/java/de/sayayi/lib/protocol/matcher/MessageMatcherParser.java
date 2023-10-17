@@ -121,7 +121,7 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
   protected @NotNull RuntimeException createException(
       @NotNull Token startToken, @NotNull Token stopToken, @NotNull String formattedMessage,
       @NotNull String errorMsg, Exception cause) {
-    return new MessageMatcherParserException(errorMsg + '\n' + formattedMessage, cause);
+    return new MessageMatcherParserException(errorMsg, formattedMessage, cause);
   }
 
 
