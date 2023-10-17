@@ -96,7 +96,7 @@ configure(subprojects.findAll { it.name.startsWith("protocol-") }) {
 
   dependencies {
     // java
-    compileOnlyApi "org.jetbrains:annotations-java5:${jetbrainsAnnotationsVersion}"
+    compileOnly "org.jetbrains:annotations-java5:${jetbrainsAnnotationsVersion}"
 
     // test
     testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
