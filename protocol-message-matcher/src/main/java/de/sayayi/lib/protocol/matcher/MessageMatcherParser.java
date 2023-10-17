@@ -18,6 +18,7 @@ package de.sayayi.lib.protocol.matcher;
 import de.sayayi.lib.antlr4.AbstractAntlr4Parser;
 import de.sayayi.lib.antlr4.AbstractVocabulary;
 import de.sayayi.lib.antlr4.syntax.GenericSyntaxErrorFormatter;
+import de.sayayi.lib.antlr4.syntax.SyntaxErrorFormatter;
 import de.sayayi.lib.antlr4.walker.Walker;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.ProtocolMessageMatcher;
@@ -28,7 +29,6 @@ import de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer;
 import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.LexerNoViableAltException;
-import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.Vocabulary;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -82,6 +82,9 @@ import static java.util.stream.Collectors.toList;
  */
 public class MessageMatcherParser extends AbstractAntlr4Parser
 {
+  private static final SyntaxErrorFormatter SYNTAX_ERROR_FORMATTER =
+      new GenericSyntaxErrorFormatter(1, 0, 0, "> ");
+
   public static final MessageMatcherParser INSTANCE =
       new MessageMatcherParser(null, null);
 
@@ -91,7 +94,7 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
 
   public MessageMatcherParser(ClassLoader classLoader, Function<String,Level> levelResolver)
   {
-    super(ErrorFormatter.INSTANCE);
+    super(SYNTAX_ERROR_FORMATTER);
 
     this.classLoader = classLoader;
     this.levelResolver = levelResolver;
@@ -115,12 +118,10 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
 
 
   @Override
-  protected @NotNull RuntimeException createException(@NotNull Token startToken,
-                                                      @NotNull Token stopToken,
-                                                      @NotNull String formattedMessage,
-                                                      @NotNull String errorMsg,
-                                                      RecognitionException ex) {
-    return new MessageMatcherParserException(formattedMessage, ex);
+  protected @NotNull RuntimeException createException(
+      @NotNull Token startToken, @NotNull Token stopToken, @NotNull String formattedMessage,
+      @NotNull String errorMsg, Exception cause) {
+    return new MessageMatcherParserException(errorMsg + '\n' + formattedMessage, cause);
   }
 
 
@@ -177,10 +178,6 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
 
   private final class Listener extends MessageMatcherBaseListener implements WalkerSupplier
   {
-    private Listener() {
-    }
-
-
     @Override
     public @NotNull Walker getWalker() {
       return WALK_EXIT_RULES_HEAP;
@@ -477,25 +474,6 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
       }
 
       ctx.str = s.toString();
-    }
-  }
-
-
-
-
-  private static final class ErrorFormatter extends GenericSyntaxErrorFormatter
-  {
-    private static final ErrorFormatter INSTANCE = new ErrorFormatter();
-
-
-    private ErrorFormatter() {
-      super(1, 0, 0);
-    }
-
-
-    @Override
-    protected @NotNull String getLineFormat(int lines, int stopLine) {
-      return "> ";
     }
   }
 

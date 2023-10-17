@@ -15,8 +15,6 @@
  */
 package de.sayayi.lib.protocol.exception;
 
-import org.antlr.v4.runtime.RecognitionException;
-
 
 /**
  * <p>
@@ -35,11 +33,5 @@ public final class MessageMatcherParserException extends ProtocolException
 
   public MessageMatcherParserException(String message, Throwable cause) {
     super(message, cause);
-  }
-
-
-  @Override
-  public RecognitionException getCause() {
-    return (RecognitionException)super.getCause();
   }
 }

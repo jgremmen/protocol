@@ -18,16 +18,28 @@ description = 'Protocol Library Projects'
 
 
 allprojects {
-  apply plugin: "base"
+  layout.buildDirectory = ".build"
 
-  buildDir = ".build"
+  apply plugin: "base"
 
   group = "de.sayayi.lib"
   version = "1.3.3"
 
   ext.jetbrainsAnnotationsVersion = "24.0.1"
-  ext.junitVersion = "5.9.3"
-  ext.lombokVersion = "1.18.28"
+  ext.junitVersion = "5.10.+"
+  ext.lombokVersion = "1.18.30"
+
+  repositories {
+    maven {
+      url 'https://oss.sonatype.org/content/repositories/snapshots/'
+      mavenContent {
+        includeGroup 'de.sayayi.lib'
+        snapshotsOnly()
+      }
+    }
+
+    mavenCentral()
+  }
 }
 
 
@@ -41,7 +53,7 @@ configure(subprojects.findAll { it.name.startsWith("protocol-") }) {
 
   ext {
     gsonVersion = "2.10.1"
-    messageFormatVersion = "0.8.3"
+    messageFormatVersion = "0.9.0-SNAPSHOT"
     mockitoVersion = "4.11.0"
     unbescapeVersion = "1.1.6.RELEASE"
   }
