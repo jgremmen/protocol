@@ -23,11 +23,13 @@ allprojects {
   apply plugin: "base"
 
   group = "de.sayayi.lib"
-  version = "1.4.0"
+  version = "1.4.0-SNAPSHOT"
 
-  ext.jetbrainsAnnotationsVersion = "24.0.1"
-  ext.junitVersion = "5.10.+"
-  ext.lombokVersion = "1.18.30"
+  ext {
+    jetbrainsAnnotationsVersion = "24.0.1"
+    junitVersion = "5.10.+"
+    lombokVersion = "1.18.30"
+  }
 
   repositories {
     maven {
