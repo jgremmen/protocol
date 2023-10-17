@@ -1,6 +1,6 @@
 plugins {
   id 'antlr'
-  id 'de.sayayi.plugin.gradle.libapi' version "1.0-SNAPSHOT"
+  id 'de.sayayi.plugin.gradle.libapi' version '1.0-SNAPSHOT'
 }
 
 
@@ -21,8 +21,8 @@ configurations {
 
 
 ext {
-  antlrVersion = "4.9.3"
-  antlrExtVersion = "0.4.1"
+  antlrVersion = '4.9.3'
+  antlrExtVersion = '0.4.1'
 }
 
 
@@ -42,7 +42,7 @@ dependencies {
       prefer antlrExtVersion
     }
 
-    exclude group:'org.jetbrains'
+    exclude group: 'org.jetbrains'
   }
 
   antlr4 "org.antlr:antlr4:${antlrVersion}"
@@ -57,12 +57,12 @@ generateGrammarSource {
 sourcesJar {
   dependsOn generateGrammarSource
 
-  include "**/*.g4"
-  include "**/*.java"
+  include '**/*.g4'
+  include '**/*.java'
 
-  exclude "**/*.tokens"
-  exclude "**/*.interp"
-  exclude "gen/**"
+  exclude '**/*.tokens'
+  exclude '**/*.interp'
+  exclude 'gen/**'
 }
 
 
