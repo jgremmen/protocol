@@ -1,7 +1,6 @@
 plugins {
   id 'antlr'
-  id "org.sonarqube" version "4.0.0.2929"
-  id 'de.sayayi.plugin.gradle.libapi' version "1.0-SNAPSHOT"
+  id 'de.sayayi.plugin.gradle.libapi' version '1.0-SNAPSHOT'
 }
 
 
@@ -9,6 +8,12 @@ description 'Protocol Library Message Matcher Parser'
 
 
 configurations {
+  antlr4 {
+    visible = false;
+  }
+
+  api.setExtendsFrom([])
+
   compile {
     extendsFrom = extendsFrom.findAll { it != configurations.antlr }
   }
@@ -16,8 +21,8 @@ configurations {
 
 
 ext {
-  antlrVersion = "4.9.3"
-  antlrExtVersion = "0.3.1"
+  antlrVersion = '4.9.3'
+  antlrExtVersion = '0.4.1'
 }
 
 
@@ -29,23 +34,35 @@ apply from: file('../gradle/publishing.gradle')
 dependencies {
   implementation project(':protocol-core')
 
-  implementation("de.sayayi.lib:antlr4-runtime-ext:${antlrExtVersion}") {
-    exclude group: 'org.antlr', module: 'antlr4'
+  implementation("de.sayayi.lib:antlr4-runtime-ext") {
+    version {
+      if (!antlrExtVersion.endsWith('-SNAPSHOT'))
+        strictly '[0.4.1,0.5)'
+
+      prefer antlrExtVersion
+    }
+
+    exclude group: 'org.jetbrains'
   }
 
-  antlr "org.antlr:antlr4:${antlrVersion}"
+  antlr4 "org.antlr:antlr4:${antlrVersion}"
+}
+
+
+generateGrammarSource {
+  antlrClasspath = configurations.antlr4
 }
 
 
 sourcesJar {
   dependsOn generateGrammarSource
 
-  include "**/*.g4"
-  include "**/*.java"
+  include '**/*.g4'
+  include '**/*.java'
 
-  exclude "**/*.tokens"
-  exclude "**/*.interp"
-  exclude "gen/**"
+  exclude '**/*.tokens'
+  exclude '**/*.interp'
+  exclude 'gen/**'
 }
 
 

@@ -490,7 +490,6 @@ class MessageMatcherParserTest extends AbstractMatcherParserTest
 
 
   @Test
-  @SuppressWarnings("ResultOfMethodCallIgnored")
   void testLexerError()
   {
     assertTrue(assertThrowsExactly(MessageMatcherParserException.class,
@@ -500,7 +499,6 @@ class MessageMatcherParserTest extends AbstractMatcherParserTest
 
 
   @Test
-  @SuppressWarnings("ResultOfMethodCallIgnored")
   void testParserError()
   {
     assertThrowsExactly(MessageMatcherParserException.class, () -> PARSER.parseMessageMatcher(""));

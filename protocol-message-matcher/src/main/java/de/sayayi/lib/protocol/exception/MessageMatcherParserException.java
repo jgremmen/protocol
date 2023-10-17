@@ -15,31 +15,55 @@
  */
 package de.sayayi.lib.protocol.exception;
 
-import org.antlr.v4.runtime.RecognitionException;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 
 /**
- * <p>
- *   Matcher parser related exception.
- * </p>
+ * Matcher parser related exception.
  *
  * @author Jeroen Gremmen
  * @since 1.2.0
  */
 public final class MessageMatcherParserException extends ProtocolException
 {
-  public MessageMatcherParserException(String message) {
-    super(message);
+  private final String errorMessage;
+  private final String syntaxError;
+
+
+  public MessageMatcherParserException(@NotNull String errorMessage, @NotNull String syntaxError,
+                                       Exception cause)
+  {
+    super(errorMessage + '\n' + syntaxError, cause);
+
+    this.errorMessage = errorMessage;
+    this.syntaxError = syntaxError;
   }
 
 
-  public MessageMatcherParserException(String message, Throwable cause) {
-    super(message, cause);
+  /**
+   * Returns the error message describing what went wrong during parsing.
+   *
+   * @return  error message, never {@code null}
+   *
+   * @since 1.4.0
+   */
+  @Contract(pure = true)
+  public @NotNull String getErrorMessage() {
+    return errorMessage;
   }
 
 
-  @Override
-  public RecognitionException getCause() {
-    return (RecognitionException)super.getCause();
+  /**
+   * Returns a visual representation of the location where the syntax error occurred during
+   * parsing.
+   *
+   * @return  syntax error, never {@code null}
+   *
+   * @since 1.4.0
+   */
+  @Contract(pure = true)
+  public @NotNull String getSyntaxError() {
+    return syntaxError;
   }
 }

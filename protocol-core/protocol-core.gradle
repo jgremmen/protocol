@@ -1,6 +1,5 @@
 plugins {
-  id "org.sonarqube" version "4.0.0.2929"
-  id 'de.sayayi.plugin.gradle.libapi' version "1.0-SNAPSHOT"
+  id 'de.sayayi.plugin.gradle.libapi' version '1.0-SNAPSHOT'
 }
 
 
@@ -22,12 +21,7 @@ java {
 dependencies {
   // java
   optionalImplementation "org.unbescape:unbescape:${unbescapeVersion}"
-
-  optionalImplementation("de.sayayi.lib:message-format:${messageFormatVersion}") {
-    exclude group: 'org.antlr', module: 'antlr4'
-    exclude group: 'javax.cache', module: 'cache-api'
-  }
-
+  optionalImplementation "de.sayayi.lib:message-format:${messageFormatVersion}"
   optionalImplementation "com.google.code.gson:gson:${gsonVersion}"
 }
 

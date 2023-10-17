@@ -51,6 +51,13 @@ artifacts {
 }
 
 
+def snapshot = version.toString().endsWith('-SNAPSHOT')
+def tmpRepositoryDirectory = rootProject.layout.buildDirectory
+        .dir("repository").get()
+        .dir(snapshot ? 'snapshot' : 'release')
+        .asFile
+
+
 publishing {
   publications {
     maven(MavenPublication) {
@@ -98,11 +105,14 @@ publishing {
   repositories {
     maven {
       name = "mavenTemp"
-      url = "${rootProject.buildDir}/repository"
+      url = tmpRepositoryDirectory
     }
     maven {
-      // maven central
-      url = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+      name = "mavenCentral"
+      url = snapshot
+              ? 'https://oss.sonatype.org/content/repositories/snapshots'
+              : 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+
       credentials {
         username = project.findProperty('mavenCentral.username')
         password = project.findProperty('mavenCentral.password')

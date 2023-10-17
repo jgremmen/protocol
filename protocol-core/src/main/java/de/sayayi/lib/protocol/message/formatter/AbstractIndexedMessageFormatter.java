@@ -47,25 +47,24 @@ public abstract class AbstractIndexedMessageFormatter<M> implements MessageForma
 
     for(final Entry<String,Object> parametersEntry: message.getParameterValues().entrySet())
     {
-      int i = -1;
-
       try {
-        i = parseInt(parametersEntry.getKey());
-      } catch(NumberFormatException ignored) {
-      }
+        final int i = parseInt(parametersEntry.getKey());
 
-      if (i >> 6 == 0)  // 0..31
-      {
-        if (i >= parameters.length)
+        if (i >> 6 == 0)  // 0..31
         {
-          i |= i >> 1;
-          i |= i >> 2;
-          i |= i >> 4;
+          if (i >= parameters.length)
+          {
+            int n = i;
+            n |= n >> 1;
+            n |= n >> 2;
+            n |= n >> 4;
 
-          parameters = copyOf(parameters, i + 1);
+            parameters = copyOf(parameters, n + 1);
+          }
+
+          parameters[i] = parametersEntry.getValue();
         }
-
-        parameters[i] = parametersEntry.getValue();
+      } catch(NumberFormatException ignored) {
       }
     }
 
