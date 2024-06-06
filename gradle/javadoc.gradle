@@ -33,7 +33,7 @@ javadoc {
 
     noQualifiers 'java.util', 'java.lang'
 
-    addStringOption('Xdoclint:-missing', '-quiet')
+    addStringOption('Xdoclint:none', '-quiet')
   }
 
   failOnError false

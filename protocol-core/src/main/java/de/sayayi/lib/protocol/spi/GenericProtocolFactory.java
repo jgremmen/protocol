@@ -32,8 +32,6 @@ import static java.util.Objects.requireNonNull;
 
 
 /**
- * {@inheritDoc}
- *
  * @author Jeroen Gremmen
  */
 public class GenericProtocolFactory<M> implements ProtocolFactory<M>

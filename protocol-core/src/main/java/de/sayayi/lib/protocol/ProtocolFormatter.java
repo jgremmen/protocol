@@ -138,8 +138,6 @@ public interface ProtocolFormatter<M,R>
 
 
   /**
-   * {@inheritDoc}
-   *
    * @since 0.1.0
    */
   interface ConfiguredProtocolFormatter<M,R> extends ProtocolFormatter<M,R>
