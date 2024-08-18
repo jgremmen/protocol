@@ -97,7 +97,9 @@ abstract class AbstractMessageBuilder
   @Override
   public @NotNull P message(@NotNull String message)
   {
-    return message0(protocol.getFactory().getMessageProcessor()
+    return message0(protocol
+        .getFactory()
+        .getMessageProcessor()
         .processMessage(requireNonNull(message, "message must not be null")));
   }
 

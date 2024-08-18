@@ -87,6 +87,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   }
 
 
+  @Contract(pure = true)
   protected @NotNull Set<String> getPropagatedTags(@NotNull Set<String> tags)
   {
     if (tagPropagationMap.isEmpty())
@@ -112,8 +113,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
 
 
   @Override
-  public boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher,
-                          boolean messageOnly)
+  public boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher, boolean messageOnly)
   {
     for(final InternalProtocolEntry<M> entry: entries)
       if (entry.matches0(levelLimit, matcher, messageOnly))
@@ -123,8 +123,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   }
 
 
-  @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level levelLimit,
-                                             @NotNull MessageMatcher matcher)
+  @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
     final List<ProtocolEntry<M>> filteredEntries = new ArrayList<>();
 
@@ -176,8 +175,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   public @NotNull ProtocolGroup<M> createGroup()
   {
     @SuppressWarnings("unchecked")
-    final ProtocolGroupImpl<M> group =
-        new ProtocolGroupImpl<>((AbstractProtocol<M,ProtocolMessageBuilder<M>>)this);
+    final ProtocolGroupImpl<M> group = new ProtocolGroupImpl<>((AbstractProtocol<M,ProtocolMessageBuilder<M>>)this);
 
     entries.add(group);
 
@@ -198,10 +196,8 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
 
 
   @Override
-  public @NotNull Spliterator<ProtocolGroup<M>> groupSpliterator()
-  {
-    return Spliterators.spliterator(groupIterator(), entries.size(),
-        DISTINCT | ORDERED | SORTED | NONNULL);
+  public @NotNull Spliterator<ProtocolGroup<M>> groupSpliterator() {
+    return Spliterators.spliterator(groupIterator(), entries.size(), DISTINCT | ORDERED | SORTED | NONNULL);
   }
 
 
@@ -209,8 +205,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull MessageMatcher matcher)
   {
     // initialize formatter
-    formatter.init(factory, matcher,
-        countGroupDepth() + (isProtocolGroup() ? 1 : 0));
+    formatter.init(factory, matcher, countGroupDepth() + (isProtocolGroup() ? 1 : 0));
 
     iterator(matcher).forEachRemaining(entry -> {
       if (entry instanceof MessageEntry)
@@ -229,6 +224,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   }
 
 
+  @Contract(pure = true)
   int countGroupDepth()
   {
     int depth = 0;

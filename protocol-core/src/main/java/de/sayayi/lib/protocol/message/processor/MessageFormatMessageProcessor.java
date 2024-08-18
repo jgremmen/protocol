@@ -24,9 +24,8 @@ import de.sayayi.lib.protocol.spi.GenericMessageWithId;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
-
 import static java.util.Objects.requireNonNull;
+import static java.util.UUID.randomUUID;
 
 
 /**
@@ -66,6 +65,6 @@ public class MessageFormatMessageProcessor implements MessageProcessor<Message>
   {
     return message instanceof Message.WithCode
         ? ((Message.WithCode)message).getCode()
-        : UUID.randomUUID().toString();
+        : randomUUID().toString();
   }
 }

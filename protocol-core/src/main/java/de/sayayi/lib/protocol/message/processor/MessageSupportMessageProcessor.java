@@ -38,8 +38,7 @@ public class MessageSupportMessageProcessor implements MessageProcessor<Message>
   private final boolean parserFallback;
 
 
-  public MessageSupportMessageProcessor(@NotNull MessageAccessor messageAccessor,
-                                        boolean parserFallback)
+  public MessageSupportMessageProcessor(@NotNull MessageAccessor messageAccessor, boolean parserFallback)
   {
     this.messageAccessor = requireNonNull(messageAccessor);
     this.parserFallback = parserFallback;
@@ -57,7 +56,7 @@ public class MessageSupportMessageProcessor implements MessageProcessor<Message>
    *   Check whether the given {@code codeOrMessageFormat} is not a valid message code.
    * </p>
    * <p>
-   *   The default implementation returns {@code false} which is sufficiant in most cases. If
+   *   The default implementation returns {@code false} which is sufficient in most cases. If
    *   message codes are easily identifiable (eg. by regex) this method can be overridden to
    *   prevent non-existing message codes from being parsed (only if {@link #parserFallback} is
    *   set to {@code true}).
@@ -86,10 +85,7 @@ public class MessageSupportMessageProcessor implements MessageProcessor<Message>
       return new GenericMessageWithId<>(message.getCode(), message);
 
     if (!parserFallback)
-    {
-      throw new ProtocolException("missing message in bundle for code '" +
-                                  codeOrMessageFormat + "'");
-    }
+      throw new ProtocolException("missing message in bundle for code '" + codeOrMessageFormat + '\'');
 
     return MessageFormatMessageProcessor.INSTANCE.processMessage(codeOrMessageFormat);
   }

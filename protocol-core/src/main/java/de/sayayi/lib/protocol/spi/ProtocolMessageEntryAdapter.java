@@ -42,8 +42,7 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
   private final @NotNull InternalProtocolEntry.Message<M> message;
 
 
-  private ProtocolMessageEntryAdapter(@NotNull Level levelLimit,
-                                      @NotNull InternalProtocolEntry.Message<M> message)
+  private ProtocolMessageEntryAdapter(@NotNull Level levelLimit, @NotNull InternalProtocolEntry.Message<M> message)
   {
     this.levelLimit = levelLimit;
     this.message = message;

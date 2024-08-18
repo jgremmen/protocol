@@ -20,6 +20,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
 
+import static java.lang.Integer.MAX_VALUE;
+import static java.lang.Integer.MIN_VALUE;
+
 
 /**
  * Describes the level at which messages are protocolled.
@@ -65,24 +68,58 @@ public interface Level
   int severity();
 
 
+  /**
+   * Return the level with the highest severity.
+   *
+   * @param l1  1st level, not {@code null}
+   * @param l2  2nd level, not {@code null}
+   *
+   * @return  level with the highest severity. If both levels have the same severity, {@code l1} is returned.
+   */
   @Contract(pure = true)
   static @NotNull Level max(@NotNull Level l1, @NotNull Level l2) {
     return l1.severity() >= l2.severity() ? l1 : l2;
   }
 
 
+  /**
+   * Return the level with the lowest severity.
+   *
+   * @param l1  1st level, not {@code null}
+   * @param l2  2nd level, not {@code null}
+   *
+   * @return  level with the lowest severity. If both levels have the same severity, {@code l1} is returned.
+   */
   @Contract(pure = true)
   static @NotNull Level min(@NotNull Level l1, @NotNull Level l2) {
     return l1.severity() <= l2.severity() ? l1 : l2;
   }
 
 
+  /**
+   * Compare levels by severity.
+   *
+   * @param l1  1st level, not {@code null}
+   * @param l2  2nd level, not {@code null}
+   *
+   * @return  {@code -1} if {@code l1} has a lower severity than {@code l2},
+   *          {@code 1} if {@code l1} has a higher severity than {@code l2},
+   *          {@code 0} if both levels have the same severity
+   */
   @Contract(pure = true)
   static int compare(@NotNull Level l1, @NotNull Level l2) {
     return Integer.compare(l1.severity(), l2.severity());
   }
 
 
+  /**
+   * Tells if levels {@code l1} and {@code l2} have the same severity.
+   *
+   * @param l1  1st level, not {@code null}
+   * @param l2  2nd level, not {@code null}
+   *
+   * @return  {@code true} if both levels have the same severity, {@code false} otherwise
+   */
   @Contract(pure = true)
   static boolean equals(@NotNull Level l1, @NotNull Level l2) {
     return l1.severity() == l2.severity();
@@ -101,7 +138,7 @@ public interface Level
   enum Shared implements Level
   {
     /** Constant representing a level with the lowest possible severity */
-    LOWEST(Integer.MIN_VALUE),
+    LOWEST(MIN_VALUE),
 
     /** Constant representing DEBUG level (severity = 100) */
     DEBUG(100),
@@ -116,7 +153,7 @@ public interface Level
     ERROR(400),
 
     /** Constant representing a level with the highest possible severity */
-    HIGHEST(Integer.MAX_VALUE);
+    HIGHEST(MAX_VALUE);
 
 
     private final int severity;
