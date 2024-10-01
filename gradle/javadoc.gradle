@@ -19,7 +19,7 @@ javadoc {
   title "Java Protocol Library ${version}"
 
   (options as StandardJavadocDocletOptions).with {
-    linksOffline 'https://javadoc.io/doc/org.jetbrains/annotations/23.0.0/',
+    linksOffline 'https://javadoc.io/doc/org.jetbrains/annotations/25.0.0/',
                  "${rootProject.projectDir}/gradle/javadocs/jetbrains-annotations"
 
     encoding 'UTF-8'

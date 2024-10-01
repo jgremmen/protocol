@@ -17,8 +17,6 @@ package de.sayayi.lib.protocol.matcher;
 
 import org.junit.jupiter.api.Test;
 
-import lombok.var;
-
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -35,21 +33,28 @@ class TagSelectorParserTest extends AbstractMatcherParserTest
   @Test
   void testBooleanAtom()
   {
-    assertTrue(PARSER.parseTagSelector("any").match(asTagNameSet("test")));
-    assertFalse(PARSER.parseTagSelector("none").match(asTagNameSet("test")));
+    assertTrue(PARSER
+        .parseTagSelector("any")
+        .match(asTagNameSet("test")));
+    assertFalse(PARSER
+        .parseTagSelector("none")
+        .match(asTagNameSet("test")));
   }
 
 
   @Test
   void testTagAtom()
   {
-    assertTrue(PARSER.parseTagSelector("default")
+    assertTrue(PARSER
+        .parseTagSelector("default")
         .match(asTagNameSet("test")));
 
-    assertTrue(PARSER.parseTagSelector("tag(system)")
+    assertTrue(PARSER
+        .parseTagSelector("tag(system)")
         .match(asTagNameSet("system", "ticket")));
 
-    assertFalse(PARSER.parseTagSelector("tag('')")
+    assertFalse(PARSER
+        .parseTagSelector("tag('')")
         .match(asTagNameSet("ticket")));
   }
 
@@ -57,13 +62,16 @@ class TagSelectorParserTest extends AbstractMatcherParserTest
   @Test
   void testAnyOfAtom()
   {
-    assertTrue(PARSER.parseTagSelector("any-of('default', default)")
+    assertTrue(PARSER
+        .parseTagSelector("any-of('default', default)")
         .match(asTagNameSet("mytag")));
 
-    assertTrue(PARSER.parseTagSelector("any-of ( system, ticket ) ")
+    assertTrue(PARSER
+        .parseTagSelector("any-of ( system, ticket ) ")
         .match(asTagNameSet("ticket")));
 
-    assertFalse(PARSER.parseTagSelector("any-of('','')")
+    assertFalse(PARSER
+        .parseTagSelector("any-of('','')")
         .match(asTagNameSet("ticket")));
   }
 
@@ -71,16 +79,20 @@ class TagSelectorParserTest extends AbstractMatcherParserTest
   @Test
   void testAllOfAtom()
   {
-    assertTrue(PARSER.parseTagSelector("all-of('default', default)")
+    assertTrue(PARSER
+        .parseTagSelector("all-of('default', default)")
         .match(asTagNameSet("mytag")));
 
-    assertTrue(PARSER.parseTagSelector("all-of ( system, ticket ) ")
+    assertTrue(PARSER
+        .parseTagSelector("all-of ( system, ticket ) ")
         .match(asTagNameSet("mytag", "ticket", "system", "develop")));
 
-    assertFalse(PARSER.parseTagSelector("all-of ( system, ticket2 ) ")
+    assertFalse(PARSER
+        .parseTagSelector("all-of ( system, ticket2 ) ")
         .match(asTagNameSet("mytag", "ticket", "system", "develop")));
 
-    assertFalse(PARSER.parseTagSelector("all-of('','')")
+    assertFalse(PARSER
+        .parseTagSelector("all-of('','')")
         .match(asTagNameSet("ticket")));
   }
 
@@ -88,16 +100,20 @@ class TagSelectorParserTest extends AbstractMatcherParserTest
   @Test
   void testNoneOfAtom()
   {
-    assertFalse(PARSER.parseTagSelector("none-of('default', default)")
+    assertFalse(PARSER
+        .parseTagSelector("none-of('default', default)")
         .match(asTagNameSet("mytag")));
 
-    assertTrue(PARSER.parseTagSelector("none-of ( system, ticket ) ")
+    assertTrue(PARSER
+        .parseTagSelector("none-of ( system, ticket ) ")
         .match(asTagNameSet("mytag")));
 
-    assertFalse(PARSER.parseTagSelector("none-of ( 'syst\\u0065m', ticket ) ")
+    assertFalse(PARSER
+        .parseTagSelector("none-of ( 'syst\\u0065m', ticket ) ")
         .match(asTagNameSet("mytag", "system")));
 
-    assertTrue(PARSER.parseTagSelector("none-of('','')")
+    assertTrue(PARSER
+        .parseTagSelector("none-of('','')")
         .match(asTagNameSet("ticket")));
   }
 
@@ -105,8 +121,7 @@ class TagSelectorParserTest extends AbstractMatcherParserTest
   @Test
   void testCompoundAnd()
   {
-    var matcher =
-        PARSER.parseTagSelector("system and not(ticket)");
+    var matcher = PARSER.parseTagSelector("system and not(ticket)");
 
     assertTrue(matcher.match(asTagNameSet("mytag", "system")));
     assertFalse(matcher.match(asTagNameSet("ticket", "system")));
@@ -117,8 +132,7 @@ class TagSelectorParserTest extends AbstractMatcherParserTest
   @Test
   void testCompoundOr()
   {
-    var matcher =
-        PARSER.parseTagSelector("system or not(ticket)");
+    var matcher = PARSER.parseTagSelector("system or not(ticket)");
 
     assertTrue(matcher.match(asTagNameSet("mytag", "system")));
     assertFalse(matcher.match(asTagNameSet("ticket")));

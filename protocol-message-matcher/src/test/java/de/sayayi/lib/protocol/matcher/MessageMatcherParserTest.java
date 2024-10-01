@@ -23,7 +23,6 @@ import de.sayayi.lib.protocol.exception.MessageMatcherParserException;
 import org.junit.jupiter.api.Test;
 
 import lombok.val;
-import lombok.var;
 
 import java.util.HashMap;
 
@@ -305,7 +304,7 @@ class MessageMatcherParserTest extends AbstractMatcherParserTest
 
 
   @Test
-  @SuppressWarnings({ "unchecked", "ResultOfMethodCallIgnored" })
+  @SuppressWarnings("unchecked")
   void testLevelAtom()
   {
     val parser = new MessageMatcherParser(null, l -> "trace".equalsIgnoreCase(l) ? TRACE : null);
@@ -346,7 +345,7 @@ class MessageMatcherParserTest extends AbstractMatcherParserTest
 
 
   @Test
-  @SuppressWarnings({ "unchecked", "ResultOfMethodCallIgnored" })
+  @SuppressWarnings("unchecked")
   void testThrowableAtom()
   {
     var matcher = PARSER.parseMessageMatcher("throwable");

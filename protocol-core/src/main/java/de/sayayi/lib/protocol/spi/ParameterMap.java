@@ -450,14 +450,14 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
     @Override
-    public @NotNull Object[] toArray() {
+    public Object @NotNull [] toArray() {
       return map.stream().map(Entry::getKey).toArray();
     }
 
 
     @Override
     @SuppressWarnings("unchecked")
-    public @NotNull <T> T[] toArray(@NotNull T[] a)
+    public <T> T @NotNull [] toArray(T @NotNull [] a)
     {
       final int size = map.size();
 
@@ -517,14 +517,14 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
     @Override
-    public @NotNull Object[] toArray() {
+    public Object @NotNull [] toArray() {
       return map.stream().toArray();
     }
 
 
     @Override
     @SuppressWarnings("unchecked")
-    public @NotNull <T> T[] toArray(@NotNull T[] a)
+    public <T> T @NotNull [] toArray(T @NotNull [] a)
     {
       final int size = map.size();
 
@@ -604,13 +604,13 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
     @Override
-    public @NotNull Object[] toArray() {
+    public Object @NotNull [] toArray() {
       return map.stream().map(Entry::getValue).toArray();
     }
 
 
     @Override
-    public @NotNull <T> T[] toArray(@NotNull T[] a) {
+    public <T> T @NotNull [] toArray(T @NotNull [] a) {
       throw new UnsupportedOperationException();
     }
 

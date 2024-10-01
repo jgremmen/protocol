@@ -50,12 +50,12 @@ import static java.util.Collections.emptySet;
  */
 abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 {
-  private static final ProtocolStart<?> PROTOCOL_START = new ProtocolStart<Object>() {
+  private static final ProtocolStart<?> PROTOCOL_START = new ProtocolStart<>() {
     @Override public int getDepth() { return 0; }
     @Override public String toString() { return "ProtocolStart"; }
   };
 
-  private static final ProtocolEnd<?> PROTOCOL_END = new ProtocolEnd<Object>() {
+  private static final ProtocolEnd<?> PROTOCOL_END = new ProtocolEnd<>() {
     @Override public int getDepth() { return 0; }
     @Override public String toString() { return "ProtocolEnd"; }
   };
@@ -408,8 +408,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     final Protocol.Message<M> message;
 
 
-    private MessageEntryImpl(int depth, boolean first, boolean last,
-                             @NotNull Protocol.Message<M> message)
+    private MessageEntryImpl(int depth, boolean first, boolean last, @NotNull Protocol.Message<M> message)
     {
       super(depth, first, last);
 
@@ -605,7 +604,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     {
       super(depth, first, last);
 
-      this.groupMessage = new GenericMessageWithLevel<M>() {
+      this.groupMessage = new GenericMessageWithLevel<>() {
         @Override public @NotNull Level getLevel() { return level; }
         @Override public @NotNull String getMessageId() { return groupMessage.getMessageId(); }
         @Override public @NotNull M getMessage() { return groupMessage.getMessage(); }

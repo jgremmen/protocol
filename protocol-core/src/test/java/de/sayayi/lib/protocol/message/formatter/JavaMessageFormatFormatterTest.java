@@ -21,8 +21,8 @@ import org.junit.jupiter.api.Test;
 import lombok.val;
 
 import java.util.HashMap;
+import java.util.Map;
 
-import static java.util.Collections.singletonMap;
 import static java.util.Locale.ROOT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -46,7 +46,7 @@ public class JavaMessageFormatFormatterTest
 
     assertEquals("this is a message", formatter.formatMessage(message, new Object[] { "message" }));
 
-    when(message.getParameterValues()).thenReturn(singletonMap("0", "test"));
+    when(message.getParameterValues()).thenReturn(Map.of("0", "test"));
 
     assertEquals("this is a test", formatter.formatMessage(message));
   }

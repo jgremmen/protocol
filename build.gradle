@@ -23,11 +23,11 @@ allprojects {
   apply plugin: 'base'
 
   group = 'de.sayayi.lib'
-  version = '1.4.1-SNAPSHOT'
+  version = '1.5.0-SNAPSHOT'
 
   ext {
-    jetbrainsAnnotationsVersion = '24.1.0'
-    junitVersion = '5.10.+'
+    jetbrainsAnnotationsVersion = '25.0.+'
+    junitVersion = '5.11.+'
     lombokVersion = '1.18.+'
   }
 
@@ -55,15 +55,15 @@ configure(subprojects.findAll { it.name.startsWith('protocol-') }) {
 
   ext {
     gsonVersion = '[2.8.9,)'
-    messageFormatVersion = '[0.8.0,)'
-    mockitoVersion = '4.11.0'
+    messageFormatVersion = '[0.8.0,0.12)'
+    mockitoVersion = '5.14.+'
     unbescapeVersion = '1.1.6.RELEASE'
   }
 
 
   tasks.withType(JavaCompile).configureEach {
     javaCompiler = javaToolchains.compilerFor {
-      languageVersion = JavaLanguageVersion.of(8)
+      languageVersion = JavaLanguageVersion.of(11)
     }
 
     options.encoding = 'UTF-8'
@@ -72,7 +72,7 @@ configure(subprojects.findAll { it.name.startsWith('protocol-') }) {
 
   tasks.withType(Test).configureEach {
     javaLauncher = javaToolchains.launcherFor {
-      languageVersion = JavaLanguageVersion.of(8)
+      languageVersion = JavaLanguageVersion.of(11)
     }
   }
 
@@ -98,7 +98,7 @@ configure(subprojects.findAll { it.name.startsWith('protocol-') }) {
 
   dependencies {
     // java
-    compileOnlyApi "org.jetbrains:annotations-java5:${jetbrainsAnnotationsVersion}"
+    compileOnlyApi "org.jetbrains:annotations:${jetbrainsAnnotationsVersion}"
 
     // test
     testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
