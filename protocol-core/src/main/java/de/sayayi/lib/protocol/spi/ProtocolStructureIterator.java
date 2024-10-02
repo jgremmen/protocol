@@ -80,6 +80,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   private int lastEntryIdx;
 
 
+  @SuppressWarnings("unchecked")
   protected ProtocolStructureIterator(@NotNull Level levelLimit, @NotNull MessageMatcher matcher, int depth,
                                       @NotNull List<ProtocolEntry<M>> protocolEntries, boolean rootProtocol)
   {
@@ -92,10 +93,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     iterator = new VisibleEntryIterator(protocolEntries.iterator());
 
     if (rootProtocol)
-    {
-      //noinspection unchecked
       addNextEntry((ProtocolStart<M>)PROTOCOL_START);
-    }
   }
 
 
@@ -172,17 +170,15 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
   protected abstract void prepareNextEntry();
 
 
+  @SuppressWarnings("unchecked")
   protected void handleAdditionalEntriesAtCurrentDepth()
   {
     if (rootProtocol)
-    {
-      //noinspection unchecked
       addNextEntry((ProtocolEnd<M>)PROTOCOL_END);
-    }
   }
 
 
-  @SuppressWarnings({ "squid:S3776", "unchecked" })
+  @SuppressWarnings("unchecked")
   void prepareNextEntry(boolean hasEntryBefore)
   {
     while(!hasNext())

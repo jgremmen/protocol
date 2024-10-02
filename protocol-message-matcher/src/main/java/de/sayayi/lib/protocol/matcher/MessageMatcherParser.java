@@ -239,6 +239,7 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
 
 
     @Override
+    @SuppressWarnings("unchecked")
     public void exitThrowableMatcher(ThrowableMatcherContext ctx)
     {
       final TerminalNode qualifiedName = ctx.QUALIFIED_CLASS_NAME();
@@ -259,7 +260,6 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
         if (clazz == null || !Throwable.class.isAssignableFrom(clazz))
           syntaxError(qualifiedName, "class not found or not of type Throwable");
 
-        //noinspection unchecked
         ctx.matcher = MessageMatchers.hasThrowable((Class<? extends Throwable>)clazz);
       }
     }
