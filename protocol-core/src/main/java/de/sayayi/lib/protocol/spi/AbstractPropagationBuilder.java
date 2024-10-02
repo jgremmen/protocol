@@ -38,8 +38,7 @@ abstract class AbstractPropagationBuilder<M,B extends ProtocolMessageBuilder<M>>
   private final @NotNull TagSelector tagSelector;
 
 
-  protected AbstractPropagationBuilder(@NotNull AbstractProtocol<M,B> protocol,
-                                       @NotNull TagSelector tagSelector)
+  protected AbstractPropagationBuilder(@NotNull AbstractProtocol<M,B> protocol, @NotNull TagSelector tagSelector)
   {
     super(protocol);
 

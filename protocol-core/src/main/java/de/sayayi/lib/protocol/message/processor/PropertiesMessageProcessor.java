@@ -43,8 +43,7 @@ public final class PropertiesMessageProcessor implements MessageProcessor<String
   @Override
   public @NotNull MessageWithId<String> processMessage(@NotNull String key)
   {
-    final String message =
-        properties.getProperty(requireNonNull(key, "key must not be null"));
+    final String message = properties.getProperty(requireNonNull(key, "key must not be null"));
     if (message == null)
       throw new ProtocolException("missing property message for key '" + key + "'");
 

@@ -35,8 +35,7 @@ import org.jetbrains.annotations.NotNull;
 public final class TechnicalProtocolFormatter<M> extends AbstractTreeProtocolFormatter<M>
     implements ConfiguredProtocolFormatter<M,String>
 {
-  private static final ConfiguredProtocolFormatter<?,String> INSTANCE =
-      new TechnicalProtocolFormatter<>();
+  private static final ConfiguredProtocolFormatter<?,String> INSTANCE = new TechnicalProtocolFormatter<>();
 
 
   private TechnicalProtocolFormatter() {

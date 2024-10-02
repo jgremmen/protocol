@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -39,7 +40,6 @@ import static de.sayayi.lib.protocol.Level.min;
 import static de.sayayi.lib.protocol.ProtocolFactory.DEFAULT_TAG_NAME;
 import static de.sayayi.lib.protocol.matcher.BooleanMatcher.ANY;
 import static de.sayayi.lib.protocol.matcher.BooleanMatcher.NONE;
-import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 
 
@@ -185,7 +185,7 @@ public final class MessageMatchers
 
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction hasAnyOf(@NotNull String... tagNames) {
-    return hasAnyOf(asList(tagNames));
+    return hasAnyOf(List.of(tagNames));
   }
 
 
@@ -208,7 +208,7 @@ public final class MessageMatchers
 
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction hasAllOf(@NotNull String... tagNames) {
-    return hasAllOf(asList(tagNames));
+    return hasAllOf(List.of(tagNames));
   }
 
 
@@ -220,7 +220,7 @@ public final class MessageMatchers
 
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction hasNoneOf(@NotNull String... tagNames) {
-    return hasNoneOf(asList(tagNames));
+    return hasNoneOf(List.of(tagNames));
   }
 
 

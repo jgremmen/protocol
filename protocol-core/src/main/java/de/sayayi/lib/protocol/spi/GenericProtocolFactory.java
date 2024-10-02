@@ -32,8 +32,6 @@ import static java.util.Objects.requireNonNull;
 
 
 /**
- * {@inheritDoc}
- *
  * @author Jeroen Gremmen
  */
 public class GenericProtocolFactory<M> implements ProtocolFactory<M>
@@ -65,13 +63,10 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
                                 @NotNull MessageFormatter<M> messageFormatter,
                                 @NotNull ProtocolMessageMatcher messageMatcher)
   {
-    this.messageProcessor =
-        requireNonNull(messageProcessor, "messageProcessor must not be null");
-    this.messageFormatter =
-        requireNonNull(messageFormatter, "messageFormatter must not be null");
+    this.messageProcessor = requireNonNull(messageProcessor, "messageProcessor must not be null");
+    this.messageFormatter = requireNonNull(messageFormatter, "messageFormatter must not be null");
 
-    messageMatcherDelegate =
-        requireNonNull(messageMatcher, "messageMatcher must not be null");
+    messageMatcherDelegate = requireNonNull(messageMatcher, "messageMatcher must not be null");
 
     id = FACTORY_ID.incrementAndGet();
   }

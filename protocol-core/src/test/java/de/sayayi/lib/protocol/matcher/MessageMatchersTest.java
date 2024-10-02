@@ -22,6 +22,8 @@ import org.junit.jupiter.api.Test;
 import lombok.val;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -34,8 +36,6 @@ import static de.sayayi.lib.protocol.matcher.MessageMatchers.hasNoneOf;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.hasParam;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.hasParamValue;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.hasTag;
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonMap;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Answers.CALLS_REAL_METHODS;
@@ -53,7 +53,7 @@ public class MessageMatchersTest
   {
     //noinspection unchecked
     val message = (Message<Object>)mock(Message.class, CALLS_REAL_METHODS);
-    when(message.getTagNames()).thenReturn(new TreeSet<>(asList(DEFAULT_TAG_NAME, "gui")));
+    when(message.getTagNames()).thenReturn(new TreeSet<>(List.of(DEFAULT_TAG_NAME, "gui")));
 
     assertTrue(hasTag("gui").matches(HIGHEST, message));
     assertTrue(hasTag(DEFAULT_TAG_NAME).matches(HIGHEST, message));
@@ -82,7 +82,7 @@ public class MessageMatchersTest
   {
     //noinspection unchecked
     val message = (Message<Object>)mock(Message.class, CALLS_REAL_METHODS);
-    when(message.getTagNames()).thenReturn(new TreeSet<>(asList(DEFAULT_TAG_NAME, "gui")));
+    when(message.getTagNames()).thenReturn(new TreeSet<>(List.of(DEFAULT_TAG_NAME, "gui")));
 
     assertTrue(hasAnyOf("support", "gui", "xyz").matches(HIGHEST, message));
     assertTrue(hasAnyOf(DEFAULT_TAG_NAME).matches(HIGHEST, message));
@@ -95,7 +95,7 @@ public class MessageMatchersTest
   {
     //noinspection unchecked
     val message = (Message<Object>)mock(Message.class, CALLS_REAL_METHODS);
-    when(message.getTagNames()).thenReturn(new TreeSet<>(asList(DEFAULT_TAG_NAME, "gui")));
+    when(message.getTagNames()).thenReturn(new TreeSet<>(List.of(DEFAULT_TAG_NAME, "gui")));
 
     assertTrue(hasAllOf(DEFAULT_TAG_NAME, "gui").matches(HIGHEST, message));
     assertTrue(hasAllOf(DEFAULT_TAG_NAME).matches(HIGHEST, message));
@@ -108,7 +108,7 @@ public class MessageMatchersTest
   {
     //noinspection unchecked
     val message = (Message<Object>)mock(Message.class, CALLS_REAL_METHODS);
-    when(message.getTagNames()).thenReturn(new TreeSet<>(asList(DEFAULT_TAG_NAME, "gui")));
+    when(message.getTagNames()).thenReturn(new TreeSet<>(List.of(DEFAULT_TAG_NAME, "gui")));
 
     assertTrue(hasNoneOf("support", "xzy").matches(HIGHEST, message));
     assertFalse(hasNoneOf("support", "gui").matches(HIGHEST, message));
@@ -121,7 +121,7 @@ public class MessageMatchersTest
   {
     //noinspection unchecked
     val message = (Message<Object>)mock(Message.class, CALLS_REAL_METHODS);
-    when(message.getParameterValues()).thenReturn(singletonMap("id", 34));
+    when(message.getParameterValues()).thenReturn(Map.of("id", 34));
 
     assertTrue(hasParam("id").matches(HIGHEST, message));
     assertFalse(hasParam("").matches(HIGHEST, message));

@@ -95,7 +95,7 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public GroupMessage getGroupMessage() {
+  public GenericMessage<M> getGroupMessage() {
     return groupMessage;
   }
 
@@ -200,11 +200,11 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public @NotNull List<ProtocolEntry<M>> getEntries0(@NotNull Level levelLimit,
-                                                     @NotNull MessageMatcher matcher)
+  public @NotNull List<ProtocolEntry<M>> getEntries0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
     return getEffectiveVisibility().isShowEntries()
-        ? super.getEntries(min(this.levelLimit, levelLimit), matcher) : emptyList();
+        ? super.getEntries(min(this.levelLimit, levelLimit), matcher)
+        : emptyList();
   }
 
 
@@ -251,8 +251,7 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public int getVisibleGroupEntryMessageCount0(@NotNull Level levelLimit,
-                                               @NotNull MessageMatcher matcher)
+  public int getVisibleGroupEntryMessageCount0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
     return getEffectiveVisibility().isShowEntries()
         ? super.getVisibleEntryCount0(min(this.levelLimit, levelLimit), matcher) : 0;
@@ -329,16 +328,14 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher,
-                          boolean messageOnly)
+  public boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher, boolean messageOnly)
   {
     final Visibility ev = getEffectiveVisibility();
 
     if (!messageOnly && (ev == SHOW_HEADER_ONLY || ev == SHOW_HEADER_ALWAYS))
       return true;
 
-    return ev.isShowEntries() &&
-           super.matches0(min(this.levelLimit, levelLimit), matcher, messageOnly);
+    return ev.isShowEntries() && super.matches0(min(this.levelLimit, levelLimit), matcher, messageOnly);
   }
 
 
@@ -363,8 +360,7 @@ final class ProtocolGroupImpl<M>
 
 
   @Override
-  public @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(
-      @NotNull String tagSelectorExpression) {
+  public @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull String tagSelectorExpression) {
     return propagate(factory.parseTagSelector(tagSelectorExpression));
   }
 
@@ -490,8 +486,7 @@ final class ProtocolGroupImpl<M>
 
 
     @Override
-    public @NotNull ProtocolGroup.MessageParameterBuilder<M> setGroupMessage(
-        @NotNull String message) {
+    public @NotNull ProtocolGroup.MessageParameterBuilder<M> setGroupMessage(@NotNull String message) {
       return ProtocolGroupImpl.this.setGroupMessage(message);
     }
 
@@ -533,8 +528,7 @@ final class ProtocolGroupImpl<M>
 
 
     @Override
-    public @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(
-        @NotNull String tagSelectorExpression) {
+    public @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull String tagSelectorExpression) {
       return (ProtocolGroup.TargetTagBuilder<M>)super.propagate(tagSelectorExpression);
     }
 

@@ -15,17 +15,17 @@
  */
 
 
-tasks.withType(Jar) {
+tasks.withType(Jar).configureEach {
   reproducibleFileOrder true
 
   manifest {
     attributes(
-            "Implementation-Vendor": "Jeroen Gremmen",
-            "Implementation-Vendor-Id": "de.sayayi",
-            "Implementation-Title": project.name,
-            "Implementation-Version": project.version,
-            "Created-By": System.getProperty("java.version"),
-            "Built-Date": new Date().format('yyyy-MM-dd HH:mm:ss')
+            'Implementation-Vendor': 'Jeroen Gremmen',
+            'Implementation-Vendor-Id': 'de.sayayi',
+            'Implementation-Title': project.name,
+            'Implementation-Version': project.version,
+            'Created-By': System.getProperty('java.version'),
+            'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ss')
     )
   }
 
@@ -33,13 +33,17 @@ tasks.withType(Jar) {
 }
 
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
+tasks.register('javadocJar', Jar) {
+  dependsOn javadoc
+
   archiveClassifier.set('javadoc')
   from javadoc.destinationDir
 }
 
 
-task sourcesJar(type: Jar, dependsOn: classes) {
+tasks.register('sourcesJar', Jar) {
+  dependsOn classes
+
   archiveClassifier.set('sources')
   from sourceSets.main.allSource
 }

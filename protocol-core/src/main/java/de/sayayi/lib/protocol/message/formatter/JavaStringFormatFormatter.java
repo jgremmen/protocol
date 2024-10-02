@@ -32,8 +32,7 @@ import static java.util.Objects.requireNonNull;
  */
 public final class JavaStringFormatFormatter extends AbstractIndexedMessageFormatter<String>
 {
-  public static final JavaStringFormatFormatter INSTANCE =
-      new JavaStringFormatFormatter(Locale.getDefault());
+  public static final JavaStringFormatFormatter INSTANCE = new JavaStringFormatFormatter(Locale.getDefault());
 
   private final Locale locale;
 

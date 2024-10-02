@@ -22,6 +22,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
+import static java.lang.System.currentTimeMillis;
+
 
 /**
  * {@inheritDoc}
@@ -41,7 +43,7 @@ abstract class AbstractGenericMessage<M> implements GenericMessage<M>
   {
     this.messageWithId = messageWithId;
 
-    timeMillis = System.currentTimeMillis();
+    timeMillis = currentTimeMillis();
     parameterMap = new ParameterMap(parentParameterMap);
   }
 

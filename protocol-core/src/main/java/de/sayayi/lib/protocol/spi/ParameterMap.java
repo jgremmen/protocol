@@ -55,7 +55,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
   }
 
 
-  public ParameterMap(ParameterMap parent)
+  public ParameterMap(@Nullable ParameterMap parent)
   {
     this.parent = parent;
 
@@ -121,8 +121,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
   @Contract(pure = true)
   public Object get(@NotNull String parameter)
   {
-    final ParameterEntry entry =
-        getEntry(requireNonNull(parameter, "parameter must not be null"));
+    final ParameterEntry entry = getEntry(requireNonNull(parameter, "parameter must not be null"));
 
     return entry == null ? null : entry.value;
   }
@@ -149,10 +148,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
   @Contract(pure = true)
   private ParameterEntry getEntry(@NotNull String parameter)
   {
-    int low = 0;
-    int high = size - 1;
-
-    while(low <= high)
+    for(int low = 0, high = size - 1; low <= high;)
     {
       final int mid = (low + high) >>> 1;
       final ParameterEntry entry = entries[mid];
@@ -454,14 +450,14 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
     @Override
-    public @NotNull Object[] toArray() {
+    public Object @NotNull [] toArray() {
       return map.stream().map(Entry::getKey).toArray();
     }
 
 
     @Override
     @SuppressWarnings("unchecked")
-    public @NotNull <T> T[] toArray(@NotNull T[] a)
+    public <T> T @NotNull [] toArray(T @NotNull [] a)
     {
       final int size = map.size();
 
@@ -479,10 +475,8 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
     @Override
-    public Spliterator<String> spliterator()
-    {
-      return Spliterators.spliterator(iterator(), super.size(),
-          ORDERED | SORTED | DISTINCT | NONNULL);
+    public Spliterator<String> spliterator() {
+      return Spliterators.spliterator(iterator(), super.size(), ORDERED | SORTED | DISTINCT | NONNULL);
     }
 
 
@@ -523,14 +517,14 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
     @Override
-    public @NotNull Object[] toArray() {
+    public Object @NotNull [] toArray() {
       return map.stream().toArray();
     }
 
 
     @Override
     @SuppressWarnings("unchecked")
-    public @NotNull <T> T[] toArray(@NotNull T[] a)
+    public <T> T @NotNull [] toArray(T @NotNull [] a)
     {
       final int size = map.size();
 
@@ -610,13 +604,13 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
     @Override
-    public @NotNull Object[] toArray() {
+    public Object @NotNull [] toArray() {
       return map.stream().map(Entry::getValue).toArray();
     }
 
 
     @Override
-    public @NotNull <T> T[] toArray(@NotNull T[] a) {
+    public <T> T @NotNull [] toArray(T @NotNull [] a) {
       throw new UnsupportedOperationException();
     }
 
@@ -632,8 +626,8 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
   private static final class ParameterEntry implements Entry<String,Object>
   {
-    final @NotNull String key;
-    Object value;
+    private final @NotNull String key;
+    private Object value;
 
 
     private ParameterEntry(@NotNull String key, Object value)

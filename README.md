@@ -31,7 +31,6 @@ The protocol library provides the following features:
 
 ## Requirements
 
-* at least Java 8
+* at least Java 11
 * [unbescape](https://mvnrepository.com/artifact/org.unbescape/unbescape) for the `HtmlProtocolFormatter` (optional)
 * [message-format](https://mvnrepository.com/artifact/de.sayayi.lib/message-format) for the `MessageFormatFormatter` (optional)
-* [gson](https://mvnrepository.com/artifact/com.google.code.gson/gson) for the `GSonProtocolFormatter` (optional)

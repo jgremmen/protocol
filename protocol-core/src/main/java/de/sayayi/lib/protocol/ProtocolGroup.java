@@ -15,6 +15,7 @@
  */
 package de.sayayi.lib.protocol;
 
+import de.sayayi.lib.protocol.Level.Shared;
 import de.sayayi.lib.protocol.exception.ProtocolException;
 import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
@@ -93,7 +94,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
   /**
    * Sets the highest level for this protocol group. The default setting is
-   * {@link Level.Shared#HIGHEST}.
+   * {@link Shared#HIGHEST}.
    * <p>
    * The severity for messages in this protocol group are limited to {@code level}. If a message
    * has a higher severity its level will equal to the limit set by this method. If a message has
@@ -185,35 +186,35 @@ public interface ProtocolGroup<M> extends Protocol<M>
   @Override
   @Contract(pure = true, value = "-> new")
   default @NotNull ProtocolMessageBuilder<M> debug() {
-    return add(Level.Shared.DEBUG);
+    return add(Shared.DEBUG);
   }
 
 
   @Override
   @Contract(pure = true, value = "-> new")
   default @NotNull ProtocolMessageBuilder<M> info() {
-    return add(Level.Shared.INFO);
+    return add(Shared.INFO);
   }
 
 
   @Override
   @Contract(pure = true, value = "-> new")
   default @NotNull ProtocolMessageBuilder<M> warn() {
-    return add(Level.Shared.WARN);
+    return add(Shared.WARN);
   }
 
 
   @Override
   @Contract(pure = true, value = "-> new")
   default @NotNull ProtocolMessageBuilder<M> error() {
-    return add(Level.Shared.ERROR);
+    return add(Shared.ERROR);
   }
 
 
   @Override
   @Contract(pure = true, value = "_ -> new")
   default @NotNull ProtocolMessageBuilder<M> error(@NotNull Throwable throwable) {
-    return add(Level.Shared.ERROR).withThrowable(throwable);
+    return add(Shared.ERROR).withThrowable(throwable);
   }
 
 
@@ -361,10 +362,6 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
 
-  /**
-   * {@inheritDoc}
-   */
-  @SuppressWarnings("squid:S2176")
   interface ProtocolMessageBuilder<M> extends Protocol.ProtocolMessageBuilder<M>
   {
     @Override
@@ -390,10 +387,6 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
 
-  /**
-   * {@inheritDoc}
-   */
-  @SuppressWarnings("squid:S2176")
   interface MessageParameterBuilder<M> extends Protocol.MessageParameterBuilder<M>, ProtocolGroup<M>
   {
     @Override
@@ -403,40 +396,35 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
     @Override
     @Contract("_, _ -> this")
-    default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter,
-                                                                   boolean value) {
+    default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, boolean value) {
       return with(parameter, Boolean.valueOf(value));
     }
 
 
     @Override
     @Contract("_, _ -> this")
-    default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter,
-                                                                   int value) {
+    default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, int value) {
       return with(parameter, Integer.valueOf(value));
     }
 
 
     @Override
     @Contract("_, _ -> this")
-    default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter,
-                                                                   long value) {
+    default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, long value) {
       return with(parameter, Long.valueOf(value));
     }
 
 
     @Override
     @Contract("_, _ -> this")
-    default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter,
-                                                                   float value) {
+    default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, float value) {
       return with(parameter, Float.valueOf(value));
     }
 
 
     @Override
     @Contract("_, _ -> this")
-    default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter,
-                                                                   double value) {
+    default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, double value) {
       return with(parameter, Double.valueOf(value));
     }
 
@@ -512,6 +500,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
      *
      * @return  effective visibility for a group without a header message, never {@code null}
      */
+    @Contract(pure = true)
     public @NotNull Visibility forAbsentHeader()
     {
       if (this == SHOW_HEADER_ALWAYS ||

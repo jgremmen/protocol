@@ -112,8 +112,7 @@ final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBuilder<M>
 
 
 
-  private class MessageBuilder
-      extends AbstractMessageBuilder<M,ProtocolMessageBuilder<M>,MessageParameterBuilder<M>>
+  private class MessageBuilder extends AbstractMessageBuilder<M,ProtocolMessageBuilder<M>,MessageParameterBuilder<M>>
   {
     MessageBuilder(@NotNull Level level) {
       super(ProtocolImpl.this, level);

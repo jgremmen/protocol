@@ -51,8 +51,7 @@ public interface ProtocolFormatter<M,R>
    * @since 1.0.0
    */
   @Contract(mutates = "this")
-  void init(@NotNull ProtocolFactory<M> factory, @NotNull MessageMatcher matcher,
-            int estimatedGroupDepth);
+  void init(@NotNull ProtocolFactory<M> factory, @NotNull MessageMatcher matcher, int estimatedGroupDepth);
 
 
   /**
@@ -138,8 +137,6 @@ public interface ProtocolFormatter<M,R>
 
 
   /**
-   * {@inheritDoc}
-   *
    * @since 0.1.0
    */
   interface ConfiguredProtocolFormatter<M,R> extends ProtocolFormatter<M,R>

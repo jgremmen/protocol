@@ -20,10 +20,10 @@ import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static de.sayayi.lib.protocol.ProtocolFactory.DEFAULT_TAG_NAME;
-import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;
 
 
@@ -35,7 +35,7 @@ abstract class AbstractMatcherParserTest
 {
   protected static @NotNull Set<String> asTagNameSet(@NotNull String ... s)
   {
-    val set = new HashSet<>(asList(s));
+    val set = new HashSet<>(List.of(s));
     set.add(DEFAULT_TAG_NAME);
 
     return unmodifiableSet(set);

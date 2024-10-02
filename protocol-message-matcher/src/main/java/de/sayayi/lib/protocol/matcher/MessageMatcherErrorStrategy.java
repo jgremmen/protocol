@@ -99,8 +99,7 @@ class MessageMatcherErrorStrategy extends DefaultErrorStrategy
 
 
   @Contract(pure = true)
-  private @NotNull String tokenList(@NotNull IntervalSet tokens,
-                                    @NotNull Vocabulary vocabulary)
+  private @NotNull String tokenList(@NotNull IntervalSet tokens, @NotNull Vocabulary vocabulary)
   {
     final StringBuilder list = new StringBuilder();
 
@@ -120,8 +119,7 @@ class MessageMatcherErrorStrategy extends DefaultErrorStrategy
 
 
   @Contract(pure = true)
-  private @NotNull Set<String> getTokenDisplayNames(@NotNull IntervalSet tokens,
-                                                    @NotNull Vocabulary vocabulary)
+  private @NotNull Set<String> getTokenDisplayNames(@NotNull IntervalSet tokens, @NotNull Vocabulary vocabulary)
   {
     return tokens.toSet()
         .stream()

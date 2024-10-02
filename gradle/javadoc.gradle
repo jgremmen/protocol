@@ -19,21 +19,21 @@ javadoc {
   title "Java Protocol Library ${version}"
 
   (options as StandardJavadocDocletOptions).with {
-    linksOffline 'https://javadoc.io/doc/org.jetbrains/annotations/23.0.0/',
+    linksOffline 'https://javadoc.io/doc/org.jetbrains/annotations/25.0.0/',
                  "${rootProject.projectDir}/gradle/javadocs/jetbrains-annotations"
 
     encoding 'UTF-8'
 
-    group("Protocol Core API", ["de.sayayi.lib.protocol"])
-    group("Protocol Message Matchers", ["de.sayayi.lib.protocol.matcher"])
-    group("Protocol Message Processors", ["de.sayayi.lib.protocol.processor"])
-    group("Protocol Formatters", ["de.sayayi.lib.protocol.formatter"])
-    group("Protocol SPI", ["de.sayayi.lib.protocol.spi"])
-    group("Protocol Tag Selectors", ["de.sayayi.lib.protocol.selector"])
+    group('Protocol Core API', ['de.sayayi.lib.protocol'])
+    group('Protocol Message Matchers', ['de.sayayi.lib.protocol.matcher'])
+    group('Protocol Message Processors', ['de.sayayi.lib.protocol.processor'])
+    group('Protocol Formatters', ['de.sayayi.lib.protocol.formatter'])
+    group('Protocol SPI', ['de.sayayi.lib.protocol.spi'])
+    group('Protocol Tag Selectors', ['de.sayayi.lib.protocol.selector'])
 
     noQualifiers 'java.util', 'java.lang'
 
-    addStringOption('Xdoclint:-missing', '-quiet')
+    addStringOption('Xdoclint:none', '-quiet')
   }
 
   failOnError false
