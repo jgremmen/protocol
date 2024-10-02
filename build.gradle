@@ -54,7 +54,7 @@ configure(subprojects.findAll { it.name.startsWith('protocol-') }) {
 
 
   ext {
-    messageFormatVersion = '[0.8.0,0.12)'
+    messageFormatVersion = '[0.8,0.12)'
     mockitoVersion = '5.14.+'
     unbescapeVersion = '1.1.6.RELEASE'
   }
