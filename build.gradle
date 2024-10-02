@@ -23,7 +23,7 @@ allprojects {
   apply plugin: 'base'
 
   group = 'de.sayayi.lib'
-  version = '1.5.0-SNAPSHOT'
+  version = '1.5.0'
 
   ext {
     jetbrainsAnnotationsVersion = '25.0.+'
