@@ -26,7 +26,7 @@ allprojects {
   version = '1.5.1-SNAPSHOT'
 
   ext {
-    jetbrainsAnnotationsVersion = '25.0.+'
+    jetbrainsAnnotationsVersion = '26.0.+'
     junitVersion = '5.11.+'
     lombokVersion = '1.18.+'
   }
@@ -54,7 +54,7 @@ configure(subprojects.findAll { it.name.startsWith('protocol-') }) {
 
 
   ext {
-    messageFormatVersion = '[0.8,0.12)'
+    messageFormatVersion = '[0.12,0.13)'
     mockitoVersion = '5.14.+'
     unbescapeVersion = '1.1.6.RELEASE'
   }
@@ -110,4 +110,9 @@ configure(subprojects.findAll { it.name.startsWith('protocol-') }) {
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
     testRuntimeOnly "org.junit.platform:junit-platform-launcher"
   }
+}
+
+
+wrapper {
+  distributionType = Wrapper.DistributionType.ALL
 }
