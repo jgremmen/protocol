@@ -82,7 +82,7 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
   @Override
   public void protocolStart()
   {
-    final String[] divClasses = new String[] { "protocol", protocolStartDivClass() };
+    var divClasses = new String[] { "protocol", protocolStartDivClass() };
 
     html.append("<div").append(classFromArray(divClasses)).append(">\n")
         .append("  <ul").append(classFromArray("depth-0", protocolStartUlClass())).append(">\n");
@@ -112,14 +112,12 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
   @Override
   public void message(@NotNull MessageEntry<M> message)
   {
-    final String msg = messageFormatter.formatMessage(message);
+    var msg = messageFormatter.formatMessage(message);
 
     indent(message.getDepth());
 
-    final String[] liClasses = new String[] {
-        "level-" + levelToHtmlClass(message.getLevel()), messageLiClass(message)
-    };
-    final String[] liSpanClasses = new String[] {
+    var liClasses = new String[] { "level-" + levelToHtmlClass(message.getLevel()), messageLiClass(message) };
+    var liSpanClasses = new String[] {
         message.isGroupMessage() ? "group-message" : null, "message", messageSpanClass(message)
     };
 
@@ -159,16 +157,14 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
   @Override
   public void groupStart(@NotNull GroupStartEntry<M> group)
   {
-    final int depth = group.getDepth();
-    final GenericMessageWithLevel<M> message = group.getGroupMessage();
-    final String msg = messageFormatter.formatMessage(group.getGroupMessage());
+    var depth = group.getDepth();
+    var message = group.getGroupMessage();
+    var msg = messageFormatter.formatMessage(group.getGroupMessage());
 
     indent(depth - 1);
 
-    final String[] liClasses = new String[] {
-        "level-" + levelToHtmlClass(message.getLevel()), groupHeaderLiClass(message)
-    };
-    final String[] liSpanClasses = new String[] { "group", groupHeaderLiSpanClass(message) };
+    var liClasses = new String[] { "level-" + levelToHtmlClass(message.getLevel()), groupHeaderLiClass(message) };
+    var liSpanClasses = new String[] { "group", groupHeaderLiSpanClass(message) };
 
     html.append("<li").append(classFromArray(liClasses)).append('>')
         .append(groupHeaderPrefixHtml(message))
@@ -179,7 +175,7 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
 
     indent(depth - 1);
 
-    final String[] ulClasses = new String[] { "depth-" + depth, "group", groupStartUlClass(group) };
+    var ulClasses = new String[] { "depth-" + depth, "group", groupStartUlClass(group) };
 
     html.append("<ul").append(classFromArray(ulClasses)).append(">\n");
   }
@@ -235,10 +231,10 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
   {
     if (classNames != null && classNames.length > 0)
     {
-      final StringBuilder cls = new StringBuilder(" class=\"");
+      var cls = new StringBuilder(" class=\"");
       int n = 0;
 
-      for(final String className: classNames)
+      for(var className: classNames)
         if (className != null && !className.trim().isEmpty())
         {
           if (n != 0)
@@ -259,7 +255,7 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
   @Contract(pure = true)
   protected void indent(int depth)
   {
-    final char[] spaces = new char[(depth + 2) * 2];
+    var spaces = new char[(depth + 2) * 2];
     fill(spaces, ' ');
 
     html.append(spaces);

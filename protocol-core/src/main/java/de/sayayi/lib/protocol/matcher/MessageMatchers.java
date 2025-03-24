@@ -18,7 +18,6 @@ package de.sayayi.lib.protocol.matcher;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolEntry.Message;
-import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.matcher.MessageMatcher.Junction;
@@ -28,7 +27,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
@@ -192,8 +190,8 @@ public final class MessageMatchers
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction hasAllOf(@NotNull Collection<String> tagNames)
   {
-    final Set<String> uniqueTagNames = new TreeSet<>(tagNames);
-    final boolean hasDefaultTag = uniqueTagNames.remove(DEFAULT_TAG_NAME);
+    var uniqueTagNames = new TreeSet<>(tagNames);
+    var hasDefaultTag = uniqueTagNames.remove(DEFAULT_TAG_NAME);
 
     if (uniqueTagNames.remove(""))
       return NONE;
@@ -282,7 +280,7 @@ public final class MessageMatchers
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message)
       {
-        final Map<String,Object> parameterValues = message.getParameterValues();
+        var parameterValues = message.getParameterValues();
 
         return value == null
             ? parameterValues.containsKey(parameterName) && parameterValues.get(parameterName) == null
@@ -392,7 +390,7 @@ public final class MessageMatchers
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message)
       {
-        final Level messageLevel = min(message.getLevel(), levelLimit);
+        var messageLevel = min(message.getLevel(), levelLimit);
         return compare(messageLevel, levelLow) >= 0 && compare(messageLevel, levelHigh) <= 0;
       }
 
@@ -492,10 +490,8 @@ public final class MessageMatchers
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message)
       {
-        final Protocol<M> protocol = message.getProtocol();
-
-        return protocol.isProtocolGroup() &&
-               groupName.equals(((ProtocolGroup<M>)protocol).getName());
+        var protocol = message.getProtocol();
+        return protocol.isProtocolGroup() && groupName.equals(((ProtocolGroup<M>)protocol).getName());
       }
 
 
@@ -523,16 +519,16 @@ public final class MessageMatchers
   @Contract(pure = true)
   public static @NotNull Junction inGroupRegex(@NotNull String groupNameRegex)
   {
-    final Pattern pattern = Pattern.compile(requireNonNull(groupNameRegex));
+    var pattern = Pattern.compile(requireNonNull(groupNameRegex));
 
     return new Junction() {
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message)
       {
-        final Protocol<M> protocol = message.getProtocol();
+        var protocol = message.getProtocol();
         if (protocol.isProtocolGroup())
         {
-          final String groupName = ((ProtocolGroup<M>)protocol).getName();
+          var groupName = ((ProtocolGroup<M>)protocol).getName();
           return groupName != null && pattern.matcher(groupName).matches();
         }
 
@@ -589,17 +585,15 @@ public final class MessageMatchers
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction inProtocol(@NotNull Protocol<?> protocol)
   {
-    final ProtocolFactory<?> protocolFactory = protocol.getFactory();
+    var protocolFactory = protocol.getFactory();
     final int protocolId = protocol.getId();
 
     return new Junction() {
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message)
       {
-        final Protocol<M> protocol = message.getProtocol();
-
-        return protocol.getFactory() == protocolFactory &&
-               protocol.getId() == protocolId;
+        var protocol = message.getProtocol();
+        return protocol.getFactory() == protocolFactory && protocol.getId() == protocolId;
       }
 
 

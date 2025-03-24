@@ -22,9 +22,8 @@ import de.sayayi.lib.protocol.matcher.MessageMatcher.Junction;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import static de.sayayi.lib.protocol.matcher.BooleanMatcher.ANY;
@@ -48,7 +47,7 @@ final class Conjunction implements Junction
 
   public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> target)
   {
-    for(final MessageMatcher matcher: matchers)
+    for(var matcher: matchers)
       if (!matcher.matches(levelLimit, target))
         return false;
 
@@ -77,7 +76,8 @@ final class Conjunction implements Junction
   @Override
   public String toString()
   {
-    return matchers.stream()
+    return matchers
+        .stream()
         .map(MessageMatcher::toString)
         .collect(joining(" and ", "(", ")"));
   }
@@ -89,7 +89,7 @@ final class Conjunction implements Junction
     if (matcher.length == 0)
       throw new IllegalArgumentException("matcher must not be empty");
 
-    final Set<MessageMatcher> matchers = new LinkedHashSet<>(Arrays.asList(matcher));
+    var matchers = new LinkedHashSet<>(List.of(matcher));
     if (matchers.contains(NONE))
       return NONE;
 
@@ -97,9 +97,9 @@ final class Conjunction implements Junction
     do {
       matchersChanged = false;
 
-      for(Iterator<MessageMatcher> matcherIterator = matchers.iterator(); matcherIterator.hasNext();)
+      for(var matcherIterator = matchers.iterator(); matcherIterator.hasNext();)
       {
-        final MessageMatcher m = matcherIterator.next();
+        var m = matcherIterator.next();
         if (m instanceof Conjunction)
         {
           matcherIterator.remove();

@@ -28,7 +28,6 @@ import java.util.Set;
 
 import static de.sayayi.lib.protocol.ProtocolFactory.DEFAULT_TAG_NAME;
 import static java.util.Collections.emptyMap;
-import static java.util.Collections.unmodifiableSet;
 
 
 /**
@@ -42,12 +41,12 @@ final class TagNamesMessageAdapter implements Message<Object>
 
   TagNamesMessageAdapter(@NotNull Collection<String> tagNames)
   {
-    final Set<String> tagNameSet = new HashSet<>(tagNames);
+    var tagNameSet = new HashSet<>(tagNames);
 
     tagNameSet.add(DEFAULT_TAG_NAME);
     tagNameSet.remove("");
 
-    this.tagNames = unmodifiableSet(tagNameSet);
+    this.tagNames = Set.copyOf(tagNameSet);
   }
 
 

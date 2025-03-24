@@ -51,8 +51,7 @@ public final class TechnicalProtocolFormatter<M> extends AbstractTreeProtocolFor
   @Override
   protected String format(@NotNull GenericMessageWithLevel<M> message)
   {
-    final StringBuilder s = new StringBuilder(super.format(message)).append("  {level=")
-        .append(message.getLevel());
+    var s = new StringBuilder(super.format(message)).append("  {level=").append(message.getLevel());
 
     if (message instanceof Message)
     {
