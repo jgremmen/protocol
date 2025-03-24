@@ -30,7 +30,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.function.Consumer;
@@ -67,10 +66,9 @@ abstract class AbstractParameterBuilder
   {
     requireNonNull(parameterValues, "parameterValues must not be null");
 
-    for(final Entry<String,Object> entry: parameterValues.entrySet())
+    for(var entry: parameterValues.entrySet())
     {
-      final String key = entry.getKey();
-
+      var key = entry.getKey();
       if (key != null && !key.isEmpty())
         with(key, entry.getValue());
     }
@@ -79,7 +77,6 @@ abstract class AbstractParameterBuilder
   }
 
 
-  @SuppressWarnings("java:S2589")
   @Override
   public @NotNull P with(@NotNull String parameter, Object value)
   {

@@ -24,6 +24,7 @@ import de.sayayi.lib.protocol.spi.GenericMessageWithId;
 
 import org.jetbrains.annotations.NotNull;
 
+import static de.sayayi.lib.message.MessageFactory.NO_CACHE_INSTANCE;
 import static java.util.Objects.requireNonNull;
 import static java.util.UUID.randomUUID;
 
@@ -36,8 +37,7 @@ import static java.util.UUID.randomUUID;
  */
 public class MessageFormatMessageProcessor implements MessageProcessor<Message>
 {
-  public static final MessageFormatMessageProcessor INSTANCE =
-      new MessageFormatMessageProcessor(MessageFactory.NO_CACHE_INSTANCE);
+  public static final MessageFormatMessageProcessor INSTANCE = new MessageFormatMessageProcessor(NO_CACHE_INSTANCE);
 
 
   private final @NotNull MessageFactory messageFactory;

@@ -47,7 +47,7 @@ public final class MapMessageProcessor<M> implements MessageProcessor<M>
   @Override
   public @NotNull MessageWithId<M> processMessage(@NotNull String key)
   {
-    final M message = map.get(requireNonNull(key, "key must not be null"));
+    var message = map.get(requireNonNull(key, "key must not be null"));
     if (message == null)
       throw new ProtocolException("missing mapped message for key '" + key + "'");
 

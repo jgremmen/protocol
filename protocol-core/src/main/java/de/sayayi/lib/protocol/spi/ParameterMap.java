@@ -40,7 +40,6 @@ import static java.util.Spliterator.SORTED;
  * @author Jeroen Gremmen
  * @since 1.0.0
  */
-@SuppressWarnings({ "java:S1192", "UnstableApiUsage" })
 public final class ParameterMap implements Iterable<Entry<String,Object>>
 {
   private final ParameterMap parent;
@@ -81,7 +80,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
       while(low <= high)
       {
         final int mid = (low + high) >>> 1;
-        final ParameterEntry entry = entries[mid];
+        final var entry = entries[mid];
         final int cmp = entry.key.compareTo(parameter);
 
         if (cmp < 0)
@@ -121,7 +120,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
   @Contract(pure = true)
   public Object get(@NotNull String parameter)
   {
-    final ParameterEntry entry = getEntry(requireNonNull(parameter, "parameter must not be null"));
+    var entry = getEntry(requireNonNull(parameter, "parameter must not be null"));
 
     return entry == null ? null : entry.value;
   }
@@ -151,7 +150,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     for(int low = 0, high = size - 1; low <= high;)
     {
       final int mid = (low + high) >>> 1;
-      final ParameterEntry entry = entries[mid];
+      final var entry = entries[mid];
       final int cmp = entry.key.compareTo(parameter);
 
       if (cmp < 0)
@@ -171,7 +170,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
   {
     int n = 0;
 
-    for(Iterator<Entry<String,Object>> iterator = iterator(); iterator.hasNext(); iterator.next())
+    for(var iterator = iterator(); iterator.hasNext(); iterator.next())
       n++;
 
     return n;
@@ -193,11 +192,11 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
   @Override
   public String toString()
   {
-    final Iterator<Entry<String,Object>> iterator = iterator();
+    var iterator = iterator();
     if (!iterator.hasNext())
       return "[]";
 
-    final StringJoiner s = new StringJoiner(",", "[", "]");
+    var s = new StringJoiner(",", "[", "]");
 
     iterator.forEachRemaining(e -> s.add(e.toString()));
 
@@ -361,7 +360,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
     @Override
-    public boolean removeIf(Predicate<? super T> filter) {
+    public boolean removeIf(@NotNull Predicate<? super T> filter) {
       throw new UnsupportedOperationException();
     }
 
@@ -374,7 +373,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
     public boolean containsAll(Collection<?> c)
     {
-      for(final Object e: c)
+      for(var e: c)
         if (!contains(e))
           return false;
 
@@ -398,11 +397,11 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
     public String toString()
     {
-      final Iterator<T> iterator = this.iterator();
+      var iterator = this.iterator();
       if (!iterator.hasNext())
         return "[]";
 
-      final StringJoiner s = new StringJoiner(", ", "[", "]");
+      var s = new StringJoiner(", ", "[", "]");
 
       iterator.forEachRemaining(e -> s.add(e.toString()));
 
@@ -431,9 +430,9 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     @Override
     public @NotNull Iterator<String> iterator()
     {
-      final Iterator<Entry<String,Object>> iterator = map.iterator();
+      var iterator = map.iterator();
 
-      return new Iterator<String>() {
+      return new Iterator<>() {
         @Override
         public boolean hasNext() {
           return iterator.hasNext();
@@ -441,7 +440,6 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
         @Override
-        @SuppressWarnings("java:S2272")
         public String next() {
           return iterator.next().getKey();
         }
@@ -459,7 +457,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     @SuppressWarnings("unchecked")
     public <T> T @NotNull [] toArray(T @NotNull [] a)
     {
-      final int size = map.size();
+      var size = map.size();
 
       if (a.length < size)
         a = (T[])Array.newInstance(a.getClass().getComponentType(), size);
@@ -467,7 +465,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
         a[size] = null;
 
       int n = 0;
-      for(final Entry<String,Object> entry: map)
+      for(var entry: map)
         a[n++] = (T)entry.getKey();
 
       return a;
@@ -475,7 +473,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
     @Override
-    public Spliterator<String> spliterator() {
+    public @NotNull Spliterator<String> spliterator() {
       return Spliterators.spliterator(iterator(), super.size(), ORDERED | SORTED | DISTINCT | NONNULL);
     }
 
@@ -502,7 +500,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     public boolean contains(Object o)
     {
       if (o instanceof Entry)
-        for(final Entry<String,Object> entry: map)
+        for(var entry: map)
           if (Objects.equals(entry, o))
             return true;
 
@@ -534,7 +532,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
         a[size] = null;
 
       int n = 0;
-      for(final Entry<String,Object> entry: map)
+      for(var entry: map)
         a[n++] = (T)entry;
 
       return a;
@@ -542,7 +540,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
     @Override
-    public Spliterator<Entry<String,Object>> spliterator() {
+    public @NotNull Spliterator<Entry<String,Object>> spliterator() {
       return map.spliterator();
     }
 
@@ -568,7 +566,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     @Override
     public boolean contains(Object o)
     {
-      for(final Entry<String,Object> entry: map)
+      for(var entry: map)
         if (Objects.equals(entry.getValue(), o))
           return true;
 
@@ -579,9 +577,9 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     @Override
     public @NotNull Iterator<Object> iterator()
     {
-      final Iterator<Entry<String,Object>> iterator = map.iterator();
+      var iterator = map.iterator();
 
-      return new Iterator<Object>() {
+      return new Iterator<>() {
         @Override
         public boolean hasNext() {
           return iterator.hasNext();
@@ -598,7 +596,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
     @Override
-    public Spliterator<Object> spliterator() {
+    public @NotNull Spliterator<Object> spliterator() {
       return Spliterators.spliterator(iterator(), super.size(), ORDERED);
     }
 
@@ -718,7 +716,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
       }
       else
       {
-        final ParameterEntry entry = entries[n];
+        final var entry = entries[n];
         int cmp = 1;
 
         if (nextParentEntry != null && (cmp = nextParentEntry.getKey().compareTo(entry.key)) < 0)
@@ -753,7 +751,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
       if (nextEntry == null)
         throw new NoSuchElementException();
 
-      final Entry<String,Object> next = nextEntry;
+      var next = nextEntry;
 
       prepareNext();
 

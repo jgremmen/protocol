@@ -20,7 +20,6 @@ import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.Protocol.GenericMessage;
 import de.sayayi.lib.protocol.Protocol.GenericMessageWithLevel;
 import de.sayayi.lib.protocol.ProtocolEntry;
-import de.sayayi.lib.protocol.ProtocolGroup.Visibility;
 import de.sayayi.lib.protocol.ProtocolIterator;
 import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
@@ -142,7 +141,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     if (!hasNext())
       throw new NoSuchElementException();
 
-    final DepthEntry<M> entry = nextEntries[firstEntryIdx];
+    var entry = nextEntries[firstEntryIdx];
 
     nextEntries[firstEntryIdx] = null;
     firstEntryIdx = (firstEntryIdx + 1) & 3;
@@ -205,8 +204,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
         return;
       }
 
-      final ProtocolEntry<M> protocolEntry = iterator.next();
-
+      var protocolEntry = iterator.next();
       if (protocolEntry instanceof InternalProtocolEntry.Group)
       {
         groupIterator = new ProtocolStructureIterator.ForGroup<>(levelLimit, matcher, depth,
@@ -268,7 +266,6 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
     private boolean forceFirst;
 
 
-    @SuppressWarnings("squid:S00107")
     ForGroup(@NotNull Level levelLimit, @NotNull MessageMatcher matcher, int depth,
              @NotNull InternalProtocolEntry.Group<M> protocol, boolean hasEntryBeforeGroup,
              boolean hasEntryAfterGroup, boolean rootProtocol)
@@ -279,7 +276,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
       this.hasEntryAfterGroup = hasEntryAfterGroup;
 
       // normalize visibility
-      Visibility visibility = protocol.getEffectiveVisibility();
+      var visibility = protocol.getEffectiveVisibility();
       if (visibility == SHOW_HEADER_ALWAYS && !hasNextVisibleEntryAtSameDepth())
         visibility = SHOW_HEADER_ONLY;
       else if (visibility == SHOW_HEADER_IF_NOT_EMPTY)

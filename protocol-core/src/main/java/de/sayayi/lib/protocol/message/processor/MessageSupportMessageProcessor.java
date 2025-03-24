@@ -79,7 +79,7 @@ public class MessageSupportMessageProcessor implements MessageProcessor<Message>
   {
     requireNonNull(codeOrMessageFormat, "codeOrMessageFormat must not be null");
 
-    final Message.WithCode message = isInvalidMessageCode(codeOrMessageFormat)
+    var message = isInvalidMessageCode(codeOrMessageFormat)
         ? null : messageAccessor.getMessageByCode(codeOrMessageFormat);
     if (message != null)
       return new GenericMessageWithId<>(message.getCode(), message);

@@ -26,7 +26,6 @@ import org.antlr.v4.runtime.misc.IntervalSet;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -52,8 +51,8 @@ class MessageMatcherErrorStrategy extends DefaultErrorStrategy
   @Override
   protected void reportInputMismatch(Parser recognizer, InputMismatchException ex)
   {
-    final IntervalSet expectedTokens = ex.getExpectedTokens();
-    final Token offendingToken = ex.getOffendingToken();
+    var expectedTokens = ex.getExpectedTokens();
+    var offendingToken = ex.getOffendingToken();
 
     if (isEOFToken(offendingToken))
     {
@@ -69,7 +68,7 @@ class MessageMatcherErrorStrategy extends DefaultErrorStrategy
     }
     else
     {
-      final String offendingTokenText = getTokenErrorDisplay(offendingToken);
+      var offendingTokenText = getTokenErrorDisplay(offendingToken);
 
       if (expectedTokens.size() <= 4)
       {
@@ -101,12 +100,12 @@ class MessageMatcherErrorStrategy extends DefaultErrorStrategy
   @Contract(pure = true)
   private @NotNull String tokenList(@NotNull IntervalSet tokens, @NotNull Vocabulary vocabulary)
   {
-    final StringBuilder list = new StringBuilder();
+    var list = new StringBuilder();
 
-    for(Iterator<String> tokenNameIterator = getTokenDisplayNames(tokens, vocabulary).iterator();
+    for(var tokenNameIterator = getTokenDisplayNames(tokens, vocabulary).iterator();
         tokenNameIterator.hasNext();)
     {
-      final String tokenName = tokenNameIterator.next();
+      var tokenName = tokenNameIterator.next();
 
       if (list.length() > 0)
         list.append(tokenNameIterator.hasNext() ? ", " : " or ");

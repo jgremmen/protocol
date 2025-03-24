@@ -172,7 +172,7 @@ final class ProtocolGroupImpl<M>
 
     levelLimit = min(this.levelLimit, levelLimit);
 
-    for(ProtocolEntry<M> entry: getEntries(levelLimit, matcher))
+    for(var entry: getEntries(levelLimit, matcher))
     {
       Level protocolEntryLevel;
 
@@ -217,7 +217,7 @@ final class ProtocolGroupImpl<M>
   @Override
   public int getVisibleEntryCount0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
-    final Visibility effectiveVisibility = getEffectiveVisibility();
+    var effectiveVisibility = getEffectiveVisibility();
     if (effectiveVisibility == SHOW_HEADER_ONLY)
       return 1;
 
@@ -330,7 +330,7 @@ final class ProtocolGroupImpl<M>
   @Override
   public boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher, boolean messageOnly)
   {
-    final Visibility ev = getEffectiveVisibility();
+    var ev = getEffectiveVisibility();
 
     if (!messageOnly && (ev == SHOW_HEADER_ONLY || ev == SHOW_HEADER_ALWAYS))
       return true;
@@ -376,7 +376,7 @@ final class ProtocolGroupImpl<M>
   @Override
   public String toString()
   {
-    final StringBuilder s = new StringBuilder("ProtocolGroup(id=").append(getId())
+    var s = new StringBuilder("ProtocolGroup(id=").append(getId())
         .append(",visibility=").append(visibility);
 
     if (compare(levelLimit, HIGHEST) < 0)
@@ -424,7 +424,7 @@ final class ProtocolGroupImpl<M>
     @Override
     public String toString()
     {
-      final StringBuilder s = new StringBuilder("GroupMessage(id=").append(getMessageId())
+      var s = new StringBuilder("GroupMessage(id=").append(getMessageId())
           .append(",message=").append(getMessage());
 
       if (!parameterMap.isEmpty())

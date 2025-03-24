@@ -70,7 +70,6 @@ import java.util.stream.StreamSupport;
  * @author Jeroen Gremmen
  * @since 0.1.0
  */
-@SuppressWarnings("UnstableApiUsage")
 public interface Protocol<M> extends ProtocolQueryable
 {
   /**
@@ -634,7 +633,6 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @param <M>  internal message object type
    */
-  @SuppressWarnings("UnstableApiUsage")
   interface MessageParameterBuilder<M> extends Protocol<M>, GenericMessage<M>
   {
     /**

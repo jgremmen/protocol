@@ -148,7 +148,7 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
   @Override
   public String toString()
   {
-    final StringBuilder s = new StringBuilder("ProtocolGroup(id=").append(group.getId())
+    var s = new StringBuilder("ProtocolGroup(id=").append(group.getId())
         .append(",visibility=").append(group.getVisibility());
 
     if (compare(levelLimit, HIGHEST) < 0)

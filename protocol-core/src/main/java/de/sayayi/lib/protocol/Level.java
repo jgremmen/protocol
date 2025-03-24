@@ -36,7 +36,6 @@ import static java.lang.Integer.MIN_VALUE;
  * @since 0.1.0
  */
 @FunctionalInterface
-@SuppressWarnings("java:S1214")
 public interface Level
 {
   /**

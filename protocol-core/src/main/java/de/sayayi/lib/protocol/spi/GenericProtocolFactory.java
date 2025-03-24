@@ -24,7 +24,6 @@ import de.sayayi.lib.protocol.matcher.MessageMatcher;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Iterator;
 import java.util.ServiceLoader;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -128,7 +127,7 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
   @Contract(pure = true)
   protected static @NotNull ProtocolMessageMatcher detectMessageMatcher(ClassLoader classLoader)
   {
-    final Iterator<ProtocolMessageMatcher> messageMatcherIterator = ServiceLoader
+    var messageMatcherIterator = ServiceLoader
         .load(ProtocolMessageMatcher.class, classLoader)
         .iterator();
 

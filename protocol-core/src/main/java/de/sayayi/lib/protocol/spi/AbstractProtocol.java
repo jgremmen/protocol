@@ -35,7 +35,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -58,7 +57,6 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   private final int id;
 
   final @NotNull ProtocolFactory<M> factory;
-
   final @NotNull ParameterMap parameterMap;
   final @NotNull List<InternalProtocolEntry<M>> entries;
   final @NotNull Map<TagSelector,Set<String>> tagPropagationMap;
@@ -66,9 +64,10 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
 
   protected AbstractProtocol(@NotNull ProtocolFactory<M> factory, ParameterMap parentParameterMap)
   {
+    id = PROTOCOL_ID.incrementAndGet();
+
     this.factory = factory;
 
-    id = PROTOCOL_ID.incrementAndGet();
     parameterMap = new ParameterMap(parentParameterMap);
     entries = new ArrayList<>(8);
     tagPropagationMap = new HashMap<>(8);
@@ -93,9 +92,9 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
     if (tagPropagationMap.isEmpty())
       return tags;
 
-    final Set<String> collectedPropagatedTagDefs = new TreeSet<>(tags);
+    var collectedPropagatedTagDefs = new TreeSet<>(tags);
 
-    for(final Entry<TagSelector,Set<String>> tagPropagation: tagPropagationMap.entrySet())
+    for(var tagPropagation: tagPropagationMap.entrySet())
       if (tagPropagation.getKey().match(collectedPropagatedTagDefs))
         collectedPropagatedTagDefs.addAll(tagPropagation.getValue());
 
@@ -115,7 +114,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   @Override
   public boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher, boolean messageOnly)
   {
-    for(final InternalProtocolEntry<M> entry: entries)
+    for(var entry: entries)
       if (entry.matches0(levelLimit, matcher, messageOnly))
         return true;
 
@@ -125,9 +124,9 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
 
   @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
-    final List<ProtocolEntry<M>> filteredEntries = new ArrayList<>();
+    var filteredEntries = new ArrayList<ProtocolEntry<M>>();
 
-    for(final InternalProtocolEntry<M> entry: entries)
+    for(var entry: entries)
       if (entry.matches0(levelLimit, matcher, false))
       {
         filteredEntries.add(entry instanceof InternalProtocolEntry.Group
@@ -144,7 +143,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   {
     int count = 0;
 
-    for(final InternalProtocolEntry<M> entry: entries)
+    for(var entry: entries)
       count += entry.getVisibleEntryCount0(levelLimit, matcher);
 
     return count;
@@ -154,9 +153,9 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   @Override
   public @NotNull Optional<ProtocolGroup<M>> getGroupByName(@NotNull String name)
   {
-    for(final Iterator<ProtocolGroup<M>> groupIterator = groupIterator(); groupIterator.hasNext();)
+    for(var groupIterator = groupIterator(); groupIterator.hasNext();)
     {
-      final Optional<ProtocolGroup<M>> result = groupIterator.next().getGroupByName(name);
+      var result = groupIterator.next().getGroupByName(name);
       if (result.isPresent())
         return result;
     }
@@ -175,7 +174,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   public @NotNull ProtocolGroup<M> createGroup()
   {
     @SuppressWarnings("unchecked")
-    final ProtocolGroupImpl<M> group = new ProtocolGroupImpl<>((AbstractProtocol<M,ProtocolMessageBuilder<M>>)this);
+    var group = new ProtocolGroupImpl<>((AbstractProtocol<M,ProtocolMessageBuilder<M>>)this);
 
     entries.add(group);
 
@@ -229,7 +228,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   {
     int depth = 0;
 
-    for(final InternalProtocolEntry<M> entry: entries)
+    for(var entry: entries)
       if (entry instanceof ProtocolGroupImpl)
         depth = Math.max(depth, 1 + ((ProtocolGroupImpl<M>)entry).countGroupDepth());
 
@@ -271,7 +270,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
     {
       while(iterator.hasNext())
       {
-        final InternalProtocolEntry<M> entry = iterator.next();
+        var entry = iterator.next();
         if (entry instanceof ProtocolGroup)
         {
           //noinspection unchecked
@@ -296,7 +295,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
       if (!hasNext())
         throw new NoSuchElementException();
 
-      final ProtocolGroup<M> nextGroup = next;
+      var nextGroup = next;
       findNext();
 
       return nextGroup;

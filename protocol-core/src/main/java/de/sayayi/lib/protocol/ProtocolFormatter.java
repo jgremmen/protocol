@@ -32,7 +32,6 @@ import org.jetbrains.annotations.NotNull;
  * @author Jeroen Gremmen
  * @since 0.1.0
  */
-@SuppressWarnings("UnstableApiUsage")
 public interface ProtocolFormatter<M,R>
 {
   /**

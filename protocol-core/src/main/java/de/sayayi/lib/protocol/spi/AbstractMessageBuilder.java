@@ -78,7 +78,7 @@ abstract class AbstractMessageBuilder
   @Override
   public @NotNull B forTags(@NotNull String ... tagNames)
   {
-    for(final String tagName: requireNonNull(tagNames, "tagNames must not be null"))
+    for(var tagName: requireNonNull(tagNames, "tagNames must not be null"))
       forTag(tagName);
 
     return (B)this;
@@ -107,8 +107,7 @@ abstract class AbstractMessageBuilder
   @Override
   public @NotNull P withMessage(@NotNull M message)
   {
-    final ProtocolMessageEntry<M> msg = new ProtocolMessageEntry<>(protocol, level,
-        protocol.getPropagatedTags(tags), throwable,
+    var msg = new ProtocolMessageEntry<>(protocol, level, protocol.getPropagatedTags(tags), throwable,
         new GenericMessageWithId<>(
             protocol.getFactory().getMessageProcessor().getIdFromMessage(message),
             requireNonNull(message, "message must not be null")),
@@ -120,11 +119,10 @@ abstract class AbstractMessageBuilder
   }
 
 
-  @SuppressWarnings("squid:S2583")
   private @NotNull P message0(@NotNull MessageWithId<M> messageWithId)
   {
-    final ProtocolMessageEntry<M> msg = new ProtocolMessageEntry<>(protocol, level,
-        protocol.getPropagatedTags(tags), throwable, messageWithId, protocol.parameterMap);
+    var msg = new ProtocolMessageEntry<>(protocol, level, protocol.getPropagatedTags(tags),
+        throwable, messageWithId, protocol.parameterMap);
 
     protocol.entries.add(msg);
 

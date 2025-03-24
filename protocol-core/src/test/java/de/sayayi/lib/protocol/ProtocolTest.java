@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Test;
 import lombok.val;
 
 import static de.sayayi.lib.protocol.Level.Shared.DEBUG;
-import static de.sayayi.lib.protocol.Level.Shared.INFO;
 
 
 /**
@@ -29,7 +28,6 @@ import static de.sayayi.lib.protocol.Level.Shared.INFO;
  */
 public class ProtocolTest
 {
-  @SuppressWarnings("squid:S2699")
   @Test
   public void testBasics()
   {

@@ -112,11 +112,11 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
   @Override
   public String toString()
   {
-    final StringBuilder s = new StringBuilder("Message(level=").append(levelLimit)
+    var s = new StringBuilder("Message(level=").append(levelLimit)
         .append(",tags={").append(String.join(",", getTagNames())).append("},id=")
         .append(getMessageId()).append(",message=").append(message.getMessage());
 
-    final Map<String,Object> parameterValues = getParameterValues();
+    var parameterValues = getParameterValues();
     if (!parameterValues.isEmpty())
     {
       s.append(parameterValues.entrySet().stream().map(Entry::toString).collect(

@@ -32,7 +32,7 @@ import java.util.List;
  * @see Message
  * @see Group
  */
-@SuppressWarnings({"unused", "squid:S2326"})
+@SuppressWarnings("unused")
 public interface ProtocolEntry<M> extends ProtocolQueryable
 {
   /**
@@ -56,7 +56,6 @@ public interface ProtocolEntry<M> extends ProtocolQueryable
   /**
    * @param <M>  internal message object type
    */
-  @SuppressWarnings("squid:S2176")
   interface Group<M> extends ProtocolEntry<M>, Protocol.Group<M>
   {
     /**

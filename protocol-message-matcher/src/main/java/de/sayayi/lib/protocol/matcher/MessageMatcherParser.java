@@ -42,6 +42,7 @@ import java.util.function.Function;
 import static de.sayayi.lib.antlr4.walker.Walker.WALK_EXIT_RULES_HEAP;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.inGroup;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.inGroupRegex;
+import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.*;
 import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.ALL_OF;
 import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.AND;
 import static de.sayayi.lib.protocol.matcher.antlr.MessageMatcherLexer.ANY;
@@ -143,7 +144,7 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
     @Override
     public void notifyListeners(LexerNoViableAltException ex)
     {
-      final Token token = getTokenFactory().create(_tokenFactorySourcePair, SKIP, null,
+      var token = getTokenFactory().create(_tokenFactorySourcePair, SKIP, null,
           _channel, _tokenStartCharIndex, _input.index(), _tokenStartLine,
           _tokenStartCharPositionInLine);
 
@@ -221,7 +222,7 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
     @Override
     public void exitNotMatcher(NotMatcherContext ctx)
     {
-      final MessageMatcher.Junction expr = ctx.compoundMatcher().matcher;
+      var expr = ctx.compoundMatcher().matcher;
       ctx.matcher = ctx.NOT() != null ? Negation.of(expr) : expr;
     }
 
@@ -242,12 +243,12 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
     @SuppressWarnings("unchecked")
     public void exitThrowableMatcher(ThrowableMatcherContext ctx)
     {
-      final TerminalNode qualifiedName = ctx.QUALIFIED_CLASS_NAME();
+      var qualifiedName = ctx.QUALIFIED_CLASS_NAME();
       if (qualifiedName == null)
         ctx.matcher = MessageMatchers.hasThrowable();
       else
       {
-        final String qualifiedNameText = qualifiedName.getText();
+        var qualifiedNameText = qualifiedName.getText();
         Class<?> clazz = null;
 
         try {
@@ -274,7 +275,7 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
     @Override
     public void exitParamMatcher(ParamMatcherContext ctx)
     {
-      final String paramName = ctx.string().str;
+      var paramName = ctx.string().str;
 
       ctx.matcher = ctx.HAS_PARAM() != null
           ? MessageMatchers.hasParam(paramName)
@@ -285,7 +286,7 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
     @Override
     public void exitLevelMatcher(LevelMatcherContext ctx)
     {
-      final LevelSharedContext levelShared = ctx.levelShared();
+      var levelShared = ctx.levelShared();
       ctx.matcher = LevelMatcher.of(levelShared != null ? levelShared.lvl : ctx.level().lvl);
     }
 
@@ -293,7 +294,7 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
     @Override
     public void exitBetweenMatcher(BetweenMatcherContext ctx)
     {
-      final List<LevelContext> levels = ctx.level();
+      var levels = ctx.level();
       ctx.matcher = MessageMatchers.between(levels.get(0).lvl, levels.get(1).lvl);
     }
 
@@ -307,7 +308,7 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
     @Override
     public void exitInGroupMatcher(InGroupMatcherContext ctx)
     {
-      final StringContext groupName = ctx.string();
+      var groupName = ctx.string();
 
       ctx.matcher = groupName == null
           ? MessageMatchers.inGroup()
@@ -346,7 +347,7 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
     @Override
     public void exitNotTagSelector(NotTagSelectorContext ctx)
     {
-      final MessageMatcher.Junction expr = ctx.compoundTagSelector().selector;
+      var expr = ctx.compoundTagSelector().selector;
       ctx.selector = ctx.NOT() != null ? Negation.of(expr) : expr;
     }
 
@@ -360,7 +361,7 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
     @Override
     public void exitTagSelectorAtom(TagSelectorAtomContext ctx)
     {
-      final TagMatcherAtomContext tagExpression = ctx.tagMatcherAtom();
+      var tagExpression = ctx.tagMatcherAtom();
 
       ctx.selector = tagExpression != null ? tagExpression.matcher
           : ctx.ANY() != null ? BooleanMatcher.ANY : BooleanMatcher.NONE;
@@ -370,7 +371,7 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
     @Override
     public void exitTagMatcherAtom(TagMatcherAtomContext ctx)
     {
-      final TagNameContext tagName = ctx.tagName();
+      var tagName = ctx.tagName();
       if (tagName != null)
         ctx.matcher = MessageMatchers.hasTag(tagName.tag);
       else
@@ -404,7 +405,7 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
     @Override
     public void exitTagName(TagNameContext ctx)
     {
-      final StringContext stringContext = ctx.string();
+      var stringContext = ctx.string();
       ctx.tag = stringContext != null ? stringContext.str : ctx.getChild(0).getText();
     }
 
@@ -412,13 +413,13 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
     @Override
     public void exitLevel(LevelContext ctx)
     {
-      final LevelSharedContext levelShared = ctx.levelShared();
+      var levelShared = ctx.levelShared();
       if (levelShared != null)
         ctx.lvl = levelShared.lvl;
       else
       {
-        final StringContext stringContext = ctx.string();
-        final String name = stringContext != null ? stringContext.str : ctx.getChild(0).getText();
+        var stringContext = ctx.string();
+        var name = stringContext != null ? stringContext.str : ctx.getChild(0).getText();
 
         try {
           ctx.lvl = levelResolver == null ? null : levelResolver.apply(name);
@@ -427,7 +428,7 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
 
         if (ctx.lvl == null)
         {
-          for(final Level.Shared level: Level.Shared.values())
+          for(var level: Level.Shared.values())
             if (level.name().equalsIgnoreCase(name))
             {
               ctx.lvl = level;
@@ -449,8 +450,8 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
     @Override
     public void exitString(StringContext ctx)
     {
-      final char[] str = ctx.STRING().getText().toCharArray();
-      final StringBuilder s = new StringBuilder();
+      var str = ctx.STRING().getText().toCharArray();
+      var s = new StringBuilder();
       char c;
 
       for(int i = 1, n = str.length - 1; i < n; i++)

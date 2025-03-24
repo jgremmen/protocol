@@ -41,7 +41,6 @@ import java.util.function.Consumer;
  * @author Jeroen Gremmen
  * @since 0.1.0
  */
-@SuppressWarnings("UnstableApiUsage")
 public interface ProtocolGroup<M> extends Protocol<M>
 {
   /**
