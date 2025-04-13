@@ -21,7 +21,9 @@ import de.sayayi.lib.protocol.ProtocolEntry.Message;
 import de.sayayi.lib.protocol.exception.MessageMatcherException;
 import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -29,6 +31,7 @@ import java.util.Set;
 
 import static de.sayayi.lib.protocol.ProtocolFactory.DEFAULT_TAG_NAME;
 import static java.util.Collections.emptyMap;
+import static java.util.Collections.unmodifiableSet;
 
 
 /**
@@ -44,34 +47,39 @@ public final class TagNamesMessageAdapter implements Message<Object>
   {
     final var tagNameSet = new HashSet<String>();
 
-    tagNames.forEach(tagNameSet::add);
-
     tagNameSet.add(DEFAULT_TAG_NAME);
-    tagNameSet.remove("");
+    tagNames.iterator().forEachRemaining(tagNameSet::add);
 
-    this.tagNames = Set.copyOf(tagNameSet);
+    tagNameSet.remove("");
+    tagNameSet.remove(null);
+
+    this.tagNames = unmodifiableSet(tagNameSet);
   }
 
 
   @Override
+  @Contract("-> fail")
   public @NotNull Protocol<Object> getProtocol() {
     throw new MessageMatcherException("getProtocol not supported");
   }
 
 
   @Override
+  @Contract("-> fail")
   public @NotNull String getMessageId() {
     throw new MessageMatcherException("getMessageId not supported");
   }
 
 
   @Override
+  @Contract("-> fail")
   public @NotNull Object getMessage() {
     throw new MessageMatcherException("getMessage not supported");
   }
 
 
   @Override
+  @Contract("-> fail")
   public long getTimeMillis() {
     throw new MessageMatcherException("getTimeMillis not supported");
   }
@@ -84,18 +92,21 @@ public final class TagNamesMessageAdapter implements Message<Object>
 
 
   @Override
+  @Contract("-> fail")
   public @NotNull Level getLevel() {
     throw new MessageMatcherException("getLevel not supported");
   }
 
 
   @Override
+  @Contract("-> fail")
   public Throwable getThrowable() {
     throw new MessageMatcherException("getThrowable not supported");
   }
 
 
   @Override
+  @Unmodifiable
   public @NotNull Set<String> getTagNames() {
     return tagNames;
   }
@@ -108,6 +119,7 @@ public final class TagNamesMessageAdapter implements Message<Object>
 
 
   @Override
+  @Contract("_ -> fail")
   public boolean matches(@NotNull MessageMatcher matcher) {
     throw new MessageMatcherException("matches not supported");
   }

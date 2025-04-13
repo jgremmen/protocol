@@ -19,6 +19,7 @@ import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolFactory;
 import de.sayayi.lib.protocol.ProtocolMessageMatcher;
 import de.sayayi.lib.protocol.TagSelector;
+import de.sayayi.lib.protocol.exception.MessageMatcherException;
 import de.sayayi.lib.protocol.internal.ProtocolImpl;
 import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
@@ -28,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ServiceLoader;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static java.lang.Thread.currentThread;
 import static java.util.Objects.requireNonNull;
 
 
@@ -44,12 +46,12 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
   private final @NotNull MessageProcessor<M> messageProcessor;
   private final @NotNull MessageFormatter<M> messageFormatter;
 
-  private @NotNull ProtocolMessageMatcher messageMatcherDelegate;
+  private @NotNull ProtocolMessageMatcher messageMatcher;
 
 
   public GenericProtocolFactory(@NotNull MessageProcessor<M> messageProcessor,
                                 @NotNull MessageFormatter<M> messageFormatter) {
-    this(messageProcessor, messageFormatter, Thread.currentThread().getContextClassLoader());
+    this(messageProcessor, messageFormatter, currentThread().getContextClassLoader());
   }
 
 
@@ -66,8 +68,7 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
   {
     this.messageProcessor = requireNonNull(messageProcessor, "messageProcessor must not be null");
     this.messageFormatter = requireNonNull(messageFormatter, "messageFormatter must not be null");
-
-    messageMatcherDelegate = requireNonNull(messageMatcher, "messageMatcher must not be null");
+    this.messageMatcher = requireNonNull(messageMatcher, "messageMatcher must not be null");
 
     id = FACTORY_ID.incrementAndGet();
   }
@@ -94,14 +95,14 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
    * @since 1.2.1
    */
   public void setMessageMatcher(@NotNull ProtocolMessageMatcher messageMatcher) {
-    messageMatcherDelegate = requireNonNull(messageMatcher, "messageMatcher must not be null");
+    this.messageMatcher = requireNonNull(messageMatcher, "messageMatcher must not be null");
   }
 
 
   @Override
   public @NotNull MessageMatcher parseMessageMatcher(@NotNull String messageMatcherExpression)
   {
-    return messageMatcherDelegate.parseMessageMatcher(
+    return messageMatcher.parseMessageMatcher(
         requireNonNull(messageMatcherExpression, "messageMatcherExpression must not be null"));
   }
 
@@ -109,7 +110,7 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
   @Override
   public @NotNull TagSelector parseTagSelector(@NotNull String tagSelectorExpression)
   {
-    return messageMatcherDelegate.parseTagSelector(
+    return messageMatcher.parseTagSelector(
         requireNonNull(tagSelectorExpression, "tagSelectorExpression must not be null"));
   }
 
@@ -129,15 +130,10 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
   @Contract(pure = true)
   protected static @NotNull ProtocolMessageMatcher detectMessageMatcher(ClassLoader classLoader)
   {
-    var messageMatcherIterator = ServiceLoader
+    return ServiceLoader
         .load(ProtocolMessageMatcher.class, classLoader)
-        .iterator();
-
-    // only 1 supported - take the first one
-    if (messageMatcherIterator.hasNext())
-      return messageMatcherIterator.next();
-
-    return new NotSupportedMessageMatcher();
+        .findFirst()
+        .orElseGet(NotSupportedMessageMatcher::new);
   }
 
 
@@ -151,13 +147,13 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 
     @Override
     public @NotNull MessageMatcher parseMessageMatcher(@NotNull String messageMatcherExpression) {
-      throw new UnsupportedOperationException("parseMessageMatcher");
+      throw new MessageMatcherException("parseMessageMatcher not supported");
     }
 
 
     @Override
     public @NotNull TagSelector parseTagSelector(@NotNull String tagSelectorExpression) {
-      throw new UnsupportedOperationException("parseTagSelector");
+      throw new MessageMatcherException("parseTagSelector not supported");
     }
 
 
