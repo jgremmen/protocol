@@ -31,4 +31,10 @@ final class OwaspHtmlEncoder extends HtmlEncoder
   public @NotNull String encodeHtml(@NotNull String text) {
     return forHtml(text);
   }
+
+
+  @Override
+  public String toString() {
+    return "Owasp";
+  }
 }

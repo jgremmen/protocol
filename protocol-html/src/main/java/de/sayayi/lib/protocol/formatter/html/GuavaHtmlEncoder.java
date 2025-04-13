@@ -31,4 +31,10 @@ final class GuavaHtmlEncoder extends HtmlEncoder
   public @NotNull String encodeHtml(@NotNull String text) {
     return htmlEscaper().escape(text);
   }
+
+
+  @Override
+  public String toString() {
+    return "Google Guava";
+  }
 }

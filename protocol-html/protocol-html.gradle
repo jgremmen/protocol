@@ -18,11 +18,14 @@ dependencies {
 
   compileOnly("org.apache.commons:commons-text:${commonsTextVersion}") { transitive = false }
   compileOnly("com.google.guava:guava:${guavaVersion}") {
-    exclude module: 'j2objc-annotations'
-    exclude module: 'listenablefuture'
     exclude module: 'error_prone_annotations'
+    exclude module: 'j2objc-annotations'
+    exclude module: 'jspecify'
+    exclude module: 'listenablefuture'
   }
   compileOnly "org.owasp.encoder:encoder:${owaspEncoderVersion}"
   compileOnly("org.springframework:spring-web:${springVersion}") { transitive = false }
   compileOnly "org.unbescape:unbescape:${unbescapeVersion}"
+
+  testImplementation("com.google.guava:guava:${guavaVersion}")
 }

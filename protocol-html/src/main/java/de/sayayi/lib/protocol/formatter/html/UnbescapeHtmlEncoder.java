@@ -31,4 +31,10 @@ final class UnbescapeHtmlEncoder extends HtmlEncoder
   public @NotNull String encodeHtml(@NotNull String text) {
     return escapeHtml5(text);
   }
+
+
+  @Override
+  public String toString() {
+    return "Unbescape";
+  }
 }

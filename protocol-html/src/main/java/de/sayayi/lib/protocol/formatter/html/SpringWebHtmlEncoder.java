@@ -31,4 +31,10 @@ final class SpringWebHtmlEncoder extends HtmlEncoder
   public @NotNull String encodeHtml(@NotNull String text) {
     return htmlEscape(text);
   }
+
+
+  @Override
+  public String toString() {
+    return "Spring Web";
+  }
 }

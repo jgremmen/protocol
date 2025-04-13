@@ -15,26 +15,22 @@
  */
 package de.sayayi.lib.protocol.formatter.html;
 
-import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import static org.apache.commons.text.StringEscapeUtils.escapeHtml4;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 
 /**
  * @author Jeroen Gremmen
  * @since 0.6.0
  */
-@SuppressWarnings("unused")
-final class CommonsTextHtmlEncoder extends HtmlEncoder
+@DisplayName("Html encoder")
+class HtmlEncoderTest
 {
-  @Override
-  public @NotNull String encodeHtml(@NotNull String text) {
-    return escapeHtml4(text);
-  }
-
-
-  @Override
-  public String toString() {
-    return "Apache Commons Text";
+  @Test
+  @DisplayName("Classpath probing")
+  void getInstance() {
+    assertInstanceOf(GuavaHtmlEncoder.class, HtmlEncoder.getInstance());
   }
 }

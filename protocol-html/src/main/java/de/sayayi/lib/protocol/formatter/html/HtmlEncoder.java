@@ -9,6 +9,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
 
+import static java.lang.Thread.currentThread;
+
 
 /**
  * @author Jeroen Gremmen
@@ -49,7 +51,7 @@ public abstract class HtmlEncoder
   @Contract(pure = true)
   private static HtmlEncoder probeForImplementations()
   {
-    final var classLoader = Thread.currentThread().getContextClassLoader();
+    final var classLoader = currentThread().getContextClassLoader();
 
     for(final var encoderEntry: ENCODER_MAP.entrySet())
     {
@@ -64,6 +66,5 @@ public abstract class HtmlEncoder
     }
 
     return null;
-
   }
 }
