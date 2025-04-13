@@ -18,6 +18,7 @@ package de.sayayi.lib.protocol.util;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -120,7 +121,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
   @Contract(pure = true)
   public Object get(@NotNull String parameter)
   {
-    var entry = getEntry(requireNonNull(parameter, "parameter must not be null"));
+    final var entry = getEntry(requireNonNull(parameter, "parameter must not be null"));
 
     return entry == null ? null : entry.value;
   }
@@ -184,6 +185,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
   @Contract(value = "-> new", pure = true)
+  @UnmodifiableView
   public @NotNull Map<String,Object> unmodifyableMap() {
     return new UnmodifyableMap(this);
   }
@@ -430,7 +432,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     @Override
     public @NotNull Iterator<String> iterator()
     {
-      var iterator = map.iterator();
+      final var iterator = map.iterator();
 
       return new Iterator<>() {
         @Override
@@ -457,7 +459,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     @SuppressWarnings("unchecked")
     public <T> T @NotNull [] toArray(T @NotNull [] a)
     {
-      var size = map.size();
+      final var size = map.size();
 
       if (a.length < size)
         a = (T[])Array.newInstance(a.getClass().getComponentType(), size);
@@ -587,7 +589,6 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
         @Override
-        @SuppressWarnings("java:S2272")
         public Object next() {
           return iterator.next().getValue();
         }

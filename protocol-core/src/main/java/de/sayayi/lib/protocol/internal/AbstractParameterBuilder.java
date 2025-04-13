@@ -27,6 +27,7 @@ import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -108,6 +109,7 @@ abstract class AbstractParameterBuilder
 
 
   @Override
+  @UnmodifiableView
   public @NotNull Map<String,Object> getParameterValues() {
     return message.getParameterValues();
   }

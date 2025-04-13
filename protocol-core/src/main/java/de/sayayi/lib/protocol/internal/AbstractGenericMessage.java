@@ -20,6 +20,7 @@ import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor.MessageWithId;
 import de.sayayi.lib.protocol.util.ParameterMap;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Map;
 
@@ -68,6 +69,7 @@ abstract class AbstractGenericMessage<M> implements GenericMessage<M>
 
 
   @Override
+  @UnmodifiableView
   public @NotNull Map<String,Object> getParameterValues() {
     return parameterMap.unmodifyableMap();
   }

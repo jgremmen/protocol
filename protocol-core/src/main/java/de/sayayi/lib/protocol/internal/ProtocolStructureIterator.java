@@ -25,6 +25,8 @@ import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Iterator;
 import java.util.List;
@@ -422,6 +424,7 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
     @Override
+    @UnmodifiableView
     public @NotNull Set<String> getTagNames() {
       return message.getTagNames();
     }
@@ -510,12 +513,14 @@ abstract class ProtocolStructureIterator<M> implements ProtocolIterator<M>
 
 
     @Override
+    @UnmodifiableView
     public @NotNull Map<String,Object> getParameterValues() {
       return groupMessage.getParameterValues();
     }
 
 
     @Override
+    @Unmodifiable
     public @NotNull Set<String> getTagNames() {
       return emptySet();
     }

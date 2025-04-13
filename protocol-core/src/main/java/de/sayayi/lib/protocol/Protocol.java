@@ -23,6 +23,7 @@ import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -808,6 +809,7 @@ public interface Protocol<M> extends ProtocolQueryable
      * @see #getMessage()
      */
     @Contract(pure = true, value = "-> new")
+    @UnmodifiableView
     @NotNull Map<String,Object> getParameterValues();
   }
 
@@ -857,6 +859,7 @@ public interface Protocol<M> extends ProtocolQueryable
      * @since 0.7.0
      */
     @Contract(pure = true, value = "-> new")
+    @UnmodifiableView
     @NotNull Set<String> getTagNames();
 
 

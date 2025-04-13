@@ -22,6 +22,7 @@ import de.sayayi.lib.protocol.matcher.MessageMatcher;
 import de.sayayi.lib.protocol.util.ParameterMap;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Map.Entry;
 import java.util.Set;
@@ -72,6 +73,7 @@ final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements
 
 
   @Override
+  @UnmodifiableView
   public @NotNull Set<String> getTagNames() {
     return unmodifiableSet(tagNames);
   }
