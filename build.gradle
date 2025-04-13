@@ -23,7 +23,7 @@ allprojects {
   apply plugin: 'base'
 
   group = 'de.sayayi.lib'
-  version = '1.5.1-SNAPSHOT'
+  version = '1.6.0-SNAPSHOT'
 
   ext {
     jetbrainsAnnotationsVersion = '26.0.+'
@@ -108,7 +108,7 @@ configure(subprojects.findAll { it.name.startsWith('protocol-') }) {
     testImplementation "org.mockito:mockito-core:${mockitoVersion}"
 
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
-    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
   }
 }
 

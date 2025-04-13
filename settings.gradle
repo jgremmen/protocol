@@ -3,7 +3,7 @@ pluginManagement {
         gradlePluginPortal()
 
         maven {
-            url "https://artifactory.sayayi.de/artifactory/plugins-snapshot/"
+            url 'https://artifactory.sayayi.de/artifactory/plugins-snapshot/'
             mavenContent {
                 includeGroupByRegex 'de\\.sayayi\\.plugin\\.gradle.*'
                 snapshotsOnly()
@@ -13,9 +13,10 @@ pluginManagement {
 }
 
 
-include "protocol-core"
-include "protocol-message-matcher"
-include "documentation"
+include 'protocol-core'
+include 'protocol-html'
+include 'protocol-message-matcher'
+include 'documentation'
 
 
 rootProject.name = 'protocol'

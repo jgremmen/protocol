@@ -20,7 +20,6 @@ java {
 
 dependencies {
   // java
-  optionalImplementation "org.unbescape:unbescape:${unbescapeVersion}"
   optionalImplementation "de.sayayi.lib:message-format:${messageFormatVersion}"
 }
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.sayayi.lib.protocol.formatter;
+package de.sayayi.lib.protocol.formatter.html;
 
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol.GenericMessageWithLevel;
@@ -42,26 +42,30 @@ import static de.sayayi.lib.protocol.Level.Shared.WARN;
 import static de.sayayi.lib.protocol.Level.compare;
 import static java.util.Arrays.fill;
 import static java.util.Collections.unmodifiableMap;
-import static org.unbescape.html.HtmlEscape.escapeHtml5;
 
 
 /**
- * <p>
- *   This formatter has a dependency with
- *   <a href="https://mvnrepository.com/artifact/org.unbescape/unbescape">unbescape</a>
- *   version &gt;= {@code 0.4}.
- * </p>
- *
  * @param <M>  internal message object type
  *
  * @author Jeroen Gremmen
- * @since 0.2.0
+ * @since 0.2.0  (refactored in 0.6.0)
  */
 @SuppressWarnings("unused")
 public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
 {
+  private final HtmlEncoder encoder;
   private final StringBuilder html = new StringBuilder();
   private MessageFormatter<M> messageFormatter;
+
+
+  public HtmlProtocolFormatter() {
+    this(HtmlEncoder.getInstance());
+  }
+
+
+  public HtmlProtocolFormatter(HtmlEncoder encoder) {
+    this.encoder = encoder;
+  }
 
 
   @Override
@@ -124,7 +128,7 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
     html.append("<li").append(classFromArray(liClasses)).append('>')
         .append(messagePrefixHtml(message))
         .append("<span").append(classFromArray(liSpanClasses)).append(">")
-        .append(escapeHtml5(msg)).append("</span>")
+        .append(encoder.encodeHtml(msg)).append("</span>")
         .append(messageSuffixHtml(message))
         .append("</li>\n");
   }
@@ -169,7 +173,7 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
     html.append("<li").append(classFromArray(liClasses)).append('>')
         .append(groupHeaderPrefixHtml(message))
         .append("<span").append(classFromArray(liSpanClasses)).append('>')
-        .append(escapeHtml5(msg)).append("</span>")
+        .append(encoder.encodeHtml(msg)).append("</span>")
         .append(groupHeaderSuffixHtml(message))
         .append("</li>\n");
 
