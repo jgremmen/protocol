@@ -644,7 +644,7 @@ public interface Protocol<M> extends ProtocolQueryable
      * @param parameterValues  map with parameter values. the parameter name must not be
      *                         {@code null} or empty.
      *
-     * @return  paramter builder instance for the current message
+     * @return  parameter builder instance for the current message
      */
     @Contract(value = "_ -> this", mutates = "this")
     @NotNull MessageParameterBuilder<M> with(@NotNull Map<String,Object> parameterValues);
@@ -659,7 +659,7 @@ public interface Protocol<M> extends ProtocolQueryable
      *                   expression {@code \p{Alnum}\p{Graph}*}.
      * @param value      parameter value
      *
-     * @return  paramter builder instance for the current message
+     * @return  parameter builder instance for the current message
      */
     @Contract(value = "_, _ -> this", mutates = "this")
     default @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, boolean value) {
@@ -676,7 +676,7 @@ public interface Protocol<M> extends ProtocolQueryable
      *                   expression {@code \p{Alnum}\p{Graph}*}.
      * @param value      parameter value
      *
-     * @return  paramter builder instance for the current message
+     * @return  parameter builder instance for the current message
      */
     @Contract(value = "_, _ -> this", mutates = "this")
     default @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, int value) {
@@ -693,7 +693,7 @@ public interface Protocol<M> extends ProtocolQueryable
      *                   expression {@code \p{Alnum}\p{Graph}*}.
      * @param value      parameter value
      *
-     * @return  paramter builder instance for the current message
+     * @return  parameter builder instance for the current message
      */
     @Contract(value = "_, _ -> this", mutates = "this")
     default @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, long value) {
@@ -710,7 +710,7 @@ public interface Protocol<M> extends ProtocolQueryable
      *                   expression {@code \p{Alnum}\p{Graph}*}.
      * @param value      parameter value
      *
-     * @return  paramter builder instance for the current message
+     * @return  parameter builder instance for the current message
      */
     @Contract(value = "_, _ -> this", mutates = "this")
     default @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, float value) {
@@ -727,7 +727,7 @@ public interface Protocol<M> extends ProtocolQueryable
      *                   expression {@code \p{Alnum}\p{Graph}*}.
      * @param value      parameter value
      *
-     * @return  paramter builder instance for the current message
+     * @return  parameter builder instance for the current message
      */
     @Contract(value = "_, _ -> this", mutates = "this")
     default @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, double value) {
@@ -744,7 +744,7 @@ public interface Protocol<M> extends ProtocolQueryable
      *                   expression {@code \p{Alnum}\p{Graph}*}.
      * @param value      parameter value
      *
-     * @return  paramter builder instance for the current message
+     * @return  parameter builder instance for the current message
      */
     @Contract(value = "_, _ -> this", mutates = "this")
     @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, Object value);
@@ -784,7 +784,7 @@ public interface Protocol<M> extends ProtocolQueryable
     /**
      * Returns the message creation time.
      *
-     * @return  creation time measured in milliseconds since midnight, January 1, 1970 UTC
+     * @return  creation time measured in milliseconds since midnight, January 1, 1970, UTC
      *
      * @since 0.6.0
      */
@@ -803,7 +803,7 @@ public interface Protocol<M> extends ProtocolQueryable
      *   </li>
      * </ul>
      *
-     * @return  unmodifyable map with parameter values, never {@code null}
+     * @return  unmodifiable map with parameter values, never {@code null}
      *
      * @see #getMessage()
      */
@@ -852,7 +852,7 @@ public interface Protocol<M> extends ProtocolQueryable
     /**
      * Returns a set containing all tag names defined for this message.
      *
-     * @return  unmodifyable set containing all tag names, never {@code null}
+     * @return  unmodifiable set containing all tag names, never {@code null}
      *
      * @since 0.7.0
      */
