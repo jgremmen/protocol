@@ -38,7 +38,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
    * group depth (starting with {@code 0}) for each entry. Every {@link GroupStartEntry}
    * increases the depth and every {@link GroupEndEntry} decreases the depth. This information
    * can be used by {@linkplain ProtocolFormatter ProtocolFormatters} to format the protocol in
-   * a structural form (eg. a tree).
+   * a structural form (e.g. a tree).
    *
    * @param <M>  internal message object type
    */
@@ -155,7 +155,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
 
   /**
    * Group message entry. This entry is generated for groups which have no visible entries
-   * themselves but have a visible group header message. Eg. for visibility
+   * themselves but have a visible group header message. E.g. for visibility
    * {@link Visibility#SHOW_HEADER_ONLY}.
    *
    * @param <M>  internal message object type

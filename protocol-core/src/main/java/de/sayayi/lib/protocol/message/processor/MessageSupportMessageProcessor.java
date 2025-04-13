@@ -57,7 +57,7 @@ public class MessageSupportMessageProcessor implements MessageProcessor<Message>
    * </p>
    * <p>
    *   The default implementation returns {@code false} which is sufficient in most cases. If
-   *   message codes are easily identifiable (eg. by regex) this method can be overridden to
+   *   message codes are easily identifiable (e.g. by regex) this method can be overridden to
    *   prevent non-existing message codes from being parsed (only if {@link #parserFallback} is
    *   set to {@code true}).
    * </p>

@@ -75,7 +75,7 @@ public interface ProtocolFormatter<M,R>
   /**
    * Format the given message.
    * <p>
-   * This method is used for both regular messages as well as group header messages for groups
+   * This method is used for both regular messages and group header messages for groups
    * with no containing messages. A distinction can be made by checking
    * {@link MessageEntry#isGroupMessage()}.
    *
