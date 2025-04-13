@@ -15,7 +15,10 @@
  */
 package de.sayayi.lib.protocol.matcher.parser;
 
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -25,12 +28,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Jeroen Gremmen
  * @since 1.2.0
  */
+@DisplayName("Tag selector")
+@TestMethodOrder(MethodOrderer.DisplayName.class)
 class TagSelectorParserTest extends AbstractMatcherParserTest
 {
   private static final MessageMatcherParser PARSER = MessageMatcherParser.INSTANCE;
 
 
   @Test
+  @DisplayName("any / none")
   void testBooleanAtom()
   {
     assertTrue(PARSER
@@ -43,6 +49,7 @@ class TagSelectorParserTest extends AbstractMatcherParserTest
 
 
   @Test
+  @DisplayName("tag(...)")
   void testTagAtom()
   {
     assertTrue(PARSER
@@ -60,6 +67,7 @@ class TagSelectorParserTest extends AbstractMatcherParserTest
 
 
   @Test
+  @DisplayName("any-of(...)")
   void testAnyOfAtom()
   {
     assertTrue(PARSER
@@ -77,6 +85,7 @@ class TagSelectorParserTest extends AbstractMatcherParserTest
 
 
   @Test
+  @DisplayName("all-of(...)")
   void testAllOfAtom()
   {
     assertTrue(PARSER
@@ -98,6 +107,7 @@ class TagSelectorParserTest extends AbstractMatcherParserTest
 
 
   @Test
+  @DisplayName("none-of(...)")
   void testNoneOfAtom()
   {
     assertFalse(PARSER
@@ -119,6 +129,7 @@ class TagSelectorParserTest extends AbstractMatcherParserTest
 
 
   @Test
+  @DisplayName("... and ...")
   void testCompoundAnd()
   {
     var matcher = PARSER.parseTagSelector("system and not(ticket)");
@@ -130,12 +141,13 @@ class TagSelectorParserTest extends AbstractMatcherParserTest
 
 
   @Test
+  @DisplayName("... or ...")
   void testCompoundOr()
   {
-    var matcher = PARSER.parseTagSelector("system or not(ticket)");
+    var matcher = PARSER.parseTagSelector("system or not(test-ticket)");
 
     assertTrue(matcher.match(asTagNameSet("mytag", "system")));
-    assertFalse(matcher.match(asTagNameSet("ticket")));
+    assertFalse(matcher.match(asTagNameSet("test-ticket")));
     assertTrue(matcher.match(asTagNameSet("mytag")));
   }
 }

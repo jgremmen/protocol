@@ -19,7 +19,10 @@ import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.Protocol;
 import de.sayayi.lib.protocol.ProtocolEntry.Message;
 import de.sayayi.lib.protocol.ProtocolGroup;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import lombok.val;
 
@@ -46,6 +49,8 @@ import static org.mockito.Mockito.when;
  * @author Jeroen Gremmen
  * @since 1.2.0
  */
+@DisplayName("Message matcher")
+@TestMethodOrder(MethodOrderer.DisplayName.class)
 class MessageMatcherParserTest extends AbstractMatcherParserTest
 {
   private static final MessageMatcherParser PARSER = MessageMatcherParser.INSTANCE;
@@ -53,6 +58,7 @@ class MessageMatcherParserTest extends AbstractMatcherParserTest
 
 
   @Test
+  @DisplayName("any / none")
   @SuppressWarnings("unchecked")
   void testBooleanAtom()
   {
@@ -71,6 +77,7 @@ class MessageMatcherParserTest extends AbstractMatcherParserTest
 
 
   @Test
+  @DisplayName("tag(...)")
   @SuppressWarnings("unchecked")
   void testTagAtom()
   {
@@ -98,6 +105,7 @@ class MessageMatcherParserTest extends AbstractMatcherParserTest
 
 
   @Test
+  @DisplayName("any-of(...)")
   @SuppressWarnings("unchecked")
   void testAnyOfAtom()
   {
@@ -128,6 +136,7 @@ class MessageMatcherParserTest extends AbstractMatcherParserTest
 
 
   @Test
+  @DisplayName("all-of(...)")
   @SuppressWarnings("unchecked")
   void testAllOfAtom()
   {
@@ -158,6 +167,7 @@ class MessageMatcherParserTest extends AbstractMatcherParserTest
 
 
   @Test
+  @DisplayName("none-of(...)")
   @SuppressWarnings("unchecked")
   void testNoneOfAtom()
   {
@@ -188,6 +198,7 @@ class MessageMatcherParserTest extends AbstractMatcherParserTest
 
 
   @Test
+  @DisplayName("in-root")
   @SuppressWarnings("unchecked")
   void testInRootAtom()
   {
@@ -210,6 +221,7 @@ class MessageMatcherParserTest extends AbstractMatcherParserTest
 
 
   @Test
+  @DisplayName("in-group")
   @SuppressWarnings("unchecked")
   void testInGroupAtom()
   {
@@ -230,6 +242,7 @@ class MessageMatcherParserTest extends AbstractMatcherParserTest
 
 
   @Test
+  @DisplayName("in-group(...)")
   @SuppressWarnings("unchecked")
   void testInGroupNameAtom()
   {
@@ -256,6 +269,7 @@ class MessageMatcherParserTest extends AbstractMatcherParserTest
 
 
   @Test
+  @DisplayName("in-group-regex(...)")
   @SuppressWarnings("unchecked")
   void testInGroupRegexAtom()
   {
@@ -283,6 +297,7 @@ class MessageMatcherParserTest extends AbstractMatcherParserTest
 
 
   @Test
+  @DisplayName("message(...)")
   @SuppressWarnings("unchecked")
   void testMessageAtom()
   {
@@ -303,6 +318,7 @@ class MessageMatcherParserTest extends AbstractMatcherParserTest
 
 
   @Test
+  @DisplayName("level(...)")
   @SuppressWarnings("unchecked")
   void testLevelAtom()
   {
@@ -344,6 +360,7 @@ class MessageMatcherParserTest extends AbstractMatcherParserTest
 
 
   @Test
+  @DisplayName("throwable")
   @SuppressWarnings("unchecked")
   void testThrowableAtom()
   {
@@ -378,11 +395,13 @@ class MessageMatcherParserTest extends AbstractMatcherParserTest
 
 
   @Test
+  @DisplayName("has-param(...)")
   @SuppressWarnings("unchecked")
   void testHasParamAtom()
   {
     val message = (Message<Object>)mock(Message.class);
-    when(message.getParameterValues()).thenReturn(unmodifiableMap(new HashMap<String,Object>() {{
+    when(message.getParameterValues()).thenReturn(unmodifiableMap(new HashMap<String, Object>()
+    {{
       put("visible", true);
       put("msg-null", null);
       put("msg", "message");
@@ -396,11 +415,13 @@ class MessageMatcherParserTest extends AbstractMatcherParserTest
 
 
   @Test
+  @DisplayName("has-param-value(...)")
   @SuppressWarnings("unchecked")
   void testHasParamValueAtom()
   {
     val message = (Message<Object>)mock(Message.class);
-    when(message.getParameterValues()).thenReturn(unmodifiableMap(new HashMap<String,Object>() {{
+    when(message.getParameterValues()).thenReturn(unmodifiableMap(new HashMap<String, Object>()
+    {{
       put("visible", true);
       put("msg-null", null);
       put("msg", "message");
@@ -414,6 +435,7 @@ class MessageMatcherParserTest extends AbstractMatcherParserTest
 
 
   @Test
+  @DisplayName("... and ...")
   @SuppressWarnings("unchecked")
   void testCompoundAnd()
   {
@@ -437,6 +459,7 @@ class MessageMatcherParserTest extends AbstractMatcherParserTest
 
 
   @Test
+  @DisplayName("... or ...")
   @SuppressWarnings("unchecked")
   void testCompoundOr()
   {
@@ -465,6 +488,7 @@ class MessageMatcherParserTest extends AbstractMatcherParserTest
 
 
   @Test
+  @DisplayName("not(...)")
   @SuppressWarnings("unchecked")
   void testCompoundNot()
   {
@@ -488,6 +512,7 @@ class MessageMatcherParserTest extends AbstractMatcherParserTest
 
 
   @Test
+  @DisplayName("Lexer error")
   void testLexerError()
   {
     assertTrue(assertThrowsExactly(MessageMatcherParserException.class,
@@ -497,6 +522,7 @@ class MessageMatcherParserTest extends AbstractMatcherParserTest
 
 
   @Test
+  @DisplayName("Parser error")
   void testParserError()
   {
     assertThrowsExactly(MessageMatcherParserException.class, () -> PARSER.parseMessageMatcher(""));

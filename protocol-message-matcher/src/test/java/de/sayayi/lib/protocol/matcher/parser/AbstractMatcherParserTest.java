@@ -36,6 +36,7 @@ abstract class AbstractMatcherParserTest
   protected static @NotNull Set<String> asTagNameSet(@NotNull String ... s)
   {
     val set = new HashSet<>(List.of(s));
+
     set.add(DEFAULT_TAG_NAME);
 
     return unmodifiableSet(set);
