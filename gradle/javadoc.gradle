@@ -24,12 +24,17 @@ javadoc {
 
     encoding 'UTF-8'
 
-    group('Protocol Core API', ['de.sayayi.lib.protocol'])
-    group('Protocol Message Matchers', ['de.sayayi.lib.protocol.matcher'])
-    group('Protocol Message Processors', ['de.sayayi.lib.protocol.processor'])
-    group('Protocol Formatters', ['de.sayayi.lib.protocol.formatter'])
-    group('Protocol SPI', ['de.sayayi.lib.protocol.spi'])
-    group('Protocol Tag Selectors', ['de.sayayi.lib.protocol.selector'])
+    group('Protocol Core API', [
+            'de.sayayi.lib.protocol',
+            'de.sayayi.lib.protocol.exception',
+            'de.sayayi.lib.protocol.message',
+            'de.sayayi.lib.protocol.util'])
+    group('Protocol Factory', ['de.sayayi.lib.protocol.factory'])
+    group('Protocol Message Matchers', [
+            'de.sayayi.lib.protocol.matcher',
+            'de.sayayi.lib.protocol.matcher.parser'])
+    group('Protocol Message Formatters', ['de.sayayi.lib.protocol.message.formatter'])
+    group('Protocol Message Processors', ['de.sayayi.lib.protocol.message.processor'])
 
     noQualifiers 'java.util', 'java.lang'
 
