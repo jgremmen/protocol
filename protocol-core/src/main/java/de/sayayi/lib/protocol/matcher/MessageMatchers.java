@@ -21,6 +21,10 @@ import de.sayayi.lib.protocol.ProtocolEntry.Message;
 import de.sayayi.lib.protocol.ProtocolGroup;
 import de.sayayi.lib.protocol.TagSelector;
 import de.sayayi.lib.protocol.matcher.MessageMatcher.Junction;
+import de.sayayi.lib.protocol.matcher.internal.Conjunction;
+import de.sayayi.lib.protocol.matcher.internal.Disjunction;
+import de.sayayi.lib.protocol.matcher.internal.LevelMatcher;
+import de.sayayi.lib.protocol.matcher.internal.Negation;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -36,8 +40,8 @@ import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
 import static de.sayayi.lib.protocol.Level.compare;
 import static de.sayayi.lib.protocol.Level.min;
 import static de.sayayi.lib.protocol.ProtocolFactory.DEFAULT_TAG_NAME;
-import static de.sayayi.lib.protocol.matcher.BooleanMatcher.ANY;
-import static de.sayayi.lib.protocol.matcher.BooleanMatcher.NONE;
+import static de.sayayi.lib.protocol.matcher.internal.BooleanMatcher.ANY;
+import static de.sayayi.lib.protocol.matcher.internal.BooleanMatcher.NONE;
 import static java.util.Objects.requireNonNull;
 
 

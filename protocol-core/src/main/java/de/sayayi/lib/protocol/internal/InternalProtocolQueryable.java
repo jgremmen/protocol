@@ -13,27 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.sayayi.lib.protocol.message.processor;
+package de.sayayi.lib.protocol.internal;
 
-import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
-import de.sayayi.lib.protocol.message.GenericMessageWithId;
+import de.sayayi.lib.protocol.Level;
+import de.sayayi.lib.protocol.ProtocolQueryable;
+import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-
-import static java.util.Objects.requireNonNull;
 
 
 /**
  * @author Jeroen Gremmen
- * @since 0.7.0
+ * @since 0.4.1
  */
-public enum StringMessageProcessor implements MessageProcessor<String>
+interface InternalProtocolQueryable extends ProtocolQueryable
 {
-  INSTANCE;
+  @Contract(pure = true)
+  boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher, boolean messageOnly);
 
 
-  @Override
-  public @NotNull MessageWithId<String> processMessage(@NotNull String message) {
-    return new GenericMessageWithId<>(requireNonNull(message, "message must not be null"));
-  }
+  @Contract(pure = true)
+  int getVisibleEntryCount0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher);
 }

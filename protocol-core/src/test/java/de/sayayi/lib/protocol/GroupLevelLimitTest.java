@@ -15,6 +15,7 @@
  */
 package de.sayayi.lib.protocol;
 
+import de.sayayi.lib.protocol.factory.StringProtocolFactory;
 import org.junit.jupiter.api.Test;
 
 import lombok.val;
@@ -29,7 +30,7 @@ import static de.sayayi.lib.protocol.matcher.MessageMatchers.isError;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.isInfo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 
 /**
@@ -54,12 +55,12 @@ public class GroupLevelLimitTest
 
     val iterator = gp.iterator(isInfo());
 
-    assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolStart);
-    assertTrue(iterator.next() instanceof ProtocolIterator.GroupStartEntry);
+    assertInstanceOf(ProtocolIterator.ProtocolStart.class, iterator.next());
+    assertInstanceOf(ProtocolIterator.GroupStartEntry.class, iterator.next());
     assertMessageWithLevel(iterator.next(), INFO, true, false);
     assertMessageWithLevel(iterator.next(), WARN, false, true);
-    assertTrue(iterator.next() instanceof ProtocolIterator.GroupEndEntry);
-    assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolEnd);
+    assertInstanceOf(ProtocolIterator.GroupEndEntry.class, iterator.next());
+    assertInstanceOf(ProtocolIterator.ProtocolEnd.class, iterator.next());
   }
 
 
@@ -76,15 +77,15 @@ public class GroupLevelLimitTest
 
     val iterator = p.iterator(is(LOWEST));
 
-    assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolStart);
+    assertInstanceOf(ProtocolIterator.ProtocolStart.class, iterator.next());
     assertMessageWithLevel(iterator.next(), WARN, true, true);
-    assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolEnd);
+    assertInstanceOf(ProtocolIterator.ProtocolEnd.class, iterator.next());
   }
 
 
   private <M> void assertMessageWithLevel(ProtocolIterator.DepthEntry<M> entry, Level level, boolean first, boolean last)
   {
-    assertTrue(entry instanceof ProtocolIterator.MessageEntry);
+    assertInstanceOf(ProtocolIterator.MessageEntry.class, entry);
 
     val message = (ProtocolIterator.MessageEntry<M>)entry;
 

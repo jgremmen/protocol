@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Jeroen Gremmen
+ * Copyright 2025 Jeroen Gremmen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,27 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.sayayi.lib.protocol.message.processor;
-
-import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
-import de.sayayi.lib.protocol.message.GenericMessageWithId;
-
-import org.jetbrains.annotations.NotNull;
-
-import static java.util.Objects.requireNonNull;
+package de.sayayi.lib.protocol.exception;
 
 
 /**
+ * Message matcher related exception.
+ *
  * @author Jeroen Gremmen
- * @since 0.7.0
+ * @since 1.6.0
  */
-public enum StringMessageProcessor implements MessageProcessor<String>
+public class MessageMatcherException extends ProtocolException
 {
-  INSTANCE;
+  public MessageMatcherException(String message) {
+    super(message);
+  }
 
 
-  @Override
-  public @NotNull MessageWithId<String> processMessage(@NotNull String message) {
-    return new GenericMessageWithId<>(requireNonNull(message, "message must not be null"));
+  public MessageMatcherException(String message, Throwable cause) {
+    super(message, cause);
   }
 }

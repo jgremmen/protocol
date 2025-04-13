@@ -16,7 +16,7 @@
 package de.sayayi.lib.protocol.matcher;
 
 import de.sayayi.lib.protocol.ProtocolEntry.Message;
-import de.sayayi.lib.protocol.StringProtocolFactory;
+import de.sayayi.lib.protocol.factory.StringProtocolFactory;
 import org.junit.jupiter.api.Test;
 
 import lombok.val;

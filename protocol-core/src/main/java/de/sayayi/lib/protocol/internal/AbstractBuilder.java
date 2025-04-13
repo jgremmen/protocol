@@ -13,27 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.sayayi.lib.protocol.message.processor;
+package de.sayayi.lib.protocol.internal;
 
-import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
-import de.sayayi.lib.protocol.message.GenericMessageWithId;
+import de.sayayi.lib.protocol.Protocol.ProtocolMessageBuilder;
 
 import org.jetbrains.annotations.NotNull;
 
-import static java.util.Objects.requireNonNull;
-
 
 /**
+ * Generic abstract builder class with a reference to the protocol instance that created the builder.
+ *
+ * @param <M>  internal message object type
+ *
  * @author Jeroen Gremmen
- * @since 0.7.0
  */
-public enum StringMessageProcessor implements MessageProcessor<String>
+abstract class AbstractBuilder<M,B extends ProtocolMessageBuilder<M>>
 {
-  INSTANCE;
+  /**
+   * Reference of the protocol this builder is associated with.
+   */
+  protected final @NotNull AbstractProtocol<M,B> protocol;
 
 
-  @Override
-  public @NotNull MessageWithId<String> processMessage(@NotNull String message) {
-    return new GenericMessageWithId<>(requireNonNull(message, "message must not be null"));
+  protected AbstractBuilder(@NotNull AbstractProtocol<M,B> protocol) {
+    this.protocol = protocol;
   }
 }

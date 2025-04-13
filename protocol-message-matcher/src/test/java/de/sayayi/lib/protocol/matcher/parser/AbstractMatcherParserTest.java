@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Jeroen Gremmen
+ * Copyright 2022 Jeroen Gremmen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,27 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.sayayi.lib.protocol.message.processor;
+package de.sayayi.lib.protocol.matcher.parser;
 
-import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
-import de.sayayi.lib.protocol.message.GenericMessageWithId;
+import lombok.val;
 
 import org.jetbrains.annotations.NotNull;
 
-import static java.util.Objects.requireNonNull;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static de.sayayi.lib.protocol.ProtocolFactory.DEFAULT_TAG_NAME;
+import static java.util.Collections.unmodifiableSet;
 
 
 /**
  * @author Jeroen Gremmen
- * @since 0.7.0
+ * @since 1.2.1
  */
-public enum StringMessageProcessor implements MessageProcessor<String>
+abstract class AbstractMatcherParserTest
 {
-  INSTANCE;
+  protected static @NotNull Set<String> asTagNameSet(@NotNull String ... s)
+  {
+    val set = new HashSet<>(List.of(s));
+    set.add(DEFAULT_TAG_NAME);
 
-
-  @Override
-  public @NotNull MessageWithId<String> processMessage(@NotNull String message) {
-    return new GenericMessageWithId<>(requireNonNull(message, "message must not be null"));
+    return unmodifiableSet(set);
   }
 }

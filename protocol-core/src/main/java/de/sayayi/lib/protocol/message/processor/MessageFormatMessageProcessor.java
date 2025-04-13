@@ -20,7 +20,7 @@ import de.sayayi.lib.message.MessageFactory;
 import de.sayayi.lib.message.exception.MessageParserException;
 import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
 import de.sayayi.lib.protocol.exception.ProtocolException;
-import de.sayayi.lib.protocol.spi.GenericMessageWithId;
+import de.sayayi.lib.protocol.message.GenericMessageWithId;
 
 import org.jetbrains.annotations.NotNull;
 

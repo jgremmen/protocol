@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Jeroen Gremmen
+ * Copyright 2022 Jeroen Gremmen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,36 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.sayayi.lib.protocol;
+package de.sayayi.lib.protocol.matcher.parser;
 
-import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.factory.GenericProtocolFactory;
-import de.sayayi.lib.protocol.message.GenericMessageWithId;
 import de.sayayi.lib.protocol.message.formatter.ToStringMessageFormatter;
+import de.sayayi.lib.protocol.message.processor.StringMessageProcessor;
 import org.junit.jupiter.api.Test;
 
 import lombok.val;
 
-import static de.sayayi.lib.protocol.Level.Shared.LOWEST;
-import static de.sayayi.lib.protocol.matcher.MessageMatchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
  * @author Jeroen Gremmen
+ * @since 1.2.1
  */
-public class ProtocolFactoryTest
+class ServiceTest extends AbstractMatcherParserTest
 {
   @Test
-  public void testProcessMessage()
+  void testCompoundOr()
   {
-    val factory = new GenericProtocolFactory<>(message -> new GenericMessageWithId<>(message + "(ok)"),
+    val factory = new GenericProtocolFactory<>(StringMessageProcessor.INSTANCE,
         ToStringMessageFormatter.IDENTITY);
-    val protocol = factory.createProtocol().debug().message("msg");
-    val iterator = protocol.iterator(is(LOWEST));
+    val matcher = factory.parseTagSelector("system or not(test-ticket)");
 
-    iterator.next();  // protocol start
-
-    assertEquals("msg(ok)", ((MessageEntry<String>)iterator.next()).getMessage());
+    assertTrue(matcher.match(asTagNameSet("mytag", "system")));
+    assertFalse(matcher.match(asTagNameSet("test-ticket")));
+    assertTrue(matcher.match(asTagNameSet("mytag")));
   }
 }

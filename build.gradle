@@ -66,6 +66,7 @@ configure(subprojects.findAll { it.name.startsWith('protocol-') }) {
     }
 
     options.encoding = 'UTF-8'
+    options.compilerArgs += [ '--module-path', configurations.compileClasspath.asPath ]
   }
 
 

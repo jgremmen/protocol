@@ -21,6 +21,7 @@ import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.ProtocolEnd;
 import de.sayayi.lib.protocol.ProtocolIterator.ProtocolStart;
 import de.sayayi.lib.protocol.exception.ProtocolException;
+import de.sayayi.lib.protocol.factory.StringProtocolFactory;
 import de.sayayi.lib.protocol.matcher.MessageMatcher;
 import org.junit.jupiter.api.Test;
 

@@ -18,6 +18,7 @@ package de.sayayi.lib.protocol;
 import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.GroupStartEntry;
 import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
+import de.sayayi.lib.protocol.factory.StringProtocolFactory;
 import org.junit.jupiter.api.Test;
 
 import lombok.val;
@@ -33,6 +34,7 @@ import static de.sayayi.lib.protocol.matcher.MessageMatchers.is;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.isError;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -66,7 +68,7 @@ public class ProtocolIteratorTest
     GroupStartEntry<String> grpEntry;
     MessageEntry<String> msgEntry;
 
-    assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolStart);
+    assertInstanceOf(ProtocolIterator.ProtocolStart.class, iterator.next());
 
     msgEntry = (MessageEntry<String>)iterator.next();
     assertTrue(msgEntry.isFirst());
@@ -106,7 +108,7 @@ public class ProtocolIteratorTest
     assertEquals(2, msgEntry.getDepth());
     assertEquals("d2,msg2", msgEntry.getMessage());
 
-    assertTrue(iterator.next() instanceof ProtocolIterator.GroupEndEntry);
+    assertInstanceOf(ProtocolIterator.GroupEndEntry.class, iterator.next());
 
     msgEntry = (MessageEntry<String>)iterator.next();
     assertFalse(msgEntry.isFirst());
@@ -114,8 +116,8 @@ public class ProtocolIteratorTest
     assertEquals(1, msgEntry.getDepth());
     assertEquals("d1,msg2", msgEntry.getMessage());
 
-    assertTrue(iterator.next() instanceof ProtocolIterator.GroupEndEntry);
-    assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolEnd);
+    assertInstanceOf(ProtocolIterator.GroupEndEntry.class, iterator.next());
+    assertInstanceOf(ProtocolIterator.ProtocolEnd.class, iterator.next());
   }
 
 
@@ -135,7 +137,7 @@ public class ProtocolIteratorTest
     GroupStartEntry<String> grpEntry;
     MessageEntry<String> msgEntry;
 
-    assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolStart);
+    assertInstanceOf(ProtocolIterator.ProtocolStart.class, iterator.next());
 
     grpEntry = (GroupStartEntry<String>)iterator.next();
     assertTrue(grpEntry.isFirst());
@@ -149,7 +151,7 @@ public class ProtocolIteratorTest
     assertEquals(1, msgEntry.getDepth());
     assertEquals("grp #1, msg #1", msgEntry.getMessage());
 
-    assertTrue(iterator.next() instanceof ProtocolIterator.GroupEndEntry);
+    assertInstanceOf(ProtocolIterator.GroupEndEntry.class, iterator.next());
 
     msgEntry = (MessageEntry<String>)iterator.next();
     assertFalse(msgEntry.isFirst());
@@ -157,7 +159,7 @@ public class ProtocolIteratorTest
     assertEquals(0, msgEntry.getDepth());
     assertEquals("grp #2, msg #1", msgEntry.getMessage());
 
-    assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolEnd);
+    assertInstanceOf(ProtocolIterator.ProtocolEnd.class, iterator.next());
   }
 
 
@@ -168,8 +170,8 @@ public class ProtocolIteratorTest
     val protocol = factory.createProtocol().debug().message("msg");
     val iterator = protocol.iterator(isError());
 
-    assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolStart);
-    assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolEnd);
+    assertInstanceOf(ProtocolIterator.ProtocolStart.class, iterator.next());
+    assertInstanceOf(ProtocolIterator.ProtocolEnd.class, iterator.next());
   }
 
 
@@ -183,12 +185,12 @@ public class ProtocolIteratorTest
     DepthEntry<String> entry;
     MessageEntry<String> message;
 
-    assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolStart);
+    assertInstanceOf(ProtocolIterator.ProtocolStart.class, iterator.next());
 
     // msg 1
     assertTrue(iterator.hasNext());
     entry = iterator.next();
-    assertTrue(entry instanceof MessageEntry);
+    assertInstanceOf(MessageEntry.class, entry);
     message = (MessageEntry<String>)entry;
     assertEquals(0, message.getDepth());
     assertTrue(message.isFirst());
@@ -196,7 +198,7 @@ public class ProtocolIteratorTest
     assertEquals("msg #1", message.getMessage());
     assertEquals(DEBUG, message.getLevel());
 
-    assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolEnd);
+    assertInstanceOf(ProtocolIterator.ProtocolEnd.class, iterator.next());
   }
 
 
@@ -215,12 +217,12 @@ public class ProtocolIteratorTest
     DepthEntry<String> entry;
     MessageEntry<String> message;
 
-    assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolStart);
+    assertInstanceOf(ProtocolIterator.ProtocolStart.class, iterator.next());
 
     // msg 1
     assertTrue(iterator.hasNext());
     entry = iterator.next();
-    assertTrue(entry instanceof MessageEntry);
+    assertInstanceOf(MessageEntry.class, entry);
     message = (MessageEntry<String>)entry;
     assertEquals(0, message.getDepth());
     assertTrue(message.isFirst());
@@ -231,7 +233,7 @@ public class ProtocolIteratorTest
     // msg 2
     assertTrue(iterator.hasNext());
     entry = iterator.next();
-    assertTrue(entry instanceof MessageEntry);
+    assertInstanceOf(MessageEntry.class, entry);
     message = (MessageEntry<String>)entry;
     assertEquals(0, message.getDepth());
     assertFalse(message.isFirst());
@@ -242,7 +244,7 @@ public class ProtocolIteratorTest
     // msg 3
     assertTrue(iterator.hasNext());
     entry = iterator.next();
-    assertTrue(entry instanceof MessageEntry);
+    assertInstanceOf(MessageEntry.class, entry);
     message = (MessageEntry<String>)entry;
     assertEquals(0, message.getDepth());
     assertFalse(message.isFirst());
@@ -250,7 +252,7 @@ public class ProtocolIteratorTest
     assertEquals("msg #3", message.getMessage());
     assertEquals(ERROR, message.getLevel());
 
-    assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolEnd);
+    assertInstanceOf(ProtocolIterator.ProtocolEnd.class, iterator.next());
   }
 
 
@@ -266,11 +268,11 @@ public class ProtocolIteratorTest
 
     val iterator = protocol.iterator(is(LOWEST));
 
-    assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolStart);
-    assertTrue(iterator.next() instanceof ProtocolIterator.GroupStartEntry);
-    assertTrue(iterator.next() instanceof ProtocolIterator.MessageEntry);
-    assertTrue(iterator.next() instanceof ProtocolIterator.GroupEndEntry);
-    assertTrue(iterator.next() instanceof ProtocolIterator.ProtocolEnd);
+    assertInstanceOf(ProtocolIterator.ProtocolStart.class, iterator.next());
+    assertInstanceOf(GroupStartEntry.class, iterator.next());
+    assertInstanceOf(MessageEntry.class, iterator.next());
+    assertInstanceOf(ProtocolIterator.GroupEndEntry.class, iterator.next());
+    assertInstanceOf(ProtocolIterator.ProtocolEnd.class, iterator.next());
   }
 
 
