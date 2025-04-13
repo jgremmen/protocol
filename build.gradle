@@ -111,6 +111,9 @@ configure(subprojects.findAll { it.name.startsWith('protocol-') }) {
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
   }
+
+
+  jar.dependsOn test
 }
 
 
