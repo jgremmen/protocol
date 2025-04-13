@@ -254,25 +254,25 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
     @Override
     public @Nullable Object put(String key, Object value) {
-      throw new UnsupportedOperationException();
+      throw new UnsupportedOperationException("put");
     }
 
 
     @Override
     public Object remove(Object key) {
-      throw new UnsupportedOperationException();
+      throw new UnsupportedOperationException("remove");
     }
 
 
     @Override
     public void putAll(@NotNull Map<? extends String,?> m) {
-      throw new UnsupportedOperationException();
+      throw new UnsupportedOperationException("putAll");
     }
 
 
     @Override
     public void clear() {
-      throw new UnsupportedOperationException();
+      throw new UnsupportedOperationException("clear");
     }
 
 
@@ -333,43 +333,43 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
     @Override
     public boolean add(T e) {
-      throw new UnsupportedOperationException();
+      throw new UnsupportedOperationException("add");
     }
 
 
     @Override
     public boolean remove(Object o) {
-      throw new UnsupportedOperationException();
+      throw new UnsupportedOperationException("remove");
     }
 
 
     @Override
     public boolean addAll(@NotNull Collection<? extends T> c) {
-      throw new UnsupportedOperationException();
+      throw new UnsupportedOperationException("addAll");
     }
 
 
     @Override
     public void clear() {
-      throw new UnsupportedOperationException();
+      throw new UnsupportedOperationException("clear");
     }
 
 
     @Override
     public boolean removeAll(@NotNull Collection<?> c) {
-      throw new UnsupportedOperationException();
+      throw new UnsupportedOperationException("removeAll");
     }
 
 
     @Override
     public boolean removeIf(@NotNull Predicate<? super T> filter) {
-      throw new UnsupportedOperationException();
+      throw new UnsupportedOperationException("removeIf");
     }
 
 
     @Override
     public boolean retainAll(@NotNull Collection<?> c) {
-      throw new UnsupportedOperationException();
+      throw new UnsupportedOperationException("retainAll");
     }
 
 
@@ -403,7 +403,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
       if (!iterator.hasNext())
         return "[]";
 
-      var s = new StringJoiner(", ", "[", "]");
+      final var s = new StringJoiner(", ", "[", "]");
 
       iterator.forEachRemaining(e -> s.add(e.toString()));
 
@@ -579,7 +579,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     @Override
     public @NotNull Iterator<Object> iterator()
     {
-      var iterator = map.iterator();
+      final var iterator = map.iterator();
 
       return new Iterator<>() {
         @Override
@@ -610,7 +610,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
     @Override
     public <T> T @NotNull [] toArray(T @NotNull [] a) {
-      throw new UnsupportedOperationException();
+      throw new UnsupportedOperationException("toArray");
     }
 
 
@@ -650,7 +650,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
     @Override
     public Object setValue(Object value) {
-      throw new UnsupportedOperationException();
+      throw new UnsupportedOperationException("setValue");
     }
 
 
@@ -662,7 +662,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
       if (!(o instanceof ParameterEntry))
         return false;
 
-      final ParameterEntry that = (ParameterEntry)o;
+      final var that = (ParameterEntry)o;
 
       return key.equals(that.key) && Objects.equals(value, that.value);
     }
@@ -752,7 +752,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
       if (nextEntry == null)
         throw new NoSuchElementException();
 
-      var next = nextEntry;
+      final var next = nextEntry;
 
       prepareNext();
 

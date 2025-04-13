@@ -15,6 +15,7 @@
  */
 package de.sayayi.lib.protocol;
 
+import de.sayayi.lib.protocol.Level.Shared;
 import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
 import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
@@ -282,11 +283,11 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @return  message builder instance for the debug message, never {@code null}
    *
-   * @see Level.Shared#DEBUG DEBUG
+   * @see Shared#DEBUG DEBUG
    */
   @Contract(pure = true, value = "-> new")
   default @NotNull ProtocolMessageBuilder<M> debug() {
-    return add(Level.Shared.DEBUG);
+    return add(Shared.DEBUG);
   }
 
 
@@ -297,11 +298,11 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @return  message builder instance for the info message, never {@code null}
    *
-   * @see Level.Shared#INFO INFO
+   * @see Shared#INFO INFO
    */
   @Contract(pure = true, value = "-> new")
   default @NotNull ProtocolMessageBuilder<M> info() {
-    return add(Level.Shared.INFO);
+    return add(Shared.INFO);
   }
 
 
@@ -312,11 +313,11 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @return  message builder instance for the warning message, never {@code null}
    *
-   * @see Level.Shared#WARN WARN
+   * @see Shared#WARN WARN
    */
   @Contract(pure = true, value = "-> new")
   default @NotNull ProtocolMessageBuilder<M> warn() {
-    return add(Level.Shared.WARN);
+    return add(Shared.WARN);
   }
 
 
@@ -327,11 +328,11 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @return  message builder instance for the error message, never {@code null}
    *
-   * @see Level.Shared#ERROR ERROR
+   * @see Shared#ERROR ERROR
    */
   @Contract(pure = true, value = "-> new")
   default @NotNull ProtocolMessageBuilder<M> error() {
-    return add(Level.Shared.ERROR);
+    return add(Shared.ERROR);
   }
 
 
@@ -345,11 +346,11 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @return  message builder instance for the error message, never {@code null}
    *
-   * @see Level.Shared#ERROR ERROR
+   * @see Shared#ERROR ERROR
    */
   @Contract(pure = true, value = "_ -> new")
   default @NotNull ProtocolMessageBuilder<M> error(@NotNull Throwable throwable) {
-    return add(Level.Shared.ERROR).withThrowable(throwable);
+    return add(Shared.ERROR).withThrowable(throwable);
   }
 
 
