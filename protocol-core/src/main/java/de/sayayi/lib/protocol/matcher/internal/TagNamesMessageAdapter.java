@@ -23,7 +23,6 @@ import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -41,9 +40,11 @@ public final class TagNamesMessageAdapter implements Message<Object>
   private final Set<String> tagNames;
 
 
-  public TagNamesMessageAdapter(@NotNull Collection<String> tagNames)
+  public TagNamesMessageAdapter(@NotNull Iterable<String> tagNames)
   {
-    var tagNameSet = new HashSet<>(tagNames);
+    final var tagNameSet = new HashSet<String>();
+
+    tagNames.forEach(tagNameSet::add);
 
     tagNameSet.add(DEFAULT_TAG_NAME);
     tagNameSet.remove("");

@@ -27,8 +27,6 @@ import de.sayayi.lib.protocol.matcher.internal.TagNamesMessageAdapter;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-
 import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
 
 
@@ -85,7 +83,7 @@ public interface MessageMatcher
 
     return new TagSelector() {
       @Override
-      public boolean match(@NotNull Collection<String> tagNames) {
+      public boolean match(@NotNull Iterable<String> tagNames) {
         return matches(HIGHEST, new TagNamesMessageAdapter(tagNames));
       }
 

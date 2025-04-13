@@ -32,7 +32,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
@@ -139,7 +138,7 @@ public final class MessageMatchers
   }
 
 
-  @Contract(value = "_ -> new", pure = true)
+  @Contract(pure = true)
   public static @NotNull Junction hasTag(@NotNull String tagName)
   {
     if (tagName.isEmpty())
@@ -168,10 +167,10 @@ public final class MessageMatchers
   }
 
 
-  @Contract(value = "_ -> new", pure = true)
+  @Contract(pure = true)
   public static @NotNull Junction hasAnyOf(@NotNull Collection<String> tagNames)
   {
-    final Set<String> uniqueTagNames = new TreeSet<>(tagNames);
+    final var uniqueTagNames = new TreeSet<>(tagNames);
     uniqueTagNames.remove("");
 
     if (uniqueTagNames.remove(DEFAULT_TAG_NAME))
@@ -185,17 +184,17 @@ public final class MessageMatchers
   }
 
 
-  @Contract(value = "_ -> new", pure = true)
+  @Contract(pure = true)
   public static @NotNull Junction hasAnyOf(@NotNull String... tagNames) {
     return hasAnyOf(List.of(tagNames));
   }
 
 
-  @Contract(value = "_ -> new", pure = true)
+  @Contract(pure = true)
   public static @NotNull Junction hasAllOf(@NotNull Collection<String> tagNames)
   {
-    var uniqueTagNames = new TreeSet<>(tagNames);
-    var hasDefaultTag = uniqueTagNames.remove(DEFAULT_TAG_NAME);
+    final var uniqueTagNames = new TreeSet<>(tagNames);
+    final var hasDefaultTag = uniqueTagNames.remove(DEFAULT_TAG_NAME);
 
     if (uniqueTagNames.remove(""))
       return NONE;
@@ -208,31 +207,31 @@ public final class MessageMatchers
   }
 
 
-  @Contract(value = "_ -> new", pure = true)
+  @Contract(pure = true)
   public static @NotNull Junction hasAllOf(@NotNull String... tagNames) {
     return hasAllOf(List.of(tagNames));
   }
 
 
-  @Contract(value = "_ -> new", pure = true)
+  @Contract(pure = true)
   public static @NotNull Junction hasNoneOf(@NotNull Collection<String> tagNames) {
     return not(hasAnyOf(tagNames));
   }
 
 
-  @Contract(value = "_ -> new", pure = true)
+  @Contract(pure = true)
   public static @NotNull Junction hasNoneOf(@NotNull String... tagNames) {
     return hasNoneOf(List.of(tagNames));
   }
 
 
-  @Contract(value = "_ -> new", pure = true)
+  @Contract(pure = true)
   public static @NotNull Junction is(@NotNull TagSelector tagSelector) {
     return tagSelector.asMessageMatcher().asJunction();
   }
 
 
-  @Contract(value = "_ -> new", pure = true)
+  @Contract(pure = true)
   public static @NotNull Junction hasParam(@NotNull String parameterName)
   {
     if (parameterName.isEmpty())
@@ -253,7 +252,7 @@ public final class MessageMatchers
   }
 
 
-  @Contract(value = "_ -> new", pure = true)
+  @Contract(pure = true)
   public static @NotNull Junction hasParamValue(@NotNull String parameterName)
   {
     if (parameterName.isEmpty())
@@ -274,7 +273,7 @@ public final class MessageMatchers
   }
 
 
-  @Contract(value = "_, _ -> new", pure = true)
+  @Contract(pure = true)
   public static @NotNull Junction hasParamValue(@NotNull String parameterName, Object value)
   {
     if (parameterName.isEmpty())
@@ -309,7 +308,7 @@ public final class MessageMatchers
    * @see #is(Level)
    * @see Level.Shared#DEBUG
    */
-  @Contract(value = "-> new", pure = true)
+  @Contract(pure = true)
   public static @NotNull Junction isDebug() {
     return LevelMatcher.DEBUG;
   }
@@ -324,7 +323,7 @@ public final class MessageMatchers
    * @see #is(Level)
    * @see Level.Shared#INFO
    */
-  @Contract(value = "-> new", pure = true)
+  @Contract(pure = true)
   public static @NotNull Junction isInfo() {
     return LevelMatcher.INFO;
   }
@@ -339,7 +338,7 @@ public final class MessageMatchers
    * @see #is(Level)
    * @see Level.Shared#WARN
    */
-  @Contract(value = "-> new", pure = true)
+  @Contract(pure = true)
   public static @NotNull Junction isWarn() {
     return LevelMatcher.WARN;
   }
@@ -354,7 +353,7 @@ public final class MessageMatchers
    * @see #is(Level)
    * @see Level.Shared#ERROR
    */
-  @Contract(value = "-> new", pure = true)
+  @Contract(pure = true)
   public static @NotNull Junction isError() {
     return LevelMatcher.ERROR;
   }
@@ -384,7 +383,7 @@ public final class MessageMatchers
    * @return  matcher instance which checks for messages with level between {@code levelLow}
    *          and {@code levelHigh}
    */
-  @Contract(value = "_, _ -> new", pure = true)
+  @Contract(pure = true)
   public static @NotNull Junction between(@NotNull Level levelLow, @NotNull Level levelHigh)
   {
     if (Level.equals(levelHigh, HIGHEST))
@@ -415,7 +414,7 @@ public final class MessageMatchers
    * @return  matcher instance which checks for messages with the given {@code messageId},
    *          never {@code null}
    */
-  @Contract(value = "_ -> new", pure = true)
+  @Contract(pure = true)
   public static @NotNull Junction hasMessage(@NotNull String messageId)
   {
     if (messageId.isEmpty())
@@ -436,7 +435,7 @@ public final class MessageMatchers
   }
 
 
-  static final Junction IN_GROUP_MATCHER = new Junction() {
+  private static final Junction IN_GROUP_MATCHER = new Junction() {
     @Override
     public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
       return message.getProtocol().isProtocolGroup();
@@ -487,7 +486,7 @@ public final class MessageMatchers
   @Contract(pure = true)
   public static @NotNull Junction inGroup(@NotNull String groupName)
   {
-    if (groupName.isEmpty())
+    if (requireNonNull(groupName).isEmpty())
       return IN_GROUP_MATCHER;
 
     return new Junction() {
@@ -523,7 +522,7 @@ public final class MessageMatchers
   @Contract(pure = true)
   public static @NotNull Junction inGroupRegex(@NotNull String groupNameRegex)
   {
-    var pattern = Pattern.compile(requireNonNull(groupNameRegex));
+    final var pattern = Pattern.compile(requireNonNull(groupNameRegex));
 
     return new Junction() {
       @Override
@@ -589,8 +588,8 @@ public final class MessageMatchers
   @Contract(value = "_ -> new", pure = true)
   public static @NotNull Junction inProtocol(@NotNull Protocol<?> protocol)
   {
-    var protocolFactory = protocol.getFactory();
-    final int protocolId = protocol.getId();
+    final var protocolFactory = protocol.getFactory();
+    final var protocolId = protocol.getId();
 
     return new Junction() {
       @Override

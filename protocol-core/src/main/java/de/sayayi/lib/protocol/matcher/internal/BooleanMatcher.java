@@ -23,8 +23,6 @@ import de.sayayi.lib.protocol.matcher.MessageMatcher.Junction;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-
 
 /**
  * @author Jeroen Gremmen
@@ -50,7 +48,7 @@ public final class BooleanMatcher implements Junction, TagSelector
 
 
   @Override
-  public boolean match(@NotNull Collection<String> tagNames) {
+  public boolean match(@NotNull Iterable<String> tagNames) {
     return matches;
   }
 
