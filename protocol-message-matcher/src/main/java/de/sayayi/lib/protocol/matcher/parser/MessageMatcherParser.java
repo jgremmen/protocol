@@ -31,6 +31,7 @@ import de.sayayi.lib.protocol.matcher.internal.Disjunction;
 import de.sayayi.lib.protocol.matcher.internal.LevelMatcher;
 import de.sayayi.lib.protocol.matcher.internal.Negation;
 import de.sayayi.lib.protocol.matcher.parser.antlr.MessageMatcherBaseListener;
+import de.sayayi.lib.protocol.matcher.parser.antlr.MessageMatcherErrorStrategy;
 import de.sayayi.lib.protocol.matcher.parser.antlr.MessageMatcherLexer;
 import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -87,7 +88,7 @@ import static java.util.stream.Collectors.toList;
  * @author Jeroen Gremmen
  * @since 1.2.0  (refactored in 1.6.0)
  */
-public class MessageMatcherParser extends AbstractAntlr4Parser
+public final class MessageMatcherParser extends AbstractAntlr4Parser
 {
   private static final SyntaxErrorFormatter SYNTAX_ERROR_FORMATTER =
       new GenericSyntaxErrorFormatter(1, 0, 0, "> ");
@@ -95,8 +96,8 @@ public class MessageMatcherParser extends AbstractAntlr4Parser
   public static final MessageMatcherParser INSTANCE =
       new MessageMatcherParser(null, null);
 
-  protected final ClassLoader classLoader;
-  protected final Function<String,Level> levelResolver;
+  private final ClassLoader classLoader;
+  private final Function<String,Level> levelResolver;
 
 
   public MessageMatcherParser(ClassLoader classLoader, Function<String,Level> levelResolver)

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.sayayi.lib.protocol.matcher.parser;
+package de.sayayi.lib.protocol.matcher.parser.antlr;
 
 import org.antlr.v4.runtime.ANTLRErrorStrategy;
 import org.antlr.v4.runtime.DefaultErrorStrategy;
@@ -37,14 +37,14 @@ import static org.antlr.v4.runtime.Token.EOF;
  * @author Jeroen Gremmen
  * @since 1.2.0  (refactored in 1.6.0)
  */
-class MessageMatcherErrorStrategy extends DefaultErrorStrategy
+public final class MessageMatcherErrorStrategy extends DefaultErrorStrategy
 {
-  static final ANTLRErrorStrategy INSTANCE = new MessageMatcherErrorStrategy();
+  public static final ANTLRErrorStrategy INSTANCE = new MessageMatcherErrorStrategy();
 
   private static final String EOF_DISPLAY_NAME = "end of matcher";
 
 
-  MessageMatcherErrorStrategy() {
+  private MessageMatcherErrorStrategy() {
   }
 
 
