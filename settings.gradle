@@ -16,7 +16,7 @@ pluginManagement {
 include 'protocol-core'
 include 'protocol-html'
 include 'protocol-message-matcher'
-include 'documentation'
+//include 'documentation'
 
 
 rootProject.name = 'protocol'
