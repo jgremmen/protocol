@@ -21,14 +21,14 @@ public abstract class HtmlEncoder
   private static final Map<String,String> ENCODER_MAP = new LinkedHashMap<>();
 
   static {
-    ENCODER_MAP.put("org.unbescape.html.HtmlEscape", "UnbescapeHtmlEncoder");
-    ENCODER_MAP.put("org.owasp.encoder.Encode", "OwaspHtmlEncoder");
     ENCODER_MAP.put("org.springframework.web.util.HtmlUtils", "SpringWebHtmlEncoder");
     ENCODER_MAP.put("com.google.common.html.HtmlEscapers", "GuavaHtmlEncoder");
     ENCODER_MAP.put("org.apache.commons.text.StringEscapeUtils", "CommonsTextHtmlEncoder");
+    ENCODER_MAP.put("org.unbescape.html.HtmlEscape", "UnbescapeHtmlEncoder");
+    ENCODER_MAP.put("org.owasp.encoder.Encode", "OwaspHtmlEncoder");
   }
 
-  private static HtmlEncoder INSTANCE = null;
+  private static volatile HtmlEncoder INSTANCE = null;
 
 
   @Contract(pure = true)
@@ -39,7 +39,11 @@ public abstract class HtmlEncoder
   {
     if (INSTANCE == null)
     {
-      INSTANCE = ServiceLoader.load(HtmlEncoder.class).findFirst().orElseGet(HtmlEncoder::probeForImplementations);
+      INSTANCE = ServiceLoader
+          .load(HtmlEncoder.class)
+          .findFirst()
+          .orElseGet(HtmlEncoder::probeForImplementations);
+
       if (INSTANCE == null)
         throw new UnsupportedOperationException("no html encoders found, please provide any of " + ENCODER_MAP.keySet());
     }

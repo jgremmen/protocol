@@ -25,7 +25,7 @@ import static com.google.common.html.HtmlEscapers.htmlEscaper;
  * @since 0.6.0
  */
 @SuppressWarnings("unused")
-final class GuavaHtmlEncoder extends HtmlEncoder
+public final class GuavaHtmlEncoder extends HtmlEncoder
 {
   @Override
   public @NotNull String encodeHtml(@NotNull String text) {

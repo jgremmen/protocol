@@ -25,7 +25,7 @@ import static org.owasp.encoder.Encode.forHtml;
  * @since 0.6.0
  */
 @SuppressWarnings("unused")
-final class OwaspHtmlEncoder extends HtmlEncoder
+public final class OwaspHtmlEncoder extends HtmlEncoder
 {
   @Override
   public @NotNull String encodeHtml(@NotNull String text) {

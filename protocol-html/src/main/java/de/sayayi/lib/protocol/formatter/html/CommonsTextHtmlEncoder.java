@@ -25,7 +25,7 @@ import static org.apache.commons.text.StringEscapeUtils.escapeHtml4;
  * @since 0.6.0
  */
 @SuppressWarnings("unused")
-final class CommonsTextHtmlEncoder extends HtmlEncoder
+public final class CommonsTextHtmlEncoder extends HtmlEncoder
 {
   @Override
   public @NotNull String encodeHtml(@NotNull String text) {

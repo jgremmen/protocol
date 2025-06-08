@@ -29,7 +29,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -77,7 +76,6 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
 
 
   @Contract(pure = true)
-  @SuppressWarnings("WeakerAccess")
   protected String levelToHtmlClass(@NotNull Level level) {
     return level.toString().toLowerCase();
   }
@@ -86,7 +84,7 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
   @Override
   public void protocolStart()
   {
-    var divClasses = new String[] { "protocol", protocolStartDivClass() };
+    final var divClasses = new String[] { "protocol", protocolStartDivClass() };
 
     html.append("<div").append(classFromArray(divClasses)).append(">\n")
         .append("  <ul").append(classFromArray("depth-0", protocolStartUlClass())).append(">\n");
@@ -116,19 +114,17 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
   @Override
   public void message(@NotNull MessageEntry<M> message)
   {
-    var msg = messageFormatter.formatMessage(message);
-
     indent(message.getDepth());
 
-    var liClasses = new String[] { "level-" + levelToHtmlClass(message.getLevel()), messageLiClass(message) };
-    var liSpanClasses = new String[] {
+    final var liClasses = new String[] { "level-" + levelToHtmlClass(message.getLevel()), messageLiClass(message) };
+    final var liSpanClasses = new String[] {
         message.isGroupMessage() ? "group-message" : null, "message", messageSpanClass(message)
     };
 
     html.append("<li").append(classFromArray(liClasses)).append('>')
         .append(messagePrefixHtml(message))
-        .append("<span").append(classFromArray(liSpanClasses)).append(">")
-        .append(encoder.encodeHtml(msg)).append("</span>")
+        .append("<span").append(classFromArray(liSpanClasses)).append('>')
+        .append(encoder.encodeHtml(messageFormatter.formatMessage(message))).append("</span>")
         .append(messageSuffixHtml(message))
         .append("</li>\n");
   }
@@ -161,27 +157,26 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
   @Override
   public void groupStart(@NotNull GroupStartEntry<M> group)
   {
-    var depth = group.getDepth();
-    var message = group.getGroupMessage();
-    var msg = messageFormatter.formatMessage(group.getGroupMessage());
+    final var depth = group.getDepth();
+    final var message = group.getGroupMessage();
+    final var msg = messageFormatter.formatMessage(group.getGroupMessage());
 
     indent(depth - 1);
 
-    var liClasses = new String[] { "level-" + levelToHtmlClass(message.getLevel()), groupHeaderLiClass(message) };
-    var liSpanClasses = new String[] { "group", groupHeaderLiSpanClass(message) };
+    final var liClasses = new String[] { "level-" + levelToHtmlClass(message.getLevel()), groupHeaderLiClass(message) };
 
     html.append("<li").append(classFromArray(liClasses)).append('>')
         .append(groupHeaderPrefixHtml(message))
-        .append("<span").append(classFromArray(liSpanClasses)).append('>')
+        .append("<span").append(classFromArray("group", groupHeaderLiSpanClass(message))).append('>')
         .append(encoder.encodeHtml(msg)).append("</span>")
         .append(groupHeaderSuffixHtml(message))
         .append("</li>\n");
 
     indent(depth - 1);
 
-    var ulClasses = new String[] { "depth-" + depth, "group", groupStartUlClass(group) };
-
-    html.append("<ul").append(classFromArray(ulClasses)).append(">\n");
+    html.append("<ul")
+        .append(classFromArray("depth-" + depth, "group", groupStartUlClass(group)))
+        .append(">\n");
   }
 
 
@@ -235,7 +230,7 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
   {
     if (classNames != null && classNames.length > 0)
     {
-      var cls = new StringBuilder(" class=\"");
+      final var cls = new StringBuilder(" class=\"");
       int n = 0;
 
       for(var className: classNames)
@@ -259,7 +254,8 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
   @Contract(pure = true)
   protected void indent(int depth)
   {
-    var spaces = new char[(depth + 2) * 2];
+    final var spaces = new char[(depth + 2) * 2];
+
     fill(spaces, ' ');
 
     html.append(spaces);
@@ -315,7 +311,7 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
 
     static
     {
-      final Map<Level,String> fa4LevelIconClassMap = new TreeMap<>(SORT_DESCENDING);
+      final var fa4LevelIconClassMap = new TreeMap<Level,String>(SORT_DESCENDING);
       fa4LevelIconClassMap.put(ERROR, "fa fa-times");
       fa4LevelIconClassMap.put(WARN, "fa fa-exclamation-triangle");
       fa4LevelIconClassMap.put(INFO, "fa fa-info-circle");
@@ -323,7 +319,7 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
       fa4LevelIconClassMap.put(LOWEST, "fa fa-wrench");
       FA4_LEVEL_ICON_CLASSES = unmodifiableMap(fa4LevelIconClassMap);
 
-      final Map<Level,String> fa5LevelIconClassMap = new TreeMap<>(SORT_DESCENDING);
+      final var fa5LevelIconClassMap = new TreeMap<Level,String>(SORT_DESCENDING);
       fa5LevelIconClassMap.put(ERROR, "fas fa-times");
       fa5LevelIconClassMap.put(WARN, "fas fa-exclamation-triangle");
       fa5LevelIconClassMap.put(INFO, "fas fa-info-circle");
@@ -376,13 +372,13 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
     @Contract(pure = true)
     protected String getIconClassName(@NotNull GenericMessageWithLevel<M> message)
     {
-      final Level level = message.getLevel();
-      final String iconClassName = levelIconMap.get(level);
+      final var level = message.getLevel();
+      final var iconClassName = levelIconMap.get(level);
 
       if (iconClassName != null)
         return iconClassName;
 
-      for(final Entry<Level,String> levelIconClassEntry: levelIconMap.entrySet())
+      for(final var levelIconClassEntry: levelIconMap.entrySet())
         if (compare(level, levelIconClassEntry.getKey()) >= 0)
           return levelIconClassEntry.getValue();
 

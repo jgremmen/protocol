@@ -25,7 +25,7 @@ import static org.springframework.web.util.HtmlUtils.htmlEscape;
  * @since 0.6.0
  */
 @SuppressWarnings("unused")
-final class SpringWebHtmlEncoder extends HtmlEncoder
+public final class SpringWebHtmlEncoder extends HtmlEncoder
 {
   @Override
   public @NotNull String encodeHtml(@NotNull String text) {

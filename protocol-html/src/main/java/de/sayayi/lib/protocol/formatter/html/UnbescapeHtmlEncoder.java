@@ -25,7 +25,7 @@ import static org.unbescape.html.HtmlEscape.escapeHtml5;
  * @since 0.6.0
  */
 @SuppressWarnings("unused")
-final class UnbescapeHtmlEncoder extends HtmlEncoder
+public final class UnbescapeHtmlEncoder extends HtmlEncoder
 {
   @Override
   public @NotNull String encodeHtml(@NotNull String text) {
