@@ -27,7 +27,7 @@ allprojects {
 
   ext {
     jetbrainsAnnotationsVersion = '26.0.+'
-    junitVersion = '5.12.+'
+    junitVersion = '5.13.+'
     lombokVersion = '1.18.+'
   }
 
