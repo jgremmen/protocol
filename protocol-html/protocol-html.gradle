@@ -2,7 +2,7 @@ description 'Protocol Library Html Protocol Formatter'
 
 
 def commonsTextVersion = '1.13.1'
-def guavaVersion = '33.4.7-jre'
+def guavaVersion = '33.4.8-jre'
 def owaspEncoderVersion = '1.3.1'
 def springVersion = '5.3.39'
 def unbescapeVersion = '1.1.6.RELEASE'
