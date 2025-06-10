@@ -38,6 +38,7 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.LexerNoViableAltException;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.Vocabulary;
+import org.antlr.v4.runtime.misc.IntervalSet;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import org.jetbrains.annotations.Contract;
@@ -54,6 +55,7 @@ import static de.sayayi.lib.protocol.matcher.parser.antlr.MessageMatcherLexer.AL
 import static de.sayayi.lib.protocol.matcher.parser.antlr.MessageMatcherLexer.AND;
 import static de.sayayi.lib.protocol.matcher.parser.antlr.MessageMatcherLexer.ANY;
 import static de.sayayi.lib.protocol.matcher.parser.antlr.MessageMatcherLexer.ANY_OF;
+import static de.sayayi.lib.protocol.matcher.parser.antlr.MessageMatcherLexer.BETWEEN;
 import static de.sayayi.lib.protocol.matcher.parser.antlr.MessageMatcherLexer.COMMA;
 import static de.sayayi.lib.protocol.matcher.parser.antlr.MessageMatcherLexer.DEBUG;
 import static de.sayayi.lib.protocol.matcher.parser.antlr.MessageMatcherLexer.ERROR;
@@ -130,6 +132,34 @@ public final class MessageMatcherParser extends AbstractAntlr4Parser
       @NotNull Token startToken, @NotNull Token stopToken, @NotNull String formattedMessage,
       @NotNull String errorMsg, Exception cause) {
     return new MessageMatcherParserException(errorMsg, formattedMessage, cause);
+  }
+
+
+  @Override
+  protected @NotNull String createTokenRecognitionMessage(@NotNull org.antlr.v4.runtime.Lexer lexer,
+                                                          @NotNull String text, boolean hasEOF) {
+    return "message matcher syntax error at " + getQuotedDisplayText(text);
+  }
+
+
+  private static final IntervalSet IVS_MATCHER = new IntervalSet(
+      ANY, NONE, NOT, THROWABLE, TAG, ANY_OF, ALL_OF, NONE_OF, HAS_PARAM, HAS_PARAM_VALUE, DEBUG,
+      INFO, WARN, ERROR, LEVEL, BETWEEN, MESSAGE, IN_GROUP, IN_GROUP_REGEX, IN_ROOT, AND, OR,
+      L_PAREN, STRING, IDENTIFIER);
+  private static final IntervalSet IVS_TAGNAME = new IntervalSet(STRING, IDENTIFIER);
+
+  @Override
+  protected @NotNull String createInputMismatchMessage(@NotNull org.antlr.v4.runtime.Parser parser,
+                                                       @NotNull IntervalSet expectedTokens,
+                                                       Token mismatchLocationNearToken)
+  {
+    if (IVS_MATCHER.equals(expectedTokens))
+      return "expecting message matcher";
+
+    if (IVS_TAGNAME.equals(expectedTokens))
+      return "expecting tag name";
+
+    return super.createInputMismatchMessage(parser, expectedTokens, mismatchLocationNearToken);
   }
 
 
@@ -266,7 +296,11 @@ public final class MessageMatcherParser extends AbstractAntlr4Parser
         }
 
         if (clazz == null || !Throwable.class.isAssignableFrom(clazz))
-          syntaxError(qualifiedName, "class not found or not of type Throwable");
+        {
+          syntaxError("class not found or not of type Throwable")
+              .with(qualifiedName)
+              .report();
+        }
 
         ctx.matcher = MessageMatchers.hasThrowable((Class<? extends Throwable>)clazz);
       }
@@ -442,7 +476,9 @@ public final class MessageMatcherParser extends AbstractAntlr4Parser
               return;
             }
 
-          syntaxError(ctx, "unknown level '" + name + "'");
+          syntaxError("unknown level '" + name + "'")
+              .with(ctx)
+              .report();
         }
       }
     }
@@ -516,9 +552,9 @@ public final class MessageMatcherParser extends AbstractAntlr4Parser
       add(L_PAREN, "'('", "L_PAREN");
       add(R_PAREN, "')'", "R_PAREN");
       add(COMMA, "','", "COMMA");
-      add(STRING, "<string>", "STRING");
-      add(QUALIFIED_CLASS_NAME, "<qualified class name>", "QUALIFIED_CLASS_NAME");
-      add(IDENTIFIER, "<identifier>", "IDENTIFIER");
+      add(STRING, "string", "STRING");
+      add(QUALIFIED_CLASS_NAME, "qualified class name", "QUALIFIED_CLASS_NAME");
+      add(IDENTIFIER, "identifier", "IDENTIFIER");
       add(WS, "' '", "WS");
     }
   };

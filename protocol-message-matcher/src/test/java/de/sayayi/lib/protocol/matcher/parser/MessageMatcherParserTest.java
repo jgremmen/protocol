@@ -36,6 +36,7 @@ import static de.sayayi.lib.protocol.Level.Shared.WARN;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.any;
 import static de.sayayi.lib.protocol.matcher.MessageMatchers.none;
 import static java.util.Collections.unmodifiableMap;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
@@ -515,9 +516,9 @@ class MessageMatcherParserTest extends AbstractMatcherParserTest
   @DisplayName("Lexer error")
   void testLexerError()
   {
-    assertTrue(assertThrowsExactly(MessageMatcherParserException.class,
-        () -> PARSER.parseMessageMatcher("all-of%("))
-        .getMessage().startsWith("unexpected input"));
+    var ex = assertThrowsExactly(MessageMatcherParserException.class,
+        () -> PARSER.parseMessageMatcher("all-of%("));
+    assertEquals("message matcher syntax error at '%'", ex.getErrorMessage());
   }
 
 
@@ -525,14 +526,16 @@ class MessageMatcherParserTest extends AbstractMatcherParserTest
   @DisplayName("Parser error")
   void testParserError()
   {
-    assertThrowsExactly(MessageMatcherParserException.class, () -> PARSER.parseMessageMatcher(""));
+    var ex = assertThrowsExactly(MessageMatcherParserException.class,
+        () -> PARSER.parseMessageMatcher(""));
+    assertEquals("expecting message matcher", ex.getErrorMessage());
 
-    assertTrue(assertThrowsExactly(MessageMatcherParserException.class,
-        () -> PARSER.parseMessageMatcher("all-of("))
-        .getMessage().startsWith("incomplete matcher"));
+    ex = assertThrowsExactly(MessageMatcherParserException.class,
+        () -> PARSER.parseMessageMatcher("all-of("));
+    assertEquals("expecting tag name", ex.getErrorMessage());
 
-    assertTrue(assertThrowsExactly(MessageMatcherParserException.class,
-        () -> PARSER.parseMessageMatcher("all-of(all-of)"))
-        .getMessage().startsWith("mismatched input"));
+    ex = assertThrowsExactly(MessageMatcherParserException.class,
+        () -> PARSER.parseMessageMatcher("all-of(all-of)"));
+    assertEquals("expecting tag name", ex.getErrorMessage());
   }
 }
