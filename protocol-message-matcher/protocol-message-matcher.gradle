@@ -22,7 +22,7 @@ configurations {
 
 ext {
   antlrVersion = '[4.13.0,4.14)'
-  antlrExtVersion = '[0.4.1,0.6)'
+  antlrExtVersion = '[0.6,0.7)'
 }
 
 
@@ -45,6 +45,7 @@ dependencies {
 
 
 generateGrammarSource {
+  //noinspection GroovyAccessibility
   antlrClasspath = configurations.antlr4
 }
 

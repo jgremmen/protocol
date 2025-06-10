@@ -22,6 +22,7 @@ import java.util.Comparator;
 
 import static java.lang.Integer.MAX_VALUE;
 import static java.lang.Integer.MIN_VALUE;
+import static java.util.Comparator.comparingInt;
 
 
 /**
@@ -36,7 +37,6 @@ import static java.lang.Integer.MIN_VALUE;
  * @since 0.1.0
  */
 @FunctionalInterface
-@SuppressWarnings("java:S1214")
 public interface Level
 {
   /**
@@ -44,7 +44,7 @@ public interface Level
    *
    * @since 0.7.0
    */
-  Comparator<Level> SORT_ASCENDING = Comparator.comparingInt(Level::severity);
+  Comparator<Level> SORT_ASCENDING = comparingInt(Level::severity);
 
 
   /**

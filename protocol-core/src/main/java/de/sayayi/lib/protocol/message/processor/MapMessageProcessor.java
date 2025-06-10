@@ -17,7 +17,7 @@ package de.sayayi.lib.protocol.message.processor;
 
 import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
 import de.sayayi.lib.protocol.exception.ProtocolException;
-import de.sayayi.lib.protocol.spi.GenericMessageWithId;
+import de.sayayi.lib.protocol.message.GenericMessageWithId;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -47,7 +47,7 @@ public final class MapMessageProcessor<M> implements MessageProcessor<M>
   @Override
   public @NotNull MessageWithId<M> processMessage(@NotNull String key)
   {
-    final M message = map.get(requireNonNull(key, "key must not be null"));
+    var message = map.get(requireNonNull(key, "key must not be null"));
     if (message == null)
       throw new ProtocolException("missing mapped message for key '" + key + "'");
 

@@ -19,7 +19,7 @@ import de.sayayi.lib.message.Message;
 import de.sayayi.lib.message.MessageSupport.MessageAccessor;
 import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
 import de.sayayi.lib.protocol.exception.ProtocolException;
-import de.sayayi.lib.protocol.spi.GenericMessageWithId;
+import de.sayayi.lib.protocol.message.GenericMessageWithId;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -57,7 +57,7 @@ public class MessageSupportMessageProcessor implements MessageProcessor<Message>
    * </p>
    * <p>
    *   The default implementation returns {@code false} which is sufficient in most cases. If
-   *   message codes are easily identifiable (eg. by regex) this method can be overridden to
+   *   message codes are easily identifiable (e.g. by regex) this method can be overridden to
    *   prevent non-existing message codes from being parsed (only if {@link #parserFallback} is
    *   set to {@code true}).
    * </p>
@@ -79,7 +79,7 @@ public class MessageSupportMessageProcessor implements MessageProcessor<Message>
   {
     requireNonNull(codeOrMessageFormat, "codeOrMessageFormat must not be null");
 
-    final Message.WithCode message = isInvalidMessageCode(codeOrMessageFormat)
+    var message = isInvalidMessageCode(codeOrMessageFormat)
         ? null : messageAccessor.getMessageByCode(codeOrMessageFormat);
     if (message != null)
       return new GenericMessageWithId<>(message.getCode(), message);

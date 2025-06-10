@@ -16,8 +16,8 @@
 package de.sayayi.lib.protocol.message.processor;
 
 import de.sayayi.lib.protocol.exception.ProtocolException;
+import de.sayayi.lib.protocol.factory.GenericProtocolFactory;
 import de.sayayi.lib.protocol.message.formatter.ToStringMessageFormatter;
-import de.sayayi.lib.protocol.spi.GenericProtocolFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

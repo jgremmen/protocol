@@ -18,11 +18,14 @@ package de.sayayi.lib.protocol.matcher;
 import de.sayayi.lib.protocol.Level;
 import de.sayayi.lib.protocol.ProtocolEntry.Message;
 import de.sayayi.lib.protocol.TagSelector;
+import de.sayayi.lib.protocol.exception.MessageMatcherException;
+import de.sayayi.lib.protocol.matcher.internal.Conjunction;
+import de.sayayi.lib.protocol.matcher.internal.Disjunction;
+import de.sayayi.lib.protocol.matcher.internal.JunctionAdapter;
+import de.sayayi.lib.protocol.matcher.internal.TagNamesMessageAdapter;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
 
 import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
 
@@ -76,11 +79,11 @@ public interface MessageMatcher
   default @NotNull TagSelector asTagSelector()
   {
     if (!isTagSelector())
-      throw new UnsupportedOperationException("matcher is not a pure tag selector");
+      throw new MessageMatcherException("matcher is not a pure tag selector");
 
     return new TagSelector() {
       @Override
-      public boolean match(@NotNull Collection<String> tagNames) {
+      public boolean match(@NotNull Iterable<String> tagNames) {
         return matches(HIGHEST, new TagNamesMessageAdapter(tagNames));
       }
 
@@ -105,7 +108,7 @@ public interface MessageMatcher
    * </p>
    * <p>
    *   If this message matcher already implements the {@code Junction} interface, it will return
-   *   same object. Otherwise it will wrap the matcher.
+   *   same object. Otherwise, it will wrap the matcher.
    * </p>
    *
    * @return  message matcher which implements {@code Junction} interface, never {@code null}

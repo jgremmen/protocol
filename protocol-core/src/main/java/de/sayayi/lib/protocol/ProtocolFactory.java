@@ -35,7 +35,6 @@ import java.util.UUID;
  * @author Jeroen Gremmen
  * @since 0.1.0
  */
-@SuppressWarnings("squid:S1214")
 public interface ProtocolFactory<M> extends ProtocolMessageMatcher
 {
   /**

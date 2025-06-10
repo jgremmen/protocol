@@ -17,7 +17,7 @@ package de.sayayi.lib.protocol.message.processor;
 
 import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
 import de.sayayi.lib.protocol.exception.ProtocolException;
-import de.sayayi.lib.protocol.spi.GenericMessageWithId;
+import de.sayayi.lib.protocol.message.GenericMessageWithId;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -43,7 +43,7 @@ public final class PropertiesMessageProcessor implements MessageProcessor<String
   @Override
   public @NotNull MessageWithId<String> processMessage(@NotNull String key)
   {
-    final String message = properties.getProperty(requireNonNull(key, "key must not be null"));
+    var message = properties.getProperty(requireNonNull(key, "key must not be null"));
     if (message == null)
       throw new ProtocolException("missing property message for key '" + key + "'");
 

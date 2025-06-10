@@ -15,13 +15,13 @@
  */
 package de.sayayi.lib.protocol;
 
+import de.sayayi.lib.protocol.factory.StringProtocolFactory;
 import de.sayayi.lib.protocol.message.formatter.ToStringMessageFormatter;
 import org.junit.jupiter.api.Test;
 
 import lombok.val;
 
 import static de.sayayi.lib.protocol.Level.Shared.DEBUG;
-import static de.sayayi.lib.protocol.Level.Shared.INFO;
 
 
 /**
@@ -29,7 +29,6 @@ import static de.sayayi.lib.protocol.Level.Shared.INFO;
  */
 public class ProtocolTest
 {
-  @SuppressWarnings("squid:S2699")
   @Test
   public void testBasics()
   {

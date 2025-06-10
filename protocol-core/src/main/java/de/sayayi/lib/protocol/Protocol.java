@@ -15,6 +15,7 @@
  */
 package de.sayayi.lib.protocol;
 
+import de.sayayi.lib.protocol.Level.Shared;
 import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
 import de.sayayi.lib.protocol.ProtocolFormatter.ConfiguredProtocolFormatter;
 import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
@@ -23,6 +24,7 @@ import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -70,7 +72,6 @@ import java.util.stream.StreamSupport;
  * @author Jeroen Gremmen
  * @since 0.1.0
  */
-@SuppressWarnings("UnstableApiUsage")
 public interface Protocol<M> extends ProtocolQueryable
 {
   /**
@@ -282,11 +283,11 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @return  message builder instance for the debug message, never {@code null}
    *
-   * @see Level.Shared#DEBUG DEBUG
+   * @see Shared#DEBUG DEBUG
    */
   @Contract(pure = true, value = "-> new")
   default @NotNull ProtocolMessageBuilder<M> debug() {
-    return add(Level.Shared.DEBUG);
+    return add(Shared.DEBUG);
   }
 
 
@@ -297,11 +298,11 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @return  message builder instance for the info message, never {@code null}
    *
-   * @see Level.Shared#INFO INFO
+   * @see Shared#INFO INFO
    */
   @Contract(pure = true, value = "-> new")
   default @NotNull ProtocolMessageBuilder<M> info() {
-    return add(Level.Shared.INFO);
+    return add(Shared.INFO);
   }
 
 
@@ -312,11 +313,11 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @return  message builder instance for the warning message, never {@code null}
    *
-   * @see Level.Shared#WARN WARN
+   * @see Shared#WARN WARN
    */
   @Contract(pure = true, value = "-> new")
   default @NotNull ProtocolMessageBuilder<M> warn() {
-    return add(Level.Shared.WARN);
+    return add(Shared.WARN);
   }
 
 
@@ -327,11 +328,11 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @return  message builder instance for the error message, never {@code null}
    *
-   * @see Level.Shared#ERROR ERROR
+   * @see Shared#ERROR ERROR
    */
   @Contract(pure = true, value = "-> new")
   default @NotNull ProtocolMessageBuilder<M> error() {
-    return add(Level.Shared.ERROR);
+    return add(Shared.ERROR);
   }
 
 
@@ -345,11 +346,11 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @return  message builder instance for the error message, never {@code null}
    *
-   * @see Level.Shared#ERROR ERROR
+   * @see Shared#ERROR ERROR
    */
   @Contract(pure = true, value = "_ -> new")
   default @NotNull ProtocolMessageBuilder<M> error(@NotNull Throwable throwable) {
-    return add(Level.Shared.ERROR).withThrowable(throwable);
+    return add(Shared.ERROR).withThrowable(throwable);
   }
 
 
@@ -634,7 +635,6 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @param <M>  internal message object type
    */
-  @SuppressWarnings("UnstableApiUsage")
   interface MessageParameterBuilder<M> extends Protocol<M>, GenericMessage<M>
   {
     /**
@@ -646,7 +646,7 @@ public interface Protocol<M> extends ProtocolQueryable
      * @param parameterValues  map with parameter values. the parameter name must not be
      *                         {@code null} or empty.
      *
-     * @return  paramter builder instance for the current message
+     * @return  parameter builder instance for the current message
      */
     @Contract(value = "_ -> this", mutates = "this")
     @NotNull MessageParameterBuilder<M> with(@NotNull Map<String,Object> parameterValues);
@@ -661,7 +661,7 @@ public interface Protocol<M> extends ProtocolQueryable
      *                   expression {@code \p{Alnum}\p{Graph}*}.
      * @param value      parameter value
      *
-     * @return  paramter builder instance for the current message
+     * @return  parameter builder instance for the current message
      */
     @Contract(value = "_, _ -> this", mutates = "this")
     default @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, boolean value) {
@@ -678,7 +678,7 @@ public interface Protocol<M> extends ProtocolQueryable
      *                   expression {@code \p{Alnum}\p{Graph}*}.
      * @param value      parameter value
      *
-     * @return  paramter builder instance for the current message
+     * @return  parameter builder instance for the current message
      */
     @Contract(value = "_, _ -> this", mutates = "this")
     default @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, int value) {
@@ -695,7 +695,7 @@ public interface Protocol<M> extends ProtocolQueryable
      *                   expression {@code \p{Alnum}\p{Graph}*}.
      * @param value      parameter value
      *
-     * @return  paramter builder instance for the current message
+     * @return  parameter builder instance for the current message
      */
     @Contract(value = "_, _ -> this", mutates = "this")
     default @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, long value) {
@@ -712,7 +712,7 @@ public interface Protocol<M> extends ProtocolQueryable
      *                   expression {@code \p{Alnum}\p{Graph}*}.
      * @param value      parameter value
      *
-     * @return  paramter builder instance for the current message
+     * @return  parameter builder instance for the current message
      */
     @Contract(value = "_, _ -> this", mutates = "this")
     default @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, float value) {
@@ -729,7 +729,7 @@ public interface Protocol<M> extends ProtocolQueryable
      *                   expression {@code \p{Alnum}\p{Graph}*}.
      * @param value      parameter value
      *
-     * @return  paramter builder instance for the current message
+     * @return  parameter builder instance for the current message
      */
     @Contract(value = "_, _ -> this", mutates = "this")
     default @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, double value) {
@@ -746,7 +746,7 @@ public interface Protocol<M> extends ProtocolQueryable
      *                   expression {@code \p{Alnum}\p{Graph}*}.
      * @param value      parameter value
      *
-     * @return  paramter builder instance for the current message
+     * @return  parameter builder instance for the current message
      */
     @Contract(value = "_, _ -> this", mutates = "this")
     @NotNull MessageParameterBuilder<M> with(@NotNull String parameter, Object value);
@@ -786,7 +786,7 @@ public interface Protocol<M> extends ProtocolQueryable
     /**
      * Returns the message creation time.
      *
-     * @return  creation time measured in milliseconds since midnight, January 1, 1970 UTC
+     * @return  creation time measured in milliseconds since midnight, January 1, 1970, UTC
      *
      * @since 0.6.0
      */
@@ -805,11 +805,12 @@ public interface Protocol<M> extends ProtocolQueryable
      *   </li>
      * </ul>
      *
-     * @return  unmodifyable map with parameter values, never {@code null}
+     * @return  unmodifiable map with parameter values, never {@code null}
      *
      * @see #getMessage()
      */
     @Contract(pure = true, value = "-> new")
+    @UnmodifiableView
     @NotNull Map<String,Object> getParameterValues();
   }
 
@@ -854,11 +855,12 @@ public interface Protocol<M> extends ProtocolQueryable
     /**
      * Returns a set containing all tag names defined for this message.
      *
-     * @return  unmodifyable set containing all tag names, never {@code null}
+     * @return  unmodifiable set containing all tag names, never {@code null}
      *
      * @since 0.7.0
      */
     @Contract(pure = true, value = "-> new")
+    @UnmodifiableView
     @NotNull Set<String> getTagNames();
 
 

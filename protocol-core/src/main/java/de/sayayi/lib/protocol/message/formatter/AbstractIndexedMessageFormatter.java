@@ -21,8 +21,6 @@ import de.sayayi.lib.protocol.ProtocolFactory.MessageFormatter;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map.Entry;
-
 import static java.lang.Integer.parseInt;
 import static java.util.Arrays.copyOf;
 
@@ -43,12 +41,12 @@ public abstract class AbstractIndexedMessageFormatter<M> implements MessageForma
   @Override
   public final @NotNull String formatMessage(@NotNull GenericMessage<M> message)
   {
-    Object[] parameters = new Object[4];
+    var parameters = new Object[4];
 
-    for(final Entry<String,Object> parametersEntry: message.getParameterValues().entrySet())
+    for(var parametersEntry: message.getParameterValues().entrySet())
     {
       try {
-        final int i = parseInt(parametersEntry.getKey());
+        var i = parseInt(parametersEntry.getKey());
 
         if (i >> 6 == 0)  // 0..31
         {

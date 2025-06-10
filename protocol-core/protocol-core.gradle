@@ -11,25 +11,11 @@ apply from: file('../gradle/quality.gradle')
 apply from: file('../gradle/publishing.gradle')
 
 
-java {
-  registerFeature('optional') {
-    usingSourceSet sourceSets.main
-  }
-}
-
-
 dependencies {
-  // java
-  optionalImplementation "org.unbescape:unbescape:${unbescapeVersion}"
-  optionalImplementation "de.sayayi.lib:message-format:${messageFormatVersion}"
+  compileOnly "de.sayayi.lib:message-format:${messageFormatVersion}"
 }
 
 
-publishing {
-  publications {
-    maven(MavenPublication) {
-      suppressPomMetadataWarningsFor 'optionalApiElements'
-      suppressPomMetadataWarningsFor 'optionalRuntimeElements'
-    }
-  }
+compileJava {
+  options.compilerArgs += [ '-Xlint:-module' ]
 }

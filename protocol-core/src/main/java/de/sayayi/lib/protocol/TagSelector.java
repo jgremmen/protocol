@@ -21,10 +21,10 @@ import de.sayayi.lib.protocol.matcher.MessageMatcher;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-
 
 /**
+ * A tag selector filters protocol entries by tag name.
+ *
  * @author Jeroen Gremmen
  * @since 0.6.0
  */
@@ -39,7 +39,7 @@ public interface TagSelector
    *          {@code false} otherwise
    */
   @Contract(pure = true)
-  boolean match(@NotNull Collection<String> tagNames);
+  boolean match(@NotNull Iterable<String> tagNames);
 
 
   /**

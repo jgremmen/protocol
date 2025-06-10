@@ -16,7 +16,7 @@
 package de.sayayi.lib.protocol.message.processor;
 
 import de.sayayi.lib.protocol.ProtocolFactory.MessageProcessor;
-import de.sayayi.lib.protocol.spi.GenericMessageWithId;
+import de.sayayi.lib.protocol.message.GenericMessageWithId;
 
 import org.jetbrains.annotations.NotNull;
 
