@@ -22,7 +22,7 @@ import static org.unbescape.html.HtmlEscape.escapeHtml5;
 
 /**
  * @author Jeroen Gremmen
- * @since 0.6.0
+ * @since 1.6.0
  */
 @SuppressWarnings("unused")
 public final class UnbescapeHtmlEncoder extends HtmlEncoder

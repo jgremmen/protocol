@@ -22,7 +22,7 @@ import static com.google.common.html.HtmlEscapers.htmlEscaper;
 
 /**
  * @author Jeroen Gremmen
- * @since 0.6.0
+ * @since 1.6.0
  */
 @SuppressWarnings("unused")
 public final class GuavaHtmlEncoder extends HtmlEncoder

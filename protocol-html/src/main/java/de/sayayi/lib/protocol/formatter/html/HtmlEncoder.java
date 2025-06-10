@@ -14,7 +14,7 @@ import static java.lang.Thread.currentThread;
 
 /**
  * @author Jeroen Gremmen
- * @since 0.6.0
+ * @since 1.6.0
  */
 public abstract class HtmlEncoder
 {

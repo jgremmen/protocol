@@ -47,7 +47,7 @@ import static java.util.Collections.unmodifiableMap;
  * @param <M>  internal message object type
  *
  * @author Jeroen Gremmen
- * @since 0.2.0  (refactored in 0.6.0)
+ * @since 0.2.0  (refactored in 1.6.0)
  */
 @SuppressWarnings("unused")
 public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>

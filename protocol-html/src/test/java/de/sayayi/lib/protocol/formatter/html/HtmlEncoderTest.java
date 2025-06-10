@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 /**
  * @author Jeroen Gremmen
- * @since 0.6.0
+ * @since 1.6.0
  */
 @DisplayName("Html encoder")
 class HtmlEncoderTest

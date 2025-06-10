@@ -22,7 +22,7 @@ import static org.springframework.web.util.HtmlUtils.htmlEscape;
 
 /**
  * @author Jeroen Gremmen
- * @since 0.6.0
+ * @since 1.6.0
  */
 @SuppressWarnings("unused")
 public final class SpringWebHtmlEncoder extends HtmlEncoder

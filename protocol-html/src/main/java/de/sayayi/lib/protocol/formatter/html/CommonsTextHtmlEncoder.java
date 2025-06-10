@@ -22,7 +22,7 @@ import static org.apache.commons.text.StringEscapeUtils.escapeHtml4;
 
 /**
  * @author Jeroen Gremmen
- * @since 0.6.0
+ * @since 1.6.0
  */
 @SuppressWarnings("unused")
 public final class CommonsTextHtmlEncoder extends HtmlEncoder
