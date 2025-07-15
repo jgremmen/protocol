@@ -20,12 +20,6 @@ configurations {
 }
 
 
-ext {
-  antlrVersion = '[4.13.0,4.14)'
-  antlrExtVersion = '[0.6,0.7)'
-}
-
-
 apply from: file('../gradle/javadoc.gradle')
 apply from: file('../gradle/quality.gradle')
 apply from: file('../gradle/publishing.gradle')
@@ -34,13 +28,13 @@ apply from: file('../gradle/publishing.gradle')
 dependencies {
   implementation project(':protocol-core')
 
-  implementation("de.sayayi.lib:antlr4-runtime-ext:${antlrExtVersion}") {
+  implementation(libs.antlr4.ext.runtime) {
     exclude group: 'org.jetbrains'
     exclude group: 'org.antlr'
   }
-  implementation "org.antlr:antlr4-runtime:${antlrVersion}"
+  implementation libs.antlr4.runtime
 
-  antlr4 "org.antlr:antlr4:${antlrVersion}"
+  antlr4 libs.antlr4
 }
 
 

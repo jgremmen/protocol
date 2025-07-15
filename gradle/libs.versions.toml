@@ -1,0 +1,33 @@
+[versions]
+# protocol version
+protocol = '1.6.1-SNAPSHOT'
+
+antlr4 = '[4.13,4.14)'
+antlr4-ext = '[0.6,0.7)'
+commons-text = '[1.3,1.14)'
+guava = '33.4.8-jre'
+jetbrains-annotations = '[24.0,26.1)'
+junit = '5.13.+'
+lombok =  '1.18.+'
+message-format = '[0.20,0.21)'
+mockito = '5.18.+'
+owasp-encoder = '[1.3,1.4)'
+spring = '[5.3,6.0)'
+unbescape = '1.1.6.RELEASE'
+
+[libraries]
+antlr4 = { module = 'org.antlr:antlr4', version.ref = 'antlr4' }
+antlr4-runtime = { module = 'org.antlr:antlr4-runtime', version.ref = 'antlr4' }
+antlr4-ext-runtime = { module = 'de.sayayi.lib:antlr4-runtime-ext', version.ref = 'antlr4-ext' }
+commons-text = { module = 'org.apache.commons:commons-text', version.ref = 'commons-text' }
+guava = { module = 'com.google.guava:guava', version.ref = 'guava' }
+jetbrains-annotations = { module = 'org.jetbrains:annotations', version.ref = 'jetbrains-annotations' }
+lombok = { module = 'org.projectlombok:lombok', version.ref = 'lombok' }
+mockito-core = { module = 'org.mockito:mockito-core', version.ref = 'mockito' }
+junit-jupiter-api = { module = 'org.junit.jupiter:junit-jupiter-api', version.ref = 'junit' }
+junit-jupiter-params = { module = 'org.junit.jupiter:junit-jupiter-params', version.ref = 'junit' }
+junit-jupiter-engine = { module = 'org.junit.jupiter:junit-jupiter-engine', version.ref = 'junit' }
+message-format = { module = 'de.sayayi.lib:message-format', version.ref = 'message-format' }
+owasp-encoder = { module = 'org.owasp.encoder:encoder', version.ref = 'owasp-encoder' }
+spring-web = { module = 'org.springframework:spring-web', version.ref = 'spring' }
+unbescape = { module = 'org.unbescape:unbescape', version.ref = 'unbescape' }

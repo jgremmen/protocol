@@ -12,7 +12,7 @@ apply from: file('../gradle/publishing.gradle')
 
 
 dependencies {
-  compileOnly "de.sayayi.lib:message-format:${messageFormatVersion}"
+  compileOnly libs.message.format
 }
 
 

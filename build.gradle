@@ -23,13 +23,7 @@ allprojects {
   apply plugin: 'base'
 
   group = 'de.sayayi.lib'
-  version = '1.6.0'
-
-  ext {
-    jetbrainsAnnotationsVersion = '26.0.+'
-    junitVersion = '5.13.+'
-    lombokVersion = '1.18.+'
-  }
+  version = libs.versions.protocol.get()
 
   repositories {
     maven {
@@ -51,12 +45,6 @@ configure(subprojects.findAll { it.name.startsWith('protocol-') }) {
   apply plugin: 'signing'
   apply plugin: 'jacoco'
   apply plugin: 'idea'
-
-
-  ext {
-    messageFormatVersion = '[0.20,0.21)'
-    mockitoVersion = '5.18.+'
-  }
 
 
   tasks.withType(JavaCompile).configureEach {
@@ -97,17 +85,17 @@ configure(subprojects.findAll { it.name.startsWith('protocol-') }) {
 
   dependencies {
     // java
-    compileOnlyApi "org.jetbrains:annotations:${jetbrainsAnnotationsVersion}"
+    compileOnlyApi libs.jetbrains.annotations
 
     // test
-    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    testAnnotationProcessor libs.lombok
 
-    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+    testCompileOnly libs.lombok
 
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
-    testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+    testImplementation libs.junit.jupiter.api
+    testImplementation libs.mockito.core
 
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+    testRuntimeOnly libs.junit.jupiter.engine
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
   }
 

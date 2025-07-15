@@ -1,13 +1,6 @@
 description 'Protocol Library Html Protocol Formatter'
 
 
-def commonsTextVersion = '1.13.1'
-def guavaVersion = '33.4.8-jre'
-def owaspEncoderVersion = '1.3.1'
-def springVersion = '5.3.39'
-def unbescapeVersion = '1.1.6.RELEASE'
-
-
 apply from: file('../gradle/javadoc.gradle')
 apply from: file('../gradle/quality.gradle')
 apply from: file('../gradle/publishing.gradle')
@@ -16,16 +9,16 @@ apply from: file('../gradle/publishing.gradle')
 dependencies {
   implementation project(':protocol-core')
 
-  compileOnly("org.apache.commons:commons-text:${commonsTextVersion}") { transitive = false }
-  compileOnly("com.google.guava:guava:${guavaVersion}") {
+  compileOnly(libs.commons.text) { transitive = false }
+  compileOnly(libs.guava) {
     exclude module: 'error_prone_annotations'
     exclude module: 'j2objc-annotations'
     exclude module: 'jspecify'
     exclude module: 'listenablefuture'
   }
-  compileOnly "org.owasp.encoder:encoder:${owaspEncoderVersion}"
-  compileOnly("org.springframework:spring-web:${springVersion}") { transitive = false }
-  compileOnly "org.unbescape:unbescape:${unbescapeVersion}"
+  compileOnly libs.owasp.encoder
+  compileOnly(libs.spring.web) { transitive = false }
+  compileOnly libs.unbescape
 
-  testImplementation("com.google.guava:guava:${guavaVersion}")
+  testImplementation libs.guava
 }
