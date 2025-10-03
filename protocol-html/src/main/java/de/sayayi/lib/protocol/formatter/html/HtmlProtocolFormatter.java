@@ -26,6 +26,7 @@ import de.sayayi.lib.protocol.ProtocolIterator.MessageEntry;
 import de.sayayi.lib.protocol.matcher.MessageMatcher;
 
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -68,6 +69,7 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
 
 
   @Override
+  @MustBeInvokedByOverriders
   public void init(@NotNull ProtocolFactory<M> factory, @NotNull MessageMatcher matcher, int estimatedGroupDepth)
   {
     messageFormatter = factory.getMessageFormatter();
