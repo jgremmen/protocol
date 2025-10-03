@@ -13,6 +13,8 @@ apply from: file('../gradle/publishing.gradle')
 
 dependencies {
   compileOnly libs.message.format
+
+  testImplementation libs.gson
 }
 
 
