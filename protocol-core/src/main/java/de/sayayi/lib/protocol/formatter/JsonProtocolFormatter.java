@@ -78,6 +78,8 @@ public class JsonProtocolFormatter<M> implements ProtocolFormatter<M,String>
     stateStack = new State[(estimatedGroupDepth + 1) * 3 + 2];
     stateStack[0] = State.DOCUMENT_0;
     stateStackTopIdx = 0;
+
+    nameBeforeValue = null;
   }
 
 
@@ -267,9 +269,9 @@ public class JsonProtocolFormatter<M> implements ProtocolFormatter<M,String>
   protected final void beginArray()
   {
     writeNameBeforeValue();
+    json.append('[');
 
     stateStack[++stateStackTopIdx] = State.ARRAY_0;
-    json.append('[');
   }
 
 
@@ -285,9 +287,9 @@ public class JsonProtocolFormatter<M> implements ProtocolFormatter<M,String>
   protected final void beginObject()
   {
     writeNameBeforeValue();
+    json.append('{');
 
     stateStack[++stateStackTopIdx] = State.OBJECT_0;
-    json.append('{');
   }
 
 
@@ -323,10 +325,7 @@ public class JsonProtocolFormatter<M> implements ProtocolFormatter<M,String>
   private void newline()
   {
     if (prettyFormat)
-    {
-      json.append("\n");
-      json.append("  ".repeat(stateStackTopIdx));
-    }
+      json.append('\n').append("  ".repeat(stateStackTopIdx));
   }
 
 
@@ -374,11 +373,10 @@ public class JsonProtocolFormatter<M> implements ProtocolFormatter<M,String>
       if (stateStack[stateStackTopIdx] == State.OBJECT_N)
         json.append(',');
 
-      stateStack[stateStackTopIdx] = State.NAME_WITHOUT_VALUE;
-
       newline();
       string(nameBeforeValue);
 
+      stateStack[stateStackTopIdx] = State.NAME_WITHOUT_VALUE;
       nameBeforeValue = null;
     }
 
@@ -399,9 +397,7 @@ public class JsonProtocolFormatter<M> implements ProtocolFormatter<M,String>
         break;
 
       case NAME_WITHOUT_VALUE:
-        json.append(':');
-        if (prettyFormat)
-          json.append(' ');
+        json.append(prettyFormat ? ": " : ":");
         stateStack[stateStackTopIdx] = State.OBJECT_N;
         break;
     }
