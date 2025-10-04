@@ -54,10 +54,7 @@ public final class TechnicalProtocolFormatter<M> extends AbstractTreeProtocolFor
     final var s = new StringBuilder(super.format(message)).append("  {level=").append(message.getLevel());
 
     if (message instanceof Message)
-    {
-      s.append(",tags=").append(((Message<M>)message).getTagNames().toString()
-          .replace(", ", ","));
-    }
+      s.append(",tags=").append(((Message<M>)message).getTagNames().toString().replace(", ", ","));
 
     return s.append('}').toString();
   }
