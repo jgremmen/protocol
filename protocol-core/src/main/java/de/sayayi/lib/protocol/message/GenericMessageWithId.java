@@ -28,40 +28,17 @@ import static java.util.UUID.randomUUID;
  * @param <M>  internal message object type
  *
  * @author Jeroen Gremmen
- * @since 1.0.0  (refactored in 1.6.0)
+ * @since 1.0.0  (refactored in 1.6.0, 1.7.0)
  */
-public final class GenericMessageWithId<M> implements MessageWithId<M>
+public record GenericMessageWithId<M>(@NotNull String id, @NotNull M message) implements MessageWithId<M>
 {
-  private final @NotNull String id;
-  private final @NotNull M message;
-
-
   public GenericMessageWithId(@NotNull M message) {
     this(randomUUID().toString(), message);
   }
 
 
-  public GenericMessageWithId(@NotNull String id, @NotNull M message)
-  {
-    this.id = id;
-    this.message = message;
-  }
-
-
   @Override
-  public @NotNull String getId() {
-    return id;
-  }
-
-
-  @Override
-  public @NotNull M getMessage() {
-    return message;
-  }
-
-
-  @Override
-  public String toString() {
+  public @NotNull String toString() {
     return "MessageWithId(id=" + id + ",message=" + message + ')';
   }
 }

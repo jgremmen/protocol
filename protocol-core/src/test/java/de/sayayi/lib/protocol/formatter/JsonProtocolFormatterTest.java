@@ -89,7 +89,7 @@ class JsonProtocolFormatterTest
         .message("Checking\tpre-requisites");
 
     group2
-        .error()
+        .error(new IllegalArgumentException(new RuntimeException("error", new NullPointerException())))
         .message("%d of %d tasks failed")
         .with("0", 3)
         .with("1", 7);

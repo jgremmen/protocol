@@ -65,7 +65,7 @@ public final class Conjunction implements Junction
 
   @Override
   public boolean equals(Object o) {
-    return this == o || o instanceof Conjunction && matchers.equals(((Conjunction)o).matchers);
+    return this == o || o instanceof Conjunction conjunction && matchers.equals(conjunction.matchers);
   }
 
 
@@ -102,10 +102,10 @@ public final class Conjunction implements Junction
       for(var matcherIterator = matchers.iterator(); matcherIterator.hasNext();)
       {
         var m = matcherIterator.next();
-        if (m instanceof Conjunction)
+        if (m instanceof Conjunction conjunction)
         {
           matcherIterator.remove();
-          matchers.addAll(((Conjunction)m).matchers);
+          matchers.addAll(conjunction.matchers);
           matchersChanged = true;
           break;
         }

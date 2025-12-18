@@ -51,8 +51,8 @@ public final class MessageMatcherErrorStrategy extends DefaultErrorStrategy
   @Override
   protected void reportInputMismatch(Parser recognizer, InputMismatchException ex)
   {
-    var expectedTokens = ex.getExpectedTokens();
-    var offendingToken = ex.getOffendingToken();
+    final var expectedTokens = ex.getExpectedTokens();
+    final var offendingToken = ex.getOffendingToken();
 
     if (isEOFToken(offendingToken))
     {
@@ -68,7 +68,7 @@ public final class MessageMatcherErrorStrategy extends DefaultErrorStrategy
     }
     else
     {
-      var offendingTokenText = getTokenErrorDisplay(offendingToken);
+      final var offendingTokenText = getTokenErrorDisplay(offendingToken);
 
       if (expectedTokens.size() <= 4)
       {
@@ -100,14 +100,14 @@ public final class MessageMatcherErrorStrategy extends DefaultErrorStrategy
   @Contract(pure = true)
   private @NotNull String tokenList(@NotNull IntervalSet tokens, @NotNull Vocabulary vocabulary)
   {
-    var list = new StringBuilder();
+    final var list = new StringBuilder();
 
     for(var tokenNameIterator = getTokenDisplayNames(tokens, vocabulary).iterator();
         tokenNameIterator.hasNext();)
     {
-      var tokenName = tokenNameIterator.next();
+      final var tokenName = tokenNameIterator.next();
 
-      if (list.length() > 0)
+      if (!list.isEmpty())
         list.append(tokenNameIterator.hasNext() ? ", " : " or ");
 
       list.append(tokenName);

@@ -1,6 +1,6 @@
 [versions]
 # protocol version
-protocol = '1.6.1-SNAPSHOT'
+protocol = '1.7.0-SNAPSHOT'
 
 antlr4 = '[4.13,4.14)'
 antlr4-ext = '[0.6,0.7)'

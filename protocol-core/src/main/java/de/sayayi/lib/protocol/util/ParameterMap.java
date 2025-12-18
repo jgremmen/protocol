@@ -169,7 +169,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
   @Contract(pure = true)
   public int size()
   {
-    int n = 0;
+    var n = 0;
 
     for(var iterator = iterator(); iterator.hasNext(); iterator.next())
       n++;
@@ -198,7 +198,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     if (!iterator.hasNext())
       return "[]";
 
-    var s = new StringJoiner(",", "[", "]");
+    final var s = new StringJoiner(",", "[", "]");
 
     iterator.forEachRemaining(e -> s.add(e.toString()));
 
@@ -466,7 +466,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
       else if (a.length > size)
         a[size] = null;
 
-      int n = 0;
+      var n = 0;
       for(var entry: map)
         a[n++] = (T)entry.getKey();
 
@@ -526,14 +526,14 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     @SuppressWarnings("unchecked")
     public <T> T @NotNull [] toArray(T @NotNull [] a)
     {
-      final int size = map.size();
+      final var size = map.size();
 
       if (a.length < size)
         a = (T[])Array.newInstance(a.getClass().getComponentType(), size);
       else if (a.length > size)
         a[size] = null;
 
-      int n = 0;
+      var n = 0;
       for(var entry: map)
         a[n++] = (T)entry;
 
@@ -655,16 +655,8 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
     @Override
-    public boolean equals(Object o)
-    {
-      if (this == o)
-        return true;
-      if (!(o instanceof ParameterEntry))
-        return false;
-
-      final var that = (ParameterEntry)o;
-
-      return key.equals(that.key) && Objects.equals(value, that.value);
+    public boolean equals(Object o) {
+      return this == o || o instanceof ParameterEntry that && key.equals(that.key) && Objects.equals(value, that.value);
     }
 
 
@@ -718,7 +710,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
       else
       {
         final var entry = entries[n];
-        int cmp = 1;
+        var cmp = 1;
 
         if (nextParentEntry != null && (cmp = nextParentEntry.getKey().compareTo(entry.key)) < 0)
         {

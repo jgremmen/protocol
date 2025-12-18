@@ -138,22 +138,12 @@ final class ProtocolGroupImpl<M>
   public boolean isHeaderVisible0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
     if (groupMessage != null)
-      switch(visibility)
-      {
-        case FLATTEN:
-        case HIDDEN:
-          return false;
-
-        case SHOW_HEADER_ONLY:
-        case SHOW_HEADER_ALWAYS:
-          return true;
-
-        case SHOW_HEADER_IF_NOT_EMPTY:
-          return matches0(levelLimit, matcher, false);
-
-        case FLATTEN_ON_SINGLE_ENTRY:
-          return super.getVisibleEntryCount0(min(this.levelLimit, levelLimit), matcher) > 1;
-      }
+      return switch(visibility) {
+        case FLATTEN, HIDDEN -> false;
+        case SHOW_HEADER_ONLY, SHOW_HEADER_ALWAYS -> true;
+        case SHOW_HEADER_IF_NOT_EMPTY -> matches0(levelLimit, matcher, false);
+        case FLATTEN_ON_SINGLE_ENTRY -> super.getVisibleEntryCount0(min(this.levelLimit, levelLimit), matcher) > 1;
+      };
 
     return false;
   }
@@ -221,26 +211,17 @@ final class ProtocolGroupImpl<M>
     if (effectiveVisibility == SHOW_HEADER_ONLY)
       return 1;
 
-    final int entryCount = super.getVisibleEntryCount0(min(this.levelLimit, levelLimit), matcher);
-    final int entryCountWithHeader = 1 + entryCount;
+    final var entryCount = super.getVisibleEntryCount0(min(this.levelLimit, levelLimit), matcher);
+    final var entryCountWithHeader = 1 + entryCount;
 
-    switch(effectiveVisibility)
-    {
-      case SHOW_HEADER_ALWAYS:
-        return entryCountWithHeader;
+    return switch(effectiveVisibility) {
+      case SHOW_HEADER_ALWAYS -> entryCountWithHeader;
+      case SHOW_HEADER_IF_NOT_EMPTY -> entryCount == 0 ? 0 : entryCountWithHeader;
+      case FLATTEN_ON_SINGLE_ENTRY -> entryCount > 1 ? entryCountWithHeader : entryCount;
+      case FLATTEN -> entryCount;
 
-      case SHOW_HEADER_IF_NOT_EMPTY:
-        return entryCount == 0 ? 0 : entryCountWithHeader;
-
-      case FLATTEN_ON_SINGLE_ENTRY:
-        return entryCount > 1 ? entryCountWithHeader : entryCount;
-
-      case FLATTEN:
-        return entryCount;
-
-      default:
-        return 0;
-    }
+      default -> 0;
+    };
   }
 
 
@@ -330,7 +311,7 @@ final class ProtocolGroupImpl<M>
   @Override
   public boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher, boolean messageOnly)
   {
-    var ev = getEffectiveVisibility();
+    final var ev = getEffectiveVisibility();
 
     if (!messageOnly && (ev == SHOW_HEADER_ONLY || ev == SHOW_HEADER_ALWAYS))
       return true;
@@ -376,7 +357,7 @@ final class ProtocolGroupImpl<M>
   @Override
   public String toString()
   {
-    var s = new StringBuilder("ProtocolGroup(id=").append(getId())
+    final var s = new StringBuilder("ProtocolGroup(id=").append(getId())
         .append(",visibility=").append(visibility);
 
     if (compare(levelLimit, HIGHEST) < 0)
@@ -424,7 +405,7 @@ final class ProtocolGroupImpl<M>
     @Override
     public String toString()
     {
-      var s = new StringBuilder("GroupMessage(id=").append(getMessageId())
+      final var s = new StringBuilder("GroupMessage(id=").append(getMessageId())
           .append(",message=").append(getMessage());
 
       if (!parameterMap.isEmpty())

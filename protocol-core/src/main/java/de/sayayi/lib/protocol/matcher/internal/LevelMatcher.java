@@ -62,7 +62,7 @@ public final class LevelMatcher implements Junction
 
   @Override
   public boolean equals(Object o) {
-    return this == o || o instanceof LevelMatcher && level.equals(((LevelMatcher)o).level);
+    return this == o || o instanceof LevelMatcher levelMatcher && level.equals(levelMatcher.level);
   }
 
 

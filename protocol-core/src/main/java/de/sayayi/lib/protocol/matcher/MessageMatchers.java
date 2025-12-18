@@ -283,7 +283,7 @@ public final class MessageMatchers
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message)
       {
-        var parameterValues = message.getParameterValues();
+        final var parameterValues = message.getParameterValues();
 
         return value == null
             ? parameterValues.containsKey(parameterName) && parameterValues.get(parameterName) == null
@@ -393,7 +393,7 @@ public final class MessageMatchers
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message)
       {
-        var messageLevel = min(message.getLevel(), levelLimit);
+        final var messageLevel = min(message.getLevel(), levelLimit);
         return compare(messageLevel, levelLow) >= 0 && compare(messageLevel, levelHigh) <= 0;
       }
 
@@ -493,7 +493,7 @@ public final class MessageMatchers
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message)
       {
-        var protocol = message.getProtocol();
+        final var protocol = message.getProtocol();
         return protocol.isProtocolGroup() && groupName.equals(((ProtocolGroup<M>)protocol).getName());
       }
 
@@ -531,7 +531,7 @@ public final class MessageMatchers
         var protocol = message.getProtocol();
         if (protocol.isProtocolGroup())
         {
-          var groupName = ((ProtocolGroup<M>)protocol).getName();
+          final var groupName = ((ProtocolGroup<M>)protocol).getName();
           return groupName != null && pattern.matcher(groupName).matches();
         }
 
@@ -595,7 +595,7 @@ public final class MessageMatchers
       @Override
       public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message)
       {
-        var protocol = message.getProtocol();
+        final var protocol = message.getProtocol();
         return protocol.getFactory() == protocolFactory && protocol.getId() == protocolId;
       }
 

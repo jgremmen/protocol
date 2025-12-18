@@ -73,7 +73,7 @@ public final class BooleanMatcher implements Junction, TagSelector
 
   @Override
   public boolean equals(Object o) {
-    return this == o || o instanceof BooleanMatcher && matches == ((BooleanMatcher)o).matches;
+    return this == o || o instanceof BooleanMatcher booleanMatcher && matches == booleanMatcher.matches;
   }
 
 

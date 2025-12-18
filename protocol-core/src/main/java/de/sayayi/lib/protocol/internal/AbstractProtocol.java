@@ -93,7 +93,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
     if (tagPropagationMap.isEmpty())
       return tags;
 
-    var collectedPropagatedTagDefs = new TreeSet<>(tags);
+    final var collectedPropagatedTagDefs = new TreeSet<>(tags);
 
     for(var tagPropagation: tagPropagationMap.entrySet())
       if (tagPropagation.getKey().match(collectedPropagatedTagDefs))
@@ -125,7 +125,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
 
   @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
-    var filteredEntries = new ArrayList<ProtocolEntry<M>>();
+    final var filteredEntries = new ArrayList<ProtocolEntry<M>>();
 
     for(var entry: entries)
       if (entry.matches0(levelLimit, matcher, false))
@@ -142,7 +142,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   @Override
   public int getVisibleEntryCount0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
-    int count = 0;
+    var count = 0;
 
     for(var entry: entries)
       count += entry.getVisibleEntryCount0(levelLimit, matcher);
@@ -175,7 +175,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   public @NotNull ProtocolGroup<M> createGroup()
   {
     @SuppressWarnings("unchecked")
-    var group = new ProtocolGroupImpl<>((AbstractProtocol<M,ProtocolMessageBuilder<M>>)this);
+    final var group = new ProtocolGroupImpl<>((AbstractProtocol<M,ProtocolMessageBuilder<M>>)this);
 
     entries.add(group);
 
@@ -227,7 +227,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   @Contract(pure = true)
   int countGroupDepth()
   {
-    int depth = 0;
+    var depth = 0;
 
     for(var entry: entries)
       if (entry instanceof ProtocolGroupImpl)

@@ -55,7 +55,7 @@ public final class Negation implements Junction
 
   @Override
   public boolean equals(Object o) {
-    return this == o || o instanceof Negation && matcher.equals(((Negation)o).matcher);
+    return this == o || o instanceof Negation negation && matcher.equals(negation.matcher);
   }
 
 
@@ -78,8 +78,8 @@ public final class Negation implements Junction
       return NONE;
     else if (matcher == NONE)
       return ANY;
-    else if (matcher instanceof Negation)
-      return ((Negation)matcher).matcher.asJunction();
+    else if (matcher instanceof Negation negation)
+      return negation.matcher.asJunction();
     else
       return new Negation(matcher);
   }

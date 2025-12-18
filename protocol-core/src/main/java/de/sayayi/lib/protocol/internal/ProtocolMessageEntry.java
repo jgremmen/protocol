@@ -118,7 +118,7 @@ final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements
   @Override
   public String toString()
   {
-    var s = new StringBuilder("Message(level=").append(level).append(",tags={")
+    final var s = new StringBuilder("Message(level=").append(level).append(",tags={")
         .append(String.join(",", tagNames)).append("},id=").append(getMessageId())
         .append(",message=").append(getMessage());
 

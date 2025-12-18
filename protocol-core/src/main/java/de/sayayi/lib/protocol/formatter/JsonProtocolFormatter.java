@@ -211,6 +211,7 @@ public class JsonProtocolFormatter<M> implements ProtocolFormatter<M,String>
     messageEntries.put("creation-time", ofEpochMilli(message.getTimeMillis()).toString());
     messageEntries.put("group-message", message.isGroupMessage());
     messageEntries.put("level-severity", message.getLevel().severity());
+    messageEntries.put("throwable", message.getThrowable() != null);
   }
 
 
@@ -317,8 +318,8 @@ public class JsonProtocolFormatter<M> implements ProtocolFormatter<M,String>
       json.append(value);
     else if (value instanceof CharSequence)
       string(value.toString());
-    else if (value instanceof Number)
-      json.append(((Number)value).longValue());
+    else if (value instanceof Number number)
+      json.append(number.longValue());
   }
 
 
@@ -343,26 +344,26 @@ public class JsonProtocolFormatter<M> implements ProtocolFormatter<M,String>
   @Contract(pure = true)
   private @NotNull String string_escape(char c)
   {
-    switch(c)
-    {
-      case '"':  return "\\\"";
-      case '\'': return "\\'";
-      case '\\': return "\\\\";
-      case '\b': return "\\b";
-      case '\f': return "\\f";
-      case '\n': return "\\n";
-      case '\r': return "\\r";
-      case '\t': return "\\t";
-      case '<':  return "\\u003c";
-      case '>':  return "\\u003e";
-      case '&':  return "\\u0026";
-      case '=':  return "\\u003d";
-    }
+    return switch(c) {
+      case '"' -> "\\\"";
+      case '\'' -> "\\'";
+      case '\\' -> "\\\\";
+      case '\b' -> "\\b";
+      case '\f' -> "\\f";
+      case '\n' -> "\\n";
+      case '\r' -> "\\r";
+      case '\t' -> "\\t";
+      case '<' -> "\\u003c";
+      case '>' -> "\\u003e";
+      case '&' -> "\\u0026";
+      case '=' -> "\\u003d";
 
-    // make sure we're producing us-ascii compatible output
-    return c >= ' ' && c < '\u0080'
-        ? Character.toString(c)
-        : String.format("\\u%04x", (int)c);
+      default ->
+        // make sure we're producing us-ascii compatible output
+        c >= ' ' && c < '\u0080'
+            ? Character.toString(c)
+            : String.format("\\u%04x", (int)c);
+    };
   }
 
 

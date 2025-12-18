@@ -98,7 +98,7 @@ public final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBui
   @Override
   public String toString()
   {
-    var s = new StringBuilder("Protocol(id=").append(getId());
+    final var s = new StringBuilder("Protocol(id=").append(getId());
 
     if (!parameterMap.isEmpty())
     {

@@ -65,7 +65,7 @@ public final class Disjunction implements Junction
 
   @Override
   public boolean equals(Object o) {
-    return this == o || o instanceof Disjunction && matchers.equals(((Disjunction)o).matchers);
+    return this == o || o instanceof Disjunction disjunction && matchers.equals(disjunction.matchers);
   }
 
 
@@ -102,10 +102,10 @@ public final class Disjunction implements Junction
       for(var matcherIterator = matchers.iterator(); matcherIterator.hasNext();)
       {
         var m = matcherIterator.next();
-        if (m instanceof Disjunction)
+        if (m instanceof Disjunction disjunction)
         {
           matcherIterator.remove();
-          matchers.addAll(((Disjunction)m).matchers);
+          matchers.addAll(disjunction.matchers);
           matchersChanged = true;
           break;
         }

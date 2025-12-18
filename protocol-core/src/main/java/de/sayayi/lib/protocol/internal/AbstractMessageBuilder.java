@@ -108,7 +108,7 @@ abstract class AbstractMessageBuilder
   @Override
   public @NotNull P withMessage(@NotNull M message)
   {
-    var msg = new ProtocolMessageEntry<>(protocol, level, protocol.getPropagatedTags(tags), throwable,
+    final var msg = new ProtocolMessageEntry<>(protocol, level, protocol.getPropagatedTags(tags), throwable,
         new GenericMessageWithId<>(
             protocol.getFactory().getMessageProcessor().getIdFromMessage(message),
             requireNonNull(message, "message must not be null")),
@@ -122,7 +122,7 @@ abstract class AbstractMessageBuilder
 
   private @NotNull P message0(@NotNull MessageWithId<M> messageWithId)
   {
-    var msg = new ProtocolMessageEntry<>(protocol, level, protocol.getPropagatedTags(tags),
+    final var msg = new ProtocolMessageEntry<>(protocol, level, protocol.getPropagatedTags(tags),
         throwable, messageWithId, protocol.parameterMap);
 
     protocol.entries.add(msg);

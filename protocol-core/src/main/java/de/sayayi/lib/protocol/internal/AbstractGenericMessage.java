@@ -58,13 +58,13 @@ abstract class AbstractGenericMessage<M> implements GenericMessage<M>
 
   @Override
   public @NotNull String getMessageId() {
-    return messageWithId.getId();
+    return messageWithId.id();
   }
 
 
   @Override
   public @NotNull M getMessage() {
-    return messageWithId.getMessage();
+    return messageWithId.message();
   }
 
 

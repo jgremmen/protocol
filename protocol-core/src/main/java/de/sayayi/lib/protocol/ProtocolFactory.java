@@ -122,18 +122,22 @@ public interface ProtocolFactory<M> extends ProtocolMessageMatcher
        * Returns the message id.
        *
        * @return  message id, never {@code null}
+       *
+       * @since 1.7.0  (refactoring)
        */
       @Contract(pure = true)
-      @NotNull String getId();
+      @NotNull String id();
 
 
       /**
        * Returns the processed message.
        *
        * @return  processed message, never {@code null}
+       *
+       * @since 1.7.0  (refactoring)
        */
       @Contract(pure = true)
-      @NotNull M getMessage();
+      @NotNull M message();
     }
   }
 

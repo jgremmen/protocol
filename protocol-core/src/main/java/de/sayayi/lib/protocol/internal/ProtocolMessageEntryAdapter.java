@@ -115,7 +115,7 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
   @Override
   public String toString()
   {
-    var s = new StringBuilder("Message(level=").append(levelLimit)
+    final var s = new StringBuilder("Message(level=").append(levelLimit)
         .append(",tags={").append(String.join(",", getTagNames())).append("},id=")
         .append(getMessageId()).append(",message=").append(message.getMessage());
 
