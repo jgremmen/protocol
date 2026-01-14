@@ -49,17 +49,19 @@ configure(subprojects.findAll { it.name.startsWith('protocol-') }) {
 
   tasks.withType(JavaCompile).configureEach {
     javaCompiler = javaToolchains.compilerFor {
-      languageVersion = JavaLanguageVersion.of(17)
+      languageVersion = JavaLanguageVersion.of(21)
     }
 
     options.encoding = 'UTF-8'
-    options.compilerArgs += [ '--module-path', configurations.compileClasspath.asPath ]
+    doFirst {
+      options.compilerArgs += [ '--module-path', configurations.compileClasspath.asPath ]
+    }
   }
 
 
   tasks.withType(Test).configureEach {
     javaLauncher = javaToolchains.launcherFor {
-      languageVersion = JavaLanguageVersion.of(17)
+      languageVersion = JavaLanguageVersion.of(21)
     }
   }
 

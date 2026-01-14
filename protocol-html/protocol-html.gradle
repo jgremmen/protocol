@@ -10,12 +10,7 @@ dependencies {
   implementation project(':protocol-core')
 
   compileOnly(libs.commons.text) { transitive = false }
-  compileOnly(libs.guava) {
-    exclude module: 'error_prone_annotations'
-    exclude module: 'j2objc-annotations'
-    exclude module: 'jspecify'
-    exclude module: 'listenablefuture'
-  }
+  compileOnly(libs.guava) { transitive = false }
   compileOnly libs.owasp.encoder
   compileOnly(libs.spring.web) { transitive = false }
   compileOnly libs.unbescape

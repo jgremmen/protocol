@@ -9,7 +9,7 @@ variables:
   GRADLE_USER_HOME: ".gradle-cache"
 
 before_script:
-  - export JAVA_HOME="/usr/lib/jvm/jdk-17"
+  - export JAVA_HOME="/usr/lib/jvm/jdk-21"
   - chmod +x ./gradlew
 
 cache:
@@ -26,5 +26,6 @@ build:
     name: "protocol-artifacts"
     paths:
       - protocol-core/.build/libs/*.jar
+      - protocol-html/.build/libs/*.jar
       - protocol-message-matcher/.build/libs/*.jar
     expire_in: 2 weeks
