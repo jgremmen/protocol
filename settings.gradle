@@ -1,25 +1,16 @@
 pluginManagement {
-    repositories {
-        gradlePluginPortal()
-
-        maven {
-            url 'https://artifactory.sayayi.de/artifactory/plugins-snapshot/'
-            mavenContent {
-                includeGroupByRegex 'de\\.sayayi\\.plugin\\.gradle.*'
-                snapshotsOnly()
-            }
-        }
-    }
+  repositories {
+    gradlePluginPortal()
+  }
 }
 
 
 include 'protocol-core'
 include 'protocol-html'
 include 'protocol-message-matcher'
-//include 'documentation'
 
 
 rootProject.name = 'protocol'
 rootProject.children.each {project ->
-    project.buildFileName = "${project.name}.gradle"
+  project.buildFileName = "${project.name}.gradle"
 }

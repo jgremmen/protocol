@@ -1,6 +1,5 @@
 plugins {
   id 'antlr'
-  id 'de.sayayi.plugin.gradle.libapi' version '1.0-SNAPSHOT'
 }
 
 

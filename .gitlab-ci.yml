@@ -22,7 +22,6 @@ build:
     - docker
   script:
     - ./gradlew clean build
-#    - ./gradlew docs
   artifacts:
     name: "protocol-artifacts"
     paths:
