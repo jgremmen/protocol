@@ -39,7 +39,6 @@ import org.antlr.v4.runtime.LexerNoViableAltException;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.Vocabulary;
 import org.antlr.v4.runtime.misc.IntervalSet;
-import org.antlr.v4.runtime.tree.TerminalNode;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -402,8 +401,11 @@ public final class MessageMatcherParser extends AbstractAntlr4Parser
     {
       final var tagExpression = ctx.tagMatcherAtom();
 
-      ctx.selector = tagExpression != null ? tagExpression.matcher
-          : ctx.ANY() != null ? BooleanMatcher.ANY : BooleanMatcher.NONE;
+      ctx.selector = tagExpression != null
+          ? tagExpression.matcher
+          : ctx.ANY() != null
+                ? BooleanMatcher.ANY
+                : BooleanMatcher.NONE;
     }
 
 
@@ -417,19 +419,11 @@ public final class MessageMatcherParser extends AbstractAntlr4Parser
       {
         final var tagNameList = ctx.tagNameList().tags;
 
-        switch(((TerminalNode)ctx.getChild(0)).getSymbol().getType())
+        switch(getTerminalToken(ctx, 0).getType())
         {
-          case ANY_OF:
-            ctx.matcher = MessageMatchers.hasAnyOf(tagNameList);
-            break;
-
-          case ALL_OF:
-            ctx.matcher = MessageMatchers.hasAllOf(tagNameList);
-            break;
-
-          case NONE_OF:
-            ctx.matcher = MessageMatchers.hasNoneOf(tagNameList);
-            break;
+          case ANY_OF -> ctx.matcher = MessageMatchers.hasAnyOf(tagNameList);
+          case ALL_OF -> ctx.matcher = MessageMatchers.hasAllOf(tagNameList);
+          case NONE_OF -> ctx.matcher = MessageMatchers.hasNoneOf(tagNameList);
         }
       }
     }

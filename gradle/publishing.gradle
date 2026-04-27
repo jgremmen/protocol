@@ -29,7 +29,9 @@ tasks.withType(Jar).configureEach {
     )
   }
 
-  from files('LICENSE')
+  metaInf {
+    from files('LICENSE')
+  }
 }
 
 

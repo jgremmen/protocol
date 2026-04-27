@@ -46,6 +46,7 @@ public class AbstractGenericMessageTest
 
 
   @Test
+  @SuppressWarnings("DataFlowIssue")
   public void testParametersNotModifyable()
   {
     val parameters = new ParameterMap();
