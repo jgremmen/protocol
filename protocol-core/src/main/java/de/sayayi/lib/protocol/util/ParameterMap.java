@@ -38,6 +38,15 @@ import static java.util.Spliterator.SORTED;
 
 
 /**
+ * Lightweight parameter map optimized for protocol message parameters.
+ * <p>
+ * The map stores parameter names in sorted order and supports optional parent chaining.
+ * Lookups first inspect the current map and then continue with the parent map, while
+ * iteration returns a merged view where entries in this map override equally named entries
+ * from the parent.
+ * <p>
+ * This type is mutable and not thread-safe.
+ *
  * @author Jeroen Gremmen
  * @since 1.0.0  (refactored in 1.6.0)
  */
@@ -50,11 +59,19 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
   private int modCount;
 
 
+  /**
+   * Creates an empty parameter map without a parent.
+   */
   public ParameterMap() {
     this(null);
   }
 
 
+  /**
+   * Creates an empty parameter map with an optional parent map.
+   *
+   * @param parent  parent parameter map or {@code null}
+   */
   public ParameterMap(@Nullable ParameterMap parent)
   {
     this.parent = parent;
@@ -65,6 +82,18 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
   }
 
 
+  /**
+   * Adds or replaces a parameter value in this map.
+   * <p>
+   * If the parameter exists in this map, only the local value is updated.
+   * Parent entries are not modified.
+   *
+   * @param parameter  parameter name, not {@code null} or empty
+   * @param value      parameter value, may be {@code null}
+   *
+   * @throws NullPointerException      if {@code parameter} is {@code null}
+   * @throws IllegalArgumentException  if {@code parameter} is empty
+   */
   @Contract(mutates = "this")
   public void put(@NotNull String parameter, Object value)
   {
@@ -112,12 +141,26 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
   }
 
 
+  /**
+   * Checks whether a parameter is present in this map or any parent map.
+   *
+   * @param parameter  parameter name, not {@code null}
+   *
+   * @return  {@code true} if the parameter exists, {@code false} otherwise
+   */
   @Contract(pure = true)
   public boolean has(@NotNull String parameter) {
     return getEntry(requireNonNull(parameter, "parameter must not be null")) != null;
   }
 
 
+  /**
+   * Returns a parameter value from this map or any parent map.
+   *
+   * @param parameter  parameter name, not {@code null}
+   *
+   * @return  parameter value, or {@code null} if the parameter is not present
+   */
   @Contract(pure = true)
   public Object get(@NotNull String parameter)
   {
@@ -127,24 +170,48 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
   }
 
 
+  /**
+   * Returns an iterator over merged parameters from this map and its parent chain.
+   * <p>
+   * Parameters are ordered by key and local entries override parent entries with the same key.
+   *
+   * @return  iterator over parameter entries, never {@code null}
+   */
   @Contract(value = "-> new", pure = true)
   public @NotNull Iterator<Entry<String,Object>> iterator() {
     return new ParameterIterator();
   }
 
 
+  /**
+   * Returns a spliterator for the merged parameter entries.
+   *
+   * @return  spliterator over parameter entries, never {@code null}
+   */
   @Override
   public @NotNull Spliterator<Entry<String,Object>> spliterator() {
     return Spliterators.spliterator(iterator(), size(), ORDERED | SORTED | DISTINCT | NONNULL);
   }
 
 
+  /**
+   * Returns a sequential stream over the merged parameter entries.
+   *
+   * @return  stream of parameter entries, never {@code null}
+   */
   @Contract(value = "-> new", pure = true)
   public @NotNull Stream<Entry<String,Object>> stream() {
     return StreamSupport.stream(spliterator(), false);
   }
 
 
+  /**
+   * Resolves a parameter entry from this map or any parent map.
+   *
+   * @param parameter  parameter name, not {@code null}
+   *
+   * @return  matching entry or {@code null}
+   */
   @Contract(pure = true)
   private ParameterEntry getEntry(@NotNull String parameter)
   {
@@ -166,6 +233,13 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
   }
 
 
+  /**
+   * Returns the number of visible parameters in the merged view.
+   * <p>
+   * Parameters shadowed by local entries are counted once.
+   *
+   * @return  number of merged parameters
+   */
   @Contract(pure = true)
   public int size()
   {
@@ -178,12 +252,22 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
   }
 
 
+  /**
+   * Checks whether this map and its parent chain contain no parameters.
+   *
+   * @return  {@code true} if there are no visible parameters, {@code false} otherwise
+   */
   @Contract(pure = true)
   public boolean isEmpty() {
     return size == 0 && (parent == null || parent.isEmpty());
   }
 
 
+  /**
+   * Returns an unmodifiable {@link Map} view of the merged parameters.
+   *
+   * @return  unmodifiable map view, never {@code null}
+   */
   @Contract(value = "-> new", pure = true)
   @UnmodifiableView
   public @NotNull Map<String,Object> unmodifyableMap() {
@@ -191,6 +275,11 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
   }
 
 
+  /**
+   * Returns a string representation of the merged parameters.
+   *
+   * @return  string representation in bracket notation
+   */
   @Override
   public String toString()
   {
@@ -208,6 +297,9 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
 
+  /**
+   * Unmodifiable {@link Map} view backed by a {@link ParameterMap}.
+   */
   private static final class UnmodifyableMap implements Map<String,Object>
   {
     private final @NotNull ParameterMap map;
@@ -217,65 +309,96 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     private Collection<Object> valueCollection;
 
 
+    /**
+     * Creates a new unmodifiable map view.
+     *
+     * @param map  backing parameter map, not {@code null}
+     */
     private UnmodifyableMap(@NotNull ParameterMap map) {
       this.map = map;
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public int size() {
       return map.size();
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public boolean isEmpty() {
       return map.isEmpty();
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public boolean containsKey(Object key) {
       return map.has((String)key);
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public boolean containsValue(Object value) {
       return values().contains(value);
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public Object get(Object key) {
       return map.get((String)key);
     }
 
 
+    /**
+     * Unsupported operation.
+     *
+     * @throws UnsupportedOperationException always
+     */
     @Override
     public @Nullable Object put(String key, Object value) {
       throw new UnsupportedOperationException("put");
     }
 
 
+    /**
+     * Unsupported operation.
+     *
+     * @throws UnsupportedOperationException always
+     */
     @Override
     public Object remove(Object key) {
       throw new UnsupportedOperationException("remove");
     }
 
 
+    /**
+     * Unsupported operation.
+     *
+     * @throws UnsupportedOperationException always
+     */
     @Override
     public void putAll(@NotNull Map<? extends String,?> m) {
       throw new UnsupportedOperationException("putAll");
     }
 
 
+    /**
+     * Unsupported operation.
+     *
+     * @throws UnsupportedOperationException always
+     */
     @Override
     public void clear() {
       throw new UnsupportedOperationException("clear");
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public @NotNull Set<String> keySet()
     {
@@ -286,6 +409,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public @NotNull Collection<Object> values()
     {
@@ -296,6 +420,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public @NotNull Set<Entry<String,Object>> entrySet()
     {
@@ -309,70 +434,118 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
 
+  /**
+   * Base class for the unmodifiable collection views backed by a {@link ParameterMap}.
+   *
+   * @param <T>  collection element type
+   */
   private abstract static class AbstractUnmodifyableCollection<T> implements Collection<T>
   {
     protected final @NotNull ParameterMap map;
 
 
+    /**
+     * Creates a new collection view.
+     *
+     * @param map  backing parameter map, not {@code null}
+     */
     protected AbstractUnmodifyableCollection(@NotNull ParameterMap map) {
       this.map = map;
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public int size() {
       return map.size();
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public boolean isEmpty() {
       return map.isEmpty();
     }
 
 
+    /**
+     * Unsupported operation.
+     *
+     * @throws UnsupportedOperationException always
+     */
     @Override
     public boolean add(T e) {
       throw new UnsupportedOperationException("add");
     }
 
 
+    /**
+     * Unsupported operation.
+     *
+     * @throws UnsupportedOperationException always
+     */
     @Override
     public boolean remove(Object o) {
       throw new UnsupportedOperationException("remove");
     }
 
 
+    /**
+     * Unsupported operation.
+     *
+     * @throws UnsupportedOperationException always
+     */
     @Override
     public boolean addAll(@NotNull Collection<? extends T> c) {
       throw new UnsupportedOperationException("addAll");
     }
 
 
+    /**
+     * Unsupported operation.
+     *
+     * @throws UnsupportedOperationException always
+     */
     @Override
     public void clear() {
       throw new UnsupportedOperationException("clear");
     }
 
 
+    /**
+     * Unsupported operation.
+     *
+     * @throws UnsupportedOperationException always
+     */
     @Override
     public boolean removeAll(@NotNull Collection<?> c) {
       throw new UnsupportedOperationException("removeAll");
     }
 
 
+    /**
+     * Unsupported operation.
+     *
+     * @throws UnsupportedOperationException always
+     */
     @Override
     public boolean removeIf(@NotNull Predicate<? super T> filter) {
       throw new UnsupportedOperationException("removeIf");
     }
 
 
+    /**
+     * Unsupported operation.
+     *
+     * @throws UnsupportedOperationException always
+     */
     @Override
     public boolean retainAll(@NotNull Collection<?> c) {
       throw new UnsupportedOperationException("retainAll");
     }
 
 
+    /** {@inheritDoc} */
     public boolean containsAll(Collection<?> c)
     {
       for(var e: c)
@@ -383,6 +556,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o)
     {
@@ -391,12 +565,14 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
       return map.hashCode();
     }
 
 
+    /** {@inheritDoc} */
     public String toString()
     {
       var iterator = this.iterator();
@@ -414,21 +590,31 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
 
+  /**
+   * Unmodifiable key set view backed by a {@link ParameterMap}.
+   */
   private static final class UnmodifyableKeySet
       extends AbstractUnmodifyableCollection<String>
       implements Set<String>
   {
+    /**
+     * Creates a new key set view.
+     *
+     * @param map  backing parameter map, not {@code null}
+     */
     private UnmodifyableKeySet(@NotNull ParameterMap map) {
       super(map);
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public boolean contains(Object o) {
       return o instanceof String && map.has((String)o);
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public @NotNull Iterator<String> iterator()
     {
@@ -449,12 +635,14 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public Object @NotNull [] toArray() {
       return map.stream().map(Entry::getKey).toArray();
     }
 
 
+    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("unchecked")
     public <T> T @NotNull [] toArray(T @NotNull [] a)
@@ -474,12 +662,14 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public @NotNull Spliterator<String> spliterator() {
       return Spliterators.spliterator(iterator(), super.size(), ORDERED | SORTED | DISTINCT | NONNULL);
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
       return super.equals(o) && o instanceof UnmodifyableKeySet;
@@ -489,15 +679,24 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
 
+  /**
+   * Unmodifiable entry set view backed by a {@link ParameterMap}.
+   */
   private static final class UnmodifyableEntrySet
       extends AbstractUnmodifyableCollection<Entry<String,Object>>
       implements Set<Entry<String,Object>>
   {
+    /**
+     * Creates a new entry set view.
+     *
+     * @param map  backing parameter map, not {@code null}
+     */
     private UnmodifyableEntrySet(@NotNull ParameterMap map) {
       super(map);
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public boolean contains(Object o)
     {
@@ -510,18 +709,21 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public @NotNull Iterator<Entry<String,Object>> iterator() {
       return map.iterator();
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public Object @NotNull [] toArray() {
       return map.stream().toArray();
     }
 
 
+    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("unchecked")
     public <T> T @NotNull [] toArray(T @NotNull [] a)
@@ -541,12 +743,14 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public @NotNull Spliterator<Entry<String,Object>> spliterator() {
       return map.spliterator();
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
       return super.equals(o) && o instanceof UnmodifyableEntrySet;
@@ -556,15 +760,24 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
 
+  /**
+   * Unmodifiable values collection view backed by a {@link ParameterMap}.
+   */
   private static final class UnmodifyableValueCollection
       extends AbstractUnmodifyableCollection<Object>
       implements Collection<Object>
   {
+    /**
+     * Creates a new values collection view.
+     *
+     * @param map  backing parameter map, not {@code null}
+     */
     private UnmodifyableValueCollection(@NotNull ParameterMap map) {
       super(map);
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public boolean contains(Object o)
     {
@@ -576,6 +789,7 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public @NotNull Iterator<Object> iterator()
     {
@@ -596,24 +810,32 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public @NotNull Spliterator<Object> spliterator() {
       return Spliterators.spliterator(iterator(), super.size(), ORDERED);
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public Object @NotNull [] toArray() {
       return map.stream().map(Entry::getValue).toArray();
     }
 
 
+    /**
+     * Unsupported operation.
+     *
+     * @throws UnsupportedOperationException always
+     */
     @Override
     public <T> T @NotNull [] toArray(T @NotNull [] a) {
       throw new UnsupportedOperationException("toArray");
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
       return super.equals(o) && o instanceof UnmodifyableValueCollection;
@@ -623,12 +845,21 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
 
+  /**
+   * Immutable key-value entry used internally by {@link ParameterMap}.
+   */
   private static final class ParameterEntry implements Entry<String,Object>
   {
     private final @NotNull String key;
     private Object value;
 
 
+    /**
+     * Creates a new parameter entry.
+     *
+     * @param key    parameter key, not {@code null}
+     * @param value  parameter value
+     */
     private ParameterEntry(@NotNull String key, Object value)
     {
       this.key = key;
@@ -636,36 +867,46 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     }
 
 
+    /** {@inheritDoc} */
     @Contract(pure = true)
     public @NotNull String getKey() {
       return key;
     }
 
 
+    /** {@inheritDoc} */
     @Contract(pure = true)
     public Object getValue() {
       return value;
     }
 
 
+    /**
+     * Unsupported operation.
+     *
+     * @throws UnsupportedOperationException always
+     */
     @Override
     public Object setValue(Object value) {
       throw new UnsupportedOperationException("setValue");
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
       return this == o || o instanceof ParameterEntry that && key.equals(that.key) && Objects.equals(value, that.value);
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
       return key.hashCode();
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
       return key + '=' + value;
@@ -675,6 +916,11 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
 
 
 
+  /**
+   * Iterator over the merged parameter view of this map and its parent chain.
+   * <p>
+   * The iterator is fail-fast with respect to structural modifications of the local map.
+   */
   private final class ParameterIterator implements Iterator<Entry<String,Object>>
   {
     private final @NotNull Iterator<Entry<String,Object>> parentIterator;
@@ -685,6 +931,9 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     private int n = 0;
 
 
+    /**
+     * Creates a new iterator.
+     */
     private ParameterIterator()
     {
       parentIterator = parent == null ? emptyIterator() : parent.iterator();
@@ -695,6 +944,9 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     }
 
 
+    /**
+     * Advances the iterator to the next merged entry.
+     */
     private void prepareNext()
     {
       nextEntry = null;
@@ -729,12 +981,14 @@ public final class ParameterMap implements Iterable<Entry<String,Object>>
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public boolean hasNext() {
       return nextEntry != null;
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public @NotNull Entry<String,Object> next()
     {

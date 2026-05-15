@@ -31,8 +31,18 @@ import static de.sayayi.lib.protocol.Level.Shared.HIGHEST;
 
 
 /**
+ * Predicate-like contract for deciding whether a protocol message is included in querying,
+ * iteration, or formatting operations.
+ * <p>
+ * Matchers can evaluate message level and message metadata, and may optionally represent a
+ * pure tag-based selector that can be converted to a {@link TagSelector}. For fluent
+ * composition using logical {@code and}/{@code or}, use {@link #asJunction()}.
+ *
  * @author Jeroen Gremmen
  * @since 1.0.0
+ *
+ * @see de.sayayi.lib.protocol.Protocol#iterator(MessageMatcher)
+ * @see de.sayayi.lib.protocol.Protocol#format(de.sayayi.lib.protocol.ProtocolFormatter, MessageMatcher)
  */
 public interface MessageMatcher
 {
@@ -42,6 +52,8 @@ public interface MessageMatcher
    * @param levelLimit  the maximum level to be considered when matching, not {@code null}. This
    *                    level takes precedence over the level provided by the message
    * @param message     message to check, not {@code null}
+   *
+   * @param <M>         internal message object type
    *
    * @return  {@code true} if the given message matches, {@code false} otherwise
    */
@@ -65,11 +77,11 @@ public interface MessageMatcher
 
 
   /**
-   * Convert this message matcher into a tag only selector.
+   * Converts this message matcher into a tag-only selector.
    *
    * @return  tag selector, never {@code null}
    *
-   * @throws UnsupportedOperationException  in case this message matcher is not a tag only matcher
+   * @throws MessageMatcherException  if this message matcher is not a pure tag selector
    *
    * @see #isTagSelector()
    *
@@ -103,15 +115,12 @@ public interface MessageMatcher
 
 
   /**
+   * Converts this matcher to a matcher that implements {@link Junction}.
    * <p>
-   *   Converts a message matcher to a matcher which implements the {@link Junction} interface.
-   * </p>
-   * <p>
-   *   If this message matcher already implements the {@code Junction} interface, it will return
-   *   same object. Otherwise, it will wrap the matcher.
-   * </p>
+   * If this matcher already implements {@code Junction}, this method returns the same instance.
+   * Otherwise, it returns an adapter that delegates to this matcher.
    *
-   * @return  message matcher which implements {@code Junction} interface, never {@code null}
+   * @return  matcher implementing {@code Junction}, never {@code null}
    */
   @Contract(pure = true)
   default @NotNull Junction asJunction() {
@@ -122,22 +131,40 @@ public interface MessageMatcher
 
 
   /**
-   * This interface allows for message matchers to be combined (conjunction and disjunction).
+   * Specialised matcher type that supports fluent logical composition.
+   * <p>
+   * A junction can be combined with other matchers using conjunction ({@link #and(MessageMatcher)})
+   * and disjunction ({@link #or(MessageMatcher)}).
    */
   interface Junction extends MessageMatcher
   {
+    /** {@inheritDoc} */
     @Override
     default @NotNull Junction asJunction() {
       return this;
     }
 
 
+    /**
+     * Creates a matcher that matches when both this matcher and {@code other} match.
+     *
+     * @param other  matcher to combine with, not {@code null}
+     *
+     * @return  conjunction matcher, never {@code null}
+     */
     @Contract(pure = true)
     default @NotNull Junction and(@NotNull MessageMatcher other) {
       return Conjunction.of(this, other);
     }
 
 
+    /**
+     * Creates a matcher that matches when either this matcher or {@code other} matches.
+     *
+     * @param other  matcher to combine with, not {@code null}
+     *
+     * @return  disjunction matcher, never {@code null}
+     */
     @Contract(pure = true)
     default @NotNull Junction or(@NotNull MessageMatcher other) {
       return Disjunction.of(this, other);
