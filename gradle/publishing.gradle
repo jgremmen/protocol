@@ -16,7 +16,7 @@
 
 
 tasks.withType(Jar).configureEach {
-  reproducibleFileOrder true
+  reproducibleFileOrder = true
 
   manifest {
     attributes(

@@ -22,7 +22,7 @@ javadoc {
     linksOffline 'https://javadoc.io/doc/org.jetbrains/annotations/26.0.2/',
                  "${rootProject.projectDir}/gradle/javadocs/jetbrains-annotations"
 
-    encoding 'UTF-8'
+    encoding = 'UTF-8'
 
     group('Protocol Core API', [
             'de.sayayi.lib.protocol',
