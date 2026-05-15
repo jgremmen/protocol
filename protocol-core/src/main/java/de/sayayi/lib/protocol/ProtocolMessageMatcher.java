@@ -22,28 +22,46 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
+ * Interface for parsing text expressions into {@link MessageMatcher} and {@link TagSelector}
+ * instances. It is implemented by {@link ProtocolFactory}, making parsed matchers and
+ * selectors available directly from the factory wherever the protocol API accepts them.
+ * <p>
+ * Full parsing support requires the {@code protocol-message-matcher} module to be present on
+ * the classpath. If it is absent, both parse methods will throw a
+ * {@link de.sayayi.lib.protocol.exception.MessageMatcherException}.
+ *
  * @author Jeroen Gremmen
  * @since 1.2.1
+ *
+ * @see ProtocolFactory
+ * @see MessageMatcher
+ * @see TagSelector
  */
 public interface ProtocolMessageMatcher
 {
   /**
-   * Create a message matcher based on a text expression.
+   * Creates a message matcher from a text expression.
    *
    * @param messageMatcherExpression  message matcher expression, not {@code null}
    *
    * @return  message matcher instance representing the expression, never {@code null}
+   *
+   * @throws de.sayayi.lib.protocol.exception.MessageMatcherException  if the expression is
+   *         invalid or if no parsing support is available
    */
   @Contract(pure = true)
   @NotNull MessageMatcher parseMessageMatcher(@NotNull String messageMatcherExpression);
 
 
   /**
-   * Create a tag selector based on a text expression.
+   * Creates a tag selector from a text expression.
    *
    * @param tagSelectorExpression  tag selector expression, not {@code null}
    *
    * @return  tag selector instance representing the expression, never {@code null}
+   *
+   * @throws de.sayayi.lib.protocol.exception.MessageMatcherException  if the expression is
+   *         invalid or if no parsing support is available
    */
   @Contract(pure = true)
   @NotNull TagSelector parseTagSelector(@NotNull String tagSelectorExpression);

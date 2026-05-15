@@ -24,6 +24,11 @@ import java.util.List;
 
 
 /**
+ * Represents a single entry in the protocol hierarchy. An entry is either a plain message
+ * ({@link Message}) or a nested protocol group ({@link Group}). Both types support querying
+ * via {@link ProtocolQueryable}, so callers can check visibility and entry counts without
+ * having to cast to the concrete sub-type first.
+ *
  * @param <M>  internal message object type
  *
  * @author Jeroen Gremmen
@@ -36,6 +41,10 @@ import java.util.List;
 public interface ProtocolEntry<M> extends ProtocolQueryable
 {
   /**
+   * A protocol entry that represents a single protocol message. It combines the entry
+   * semantics of {@link ProtocolEntry} with the full message structure defined in
+   * {@link Protocol.Message}, providing access to level, tags, throwable, and parameter values.
+   *
    * @param <M>  internal message object type
    */
   interface Message<M> extends ProtocolEntry<M>, Protocol.Message<M>
@@ -54,6 +63,11 @@ public interface ProtocolEntry<M> extends ProtocolQueryable
 
 
   /**
+   * A protocol entry that represents a nested protocol group. It combines the entry semantics
+   * of {@link ProtocolEntry} with the group structure defined in {@link Protocol.Group}, and
+   * additionally provides methods to retrieve the group's visible entries, determine whether
+   * the group header is visible, and compute the aggregate severity level of the group.
+   *
    * @param <M>  internal message object type
    */
   interface Group<M> extends ProtocolEntry<M>, Protocol.Group<M>

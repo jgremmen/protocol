@@ -26,10 +26,36 @@ import java.util.Iterator;
 
 
 /**
+ * Iterator that traverses a protocol hierarchy in depth-first order and yields a flat sequence
+ * of typed {@link DepthEntry} instances. This is the entry point for all formatting and
+ * streaming operations in the protocol API.
+ * <p>
+ * A complete iteration sequence has the following structure:
+ * <ol>
+ *   <li>{@link ProtocolStart} – emitted once before any other entry</li>
+ *   <li>
+ *     For each visible protocol entry, one of:
+ *     <ul>
+ *       <li>{@link MessageEntry} – a regular or standalone group-header message</li>
+ *       <li>
+ *         {@link GroupStartEntry} / inner entries / {@link GroupEndEntry} – a group that has
+ *         both a visible header message and at least one visible child entry
+ *       </li>
+ *       <li>{@link GroupMessageEntry} – a group whose header is visible but that has no
+ *           visible child entries (e.g. {@link ProtocolGroup.Visibility#SHOW_HEADER_ONLY})</li>
+ *     </ul>
+ *   </li>
+ *   <li>{@link ProtocolEnd} – emitted once after all entries</li>
+ * </ol>
+ * {@link ProtocolFormatter} implementations consume this sequence to build their output.
+ *
  * @param <M>  internal message object type
  *
  * @author Jeroen Gremmen
  * @since 0.1.0
+ *
+ * @see Protocol#iterator(de.sayayi.lib.protocol.matcher.MessageMatcher)
+ * @see ProtocolFormatter
  */
 public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
 {
@@ -76,8 +102,9 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
 
 
   /**
-   * In addition to {@link DepthEntry} this type provides information about the position, with
-   * respect to its depth, it is listed in.
+   * Extends {@link DepthEntry} with positional information that indicates whether this entry
+   * is the first or last among sibling entries at the same depth level. This is useful for
+   * formatters that need to emit structural markup such as list delimiters or tree connectors.
    *
    * @param <M>  internal message object type
    */
@@ -133,9 +160,15 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
 
 
   /**
-   * Message entry.
+   * Represents a single protocol message as yielded by the iterator. It provides access to
+   * the message content, level, tags and optional throwable, and indicates via
+   * {@link #isGroupMessage()} whether the message is a regular entry or a group header that
+   * appears without a surrounding group (i.e. the group has no visible child entries).
    *
    * @param <M>  internal message object type
+   *
+   * @see GroupMessageEntry
+   * @see GroupStartEntry
    */
   interface MessageEntry<M> extends BoundedDepthEntry<M>, Protocol.Message<M>
   {

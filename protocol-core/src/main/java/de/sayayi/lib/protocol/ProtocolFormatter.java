@@ -26,11 +26,29 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
+ * Defines the contract for formatting a protocol into a result of type {@code R}. A formatter
+ * receives protocol entries from a {@link ProtocolIterator} and assembles them into the desired
+ * output format (e.g. plain text, HTML, a data structure, etc.).
+ * <p>
+ * The formatting lifecycle follows a fixed sequence of method calls:
+ * <ol>
+ *   <li>{@link #init} – called once to initialize (or re-initialize) the formatter before use</li>
+ *   <li>{@link #protocolStart} – called when traversal of the protocol begins</li>
+ *   <li>{@link #message}, {@link #groupStart}, {@link #groupEnd} – called for each entry</li>
+ *   <li>{@link #protocolEnd} – called after the last entry has been processed</li>
+ *   <li>{@link #getResult} – called to retrieve the assembled result</li>
+ * </ol>
+ * Default no-op implementations are provided for {@code protocolStart}, {@code groupStart} and
+ * {@code groupEnd}, so implementors only need to override the methods relevant to their output.
+ *
  * @param <M>  internal message object type
  * @param <R>  formatting result type
  *
  * @author Jeroen Gremmen
  * @since 0.1.0
+ *
+ * @see ConfiguredProtocolFormatter
+ * @see Protocol#format(ProtocolFormatter, MessageMatcher)
  */
 public interface ProtocolFormatter<M,R>
 {
@@ -116,8 +134,8 @@ public interface ProtocolFormatter<M,R>
 
 
   /**
-   * Formats a {@code protocol} using this formatter iterating over all elements matching
-   * {@code level} and {@code tagSelector}.
+   * Formats a {@code protocol} using this formatter, iterating over all entries matched by
+   * {@code matcher}.
    *
    * @param protocol  protocol to be formatted, never {@code null}
    * @param matcher   message matcher, never {@code null}
@@ -136,6 +154,14 @@ public interface ProtocolFormatter<M,R>
 
 
   /**
+   * Extension of {@link ProtocolFormatter} that carries its own {@link MessageMatcher}
+   * configuration. This makes the formatter self-contained so it can be passed directly to
+   * {@link Protocol#format(ConfiguredProtocolFormatter)} without supplying a separate matcher,
+   * which is useful for formatters that always operate on a fixed set of levels or tags.
+   *
+   * @param <M>  internal message object type
+   * @param <R>  formatting result type
+   *
    * @since 0.1.0
    */
   interface ConfiguredProtocolFormatter<M,R> extends ProtocolFormatter<M,R>
@@ -145,7 +171,7 @@ public interface ProtocolFormatter<M,R>
      *
      * @param protocolFactory  the factory from which the protocol was created
      *
-     * @return  tag selector, never {@code null}
+     * @return  message matcher, never {@code null}
      *
      * @since 1.0.0
      */

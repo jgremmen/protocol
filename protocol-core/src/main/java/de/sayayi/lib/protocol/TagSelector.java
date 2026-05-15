@@ -23,17 +23,36 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
- * A tag selector filters protocol entries by tag name.
+ * A tag selector determines whether a protocol message matches based on its set of associated
+ * tag names. It is used in two main contexts:
+ * <ul>
+ *   <li>
+ *     <b>Tag propagation</b> – as the source criterion in
+ *     {@link Protocol#propagate(TagSelector)}, so that matching messages automatically receive
+ *     an additional target tag.
+ *   </li>
+ *   <li>
+ *     <b>Message filtering</b> – by converting a tag selector to a {@link de.sayayi.lib.protocol.matcher.MessageMatcher}
+ *     via {@link #asMessageMatcher()} and passing it to formatting or querying methods.
+ *   </li>
+ * </ul>
+ * Instances are typically created by parsing a tag selector expression via
+ * {@link ProtocolMessageMatcher#parseTagSelector(String)}. Supported expression forms include
+ * {@code any}, {@code none}, {@code tag(name)}, {@code any-of(...)}, {@code all-of(...)},
+ * {@code none-of(...)}, as well as {@code and}, {@code or} and {@code not} combinators.
  *
  * @author Jeroen Gremmen
  * @since 0.6.0
+ *
+ * @see ProtocolMessageMatcher#parseTagSelector(String)
+ * @see Protocol#propagate(TagSelector)
  */
 public interface TagSelector
 {
   /**
-   * Tells whether the selector matches for the provided {@code tagNames}.
+   * Tells whether this selector matches the given set of tag names.
    *
-   * @param tagNames  a collection of tag names, not {@code null}
+   * @param tagNames  the tag names associated with the message being tested, not {@code null}
    *
    * @return  {@code true} if the selector matches for the collection provided,
    *          {@code false} otherwise
@@ -43,9 +62,15 @@ public interface TagSelector
 
 
   /**
-   * Converts this tag selector into a message matcher.
+   * Returns a {@link de.sayayi.lib.protocol.matcher.MessageMatcher} that matches any message
+   * whose tag set is accepted by this tag selector.
+   * <p>
+   * This allows a tag selector to be used wherever a {@code MessageMatcher} is required, such
+   * as in {@link Protocol#format(ProtocolFormatter, de.sayayi.lib.protocol.matcher.MessageMatcher)
+   * Protocol#format} or {@link Protocol#iterator(de.sayayi.lib.protocol.matcher.MessageMatcher)
+   * Protocol#iterator}.
    *
-   * @return  message matcher instance, never {@code null}
+   * @return  message matcher backed by this tag selector, never {@code null}
    *
    * @since 1.2.1
    */

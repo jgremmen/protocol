@@ -171,7 +171,9 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
   /**
-   * @param matcher  Message matcher, never {@code null}
+   * Tells whether the group header message is set and visible for the given {@code matcher}.
+   *
+   * @param matcher  message matcher, never {@code null}
    *
    * @return  {@code true} if a group header is set and is visible for the given {@code matcher},
    *          {@code false} otherwise
@@ -182,6 +184,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
   boolean isHeaderVisible(@NotNull MessageMatcher matcher);
 
 
+  /** {@inheritDoc} */
   @Override
   @Contract(pure = true, value = "-> new")
   default @NotNull ProtocolMessageBuilder<M> debug() {
@@ -189,6 +192,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   @Contract(pure = true, value = "-> new")
   default @NotNull ProtocolMessageBuilder<M> info() {
@@ -196,6 +200,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   @Contract(pure = true, value = "-> new")
   default @NotNull ProtocolMessageBuilder<M> warn() {
@@ -203,6 +208,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   @Contract(pure = true, value = "-> new")
   default @NotNull ProtocolMessageBuilder<M> error() {
@@ -210,6 +216,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   @Contract(pure = true, value = "_ -> new")
   default @NotNull ProtocolMessageBuilder<M> error(@NotNull Throwable throwable) {
@@ -217,16 +224,19 @@ public interface ProtocolGroup<M> extends Protocol<M>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   @Contract(pure = true, value = "_ -> new")
   @NotNull ProtocolMessageBuilder<M> add(@NotNull Level level);
 
 
+  /** {@inheritDoc} */
   @Override
   @Contract(value = "_ -> new", pure = true)
   @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull TagSelector tagSelector);
 
 
+  /** {@inheritDoc} */
   @Override
   @Contract(value = "_ -> new", pure = true)
   @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull String tagSelectorExpression);
@@ -361,23 +371,34 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
 
+  /**
+   * Group-specific specialization of {@link Protocol.ProtocolMessageBuilder} that ensures the
+   * fluent API continues returning {@link ProtocolGroup}-typed builders after adding a message
+   * to a protocol group.
+   *
+   * @param <M>  internal message object type
+   */
   interface ProtocolMessageBuilder<M> extends Protocol.ProtocolMessageBuilder<M>
   {
+    /** {@inheritDoc} */
     @Override
     @Contract("_ -> this")
     @NotNull ProtocolMessageBuilder<M> forTag(@NotNull String tagName);
 
 
+    /** {@inheritDoc} */
     @Override
     @Contract("_ -> this")
     @NotNull ProtocolMessageBuilder<M> forTags(@NotNull String ... tagNames);
 
 
+    /** {@inheritDoc} */
     @Override
     @Contract("_ -> this")
     @NotNull ProtocolMessageBuilder<M> withThrowable(@NotNull Throwable throwable);
 
 
+    /** {@inheritDoc} */
     @Override
     @Contract("_ -> new")
     @NotNull MessageParameterBuilder<M> message(@NotNull String message);
@@ -386,13 +407,22 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
 
+  /**
+   * Group-specific specialization of {@link Protocol.MessageParameterBuilder} that ensures the
+   * fluent API continues returning {@link ProtocolGroup}-typed builders after setting message
+   * parameters on a message that was added to a protocol group.
+   *
+   * @param <M>  internal message object type
+   */
   interface MessageParameterBuilder<M> extends Protocol.MessageParameterBuilder<M>, ProtocolGroup<M>
   {
+    /** {@inheritDoc} */
     @Override
     @Contract("_ -> this")
     @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull Map<String,Object> parameterValues);
 
 
+    /** {@inheritDoc} */
     @Override
     @Contract("_, _ -> this")
     default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, boolean value) {
@@ -400,6 +430,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
     }
 
 
+    /** {@inheritDoc} */
     @Override
     @Contract("_, _ -> this")
     default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, int value) {
@@ -407,6 +438,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
     }
 
 
+    /** {@inheritDoc} */
     @Override
     @Contract("_, _ -> this")
     default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, long value) {
@@ -414,6 +446,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
     }
 
 
+    /** {@inheritDoc} */
     @Override
     @Contract("_, _ -> this")
     default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, float value) {
@@ -421,6 +454,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
     }
 
 
+    /** {@inheritDoc} */
     @Override
     @Contract("_, _ -> this")
     default @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, double value) {
@@ -428,6 +462,7 @@ public interface ProtocolGroup<M> extends Protocol<M>
     }
 
 
+    /** {@inheritDoc} */
     @Override
     @Contract("_, _ -> this")
     @NotNull ProtocolGroup.MessageParameterBuilder<M> with(@NotNull String parameter, Object value);
@@ -437,7 +472,15 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
   /**
-   * The various visibility settings allow for more control on how to format a protocol group.
+   * Defines the possible visibility modes for a protocol group, controlling whether and how the
+   * group header message and its entries are included during formatting.
+   * <p>
+   * The visibility is set via {@link ProtocolGroup#setVisibility(Visibility)} and influences
+   * what a {@link ProtocolFormatter} receives when iterating over the protocol hierarchy.
+   *
+   * @see ProtocolGroup#setVisibility(Visibility)
+   * @see ProtocolGroup#getVisibility()
+   * @see ProtocolGroup#getEffectiveVisibility()
    */
   enum Visibility
   {
@@ -526,12 +569,23 @@ public interface ProtocolGroup<M> extends Protocol<M>
 
 
 
+  /**
+   * Group-specific specialization of {@link Protocol.TargetTagBuilder} that returns a
+   * {@link ProtocolGroup} from the {@code to()} methods, allowing the fluent API to continue
+   * with group-level operations after defining a tag propagation rule.
+   *
+   * @param <M>  internal message object type
+   *
+   * @since 0.5.0
+   */
   interface TargetTagBuilder<M> extends Protocol.TargetTagBuilder<M>
   {
+    /** {@inheritDoc} */
     @Override
     @NotNull ProtocolGroup<M> to(@NotNull String targetTagName);
 
 
+    /** {@inheritDoc} */
     @Override
     @NotNull ProtocolGroup<M> to(@NotNull String... targetTagNames);
   }

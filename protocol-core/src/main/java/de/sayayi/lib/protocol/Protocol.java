@@ -468,7 +468,10 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
   /**
-   * @param matcher  Message matcher, never {@code null}
+   * Returns an iterator over all protocol entries that match {@code matcher}, traversing the
+   * protocol hierarchy in depth-first order.
+   *
+   * @param matcher  message matcher, never {@code null}
    *
    * @return  protocol iterator over all matching elements, never {@code null}
    *
@@ -487,7 +490,7 @@ public interface Protocol<M> extends ProtocolQueryable
    *
    * @param matcher  Message matcher, never {@code null}
    *
-   * @return A spliterator from an iterator
+   * @return  spliterator over the matching protocol depth entries, never {@code null}
    *
    * @since 1.0.0
    */
@@ -495,6 +498,15 @@ public interface Protocol<M> extends ProtocolQueryable
   @NotNull Spliterator<DepthEntry<M>> spliterator(@NotNull MessageMatcher matcher);
 
 
+  /**
+   * Returns a sequential {@link Stream} of protocol depth entries matched by {@code matcher}.
+   *
+   * @param matcher  message matcher, never {@code null}
+   *
+   * @return  sequential stream of matching protocol depth entries, never {@code null}
+   *
+   * @see #spliterator(MessageMatcher)
+   */
   @Contract(pure = true, value = "_ -> new")
   default @NotNull Stream<DepthEntry<M>> stream(@NotNull MessageMatcher matcher) {
     return StreamSupport.stream(spliterator(matcher), false);
@@ -913,15 +925,35 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
   /**
+   * Builder for specifying the target tag(s) of a tag propagation rule.
+   * <p>
+   * An instance is obtained via {@link Protocol#propagate(TagSelector)} or
+   * {@link Protocol#propagate(String)} and completes the rule by defining which tag(s) will
+   * be automatically added to any message that already carries the source tag.
+   *
    * @param <M>  internal message object type
    *
    * @since 0.5.0
    */
   interface TargetTagBuilder<M>
   {
+    /**
+     * Completes the propagation rule by specifying a single target tag.
+     *
+     * @param targetTagName  name of the target tag, not {@code null}
+     *
+     * @return  the protocol instance on which the propagation rule was defined, never {@code null}
+     */
     @NotNull Protocol<M> to(@NotNull String targetTagName);
 
 
+    /**
+     * Completes the propagation rule by specifying multiple target tags.
+     *
+     * @param targetTagNames  names of the target tags, not {@code null}
+     *
+     * @return  the protocol instance on which the propagation rule was defined, never {@code null}
+     */
     @NotNull Protocol<M> to(@NotNull String ... targetTagNames);
   }
 }

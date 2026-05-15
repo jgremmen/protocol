@@ -32,25 +32,36 @@ import static java.util.Comparator.comparingInt;
  * regularly used protocol levels like {@code DEBUG} and {@code ERROR}. In addition to that
  * (or even as a replacement) you can define your own set of protocol levels and use them to
  * {@linkplain Protocol#add(Level) protocol} messages.
+ * <p>
+ * Since {@code Level} is a functional interface, custom levels can be created inline as
+ * lambda expressions, e.g. {@code () -> 250} defines a level with severity 250.
  *
  * @author Jeroen Gremmen
  * @since 0.1.0
+ *
+ * @see Shared
  */
 @FunctionalInterface
 public interface Level
 {
   /**
-   * Sort levels ascending: {@link Shared#LOWEST LOWEST} -&gt; {@link Shared#HIGHEST HIGHEST}
+   * Comparator that sorts levels by ascending severity, i.e. from
+   * {@link Shared#LOWEST LOWEST} to {@link Shared#HIGHEST HIGHEST}.
    *
    * @since 0.7.0
+   *
+   * @see #SORT_DESCENDING
    */
   Comparator<Level> SORT_ASCENDING = comparingInt(Level::severity);
 
 
   /**
-   * Sort levels descending: {@link Shared#HIGHEST HIGHEST} -&gt; {@link Shared#LOWEST LOWEST}
+   * Comparator that sorts levels by descending severity, i.e. from
+   * {@link Shared#HIGHEST HIGHEST} to {@link Shared#LOWEST LOWEST}.
    *
    * @since 0.7.0
+   *
+   * @see #SORT_ASCENDING
    */
   Comparator<Level> SORT_DESCENDING = SORT_ASCENDING.reversed();
 
@@ -129,9 +140,13 @@ public interface Level
 
 
   /**
-   * Level constants for the {@linkplain Protocol#debug() debug()},
-   * {@linkplain Protocol#info() info()}, {@linkplain Protocol#warn() warn()} and
-   * {@linkplain Protocol#error() error()} protocol methods.
+   * Predefined set of standard protocol levels.
+   * <p>
+   * Alongside the conventional {@code DEBUG}, {@code INFO}, {@code WARN} and {@code ERROR}
+   * levels, this enumeration provides {@code LOWEST} and {@code HIGHEST} as sentinel levels
+   * that represent the absolute lower and upper boundaries of the severity range. These
+   * sentinels are useful when querying or filtering protocol entries across all possible
+   * levels without hard-coding a specific severity value.
    *
    * @since 0.1.0
    */

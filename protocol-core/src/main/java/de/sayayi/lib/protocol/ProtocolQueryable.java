@@ -22,19 +22,29 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
- * This interface provides methods for querying protocol objects.
+ * Common query interface implemented by protocol objects — including {@link Protocol},
+ * {@link ProtocolGroup}, and {@link ProtocolEntry} — that allows callers to check whether
+ * an object has any entries matching a given {@link MessageMatcher} and to count how many
+ * visible entries it contains under that matcher.
  *
  * @author Jeroen Gremmen
  * @since 0.1.0
+ *
+ * @see Protocol
+ * @see ProtocolGroup
+ * @see ProtocolEntry
  */
 public interface ProtocolQueryable
 {
   /**
-   * Tells if this protocol object matches the given {@code matcher}.
+   * Tells whether this protocol object has at least one entry that is accepted by the given
+   * {@code matcher}. For a message entry this means the message itself satisfies the matcher;
+   * for a protocol or group it means at least one of its contained entries does.
    *
    * @param matcher  message matcher, not {@code null}
    *
-   * @return  {@code true} if the protocol object matches, {@code false} otherwise
+   * @return  {@code true} if the protocol object has at least one matching entry,
+   *          {@code false} otherwise
    *
    * @since 1.0.0
    */

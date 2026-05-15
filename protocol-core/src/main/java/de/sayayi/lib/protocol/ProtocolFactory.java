@@ -26,19 +26,32 @@ import java.util.UUID;
 
 
 /**
+ * Factory for creating {@link Protocol} instances. A factory encapsulates the strategy for
+ * converting message strings into an internal representation via its {@link MessageProcessor},
+ * and for formatting that representation back into a displayable string via its
+ * {@link MessageFormatter}. Both components are shared across all protocols created by the
+ * same factory.
+ * <p>
+ * As an implementation of {@link ProtocolMessageMatcher}, a factory can also parse message
+ * matcher and tag selector expressions used throughout the protocol API.
  *
- * @param <M>  Internal message object type. Messages are added by providing a string. The factory
- *             converts this string in the appropriate internal format
- *             (see {@link MessageProcessor}), allowing for various message retrieval/formatting
- *             libraries to be used.
+ * @param <M>  internal message object type. Messages are added by providing a string; the
+ *             factory converts this string into the appropriate internal format via its
+ *             {@link MessageProcessor}, allowing various message retrieval/formatting
+ *             libraries to be plugged in.
  *
  * @author Jeroen Gremmen
  * @since 0.1.0
+ *
+ * @see Protocol
+ * @see MessageProcessor
+ * @see MessageFormatter
  */
 public interface ProtocolFactory<M> extends ProtocolMessageMatcher
 {
   /**
-   * Name of the default tag.
+   * Name of the default tag. Every protocol factory recognizes this tag and it can be used as
+   * a baseline when defining tag selectors or propagation rules.
    */
   String DEFAULT_TAG_NAME = "default";
 
@@ -89,6 +102,14 @@ public interface ProtocolFactory<M> extends ProtocolMessageMatcher
    */
   interface MessageProcessor<M>
   {
+    /**
+     * Processes the given message string and converts it into the internal message
+     * representation, paired with a unique identifier.
+     *
+     * @param message  message string to process, not {@code null}
+     *
+     * @return  message with id, never {@code null}
+     */
     @Contract(pure = true)
     @NotNull MessageWithId<M> processMessage(@NotNull String message);
 
@@ -112,6 +133,9 @@ public interface ProtocolFactory<M> extends ProtocolMessageMatcher
 
 
     /**
+     * Pairs the internal message representation with its unique identifier, as produced
+     * by {@link MessageProcessor#processMessage(String)}.
+     *
      * @param <M>  internal message object type
      *
      * @since 1.0.0
