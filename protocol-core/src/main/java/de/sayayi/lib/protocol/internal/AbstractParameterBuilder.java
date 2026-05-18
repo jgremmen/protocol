@@ -39,7 +39,13 @@ import static java.util.Objects.requireNonNull;
 
 
 /**
+ * Base implementation of {@link MessageParameterBuilder} that allows setting parameter values on a protocol message.
+ * It also implements the full {@link Protocol} interface by delegating all protocol operations to the enclosing
+ * protocol, enabling a fluent builder pattern where protocol methods can be chained directly after setting parameters.
+ *
  * @param <M>  internal message object type
+ * @param <P>  self-referencing parameter builder type for fluent chaining
+ * @param <B>  protocol message builder type
  *
  * @author Jeroen Gremmen
  * @since 0.1.0
@@ -53,6 +59,12 @@ abstract class AbstractParameterBuilder
   private final @NotNull AbstractGenericMessage<M> message;
 
 
+  /**
+   * Creates a new parameter builder for the given protocol and message.
+   *
+   * @param protocol  protocol that owns this message, not {@code null}
+   * @param message   message to set parameters on, not {@code null}
+   */
   protected AbstractParameterBuilder(@NotNull AbstractProtocol<M,B> protocol,
                                      @NotNull AbstractGenericMessage<M> message)
   {
@@ -62,6 +74,7 @@ abstract class AbstractParameterBuilder
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull P with(@NotNull Map<String,Object> parameterValues)
   {
@@ -78,6 +91,7 @@ abstract class AbstractParameterBuilder
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull P with(@NotNull String parameter, Object value)
   {
@@ -90,24 +104,28 @@ abstract class AbstractParameterBuilder
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull String getMessageId() {
     return message.getMessageId();
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull M getMessage() {
     return message.getMessage();
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public long getTimeMillis() {
     return message.timeMillis;
   }
 
 
+  /** {@inheritDoc} */
   @Override
   @UnmodifiableView
   public @NotNull Map<String,Object> getParameterValues() {
@@ -115,102 +133,119 @@ abstract class AbstractParameterBuilder
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull ProtocolFactory<M> getFactory() {
     return protocol.getFactory();
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public Protocol<M> getParent() {
     return protocol.getParent();
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public int getId() {
     return protocol.getId();
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public boolean matches(@NotNull String matcher) {
     return protocol.matches(matcher);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull B add(@NotNull Level level) {
     return protocol.add(level);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull ProtocolGroup<M> createGroup() {
     return protocol.createGroup();
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull Iterator<ProtocolGroup<M>> groupIterator() {
     return protocol.groupIterator();
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull Spliterator<ProtocolGroup<M>> groupSpliterator() {
     return protocol.groupSpliterator();
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull MessageMatcher matcher) {
     return protocol.format(formatter, matcher);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public boolean matches(@NotNull MessageMatcher matcher) {
     return protocol.matches(matcher);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public int getVisibleEntryCount(@NotNull MessageMatcher matcher) {
     return protocol.getVisibleEntryCount(matcher);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull ProtocolIterator<M> iterator(@NotNull MessageMatcher matcher) {
     return protocol.iterator(matcher);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull Spliterator<ProtocolIterator.DepthEntry<M>> spliterator(@NotNull MessageMatcher matcher) {
     return protocol.spliterator(matcher);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull TargetTagBuilder<M> propagate(@NotNull TagSelector tagSelector) {
     return protocol.propagate(tagSelector);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull TargetTagBuilder<M> propagate(@NotNull String tagSelectorExpression) {
     return protocol.propagate(tagSelectorExpression);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull Optional<ProtocolGroup<M>> getGroupByName(@NotNull String name) {
     return protocol.getGroupByName(name);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public void forEachGroupByRegex(@NotNull String regex, @NotNull Consumer<ProtocolGroup<M>> action) {
     protocol.forEachGroupByRegex(regex, action);

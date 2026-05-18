@@ -21,12 +21,16 @@ import static org.springframework.web.util.HtmlUtils.htmlEscape;
 
 
 /**
+ * {@link HtmlEncoder} implementation using
+ * <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/util/HtmlUtils.html">Spring Web HtmlUtils</a>.
+ *
  * @author Jeroen Gremmen
  * @since 1.6.0
  */
 @SuppressWarnings("unused")
 public final class SpringWebHtmlEncoder extends HtmlEncoder
 {
+  /** {@inheritDoc} */
   @Override
   public @NotNull String encodeHtml(@NotNull String text) {
     return htmlEscape(text);

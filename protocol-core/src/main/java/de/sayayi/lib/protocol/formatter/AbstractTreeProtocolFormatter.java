@@ -27,7 +27,12 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
- * Abstract class capable of representing the protocol as a tree using ascii graphics.
+ * Abstract class capable of representing the protocol as a tree using box-drawing characters.
+ * The output uses {@code ■──} for the root node, {@code ├──} and {@code └──} for intermediate
+ * and last sibling nodes, and {@code │} for vertical connectors between depth levels.
+ * <p>
+ * Subclasses control how individual messages are rendered by overriding
+ * {@link #format(GenericMessageWithLevel)}.
  *
  * @param <M>  internal message object type
  *
@@ -57,6 +62,7 @@ public abstract class AbstractTreeProtocolFormatter<M> implements ProtocolFormat
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public void init(@NotNull ProtocolFactory<M> factory, @NotNull MessageMatcher matcher, int estimatedGroupDepth)
   {
@@ -69,11 +75,22 @@ public abstract class AbstractTreeProtocolFormatter<M> implements ProtocolFormat
   }
 
 
+  /**
+   * Converts the given message into the text that will appear after the tree node prefix
+   * ({@code ■──}, {@code ├──} or {@code └──}). The default implementation delegates to the
+   * factory's {@link MessageFormatter}. Subclasses can override this to append additional
+   * information (e.g. level, tags).
+   *
+   * @param message  message with level to format, not {@code null}
+   *
+   * @return  text to display as tree node label, never {@code null}
+   */
   protected String format(@NotNull GenericMessageWithLevel<M> message) {
     return messageFormatter.formatMessage(message);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public void message(@NotNull MessageEntry<M> message)
   {
@@ -93,6 +110,7 @@ public abstract class AbstractTreeProtocolFormatter<M> implements ProtocolFormat
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public void groupStart(@NotNull GroupStartEntry<M> group)
   {
@@ -113,6 +131,7 @@ public abstract class AbstractTreeProtocolFormatter<M> implements ProtocolFormat
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull String getResult() {
     return result.toString();

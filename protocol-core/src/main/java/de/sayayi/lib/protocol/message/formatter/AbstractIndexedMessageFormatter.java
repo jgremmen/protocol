@@ -26,10 +26,8 @@ import static java.util.Arrays.copyOf;
 
 
 /**
- * <p>
- *   Abstract class for message formatters that require the parameters to be provided in an
- *   {@code Object[]} instead of a {@code Map}.
- * </p>
+ * Abstract class for message formatters that require the parameters to be provided in an
+ * {@code Object[]} instead of a {@code Map}.
  *
  * @param <M>  internal message object type
  *
@@ -38,6 +36,7 @@ import static java.util.Arrays.copyOf;
  */
 public abstract class AbstractIndexedMessageFormatter<M> implements MessageFormatter<M>
 {
+  /** {@inheritDoc} */
   @Override
   public final @NotNull String formatMessage(@NotNull GenericMessage<M> message)
   {
@@ -71,20 +70,17 @@ public abstract class AbstractIndexedMessageFormatter<M> implements MessageForma
 
 
   /**
+   * This method replaces {@code formatMessage(GenericMessage)}.
    * <p>
-   *   This method replaces {@code formatMessage(GenericMessage)}.
-   * </p>
-   * <p>
-   *   Message parameters are collected into an {@code Object[]} by using the parameter name as an
-   *   index in the array. The resulting array has a size equal to the largest index number
-   *   found + 1. In order to prevent large numbers leading to allocating huge amounts of memory,
-   *   the maximum index taken into account is {@code 31}.
-   *   <br>
-   *   Missing indices will be initialized with {@code null} in the resulting array.
-   * </p>
+   * Message parameters are collected into an {@code Object[]} by using the parameter name as an
+   * index in the array. The resulting array has a size equal to the largest index number
+   * found + 1. In order to prevent large numbers leading to allocating huge amounts of memory,
+   * the maximum index taken into account is {@code 31}.
+   * <br>
+   * Missing indices will be initialized with {@code null} in the resulting array.
    *
-   * @param message     message to format, never {@code null}
-   * @param parameters  indexed message parameters, never {@code null}
+   * @param message     message to format, not {@code null}
+   * @param parameters  indexed message parameters, not {@code null}
    *
    * @return  formatted message
    */

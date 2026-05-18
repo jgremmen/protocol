@@ -46,9 +46,15 @@ import static java.util.Spliterator.SORTED;
 
 
 /**
+ * Base implementation for {@link Protocol} that provides common functionality shared by root protocols and protocol
+ * groups. It manages the protocol's entry list, parameter map, tag propagation, and provides the core implementation
+ * for querying, iterating, and formatting protocol entries.
+ *
  * @param <M>  internal message object type
+ * @param <B>  protocol message builder type
  *
  * @author Jeroen Gremmen
+ * @since 0.1.0
  */
 abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
     implements Protocol<M>, InternalProtocolQueryable
@@ -63,6 +69,12 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   final @NotNull Map<TagSelector,Set<String>> tagPropagationMap;
 
 
+  /**
+   * Creates a new protocol with a unique id using the given factory and parent parameter map.
+   *
+   * @param factory             protocol factory, not {@code null}
+   * @param parentParameterMap  parent parameter map to inherit from, or {@code null}
+   */
   protected AbstractProtocol(@NotNull ProtocolFactory<M> factory, ParameterMap parentParameterMap)
   {
     id = PROTOCOL_ID.incrementAndGet();
@@ -75,18 +87,28 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   }
 
 
+  /** {@inheritDoc} */
   @Contract(pure = true)
   public int getId() {
     return id;
   }
 
 
+  /** {@inheritDoc} */
   @Contract(pure = true)
   public @NotNull ProtocolFactory<M> getFactory() {
     return factory;
   }
 
 
+  /**
+   * Returns the set of tag names extended with any propagated tags that apply based on the configured tag propagation
+   * rules.
+   *
+   * @param tags  original tag names, not {@code null}
+   *
+   * @return  tag names including propagated tags, never {@code null}
+   */
   @Contract(pure = true)
   protected @NotNull Set<String> getPropagatedTags(@NotNull Set<String> tags)
   {
@@ -103,15 +125,24 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   }
 
 
+  /**
+   * Creates a new message builder for the given severity level.
+   *
+   * @param level  message level, not {@code null}
+   *
+   * @return  message builder, never {@code null}
+   */
   public abstract @NotNull B add(@NotNull Level level);
 
 
+  /** {@inheritDoc} */
   @Override
   public boolean matches(@NotNull String matcher) {
     return matches(factory.parseMessageMatcher(matcher));
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher, boolean messageOnly)
   {
@@ -123,6 +154,15 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   }
 
 
+  /**
+   * Returns the protocol entries matching the given level limit and matcher, wrapping each entry with the appropriate
+   * adapter if level capping is needed.
+   *
+   * @param levelLimit  maximum level to consider, not {@code null}
+   * @param matcher     message matcher for filtering, not {@code null}
+   *
+   * @return  list of matching protocol entries, never {@code null}
+   */
   @NotNull List<ProtocolEntry<M>> getEntries(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
     final var filteredEntries = new ArrayList<ProtocolEntry<M>>();
@@ -139,6 +179,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public int getVisibleEntryCount0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
@@ -151,6 +192,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull Optional<ProtocolGroup<M>> getGroupByName(@NotNull String name)
   {
@@ -165,12 +207,14 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public void forEachGroupByRegex(@NotNull String regex, @NotNull Consumer<ProtocolGroup<M>> action) {
     groupIterator().forEachRemaining(group -> group.forEachGroupByRegex(regex, action));
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull ProtocolGroup<M> createGroup()
   {
@@ -183,24 +227,28 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull Spliterator<DepthEntry<M>> spliterator(@NotNull MessageMatcher matcher) {
     return new ProtocolSpliterator<>(iterator(matcher));
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull Iterator<ProtocolGroup<M>> groupIterator() {
     return new GroupIterator();
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull Spliterator<ProtocolGroup<M>> groupSpliterator() {
     return Spliterators.spliterator(groupIterator(), entries.size(), DISTINCT | ORDERED | SORTED | NONNULL);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public <R> R format(@NotNull ProtocolFormatter<M,R> formatter, @NotNull MessageMatcher matcher)
   {
@@ -224,6 +272,11 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   }
 
 
+  /**
+   * Returns the maximum nesting depth of groups contained in this protocol.
+   *
+   * @return  maximum group depth (&gt;= 0)
+   */
   @Contract(pure = true)
   int countGroupDepth()
   {
@@ -252,6 +305,8 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
 
 
   /**
+   * Iterator over the direct child groups of this protocol, skipping non-group entries.
+   *
    * @since 0.7.0
    */
   protected final class GroupIterator implements Iterator<ProtocolGroup<M>>
@@ -260,6 +315,9 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
     private ProtocolGroup<M> next;
 
 
+    /**
+     * Creates a new group iterator over the entries of the enclosing protocol.
+     */
     private GroupIterator()
     {
       iterator = entries.iterator();
@@ -284,12 +342,14 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public boolean hasNext() {
       return next != null;
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public ProtocolGroup<M> next()
     {

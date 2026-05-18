@@ -23,15 +23,23 @@ import static java.util.UUID.randomUUID;
 
 
 /**
- * Generic message with id implementation.
+ * Generic implementation of {@link MessageWithId} that pairs a message with its unique identifier.
  *
- * @param <M>  internal message object type
+ * @param id       unique message identifier, not {@code null}
+ * @param message  processed message object, not {@code null}
+ *
+ * @param <M>      internal message object type
  *
  * @author Jeroen Gremmen
  * @since 1.0.0  (refactored in 1.6.0, 1.7.0)
  */
 public record GenericMessageWithId<M>(@NotNull String id, @NotNull M message) implements MessageWithId<M>
 {
+  /**
+   * Creates a message with id using a randomly generated UUID as identifier.
+   *
+   * @param message  processed message object, not {@code null}
+   */
   public GenericMessageWithId(@NotNull M message) {
     this(randomUUID().toString(), message);
   }

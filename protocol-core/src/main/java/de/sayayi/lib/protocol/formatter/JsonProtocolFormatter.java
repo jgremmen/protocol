@@ -39,8 +39,17 @@ import static java.time.Instant.ofEpochMilli;
 
 
 /**
- * This formatter generates a json structure for the protocol.
- * 
+ * A {@link ProtocolFormatter} that renders the protocol as a JSON array of message objects.
+ * Each message object contains properties like {@code level}, {@code message}, {@code group},
+ * {@code creation-time}, {@code message-id} and optionally {@code tags}. Group entries are
+ * nested objects with a {@code messages} array containing their child messages.
+ * <p>
+ * The output can be pretty-printed with indentation or compact without whitespace, controlled
+ * via the constructor parameter.
+ * <p>
+ * Subclasses can customize the generated JSON by overriding {@link #decorateMessageEntries},
+ * {@link #decorateGroupEntries}, {@link #extractTagNames} and {@link #levelToString}.
+ *
  * @param <M>  internal message object type
  *
  * @author Jeroen Gremmen
@@ -57,16 +66,25 @@ public class JsonProtocolFormatter<M> implements ProtocolFormatter<M,String>
   private String nameBeforeValue;
 
 
+  /**
+   * Creates a new JSON formatter with pretty-printing enabled.
+   */
   public JsonProtocolFormatter() {
     this(true);
   }
 
 
+  /**
+   * Creates a new JSON formatter.
+   *
+   * @param prettyFormat  {@code true} for indented output, {@code false} for compact output
+   */
   public JsonProtocolFormatter(boolean prettyFormat) {
     this.prettyFormat = prettyFormat;
   }
 
 
+  /** {@inheritDoc} */
   @Override
   @MustBeInvokedByOverriders
   public void init(@NotNull ProtocolFactory<M> factory, @NotNull MessageMatcher matcher, int estimatedGroupDepth)
@@ -83,18 +101,21 @@ public class JsonProtocolFormatter<M> implements ProtocolFormatter<M,String>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public final void protocolStart() {
     beginArray();
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public final void protocolEnd() {
     endArray();
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public final void groupStart(@NotNull GroupStartEntry<M> group)
   {
@@ -148,6 +169,7 @@ public class JsonProtocolFormatter<M> implements ProtocolFormatter<M,String>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public final void groupEnd(@NotNull GroupEndEntry<M> groupEnd)
   {
@@ -156,6 +178,7 @@ public class JsonProtocolFormatter<M> implements ProtocolFormatter<M,String>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public final void message(@NotNull MessageEntry<M> message)
   {
@@ -260,6 +283,7 @@ public class JsonProtocolFormatter<M> implements ProtocolFormatter<M,String>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   @Language("JSON")
   public final String getResult() {
@@ -267,6 +291,9 @@ public class JsonProtocolFormatter<M> implements ProtocolFormatter<M,String>
   }
 
 
+  /**
+   * Opens a new JSON array in the output.
+   */
   protected final void beginArray()
   {
     writeNameBeforeValue();
@@ -276,6 +303,9 @@ public class JsonProtocolFormatter<M> implements ProtocolFormatter<M,String>
   }
 
 
+  /**
+   * Closes the current JSON array in the output.
+   */
   protected final void endArray()
   {
     if (stateStack[stateStackTopIdx--] == State.ARRAY_N)
@@ -285,6 +315,9 @@ public class JsonProtocolFormatter<M> implements ProtocolFormatter<M,String>
   }
 
 
+  /**
+   * Opens a new JSON object in the output.
+   */
   protected final void beginObject()
   {
     writeNameBeforeValue();
@@ -294,6 +327,9 @@ public class JsonProtocolFormatter<M> implements ProtocolFormatter<M,String>
   }
 
 
+  /**
+   * Closes the current JSON object in the output.
+   */
   protected final void endObject()
   {
     if (stateStack[stateStackTopIdx--] == State.OBJECT_N)
@@ -303,6 +339,13 @@ public class JsonProtocolFormatter<M> implements ProtocolFormatter<M,String>
   }
 
 
+  /**
+   * Sets the property name for the next value to be written.
+   *
+   * @param name  JSON property name, not {@code null}
+   *
+   * @return  this formatter, for method chaining
+   */
   protected final @NotNull JsonProtocolFormatter<M> name(@NotNull String name)
   {
     nameBeforeValue = name;
@@ -310,6 +353,12 @@ public class JsonProtocolFormatter<M> implements ProtocolFormatter<M,String>
   }
 
 
+  /**
+   * Writes a JSON value. Supported types are {@code null}, {@link Boolean}, {@link CharSequence}
+   * and {@link Number} (written as long).
+   *
+   * @param value  value to write, or {@code null}
+   */
   protected final void value(Object value)
   {
     writeNameBeforeValue();
@@ -326,7 +375,7 @@ public class JsonProtocolFormatter<M> implements ProtocolFormatter<M,String>
   private void newline()
   {
     if (prettyFormat)
-      json.append('\n').append("  ".repeat(stateStackTopIdx));
+      json.append('\n').repeat("  ", stateStackTopIdx);
   }
 
 

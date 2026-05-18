@@ -35,14 +35,30 @@ import static java.util.Collections.unmodifiableSet;
 
 
 /**
+ * A minimal {@link Message} adapter that only provides tag names. This is used by
+ * {@link de.sayayi.lib.protocol.matcher.MessageMatcher#asTagSelector()} to evaluate tag-based matchers against a set
+ * of tag names without requiring a full message instance.
+ * <p>
+ * Only {@link #getTagNames()}, {@link #hasTag(String)}, {@link #getParameterValues()}, and
+ * {@link #getVisibleEntryCount(MessageMatcher)} are supported. All other methods throw a
+ * {@link MessageMatcherException}.
+ *
  * @author Jeroen Gremmen
  * @since 1.2.0  (refactored in 1.6.0)
  */
+@SuppressWarnings("ClassCanBeRecord")
 public final class TagNamesMessageAdapter implements Message<Object>
 {
   private final Set<String> tagNames;
 
 
+  /**
+   * Creates a tag names adapter from the given tag names. The
+   * {@linkplain de.sayayi.lib.protocol.ProtocolFactory#DEFAULT_TAG_NAME default tag} is always included; empty and
+   * {@code null} values are removed.
+   *
+   * @param tagNames  tag names to wrap, not {@code null}
+   */
   public TagNamesMessageAdapter(@NotNull Iterable<String> tagNames)
   {
     final var tagNameSet = new HashSet<String>();
@@ -57,6 +73,7 @@ public final class TagNamesMessageAdapter implements Message<Object>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   @Contract("-> fail")
   public @NotNull Protocol<Object> getProtocol() {
@@ -64,6 +81,7 @@ public final class TagNamesMessageAdapter implements Message<Object>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   @Contract("-> fail")
   public @NotNull String getMessageId() {
@@ -71,6 +89,7 @@ public final class TagNamesMessageAdapter implements Message<Object>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   @Contract("-> fail")
   public @NotNull Object getMessage() {
@@ -78,6 +97,7 @@ public final class TagNamesMessageAdapter implements Message<Object>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   @Contract("-> fail")
   public long getTimeMillis() {
@@ -85,12 +105,14 @@ public final class TagNamesMessageAdapter implements Message<Object>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull Map<String,Object> getParameterValues() {
     return emptyMap();
   }
 
 
+  /** {@inheritDoc} */
   @Override
   @Contract("-> fail")
   public @NotNull Level getLevel() {
@@ -98,6 +120,7 @@ public final class TagNamesMessageAdapter implements Message<Object>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   @Contract("-> fail")
   public Throwable getThrowable() {
@@ -105,6 +128,7 @@ public final class TagNamesMessageAdapter implements Message<Object>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   @Unmodifiable
   public @NotNull Set<String> getTagNames() {
@@ -112,12 +136,14 @@ public final class TagNamesMessageAdapter implements Message<Object>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public boolean hasTag(@NotNull String tagName) {
     return tagNames.contains(tagName);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   @Contract("_ -> fail")
   public boolean matches(@NotNull MessageMatcher matcher) {
@@ -125,6 +151,7 @@ public final class TagNamesMessageAdapter implements Message<Object>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public int getVisibleEntryCount(@NotNull MessageMatcher matcher) {
     return 0;

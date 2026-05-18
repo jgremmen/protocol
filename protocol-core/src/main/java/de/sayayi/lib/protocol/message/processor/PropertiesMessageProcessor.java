@@ -27,6 +27,9 @@ import static java.util.Objects.requireNonNull;
 
 
 /**
+ * A {@link MessageProcessor} implementation that resolves messages from a {@link Properties}
+ * instance. Each property key is used to look up the corresponding message string.
+ *
  * @author Jeroen Gremmen
  * @since 0.7.0
  */
@@ -35,11 +38,27 @@ public final class PropertiesMessageProcessor implements MessageProcessor<String
   private final @NotNull Properties properties;
 
 
+  /**
+   * Creates a new properties-based message processor backed by the given properties.
+   *
+   * @param properties  properties containing message key/value pairs, not {@code null}
+   */
   public PropertiesMessageProcessor(@NotNull Properties properties) {
     this.properties = requireNonNull(properties);
   }
 
 
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Looks up the message string by the given key in the backing properties.
+   *
+   * @param key  property key to look up, not {@code null}
+   *
+   * @return  the message string paired with its key, never {@code null}
+   *
+   * @throws ProtocolException  if no property is defined for the given key
+   */
   @Override
   public @NotNull MessageWithId<String> processMessage(@NotNull String key)
   {

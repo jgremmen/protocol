@@ -29,6 +29,9 @@ import static java.util.Objects.requireNonNull;
 
 
 /**
+ * A {@link MessageProcessor} implementation that resolves messages from a pre-defined
+ * {@link Map}. Each map entry associates a string key with its corresponding message object.
+ *
  * @param <M>  internal message object type
  *
  * @author Jeroen Gremmen
@@ -39,11 +42,27 @@ public final class MapMessageProcessor<M> implements MessageProcessor<M>
   private final Map<String,M> map;
 
 
+  /**
+   * Creates a new map-based message processor backed by a sorted copy of the given map.
+   *
+   * @param map  map of message keys to message objects, not {@code null}
+   */
   public MapMessageProcessor(@NotNull Map<String,M> map) {
     this.map = unmodifiableMap(new TreeMap<>(map));
   }
 
 
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Looks up the message by the given key in the backing map.
+   *
+   * @param key  message key to look up, not {@code null}
+   *
+   * @return  the message paired with its key, never {@code null}
+   *
+   * @throws ProtocolException  if no message is mapped for the given key
+   */
   @Override
   public @NotNull MessageWithId<M> processMessage(@NotNull String key)
   {

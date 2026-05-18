@@ -27,6 +27,9 @@ import static java.util.Objects.requireNonNull;
 
 
 /**
+ * A {@link MessageProcessor} implementation that resolves messages from a {@link ResourceBundle}.
+ * Each message is looked up by its key in the resource bundle.
+ *
  * @author Jeroen Gremmen
  * @since 0.7.0
  */
@@ -35,11 +38,27 @@ public final class ResourceBundleMessageProcessor implements MessageProcessor<St
   private final @NotNull ResourceBundle resourceBundle;
 
 
+  /**
+   * Creates a new resource bundle message processor backed by the given resource bundle.
+   *
+   * @param resourceBundle  resource bundle containing message key/value pairs, not {@code null}
+   */
   public ResourceBundleMessageProcessor(@NotNull ResourceBundle resourceBundle) {
     this.resourceBundle = requireNonNull(resourceBundle);
   }
 
 
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Looks up the message string by the given key in the backing resource bundle.
+   *
+   * @param key  resource bundle key to look up, not {@code null}
+   *
+   * @return  the message string paired with its key, never {@code null}
+   *
+   * @throws ProtocolException  if the resource bundle does not contain the given key
+   */
   @Override
   public @NotNull MessageWithId<String> processMessage(@NotNull String key)
   {

@@ -34,19 +34,30 @@ import static java.util.stream.Collectors.joining;
 
 
 /**
+ * A {@link Junction} that matches when <em>any</em> of its component matchers match (logical OR). Nested disjunctions
+ * are automatically flattened.
+ *
  * @author Jeroen Gremmen
  * @since 1.0.0  (refactored in 1.6.0)
+ *
+ * @see Conjunction
  */
 public final class Disjunction implements Junction
 {
   private final Set<MessageMatcher> matchers;
 
 
+  /**
+   * Creates a disjunction from the given set of matchers.
+   *
+   * @param matchers  component matchers, not {@code null}
+   */
   private Disjunction(@NotNull Set<MessageMatcher> matchers) {
     this.matchers = matchers;
   }
 
 
+  /** {@inheritDoc} */
   public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> target)
   {
     for(var matcher: matchers)
@@ -57,6 +68,7 @@ public final class Disjunction implements Junction
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public boolean isTagSelector() {
     return matchers.stream().allMatch(MessageMatcher::isTagSelector);
@@ -115,6 +127,6 @@ public final class Disjunction implements Junction
     if (matchers.size() > 1)
       matchers.remove(NONE);
 
-    return matchers.size() == 1 ? matchers.iterator().next().asJunction() : new Disjunction(matchers);
+    return matchers.size() == 1 ? matchers.getFirst().asJunction() : new Disjunction(matchers);
   }
 }

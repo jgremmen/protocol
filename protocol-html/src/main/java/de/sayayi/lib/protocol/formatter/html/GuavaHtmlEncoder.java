@@ -21,12 +21,16 @@ import static com.google.common.html.HtmlEscapers.htmlEscaper;
 
 
 /**
+ * {@link HtmlEncoder} implementation using
+ * <a href="https://github.com/google/guava">Google Guava</a>.
+ *
  * @author Jeroen Gremmen
  * @since 1.6.0
  */
 @SuppressWarnings("unused")
 public final class GuavaHtmlEncoder extends HtmlEncoder
 {
+  /** {@inheritDoc} */
   @Override
   public @NotNull String encodeHtml(@NotNull String text) {
     return htmlEscaper().escape(text);

@@ -72,14 +72,11 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
   interface DepthEntry<M>
   {
     /**
+     * Returns the depth for this entry.
      * <p>
-     *   Returns the depth for this entry.
-     * </p>
-     * <p>
-     *   The first entry (message or group entry) returned by a protocol iterator starts at depth
-     *   0. For each group with group message, the messages belonging to that group have an
-     *   incremented depth:
-     * </p>
+     * The first entry (message or group entry) returned by a protocol iterator starts at depth
+     * 0. For each group with group message, the messages belonging to that group have an
+     * incremented depth:
      * <ul>
      *   <li>Message 1 (depth = 0)</li>
      *   <li>
@@ -235,13 +232,10 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
 
 
   /**
+   * Marks the beginning of a protocol group.
    * <p>
-   *   Marks the beginning of a protocol group.
-   * </p>
-   * <p>
-   *   This entry is generated only if the protocol group has a visible group header message and
-   *   at least 1 containing visible entry.
-   * </p>
+   * This entry is generated only if the protocol group has a visible group header message and
+   * at least 1 containing visible entry.
    *
    * @param <M>  internal message object type
    *
@@ -261,10 +255,8 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
 
 
     /**
-     * <p>
-     *   Returns the number of visible messages in this group. Only messages with the same depth
-     *   are counted.
-     * </p>
+     * Returns the number of visible messages in this group. Only messages with the same depth
+     * are counted.
      *
      * @return  number of messages in the group (at least 1)
      *
@@ -278,9 +270,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
 
 
   /**
-   * <p>
-   *   Marks the end of a protocol group.
-   * </p>
+   * Marks the end of a protocol group.
    *
    * @param <M>  internal message object type
    *

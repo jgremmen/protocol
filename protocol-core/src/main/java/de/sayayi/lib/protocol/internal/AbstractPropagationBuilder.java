@@ -28,6 +28,13 @@ import static java.util.Objects.requireNonNull;
 
 
 /**
+ * Base implementation of {@link TargetTagBuilder} that registers tag propagation rules on a protocol. When
+ * {@link #to(String)} or {@link #to(String...)} is called, the target tags are associated with the given
+ * {@link TagSelector} in the protocol's tag propagation map.
+ *
+ * @param <M>  internal message object type
+ * @param <B>  protocol message builder type
+ *
  * @author Jeroen Gremmen
  * @since 0.5.0
  */
@@ -38,6 +45,12 @@ abstract class AbstractPropagationBuilder<M,B extends ProtocolMessageBuilder<M>>
   private final @NotNull TagSelector tagSelector;
 
 
+  /**
+   * Creates a new propagation builder for the given protocol and tag selector.
+   *
+   * @param protocol     protocol to register the propagation rule on, not {@code null}
+   * @param tagSelector  source tag selector for the propagation rule, not {@code null}
+   */
   protected AbstractPropagationBuilder(@NotNull AbstractProtocol<M,B> protocol, @NotNull TagSelector tagSelector)
   {
     super(protocol);
@@ -46,6 +59,7 @@ abstract class AbstractPropagationBuilder<M,B extends ProtocolMessageBuilder<M>>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull Protocol<M> to(@NotNull String targetTagName)
   {
@@ -58,6 +72,7 @@ abstract class AbstractPropagationBuilder<M,B extends ProtocolMessageBuilder<M>>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull Protocol<M> to(@NotNull String... targetTagNames)
   {

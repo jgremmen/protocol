@@ -26,6 +26,9 @@ import static java.util.Objects.requireNonNull;
 
 
 /**
+ * A {@link MessageFormatter} that formats messages using the message-format library's
+ * {@link Message#format(MessageSupport.MessageAccessor, Message.Parameters)} method.
+ *
  * @author Jeroen Gremmen
  * @since 0.7.0
  *
@@ -36,11 +39,17 @@ public final class MessageFormatFormatter implements MessageFormatter<Message>
   private final @NotNull MessageSupport messageSupport;
 
 
+  /**
+   * Creates a new formatter backed by the given message support instance.
+   *
+   * @param messageSupport  message support used for formatting, not {@code null}
+   */
   public MessageFormatFormatter(@NotNull MessageSupport messageSupport) {
     this.messageSupport = requireNonNull(messageSupport);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull String formatMessage(@NotNull GenericMessage<Message> message)
   {

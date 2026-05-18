@@ -13,8 +13,20 @@ import static java.lang.Thread.currentThread;
 
 
 /**
+ * Abstract base class for HTML encoding strategies. Implementations delegate to a specific HTML escaping library
+ * (e.g. Spring Web, Guava, Apache Commons Text, Unbescape, or OWASP).
+ * <p>
+ * The active encoder is resolved automatically via Java {@link ServiceLoader} or by probing the classpath for known
+ * libraries. A single shared instance is obtained through {@link #getInstance()}.
+ *
  * @author Jeroen Gremmen
  * @since 1.6.0
+ *
+ * @see CommonsTextHtmlEncoder
+ * @see GuavaHtmlEncoder
+ * @see OwaspHtmlEncoder
+ * @see SpringWebHtmlEncoder
+ * @see UnbescapeHtmlEncoder
  */
 public abstract class HtmlEncoder
 {
@@ -31,10 +43,25 @@ public abstract class HtmlEncoder
   private static volatile HtmlEncoder INSTANCE = null;
 
 
+  /**
+   * Encodes the given plain text for safe inclusion in HTML content.
+   *
+   * @param text  plain text to encode, not {@code null}
+   *
+   * @return  HTML-encoded text, never {@code null}
+   */
   @Contract(pure = true)
   public abstract @Language("HTML") @NotNull String encodeHtml(@NotNull String text);
 
 
+  /**
+   * Returns the shared {@link HtmlEncoder} instance. On first invocation, the encoder is resolved via
+   * {@link ServiceLoader} or by probing the classpath for known HTML escaping libraries.
+   *
+   * @return  shared encoder instance, never {@code null}
+   *
+   * @throws UnsupportedOperationException  if no supported HTML encoding library is found
+   */
   public static @NotNull HtmlEncoder getInstance()
   {
     if (INSTANCE == null)

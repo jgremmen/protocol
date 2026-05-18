@@ -25,46 +25,62 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
+ * A constant matcher that unconditionally matches or rejects all messages. The two singleton instances {@link #ANY}
+ * and {@link #NONE} also implement {@link TagSelector}, making them usable in both matcher and tag selector contexts.
+ *
  * @author Jeroen Gremmen
  * @since 1.0.0  (refactored in 1.6.0)
  */
 public final class BooleanMatcher implements Junction, TagSelector
 {
+  /** Matcher that matches every message. */
   public static final BooleanMatcher ANY = new BooleanMatcher(true);
+
+  /** Matcher that matches no message. */
   public static final BooleanMatcher NONE = new BooleanMatcher(false);
 
   private final boolean matches;
 
 
+  /**
+   * Creates a boolean matcher with the given match result.
+   *
+   * @param matches  {@code true} to match all, {@code false} to match none
+   */
   private BooleanMatcher(boolean matches) {
     this.matches = matches;
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
     return matches;
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public boolean match(@NotNull Iterable<String> tagNames) {
     return matches;
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public boolean isTagSelector() {
     return true;
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull TagSelector asTagSelector() {
     return this;
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull MessageMatcher asMessageMatcher() {
     return this;

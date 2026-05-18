@@ -21,12 +21,16 @@ import static org.apache.commons.text.StringEscapeUtils.escapeHtml4;
 
 
 /**
+ * {@link HtmlEncoder} implementation using
+ * <a href="https://commons.apache.org/proper/commons-text/">Apache Commons Text</a>.
+ *
  * @author Jeroen Gremmen
  * @since 1.6.0
  */
 @SuppressWarnings("unused")
 public final class CommonsTextHtmlEncoder extends HtmlEncoder
 {
+  /** {@inheritDoc} */
   @Override
   public @NotNull String encodeHtml(@NotNull String text) {
     return escapeHtml4(text);

@@ -26,6 +26,9 @@ import static java.util.Objects.requireNonNull;
 
 
 /**
+ * A {@link de.sayayi.lib.protocol.ProtocolFactory.MessageFormatter MessageFormatter} that formats
+ * messages using {@link MessageFormat} with indexed parameters.
+ *
  * @author Jeroen Gremmen
  * @since 0.7.0
  *
@@ -33,16 +36,23 @@ import static java.util.Objects.requireNonNull;
  */
 public final class JavaMessageFormatFormatter extends AbstractIndexedMessageFormatter<String>
 {
+  /** Default instance using the system default locale. */
   public static final JavaMessageFormatFormatter INSTANCE = new JavaMessageFormatFormatter(Locale.getDefault());
 
   private final Locale locale;
 
 
+  /**
+   * Creates a new formatter using the given locale.
+   *
+   * @param locale  locale to use for formatting, not {@code null}
+   */
   public JavaMessageFormatFormatter(@NotNull Locale locale) {
     this.locale = requireNonNull(locale);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   protected @NotNull String formatMessage(@NotNull GenericMessage<String> message, @NotNull Object[] parameters) {
     return new MessageFormat(message.getMessage(), locale).format(parameters);

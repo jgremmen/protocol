@@ -21,12 +21,16 @@ import static org.unbescape.html.HtmlEscape.escapeHtml5;
 
 
 /**
+ * {@link HtmlEncoder} implementation using
+ * <a href="https://www.unbescape.org/">Unbescape</a>.
+ *
  * @author Jeroen Gremmen
  * @since 1.6.0
  */
 @SuppressWarnings("unused")
 public final class UnbescapeHtmlEncoder extends HtmlEncoder
 {
+  /** {@inheritDoc} */
   @Override
   public @NotNull String encodeHtml(@NotNull String text) {
     return escapeHtml5(text);

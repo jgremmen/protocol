@@ -45,10 +45,18 @@ import static java.util.Collections.unmodifiableMap;
 
 
 /**
+ * A {@link ProtocolFormatter} that renders protocol entries as an HTML unordered list structure. Messages and group
+ * headers are output as {@code <li>} elements within nested {@code <ul>} lists, with CSS classes for level and depth.
+ * <p>
+ * Subclasses can override the various hook methods ({@code *Class}, {@code *PrefixHtml}, {@code *SuffixHtml}) to
+ * customize the generated HTML without changing the overall structure.
+ *
  * @param <M>  internal message object type
  *
  * @author Jeroen Gremmen
  * @since 0.2.0  (refactored in 1.6.0)
+ *
+ * @see WithFontAwesome
  */
 @SuppressWarnings("unused")
 public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
@@ -58,16 +66,25 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
   private MessageFormatter<M> messageFormatter;
 
 
+  /**
+   * Creates a new HTML formatter using the default {@link HtmlEncoder}.
+   */
   public HtmlProtocolFormatter() {
     this(HtmlEncoder.getInstance());
   }
 
 
+  /**
+   * Creates a new HTML formatter using the given {@link HtmlEncoder}.
+   *
+   * @param encoder  HTML encoder to use for escaping text, not {@code null}
+   */
   public HtmlProtocolFormatter(HtmlEncoder encoder) {
     this.encoder = encoder;
   }
 
 
+  /** {@inheritDoc} */
   @Override
   @MustBeInvokedByOverriders
   public void init(@NotNull ProtocolFactory<M> factory, @NotNull MessageMatcher matcher, int estimatedGroupDepth)
@@ -77,12 +94,20 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
   }
 
 
+  /**
+   * Converts a level to a CSS class name. By default this returns the lowercased level name.
+   *
+   * @param level  message level, not {@code null}
+   *
+   * @return  CSS class name for the level, or {@code null}
+   */
   @Contract(pure = true)
   protected String levelToHtmlClass(@NotNull Level level) {
     return level.toString().toLowerCase();
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public void protocolStart()
   {
@@ -93,18 +118,29 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
   }
 
 
+  /**
+   * Returns an additional CSS class for the protocol wrapper {@code <div>} element.
+   *
+   * @return  CSS class name, or {@code null} for none
+   */
   @Contract(pure = true)
   protected String protocolStartDivClass() {
     return null;
   }
 
 
+  /**
+   * Returns an additional CSS class for the top-level {@code <ul>} element.
+   *
+   * @return  CSS class name, or {@code null} for none
+   */
   @Contract(pure = true)
   protected String protocolStartUlClass() {
     return null;
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public void protocolEnd()
   {
@@ -113,6 +149,7 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public void message(@NotNull MessageEntry<M> message)
   {
@@ -132,30 +169,59 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
   }
 
 
+  /**
+   * Returns an additional CSS class for a message {@code <li>} element.
+   *
+   * @param message  message entry, not {@code null}
+   *
+   * @return  CSS class name, or {@code null} for none
+   */
   @Contract(pure = true)
   protected String messageLiClass(@NotNull MessageEntry<M> message) {
     return null;
   }
 
 
+  /**
+   * Returns an additional CSS class for the message text {@code <span>} element.
+   *
+   * @param message  message entry, not {@code null}
+   *
+   * @return  CSS class name, or {@code null} for none
+   */
   @Contract(pure = true)
   protected String messageSpanClass(@NotNull MessageEntry<M> message) {
     return null;
   }
 
 
+  /**
+   * Returns HTML to insert before the message text span.
+   *
+   * @param message  message entry, not {@code null}
+   *
+   * @return  prefix HTML, never {@code null}
+   */
   @Contract(pure = true)
   protected @NotNull String messagePrefixHtml(@NotNull MessageEntry<M> message) {
     return "";
   }
 
 
+  /**
+   * Returns HTML to insert after the message text span.
+   *
+   * @param message  message entry, not {@code null}
+   *
+   * @return  suffix HTML, never {@code null}
+   */
   @Contract(pure = true)
   protected @NotNull String messageSuffixHtml(@NotNull MessageEntry<M> message) {
     return "";
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public void groupStart(@NotNull GroupStartEntry<M> group)
   {
@@ -182,36 +248,72 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
   }
 
 
+  /**
+   * Returns an additional CSS class for a group header {@code <li>} element.
+   *
+   * @param message  group header message, not {@code null}
+   *
+   * @return  CSS class name, or {@code null} for none
+   */
   @Contract(pure = true)
   protected String groupHeaderLiClass(@NotNull GenericMessageWithLevel<M> message) {
     return null;
   }
 
 
+  /**
+   * Returns an additional CSS class for the group header text {@code <span>} element.
+   *
+   * @param message  group header message, not {@code null}
+   *
+   * @return  CSS class name, or {@code null} for none
+   */
   @Contract(pure = true)
   protected String groupHeaderLiSpanClass(@NotNull GenericMessageWithLevel<M> message) {
     return null;
   }
 
 
+  /**
+   * Returns HTML to insert before the group header text span.
+   *
+   * @param message  group header message, not {@code null}
+   *
+   * @return  prefix HTML, never {@code null}
+   */
   @Contract(pure = true)
   protected @NotNull String groupHeaderPrefixHtml(@NotNull GenericMessageWithLevel<M> message) {
     return "";
   }
 
 
+  /**
+   * Returns HTML to insert after the group header text span.
+   *
+   * @param message  group header message, not {@code null}
+   *
+   * @return  suffix HTML, never {@code null}
+   */
   @Contract(pure = true)
   protected @NotNull String groupHeaderSuffixHtml(@NotNull GenericMessageWithLevel<M> message) {
     return "";
   }
 
 
+  /**
+   * Returns an additional CSS class for a group's {@code <ul>} element.
+   *
+   * @param group  group start entry, not {@code null}
+   *
+   * @return  CSS class name, or {@code null} for none
+   */
   @Contract(pure = true)
   protected String groupStartUlClass(@NotNull GroupStartEntry<M> group) {
     return null;
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public void groupEnd(@NotNull GroupEndEntry<M> groupEnd)
   {
@@ -221,12 +323,21 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull String getResult() {
     return html.toString();
   }
 
 
+  /**
+   * Builds a {@code class="..."} attribute string from the given class names. Null and blank entries are ignored.
+   * Returns an empty string if no valid class names are provided.
+   *
+   * @param classNames  CSS class names to include
+   *
+   * @return  HTML class attribute string, never {@code null}
+   */
   @Contract(pure = true)
   protected @NotNull String classFromArray(String ... classNames)
   {
@@ -253,6 +364,11 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
   }
 
 
+  /**
+   * Appends indentation whitespace to the HTML output for the given depth.
+   *
+   * @param depth  indentation depth
+   */
   @Contract(pure = true)
   protected void indent(int depth)
   {
@@ -267,7 +383,11 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
 
 
   /**
-   * Html protocol formatter that produces list bullets with font awesome icons.
+   * HTML protocol formatter that renders list item icons using <a href="https://fontawesome.com/">Font Awesome</a>.
+   * Icons are selected based on the message level using a configurable level-to-icon-class mapping.
+   * <p>
+   * Pre-configured icon maps for Font Awesome 4 ({@link #FA4_LEVEL_ICON_CLASSES}) and Font Awesome 5
+   * ({@link #FA5_LEVEL_ICON_CLASSES}) are provided.
    *
    * @param <M>  internal message object type
    *
@@ -276,12 +396,9 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
   public static class WithFontAwesome<M> extends HtmlProtocolFormatter<M>
   {
     /**
+     * Font Awesome 4 default icons.
      * <p>
-     *   Font Awesome 4 default icons.
-     * </p>
-     * <p>
-     *   Add the following link to your html page:
-     * </p>
+     * Add the following link to your html page:
      * <br>
      * <pre>
      *   &lt;link rel="stylesheet"
@@ -294,12 +411,9 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
 
 
     /**
+     * Font Awesome 5 default icons.
      * <p>
-     *   Font Awesome 5 default icons.
-     * </p>
-     * <p>
-     *   Add the following link to your html page:
-     * </p>
+     * Add the following link to your html page:
      * <br>
      * <pre>
      *   &lt;link rel="stylesheet"
@@ -334,6 +448,11 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
     private final SortedMap<Level,String> levelIconMap;
 
 
+    /**
+     * Creates a new Font Awesome HTML formatter with the given level-to-icon-class mapping.
+     *
+     * @param levelIconMap  mapping from severity level to Font Awesome CSS class names, not {@code null}
+     */
     public WithFontAwesome(@NotNull Map<Level,String> levelIconMap)
     {
       this.levelIconMap = new TreeMap<>(SORT_DESCENDING);
@@ -341,36 +460,55 @@ public class HtmlProtocolFormatter<M> implements ProtocolFormatter<M,String>
     }
 
 
+    /** {@inheritDoc} */
     @Override
     protected @NotNull String protocolStartUlClass() {
       return "fa-ul";
     }
 
 
+    /** {@inheritDoc} */
     @Override
     protected String groupStartUlClass(@NotNull GroupStartEntry<M> group) {
       return "fa-ul";
     }
 
 
+    /** {@inheritDoc} */
     @Override
     protected @NotNull String messagePrefixHtml(@NotNull MessageEntry<M> message) {
       return htmlPart(getIconClassName(message));
     }
 
 
+    /** {@inheritDoc} */
     @Override
     protected @NotNull String groupHeaderPrefixHtml(@NotNull GenericMessageWithLevel<M> message) {
       return htmlPart(getIconClassName(message));
     }
 
 
+    /**
+     * Generates the Font Awesome icon HTML for the given icon class name.
+     *
+     * @param iconClassName  Font Awesome CSS class name, or {@code null}
+     *
+     * @return  HTML for the icon element, never {@code null}
+     */
     @Contract(pure = true)
     protected @NotNull String htmlPart(String iconClassName) {
       return "<span class=\"fa-li\"><i" + classFromArray(iconClassName) + "></i></span>";
     }
 
 
+    /**
+     * Determines the Font Awesome icon class for the given message's level by finding the closest matching entry in
+     * the level-to-icon map.
+     *
+     * @param message  message to get the icon class for, not {@code null}
+     *
+     * @return  Font Awesome CSS class name, or {@code null} if no mapping matches
+     */
     @Contract(pure = true)
     protected String getIconClassName(@NotNull GenericMessageWithLevel<M> message)
     {

@@ -45,10 +45,32 @@ import static java.util.Objects.requireNonNull;
 
 
 /**
- * A comprehensive collection of message matchers.
+ * A comprehensive collection of factory methods for creating {@link MessageMatcher} instances.
+ * <p>
+ * All methods return {@link Junction} instances, which support fluent logical composition
+ * via {@link Junction#and(MessageMatcher) and} and {@link Junction#or(MessageMatcher) or}.
+ * <p>
+ * Matchers can filter messages by various criteria including:
+ * <ul>
+ *   <li>Message level – {@link #isDebug()}, {@link #isInfo()}, {@link #isWarn()},
+ *       {@link #isError()}, {@link #is(Level)}, {@link #between(Level, Level)}</li>
+ *   <li>Tag names – {@link #hasTag(String)}, {@link #hasAnyOf(String...)},
+ *       {@link #hasAllOf(String...)}, {@link #hasNoneOf(String...)}</li>
+ *   <li>Parameters – {@link #hasParam(String)}, {@link #hasParamValue(String)},
+ *       {@link #hasParamValue(String, Object)}</li>
+ *   <li>Throwables – {@link #hasThrowable()}, {@link #hasThrowable(Class)}</li>
+ *   <li>Message identity – {@link #hasMessage(String)}</li>
+ *   <li>Protocol structure – {@link #inGroup()}, {@link #inGroup(String)},
+ *       {@link #inGroupRegex(String)}, {@link #inRoot()}, {@link #inProtocol(Protocol)}</li>
+ *   <li>Boolean – {@link #any()}, {@link #none()}, {@link #not(MessageMatcher)}</li>
+ *   <li>Tag selector – {@link #is(TagSelector)}</li>
+ * </ul>
  *
  * @author Jeroen Gremmen
  * @since 1.0.0
+ *
+ * @see MessageMatcher
+ * @see Junction
  */
 public final class MessageMatchers
 {
@@ -78,6 +100,13 @@ public final class MessageMatchers
   }
 
 
+  /**
+   * Return a message matcher which negates the given {@code matcher}.
+   *
+   * @param matcher  matcher to negate, not {@code null}
+   *
+   * @return  negated matcher, never {@code null}
+   */
   @Contract(pure = true)
   public static @NotNull Junction not(@NotNull MessageMatcher matcher) {
     return Negation.of(requireNonNull(matcher));
@@ -138,6 +167,18 @@ public final class MessageMatchers
   }
 
 
+  /**
+   * Return a message matcher which matches every message having a specific tag associated
+   * with it.
+   * <p>
+   * If {@code tagName} is empty, the returned matcher matches no message. If {@code tagName}
+   * equals the {@linkplain de.sayayi.lib.protocol.ProtocolFactory#DEFAULT_TAG_NAME default tag
+   * name}, the returned matcher matches every message.
+   *
+   * @param tagName  tag name to check for, not {@code null}
+   *
+   * @return  tag message matcher, never {@code null}
+   */
   @Contract(pure = true)
   public static @NotNull Junction hasTag(@NotNull String tagName)
   {
@@ -167,6 +208,16 @@ public final class MessageMatchers
   }
 
 
+  /**
+   * Return a message matcher which matches every message having at least one of the given
+   * tag names associated with it.
+   *
+   * @param tagNames  tag names to check for, not {@code null}
+   *
+   * @return  disjunctive tag matcher, never {@code null}
+   *
+   * @see #hasAnyOf(String...)
+   */
   @Contract(pure = true)
   public static @NotNull Junction hasAnyOf(@NotNull Collection<String> tagNames)
   {
@@ -184,12 +235,32 @@ public final class MessageMatchers
   }
 
 
+  /**
+   * Return a message matcher which matches every message having at least one of the given
+   * tag names associated with it.
+   *
+   * @param tagNames  tag names to check for, not {@code null}
+   *
+   * @return  disjunctive tag matcher, never {@code null}
+   *
+   * @see #hasAnyOf(Collection)
+   */
   @Contract(pure = true)
   public static @NotNull Junction hasAnyOf(@NotNull String... tagNames) {
     return hasAnyOf(List.of(tagNames));
   }
 
 
+  /**
+   * Return a message matcher which matches every message having all the given tag names
+   * associated with it.
+   *
+   * @param tagNames  tag names to check for, not {@code null}
+   *
+   * @return  conjunctive tag matcher, never {@code null}
+   *
+   * @see #hasAllOf(String...)
+   */
   @Contract(pure = true)
   public static @NotNull Junction hasAllOf(@NotNull Collection<String> tagNames)
   {
@@ -207,30 +278,80 @@ public final class MessageMatchers
   }
 
 
+  /**
+   * Return a message matcher which matches every message having all the given tag names
+   * associated with it.
+   *
+   * @param tagNames  tag names to check for, not {@code null}
+   *
+   * @return  conjunctive tag matcher, never {@code null}
+   *
+   * @see #hasAllOf(Collection)
+   */
   @Contract(pure = true)
   public static @NotNull Junction hasAllOf(@NotNull String... tagNames) {
     return hasAllOf(List.of(tagNames));
   }
 
 
+  /**
+   * Return a message matcher which matches every message having none of the given tag names
+   * associated with it.
+   *
+   * @param tagNames  tag names to check for, not {@code null}
+   *
+   * @return  negated disjunctive tag matcher, never {@code null}
+   *
+   * @see #hasNoneOf(String...)
+   */
   @Contract(pure = true)
   public static @NotNull Junction hasNoneOf(@NotNull Collection<String> tagNames) {
     return not(hasAnyOf(tagNames));
   }
 
 
+  /**
+   * Return a message matcher which matches every message having none of the given tag names
+   * associated with it.
+   *
+   * @param tagNames  tag names to check for, not {@code null}
+   *
+   * @return  negated disjunctive tag matcher, never {@code null}
+   *
+   * @see #hasNoneOf(Collection)
+   */
   @Contract(pure = true)
   public static @NotNull Junction hasNoneOf(@NotNull String... tagNames) {
     return hasNoneOf(List.of(tagNames));
   }
 
 
+  /**
+   * Return a message matcher based on the given {@link TagSelector}.
+   *
+   * @param tagSelector  tag selector to convert, not {@code null}
+   *
+   * @return  matcher backed by the given tag selector, never {@code null}
+   *
+   * @see TagSelector#asMessageMatcher()
+   */
   @Contract(pure = true)
   public static @NotNull Junction is(@NotNull TagSelector tagSelector) {
     return tagSelector.asMessageMatcher().asJunction();
   }
 
 
+  /**
+   * Return a message matcher which matches every message having a parameter with the given
+   * name, regardless of its value.
+   *
+   * @param parameterName  parameter name to check for, not {@code null}
+   *
+   * @return  parameter matcher, never {@code null}
+   *
+   * @see #hasParamValue(String)
+   * @see #hasParamValue(String, Object)
+   */
   @Contract(pure = true)
   public static @NotNull Junction hasParam(@NotNull String parameterName)
   {
@@ -252,6 +373,17 @@ public final class MessageMatchers
   }
 
 
+  /**
+   * Return a message matcher which matches every message having a parameter with the given
+   * name and a non-{@code null} value.
+   *
+   * @param parameterName  parameter name to check for, not {@code null}
+   *
+   * @return  parameter value matcher, never {@code null}
+   *
+   * @see #hasParam(String)
+   * @see #hasParamValue(String, Object)
+   */
   @Contract(pure = true)
   public static @NotNull Junction hasParamValue(@NotNull String parameterName)
   {
@@ -273,6 +405,18 @@ public final class MessageMatchers
   }
 
 
+  /**
+   * Return a message matcher which matches every message having a parameter with the given
+   * name and a value equal to {@code value}.
+   *
+   * @param parameterName  parameter name to check for, not {@code null}
+   * @param value          expected parameter value, may be {@code null}
+   *
+   * @return  parameter value matcher, never {@code null}
+   *
+   * @see #hasParam(String)
+   * @see #hasParamValue(String)
+   */
   @Contract(pure = true)
   public static @NotNull Junction hasParamValue(@NotNull String parameterName, Object value)
   {
@@ -466,13 +610,10 @@ public final class MessageMatchers
 
 
   /**
+   * Create a matcher which checks for messages that are contained in a protocol group with
+   * name equal to {@code groupName}.
    * <p>
-   *   Create a matcher which checks for messages that are contained in a protocol group with
-   *   name equal to {@code groupName}.
-   * </p>
-   * <p>
-   *   If {@code groupName} is empty, any protocol group will match, regardless of its name.
-   * </p>
+   * If {@code groupName} is empty, any protocol group will match, regardless of its name.
    *
    * @param groupName  name of the protocol group name to match, not {@code null}
    *
@@ -507,10 +648,8 @@ public final class MessageMatchers
 
 
   /**
-   * <p>
-   *   Create a matcher which checks for messages that are contained in a protocol group with
-   *   a name that matches {@code groupNameRegex}.
-   * </p>
+   * Create a matcher which checks for messages that are contained in a protocol group with
+   * a name that matches {@code groupNameRegex}.
    *
    * @param groupNameRegex  regular expression for protocol group name to match, not {@code null}
    *

@@ -21,11 +21,14 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
- * Generic abstract builder class with a reference to the protocol instance that created the builder.
+ * Generic abstract builder class with a reference to the protocol instance that created the builder. This is the
+ * common base for all internal builder types such as message builders, parameter builders, and propagation builders.
  *
  * @param <M>  internal message object type
+ * @param <B>  protocol message builder type
  *
  * @author Jeroen Gremmen
+ * @since 0.5.0
  */
 abstract class AbstractBuilder<M,B extends ProtocolMessageBuilder<M>>
 {
@@ -35,6 +38,11 @@ abstract class AbstractBuilder<M,B extends ProtocolMessageBuilder<M>>
   protected final @NotNull AbstractProtocol<M,B> protocol;
 
 
+  /**
+   * Creates a new builder associated with the given protocol.
+   *
+   * @param protocol  protocol instance this builder is associated with, not {@code null}
+   */
   protected AbstractBuilder(@NotNull AbstractProtocol<M,B> protocol) {
     this.protocol = protocol;
   }

@@ -30,30 +30,50 @@ import static de.sayayi.lib.protocol.matcher.internal.BooleanMatcher.ANY;
 
 
 /**
+ * A {@link Junction} that matches messages whose effective level (the minimum of the message level and the level
+ * limit) is at least as severe as a configured threshold.
+ * <p>
+ * Pre-built instances for the standard levels are available as {@link #DEBUG}, {@link #INFO}, {@link #WARN}, and
+ * {@link #ERROR}. Custom instances can be obtained via {@link #of(Level)}.
+ *
  * @author Jeroen Gremmen
  * @since 1.0.0  (refactored in 1.6.0)
  */
 public final class LevelMatcher implements Junction
 {
+  /** Matcher for messages with level &gt;= {@code DEBUG}. */
   public static final Junction DEBUG = new LevelMatcher(Shared.DEBUG);
+
+  /** Matcher for messages with level &gt;= {@code INFO}. */
   public static final Junction INFO = new LevelMatcher(Shared.INFO);
+
+  /** Matcher for messages with level &gt;= {@code WARN}. */
   public static final Junction WARN = new LevelMatcher(Shared.WARN);
+
+  /** Matcher for messages with level &gt;= {@code ERROR}. */
   public static final Junction ERROR = new LevelMatcher(Shared.ERROR);
 
   private final Level level;
 
 
+  /**
+   * Creates a level matcher with the given minimum level threshold.
+   *
+   * @param level  minimum level to match, not {@code null}
+   */
   private LevelMatcher(@NotNull Level level) {
     this.level = level;
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
     return compare(min(message.getLevel(), levelLimit), level) >= 0;
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public boolean isTagSelector() {
     return false;
@@ -78,6 +98,14 @@ public final class LevelMatcher implements Junction
   }
 
 
+  /**
+   * Returns a level matcher for the given minimum level. For standard shared levels, cached singleton instances are
+   * returned.
+   *
+   * @param level  minimum level to match, not {@code null}
+   *
+   * @return  level matcher, never {@code null}
+   */
   @Contract(pure = true)
   public static Junction of(@NotNull Level level)
   {

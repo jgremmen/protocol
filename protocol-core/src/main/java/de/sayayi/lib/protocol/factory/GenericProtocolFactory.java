@@ -34,6 +34,12 @@ import static java.util.Objects.requireNonNull;
 
 
 /**
+ * Default implementation of {@link ProtocolFactory} that combines a {@link MessageProcessor} and
+ * a {@link MessageFormatter} to create protocol instances. The message matcher is detected via
+ * {@link ServiceLoader} or can be set explicitly.
+ *
+ * @param <M>  internal message object type
+ *
  * @author Jeroen Gremmen
  * @since 1.6.0
  */
@@ -49,12 +55,25 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
   private @NotNull ProtocolMessageMatcher messageMatcher;
 
 
+  /**
+   * Creates a new protocol factory using the context class loader to detect the message matcher.
+   *
+   * @param messageProcessor  processor for converting message strings, not {@code null}
+   * @param messageFormatter  formatter for rendering messages, not {@code null}
+   */
   public GenericProtocolFactory(@NotNull MessageProcessor<M> messageProcessor,
                                 @NotNull MessageFormatter<M> messageFormatter) {
     this(messageProcessor, messageFormatter, currentThread().getContextClassLoader());
   }
 
 
+  /**
+   * Creates a new protocol factory using the given class loader to detect the message matcher.
+   *
+   * @param messageProcessor  processor for converting message strings, not {@code null}
+   * @param messageFormatter  formatter for rendering messages, not {@code null}
+   * @param classLoader       class loader used for service discovery, or {@code null}
+   */
   public GenericProtocolFactory(@NotNull MessageProcessor<M> messageProcessor,
                                 @NotNull MessageFormatter<M> messageFormatter,
                                 ClassLoader classLoader) {
@@ -62,6 +81,13 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
   }
 
 
+  /**
+   * Creates a new protocol factory with an explicit message matcher.
+   *
+   * @param messageProcessor  processor for converting message strings, not {@code null}
+   * @param messageFormatter  formatter for rendering messages, not {@code null}
+   * @param messageMatcher    message matcher for parsing expressions, not {@code null}
+   */
   public GenericProtocolFactory(@NotNull MessageProcessor<M> messageProcessor,
                                 @NotNull MessageFormatter<M> messageFormatter,
                                 @NotNull ProtocolMessageMatcher messageMatcher)
@@ -74,12 +100,14 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull MessageProcessor<M> getMessageProcessor() {
     return messageProcessor;
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull MessageFormatter<M> getMessageFormatter() {
     return messageFormatter;
@@ -99,6 +127,7 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull MessageMatcher parseMessageMatcher(@NotNull String messageMatcherExpression)
   {
@@ -107,6 +136,7 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull TagSelector parseTagSelector(@NotNull String tagSelectorExpression)
   {
@@ -115,6 +145,7 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull Protocol<M> createProtocol() {
     return new ProtocolImpl<>(this);
@@ -127,6 +158,14 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
   }
 
 
+  /**
+   * Detects a {@link ProtocolMessageMatcher} implementation via {@link ServiceLoader}.
+   * If none is found, a fallback that throws on any parse request is returned.
+   *
+   * @param classLoader  class loader to use for service discovery, or {@code null}
+   *
+   * @return  detected or fallback message matcher, never {@code null}
+   */
   @Contract(pure = true)
   protected static @NotNull ProtocolMessageMatcher detectMessageMatcher(ClassLoader classLoader)
   {
@@ -139,18 +178,24 @@ public class GenericProtocolFactory<M> implements ProtocolFactory<M>
 
 
 
+  /**
+   * Fallback {@link ProtocolMessageMatcher} that throws {@link MessageMatcherException} for
+   * all parse operations. Used when no matcher implementation is available via service loading.
+   */
   protected static final class NotSupportedMessageMatcher implements ProtocolMessageMatcher
   {
     private NotSupportedMessageMatcher() {
     }
 
 
+    /** @throws MessageMatcherException always */
     @Override
     public @NotNull MessageMatcher parseMessageMatcher(@NotNull String messageMatcherExpression) {
       throw new MessageMatcherException("parseMessageMatcher not supported");
     }
 
 
+    /** @throws MessageMatcherException always */
     @Override
     public @NotNull TagSelector parseTagSelector(@NotNull String tagSelectorExpression) {
       throw new MessageMatcherException("parseTagSelector not supported");

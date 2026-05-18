@@ -32,7 +32,13 @@ import static java.util.Objects.requireNonNull;
 
 
 /**
+ * Base implementation of {@link ProtocolMessageBuilder} that collects tags, an optional throwable, and a severity
+ * level before a message is created. When {@link #message(String)} or {@link #withMessage(Object)} is called, the
+ * collected information is combined into a {@link ProtocolMessageEntry} and added to the protocol.
+ *
  * @param <M>  internal message object type
+ * @param <B>  protocol message builder type
+ * @param <P>  message parameter builder type returned after message creation
  *
  * @author Jeroen Gremmen
  * @since 0.1.0
@@ -49,6 +55,13 @@ abstract class AbstractMessageBuilder
   private Throwable throwable;
 
 
+  /**
+   * Creates a new message builder for the given protocol and severity level. The
+   * {@linkplain de.sayayi.lib.protocol.ProtocolFactory#DEFAULT_TAG_NAME default tag} is added automatically.
+   *
+   * @param protocol  protocol to add the message to, not {@code null}
+   * @param level     severity level for the message, not {@code null}
+   */
   protected AbstractMessageBuilder(@NotNull AbstractProtocol<M,B> protocol, @NotNull Level level)
   {
     super(protocol);
@@ -60,10 +73,18 @@ abstract class AbstractMessageBuilder
   }
 
 
+  /**
+   * Creates a parameter builder for the given message entry. Subclasses provide the concrete parameter builder type.
+   *
+   * @param message  protocol message entry to create the parameter builder for, not {@code null}
+   *
+   * @return  parameter builder instance, never {@code null}
+   */
   @Contract("_ -> new")
   protected abstract @NotNull P createMessageParameterBuilder(@NotNull ProtocolMessageEntry<M> message);
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull B forTag(@NotNull String tagName)
   {
@@ -76,6 +97,7 @@ abstract class AbstractMessageBuilder
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull B forTags(@NotNull String ... tagNames)
   {
@@ -86,6 +108,7 @@ abstract class AbstractMessageBuilder
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull B withThrowable(@NotNull Throwable throwable)
   {
@@ -95,6 +118,7 @@ abstract class AbstractMessageBuilder
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull P message(@NotNull String message)
   {
@@ -105,6 +129,7 @@ abstract class AbstractMessageBuilder
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull P withMessage(@NotNull M message)
   {
@@ -120,6 +145,13 @@ abstract class AbstractMessageBuilder
   }
 
 
+  /**
+   * Creates a new protocol message entry from the given message-with-id and adds it to the protocol.
+   *
+   * @param messageWithId  processed message with its identifier, not {@code null}
+   *
+   * @return  parameter builder for the newly created message, never {@code null}
+   */
   private @NotNull P message0(@NotNull MessageWithId<M> messageWithId)
   {
     final var msg = new ProtocolMessageEntry<>(protocol, level, protocol.getPropagatedTags(tags),

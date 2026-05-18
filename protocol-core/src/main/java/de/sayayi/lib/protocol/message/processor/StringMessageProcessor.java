@@ -24,14 +24,28 @@ import static java.util.Objects.requireNonNull;
 
 
 /**
+ * A {@link MessageProcessor} implementation that uses the message string as-is, without any
+ * lookup or transformation. The message string itself serves as both the message and its
+ * identifier.
+ *
  * @author Jeroen Gremmen
  * @since 0.7.0
  */
 public enum StringMessageProcessor implements MessageProcessor<String>
 {
+  /** Singleton instance. */
   INSTANCE;
 
 
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Returns the given message string directly, using it as both the message content and its id.
+   *
+   * @param message  message string, not {@code null}
+   *
+   * @return  the message paired with its id, never {@code null}
+   */
   @Override
   public @NotNull MessageWithId<String> processMessage(@NotNull String message) {
     return new GenericMessageWithId<>(requireNonNull(message, "message must not be null"));

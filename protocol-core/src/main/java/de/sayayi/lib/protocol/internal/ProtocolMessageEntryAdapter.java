@@ -32,6 +32,13 @@ import static java.util.stream.Collectors.joining;
 
 
 /**
+ * Adapter that wraps an {@link InternalProtocolEntry.Message} and caps its reported level at a given limit. This is
+ * used when the effective level of a message needs to be constrained by a level limit that is lower than the message's
+ * own level.
+ * <p>
+ * Instances are created via the {@link #from(Level, InternalProtocolEntry.Message)} factory method, which returns the
+ * original message unchanged if no level capping is needed.
+ *
  * @param <M>  internal message object type
  *
  * @author Jeroen Gremmen
@@ -43,6 +50,12 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
   private final @NotNull InternalProtocolEntry.Message<M> message;
 
 
+  /**
+   * Creates a new adapter that wraps the given message with a capped level.
+   *
+   * @param levelLimit  maximum level to report for this message, not {@code null}
+   * @param message     internal message entry to wrap, not {@code null}
+   */
   private ProtocolMessageEntryAdapter(@NotNull Level levelLimit, @NotNull InternalProtocolEntry.Message<M> message)
   {
     this.levelLimit = levelLimit;
@@ -50,24 +63,28 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull String getMessageId() {
     return message.getMessageId();
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull M getMessage() {
     return message.getMessage();
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public long getTimeMillis() {
     return message.getTimeMillis();
   }
 
 
+  /** {@inheritDoc} */
   @Override
   @UnmodifiableView
   public @NotNull Map<String,Object> getParameterValues() {
@@ -75,24 +92,32 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull Protocol<M> getProtocol() {
     return message.getProtocol();
   }
 
 
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Returns the capped level limit rather than the original message level.
+   */
   @Override
   public @NotNull Level getLevel() {
     return levelLimit;
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public Throwable getThrowable() {
     return message.getThrowable();
   }
 
 
+  /** {@inheritDoc} */
   @Override
   @UnmodifiableView
   public @NotNull Set<String> getTagNames() {
@@ -100,12 +125,14 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public boolean matches(@NotNull MessageMatcher matcher) {
     return message.matches0(levelLimit, matcher, true);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public int getVisibleEntryCount(@NotNull MessageMatcher matcher) {
     return message.getVisibleEntryCount0(levelLimit, matcher);
@@ -130,6 +157,18 @@ final class ProtocolMessageEntryAdapter<M> implements ProtocolEntry.Message<M>
   }
 
 
+  /**
+   * Returns a {@link ProtocolEntry.Message} for the given message entry, applying a level cap if the given
+   * {@code levelLimit} is lower than the message's own level. If no capping is needed, the original message entry is
+   * returned as-is.
+   *
+   * @param levelLimit    maximum level to report, not {@code null}
+   * @param messageEntry  internal message entry, not {@code null}
+   *
+   * @param <M>  internal message object type
+   *
+   * @return  message entry with level capped at {@code levelLimit}, never {@code null}
+   */
   static <M> ProtocolEntry.Message<M> from(@NotNull Level levelLimit,
                                            @NotNull InternalProtocolEntry.Message<M> messageEntry)
   {

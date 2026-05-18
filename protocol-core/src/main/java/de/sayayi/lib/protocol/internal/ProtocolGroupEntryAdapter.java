@@ -31,6 +31,12 @@ import static de.sayayi.lib.protocol.Level.compare;
 
 
 /**
+ * Adapter that wraps an {@link InternalProtocolEntry.Group} and constrains all level-dependent operations to a given
+ * level limit. This ensures that queries for entries, header visibility, and header level are evaluated against the
+ * capped level rather than the unrestricted one.
+ * <p>
+ * Instances are created via the {@link #from(Level, InternalProtocolEntry.Group)} factory method.
+ *
  * @param <M>  internal message object type
  *
  * @author Jeroen Gremmen
@@ -42,6 +48,12 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
   private final @NotNull InternalProtocolEntry.Group<M> group;
 
 
+  /**
+   * Creates a new adapter that wraps the given group with a capped level.
+   *
+   * @param levelLimit  maximum level to apply to group operations, not {@code null}
+   * @param group       internal group entry to wrap, not {@code null}
+   */
   private ProtocolGroupEntryAdapter(@NotNull Level levelLimit, @NotNull InternalProtocolEntry.Group<M> group)
   {
     this.levelLimit = levelLimit;
@@ -49,96 +61,112 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull List<ProtocolEntry<M>> getEntries(@NotNull MessageMatcher matcher) {
     return group.getEntries0(levelLimit, matcher);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public boolean isHeaderVisible(@NotNull MessageMatcher matcher) {
     return group.isHeaderVisible0(levelLimit, matcher);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull Level getHeaderLevel(@NotNull MessageMatcher matcher) {
     return group.getHeaderLevel0(levelLimit, matcher);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public String getName() {
     return group.getName();
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public Protocol.GenericMessage<M> getGroupMessage() {
     return group.getGroupMessage();
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public boolean matches(@NotNull MessageMatcher matcher) {
     return group.matches0(levelLimit, matcher, true);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public int getVisibleEntryCount(@NotNull MessageMatcher matcher) {
     return group.getVisibleEntryCount0(levelLimit, matcher);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public int getId() {
     return group.getId();
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull ProtocolGroup.Visibility getVisibility() {
     return group.getVisibility();
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull ProtocolGroup.Visibility getEffectiveVisibility() {
     return group.getEffectiveVisibility();
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull List<ProtocolEntry<M>> getEntries0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher) {
     return group.getEntries0(levelLimit, matcher);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public boolean isHeaderVisible0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher) {
     return group.isHeaderVisible0(levelLimit, matcher);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull Level getHeaderLevel0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher) {
     return group.getHeaderLevel0(levelLimit, matcher);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public int getVisibleGroupEntryMessageCount0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher) {
     return group.getVisibleGroupEntryMessageCount0(levelLimit, matcher);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher, boolean messageOnly) {
     return group.matches0(levelLimit, matcher, messageOnly);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public int getVisibleEntryCount0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher) {
     return group.getVisibleEntryCount0(levelLimit, matcher);
@@ -158,6 +186,17 @@ final class ProtocolGroupEntryAdapter<M> implements InternalProtocolEntry.Group<
   }
 
 
+  /**
+   * Creates a new {@link ProtocolEntry.Group} adapter that constrains the given group entry to the specified level
+   * limit.
+   *
+   * @param levelLimit  maximum level to apply, not {@code null}
+   * @param groupEntry  internal group entry to wrap, not {@code null}
+   *
+   * @param <M>  internal message object type
+   *
+   * @return  group entry adapter with the given level limit applied, never {@code null}
+   */
   @Contract(value = "_, _ -> new", pure = true)
   static @NotNull <M> ProtocolEntry.Group<M> from(@NotNull Level levelLimit,
                                                   @NotNull InternalProtocolEntry.Group<M> groupEntry) {

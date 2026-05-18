@@ -24,11 +24,22 @@ package de.sayayi.lib.protocol.exception;
  */
 public class MessageMatcherException extends ProtocolException
 {
+  /**
+   * Creates a new message matcher exception with the given detail message.
+   *
+   * @param message  detail message
+   */
   public MessageMatcherException(String message) {
     super(message);
   }
 
 
+  /**
+   * Creates a new message matcher exception with the given detail message and cause.
+   *
+   * @param message  detail message
+   * @param cause    underlying cause
+   */
   public MessageMatcherException(String message, Throwable cause) {
     super(message, cause);
   }

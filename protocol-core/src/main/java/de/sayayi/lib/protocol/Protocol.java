@@ -37,17 +37,15 @@ import java.util.stream.StreamSupport;
 
 
 /**
+ * This interface is the core instance for protocolling messages.
  * <p>
- *   This interface is the core instance for protocolling messages.
- * </p>
- * <p>
- *   A protocol is created by a protocol factory or by creating a group protocol using another
- *   protocol. Group protocols have additional functionality but share the same core functions
- *   defined in this interface.
- * </p>
+ * A protocol is created by a protocol factory or by creating a group protocol using another
+ * protocol. Group protocols have additional functionality but share the same core functions
+ * defined in this interface.
  *
  * <pre>
- *   public void validate(Protocol protocol) {
+ *   public void validate(Protocol protocol)
+ *   {
  *     try {
  *       ...
  *
@@ -57,15 +55,20 @@ import java.util.stream.StreamSupport;
  *       ...
  *     } catch(Exception ex) {
  *       String ticket = createTicket();
- *       protocol.warn().forTags("ui", "support").message("Ticket {0} created. Please contact support").with("0", ticket)
- *               .error(ex).forTag("support").message("Unexpected validation error occurred");
+ *       protocol
+ *           .warn()
+ *           .forTags("ui", "support")
+ *           .message("Ticket {0} created. Please contact support")
+ *           .with("0", ticket)
+ *           .error(ex)
+ *           .forTag("support")
+ *           .message("Unexpected validation error occurred");
  *     }
  *   }
  * </pre>
  *
  * <p>
- *   Protocol instances are not thread safe.
- * </p>
+ * Protocol instances are not thread safe.
  *
  * @param <M>  internal message object type
  *

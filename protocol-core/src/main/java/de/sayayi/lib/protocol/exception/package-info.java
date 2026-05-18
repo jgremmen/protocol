@@ -13,34 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.sayayi.lib.protocol.exception;
-
 
 /**
- * Protocol related exception.
+ * Exception types thrown by the protocol API.
+ * <p>
+ * {@link de.sayayi.lib.protocol.exception.ProtocolException ProtocolException} is the base
+ * exception for all protocol-related errors.
+ * {@link de.sayayi.lib.protocol.exception.MessageMatcherException MessageMatcherException}
+ * signals errors related to message matcher or tag selector parsing and evaluation.
  *
- * @author Jeroen Gremmen
  * @since 0.7.0
  */
-public class ProtocolException extends RuntimeException
-{
-  /**
-   * Creates a new protocol exception with the given detail message.
-   *
-   * @param message  detail message
-   */
-  public ProtocolException(String message) {
-    super(message);
-  }
-
-
-  /**
-   * Creates a new protocol exception with the given detail message and cause.
-   *
-   * @param message  detail message
-   * @param cause    underlying cause
-   */
-  public ProtocolException(String message, Throwable cause) {
-    super(message, cause);
-  }
-}
+package de.sayayi.lib.protocol.exception;

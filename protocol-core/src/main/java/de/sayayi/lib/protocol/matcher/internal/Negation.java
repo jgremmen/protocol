@@ -28,6 +28,10 @@ import static de.sayayi.lib.protocol.matcher.internal.BooleanMatcher.NONE;
 
 
 /**
+ * A {@link Junction} that inverts the result of another matcher (logical NOT). Double negation is automatically
+ * eliminated, and negating {@link BooleanMatcher#ANY ANY} or {@link BooleanMatcher#NONE NONE} returns the opposite
+ * constant.
+ *
  * @author Jeroen Gremmen
  * @since 1.0.0  (refactored in 1.6.0)
  */
@@ -36,17 +40,24 @@ public final class Negation implements Junction
   private final MessageMatcher matcher;
 
 
+  /**
+   * Creates a negation wrapping the given matcher.
+   *
+   * @param matcher  matcher to negate, not {@code null}
+   */
   private Negation(@NotNull MessageMatcher matcher) {
     this.matcher = matcher;
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
     return !matcher.matches(levelLimit, message);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public boolean isTagSelector() {
     return matcher.isTagSelector();
@@ -71,6 +82,13 @@ public final class Negation implements Junction
   }
 
 
+  /**
+   * Creates a negation of the given matcher. Double negation is eliminated and boolean constants are inverted directly.
+   *
+   * @param matcher  matcher to negate, not {@code null}
+   *
+   * @return  negated matcher, never {@code null}
+   */
   @Contract(pure = true)
   public static @NotNull Junction of(@NotNull MessageMatcher matcher)
   {

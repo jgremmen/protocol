@@ -28,9 +28,16 @@ import static java.lang.System.currentTimeMillis;
 
 
 /**
- * {@inheritDoc}
+ * Base class for protocol messages that implements common {@link GenericMessage} functionality such as message
+ * identity, parameter storage, and creation time tracking.
+ * <p>
+ * Each instance records the creation time at construction and maintains its own {@link ParameterMap} that inherits
+ * entries from a parent parameter map.
+ *
+ * @param <M>  internal message object type
  *
  * @author Jeroen Gremmen
+ * @since 0.1.0
  */
 abstract class AbstractGenericMessage<M> implements GenericMessage<M>
 {
@@ -40,6 +47,13 @@ abstract class AbstractGenericMessage<M> implements GenericMessage<M>
   protected final @NotNull ParameterMap parameterMap;
 
 
+  /**
+   * Creates a new message with the given message identity and a parameter map that inherits from the given parent.
+   * The creation time is recorded at construction.
+   *
+   * @param messageWithId       message with its identifier, not {@code null}
+   * @param parentParameterMap  parent parameter map to inherit from, not {@code null}
+   */
   protected AbstractGenericMessage(@NotNull MessageWithId<M> messageWithId,
                                    @NotNull ParameterMap parentParameterMap)
   {
@@ -50,24 +64,28 @@ abstract class AbstractGenericMessage<M> implements GenericMessage<M>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public long getTimeMillis() {
     return timeMillis;
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull String getMessageId() {
     return messageWithId.id();
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull M getMessage() {
     return messageWithId.message();
   }
 
 
+  /** {@inheritDoc} */
   @Override
   @UnmodifiableView
   public @NotNull Map<String,Object> getParameterValues() {

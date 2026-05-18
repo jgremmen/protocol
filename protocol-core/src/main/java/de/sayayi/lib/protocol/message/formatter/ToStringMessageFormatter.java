@@ -22,6 +22,9 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
+ * A {@link MessageFormatter} that formats messages by calling {@code toString()} on the internal
+ * message object. Also provides an {@link #IDENTITY} formatter that returns string messages as-is.
+ *
  * @param <M>  internal message object type
  *
  * @author Jeroen Gremmen
@@ -33,7 +36,7 @@ public final class ToStringMessageFormatter<M> implements MessageFormatter<M>
 
 
   /**
-   * This formatter returns the internal string message as is.
+   * A formatter that returns the internal string message without any transformation.
    */
   public static final MessageFormatter<String> IDENTITY = GenericMessage::getMessage;
 
@@ -42,12 +45,20 @@ public final class ToStringMessageFormatter<M> implements MessageFormatter<M>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull String formatMessage(@NotNull GenericMessage<M> message) {
     return message.getMessage().toString();
   }
 
 
+  /**
+   * Returns a shared formatter instance that formats messages using {@code toString()}.
+   *
+   * @param <T>  internal message object type
+   *
+   * @return  shared formatter instance, never {@code null}
+   */
   @SuppressWarnings("unchecked")
   public static @NotNull <T> MessageFormatter<T> getInstance() {
     return (MessageFormatter<T>)INSTANCE;

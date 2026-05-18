@@ -26,6 +26,9 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
+ * A {@link ConfiguredProtocolFormatter} that renders all protocol messages as an ASCII tree
+ * including technical details such as level and tags. Useful for debugging and diagnostics.
+ *
  * @param <M>  internal message object type
  *
  * @author Jeroen Gremmen
@@ -42,12 +45,16 @@ public final class TechnicalProtocolFormatter<M> extends AbstractTreeProtocolFor
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull MessageMatcher getMatcher(@NotNull ProtocolFactory<M> protocolFactory) {
     return MessageMatchers.any();
   }
 
 
+  /**
+   * Formats the message and appends technical metadata (level and tags).
+   */
   @Override
   protected String format(@NotNull GenericMessageWithLevel<M> message)
   {
@@ -60,6 +67,13 @@ public final class TechnicalProtocolFormatter<M> extends AbstractTreeProtocolFor
   }
 
 
+  /**
+   * Returns a shared instance of this formatter.
+   *
+   * @param <M>  internal message object type
+   *
+   * @return  shared technical protocol formatter instance, never {@code null}
+   */
   @SuppressWarnings("unchecked")
   public static @NotNull <M> ConfiguredProtocolFormatter<M,String> getInstance() {
     return (ConfiguredProtocolFormatter<M,String>)INSTANCE;

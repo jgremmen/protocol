@@ -24,31 +24,44 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
+ * Adapter that wraps a plain {@link MessageMatcher} to make it implement the {@link MessageMatcher.Junction} interface,
+ * enabling fluent composition via {@link Junction#and(MessageMatcher) and} and {@link Junction#or(MessageMatcher) or}.
+ *
  * @author Jeroen Gremmen
  * @since 1.2.0  (refactored in 1.6.0)
+ *
+ * @see MessageMatcher#asJunction()
  */
 public final class JunctionAdapter implements MessageMatcher.Junction
 {
   private final MessageMatcher matcher;
 
 
+  /**
+   * Creates a junction adapter wrapping the given matcher.
+   *
+   * @param matcher  matcher to wrap, not {@code null}
+   */
   public JunctionAdapter(@NotNull MessageMatcher matcher) {
     this.matcher = matcher;
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public <M> boolean matches(@NotNull Level levelLimit, @NotNull Message<M> message) {
     return matcher.matches(levelLimit, message);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public boolean isTagSelector() {
     return matcher.isTagSelector();
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull TagSelector asTagSelector() {
     return matcher.asTagSelector();

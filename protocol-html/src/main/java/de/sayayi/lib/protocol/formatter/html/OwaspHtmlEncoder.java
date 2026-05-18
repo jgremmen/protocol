@@ -21,12 +21,16 @@ import static org.owasp.encoder.Encode.forHtml;
 
 
 /**
+ * {@link HtmlEncoder} implementation using
+ * <a href="https://github.com/OWASP/owasp-java-encoder">OWASP Java Encoder</a>.
+ *
  * @author Jeroen Gremmen
  * @since 1.6.0
  */
 @SuppressWarnings("unused")
 public final class OwaspHtmlEncoder extends HtmlEncoder
 {
+  /** {@inheritDoc} */
   @Override
   public @NotNull String encodeHtml(@NotNull String text) {
     return forHtml(text);

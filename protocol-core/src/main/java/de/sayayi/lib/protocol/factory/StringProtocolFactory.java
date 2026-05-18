@@ -35,6 +35,11 @@ import java.text.MessageFormat;
  */
 public class StringProtocolFactory extends GenericProtocolFactory<String>
 {
+  /**
+   * Creates a new string protocol factory with the given message formatter.
+   *
+   * @param messageFormatter  formatter used for rendering string messages, not {@code null}
+   */
   public StringProtocolFactory(@NotNull MessageFormatter<String> messageFormatter) {
     super(StringMessageProcessor.INSTANCE, messageFormatter);
   }

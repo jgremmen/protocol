@@ -33,6 +33,9 @@ import static java.util.stream.Collectors.joining;
 
 
 /**
+ * Stores a single protocol message entry with its level, tags, throwable, and parameters. This is the concrete
+ * representation of a message as it is added to a protocol or protocol group.
+ *
  * @param <M>  internal message object type
  *
  * @author Jeroen Gremmen
@@ -46,6 +49,16 @@ final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements
   private final Throwable throwable;
 
 
+  /**
+   * Creates a new protocol message entry.
+   *
+   * @param protocol            protocol that contains this message, not {@code null}
+   * @param level               severity level of the message, not {@code null}
+   * @param tagNames            tag names associated with this message, not {@code null}
+   * @param throwable           throwable associated with this message, or {@code null}
+   * @param messageWithId       message with its identifier, not {@code null}
+   * @param parentParameterMap  parent parameter map to inherit from, not {@code null}
+   */
   ProtocolMessageEntry(@NotNull Protocol<M> protocol, @NotNull Level level,
                        @NotNull Set<String> tagNames, Throwable throwable,
                        @NotNull MessageWithId<M> messageWithId,
@@ -60,18 +73,21 @@ final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull Protocol<M> getProtocol() {
     return protocol;
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull Level getLevel() {
     return level;
   }
 
 
+  /** {@inheritDoc} */
   @Override
   @UnmodifiableView
   public @NotNull Set<String> getTagNames() {
@@ -79,36 +95,42 @@ final class ProtocolMessageEntry<M> extends AbstractGenericMessage<M> implements
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public Throwable getThrowable() {
     return throwable;
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public boolean hasTag(@NotNull String tagName) {
     return tagNames.contains(tagName);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher, boolean messageOnly) {
     return matcher.matches(levelLimit, this);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public boolean matches(@NotNull MessageMatcher matcher) {
     return matches0(HIGHEST, matcher, true);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public int getVisibleEntryCount0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher) {
     return matches0(levelLimit, matcher, false) ? 1 : 0;
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public int getVisibleEntryCount(@NotNull MessageMatcher matcher) {
     return getVisibleEntryCount0(HIGHEST, matcher);
