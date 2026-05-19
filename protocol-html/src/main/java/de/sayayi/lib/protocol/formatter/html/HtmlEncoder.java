@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static java.lang.Thread.currentThread;
 
@@ -40,6 +42,7 @@ public abstract class HtmlEncoder
     ENCODER_MAP.put("org.owasp.encoder.Encode", "OwaspHtmlEncoder");
   }
 
+  private static final Lock LOCK = new ReentrantLock();
   private static volatile HtmlEncoder INSTANCE = null;
 
 
@@ -64,18 +67,32 @@ public abstract class HtmlEncoder
    */
   public static @NotNull HtmlEncoder getInstance()
   {
-    if (INSTANCE == null)
+    var instance = INSTANCE;
+    if (instance == null)
     {
-      INSTANCE = ServiceLoader
-          .load(HtmlEncoder.class)
-          .findFirst()
-          .orElseGet(HtmlEncoder::probeForImplementations);
+      LOCK.lock();
+      try {
+        if ((instance = INSTANCE) == null)
+        {
+          instance = ServiceLoader
+              .load(HtmlEncoder.class)
+              .findFirst()
+              .orElseGet(HtmlEncoder::probeForImplementations);
 
-      if (INSTANCE == null)
-        throw new UnsupportedOperationException("no html encoders found, please provide any of " + ENCODER_MAP.keySet());
+          if (instance == null)
+          {
+            throw new UnsupportedOperationException("no html encoders found, please provide any of " +
+               ENCODER_MAP.keySet());
+          }
+
+          INSTANCE = instance;
+        }
+      } finally {
+        LOCK.unlock();
+      }
     }
 
-    return INSTANCE;
+    return instance;
   }
 
 
