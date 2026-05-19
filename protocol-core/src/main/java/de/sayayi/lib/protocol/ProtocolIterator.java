@@ -16,8 +16,15 @@
 package de.sayayi.lib.protocol;
 
 import de.sayayi.lib.protocol.Protocol.GenericMessageWithLevel;
-import de.sayayi.lib.protocol.ProtocolGroup.Visibility;
 import de.sayayi.lib.protocol.ProtocolIterator.DepthEntry;
+import de.sayayi.lib.protocol.internal.ProtocolStructureIterator.BoundedDepthEntryImpl;
+import de.sayayi.lib.protocol.internal.ProtocolStructureIterator.DepthEntryImpl;
+import de.sayayi.lib.protocol.internal.ProtocolStructureIterator.GroupEndEntryImpl;
+import de.sayayi.lib.protocol.internal.ProtocolStructureIterator.GroupMessageEntryImpl;
+import de.sayayi.lib.protocol.internal.ProtocolStructureIterator.GroupStartEntryImpl;
+import de.sayayi.lib.protocol.internal.ProtocolStructureIterator.MessageEntryImpl;
+import de.sayayi.lib.protocol.internal.ProtocolStructureIterator.ProtocolEndImpl;
+import de.sayayi.lib.protocol.internal.ProtocolStructureIterator.ProtocolStartImpl;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -69,7 +76,8 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
    * @param <M>  internal message object type
    */
   @SuppressWarnings("unused")
-  interface DepthEntry<M>
+  sealed interface DepthEntry<M>
+      permits BoundedDepthEntry, ProtocolStart, ProtocolEnd, GroupEndEntry, DepthEntryImpl
   {
     /**
      * Returns the depth for this entry.
@@ -105,7 +113,8 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
    *
    * @param <M>  internal message object type
    */
-  interface BoundedDepthEntry<M> extends DepthEntry<M>
+  sealed interface BoundedDepthEntry<M> extends DepthEntry<M>
+      permits MessageEntry, GroupStartEntry, BoundedDepthEntryImpl
   {
     /**
      * Tells if this is the first entry with respect to its depth.
@@ -139,7 +148,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
    *
    * @param <M>  internal message object type
    */
-  interface ProtocolStart<M> extends DepthEntry<M> {
+  sealed interface ProtocolStart<M> extends DepthEntry<M> permits ProtocolStartImpl {
   }
 
 
@@ -150,7 +159,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
    *
    * @param <M>  internal message object type
    */
-  interface ProtocolEnd<M> extends DepthEntry<M> {
+  sealed interface ProtocolEnd<M> extends DepthEntry<M> permits ProtocolEndImpl {
   }
 
 
@@ -167,7 +176,8 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
    * @see GroupMessageEntry
    * @see GroupStartEntry
    */
-  interface MessageEntry<M> extends BoundedDepthEntry<M>, Protocol.Message<M>
+  sealed interface MessageEntry<M> extends BoundedDepthEntry<M>, Protocol.Message<M>
+      permits GroupMessageEntry, MessageEntryImpl
   {
     /**
      * Tells if this message is a group header message.
@@ -186,14 +196,14 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
   /**
    * Group message entry. This entry is generated for groups which have no visible entries
    * themselves but have a visible group header message. E.g. for visibility
-   * {@link Visibility#SHOW_HEADER_ONLY}.
+   * {@link ProtocolGroup.Visibility#SHOW_HEADER_ONLY}.
    *
    * @param <M>  internal message object type
    *
-   * @see ProtocolGroup#setVisibility(Visibility)
+   * @see ProtocolGroup#setVisibility(ProtocolGroup.Visibility)
    * @see GroupStartEntry
    */
-  interface GroupMessageEntry<M> extends MessageEntry<M>
+  sealed interface GroupMessageEntry<M> extends MessageEntry<M> permits GroupMessageEntryImpl
   {
     /**
      * Returns the unique name for this group.
@@ -242,7 +252,7 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
    * @see GroupMessageEntry
    * @see GroupEndEntry
    */
-  interface GroupStartEntry<M> extends BoundedDepthEntry<M>, Protocol.Group<M>
+  sealed interface GroupStartEntry<M> extends BoundedDepthEntry<M>, Protocol.Group<M> permits GroupStartEntryImpl
   {
     /**
      * {@inheritDoc}
@@ -276,6 +286,6 @@ public interface ProtocolIterator<M> extends Iterator<DepthEntry<M>>
    *
    * @see GroupStartEntry
    */
-  interface GroupEndEntry<M> extends DepthEntry<M> {
+  sealed interface GroupEndEntry<M> extends DepthEntry<M> permits GroupEndEntryImpl {
   }
 }
