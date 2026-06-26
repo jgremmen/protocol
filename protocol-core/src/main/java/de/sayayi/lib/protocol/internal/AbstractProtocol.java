@@ -142,7 +142,6 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher, boolean messageOnly)
   {
@@ -179,7 +178,6 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int getVisibleEntryCount0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
