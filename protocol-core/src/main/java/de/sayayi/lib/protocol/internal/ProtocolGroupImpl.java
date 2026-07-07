@@ -520,6 +520,12 @@ final class ProtocolGroupImpl<M>
       parameterMap.put(parameter, value);
       return this;
     }
+
+
+    @Override
+    public <T> T get(@NotNull String parameter, @NotNull Class<T> type) {
+      return ProtocolGroupImpl.this.get(parameter, type);
+    }
   }
 
 

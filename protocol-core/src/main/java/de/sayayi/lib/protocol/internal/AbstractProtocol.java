@@ -225,6 +225,16 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   }
 
 
+  @Override
+  @SuppressWarnings("unchecked")
+  public <T> T get(@NotNull String parameter, @NotNull Class<T> type)
+  {
+    final var value = parameterMap.get(parameter);
+
+    return value != null && type.isAssignableFrom(value.getClass()) ? (T)value : null;
+  }
+
+
   /** {@inheritDoc} */
   @Override
   public @NotNull Spliterator<DepthEntry<M>> spliterator(@NotNull MessageMatcher matcher) {

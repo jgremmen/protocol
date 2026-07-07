@@ -280,6 +280,43 @@ public interface Protocol<M> extends ProtocolQueryable
 
 
   /**
+   * Returns the value for the given {@code parameter}, previously set using one of the
+   * {@code set} methods on this protocol.
+   *
+   * @param parameter  name of the parameter to retrieve, not {@code null}
+   *
+   * @return  parameter value or {@code null} if no value has been set for this parameter
+   *
+   * @see #set(String, Object)
+   *
+   * @since 1.7.0
+   */
+  @Contract(pure = true)
+  default Object get(@NotNull String parameter) {
+    return get(parameter, Object.class);
+  }
+
+
+  /**
+   * Returns the value for the given {@code parameter}, previously set using one of the
+   * {@code set} methods on this protocol, provided it is assignable to {@code type}.
+   *
+   * @param parameter  name of the parameter to retrieve, not {@code null}
+   * @param type       type the parameter value must be assignable to, not {@code null}
+   * @param <T>        parameter value type
+   *
+   * @return  parameter value, or {@code null} if no value has been set for this parameter or
+   *          if the value is not assignable to {@code type}
+   *
+   * @see #set(String, Object)
+   *
+   * @since 1.7.0
+   */
+  @Contract(pure = true)
+  <T> T get(@NotNull String parameter, @NotNull Class<T> type);
+
+
+  /**
    * Prepares a new debug level message.
    * <p>
    * This method is a convenience function and is identical to {@code add(Level.Shared.DEBUG)}

@@ -138,10 +138,14 @@ public final class ProtocolImpl<M> extends AbstractProtocol<M,ProtocolMessageBui
 
 
     @Override
-    public @NotNull Protocol<M> set(@NotNull String parameter, Object value)
-    {
-      parameterMap.put(parameter, value);
-      return this;
+    public @NotNull Protocol<M> set(@NotNull String parameter, Object value) {
+      return ProtocolImpl.this.set(parameter, value);
+    }
+
+
+    @Override
+    public <T> T get(@NotNull String parameter, @NotNull Class<T> type) {
+      return ProtocolImpl.this.get(parameter, type);
     }
   }
 
