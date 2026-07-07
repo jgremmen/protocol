@@ -48,9 +48,14 @@ import static java.util.stream.Collectors.joining;
 
 
 /**
+ * Default implementation of a {@link ProtocolGroup}. A protocol group is a nested protocol that
+ * groups a set of messages under an optional header message and controls how that group is rendered
+ * through its visibility and level limit settings.
+ *
  * @param <M>  internal message object type
  *
  * @author Jeroen Gremmen
+ * @since 0.1.0
  */
 @SuppressWarnings("java:S2160")
 final class ProtocolGroupImpl<M>
@@ -65,6 +70,11 @@ final class ProtocolGroupImpl<M>
   private String name;
 
 
+  /**
+   * Creates a new protocol group as a child of the given parent protocol.
+   *
+   * @param parent  parent protocol, not {@code null}
+   */
   ProtocolGroupImpl(@NotNull AbstractProtocol<M,Protocol.ProtocolMessageBuilder<M>> parent)
   {
     super(parent.getFactory(), parent.parameterMap);
@@ -76,48 +86,56 @@ final class ProtocolGroupImpl<M>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull Protocol<M> getParent() {
     return parent;
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull Level getLevelLimit() {
     return levelLimit;
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull Visibility getVisibility() {
     return visibility;
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public GenericMessage<M> getGroupMessage() {
     return groupMessage;
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public String getName() {
     return name;
   }
 
 
+  /** {@inheritDoc} */
   @Override
   protected @NotNull Set<String> getPropagatedTags(@NotNull Set<String> tags) {
     return parent.getPropagatedTags(super.getPropagatedTags(tags));
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull Visibility getEffectiveVisibility() {
     return groupMessage == null ? visibility.forAbsentHeader() : visibility;
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull ProtocolGroup<M> setVisibility(@NotNull Visibility visibility)
   {
@@ -126,6 +144,7 @@ final class ProtocolGroupImpl<M>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull ProtocolGroup<M> setLevelLimit(@NotNull Level level)
   {
@@ -134,6 +153,7 @@ final class ProtocolGroupImpl<M>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public boolean isHeaderVisible0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
@@ -149,12 +169,14 @@ final class ProtocolGroupImpl<M>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public boolean isHeaderVisible(@NotNull MessageMatcher matcher) {
     return isHeaderVisible0(levelLimit, matcher);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull Level getHeaderLevel0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
@@ -183,12 +205,14 @@ final class ProtocolGroupImpl<M>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull Level getHeaderLevel(@NotNull MessageMatcher matcher) {
     return getHeaderLevel0(levelLimit, matcher);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull List<ProtocolEntry<M>> getEntries0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
@@ -198,12 +222,14 @@ final class ProtocolGroupImpl<M>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull List<ProtocolEntry<M>> getEntries(@NotNull MessageMatcher matcher) {
     return getEntries(levelLimit, matcher);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public int getVisibleEntryCount0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
@@ -225,12 +251,14 @@ final class ProtocolGroupImpl<M>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public int getVisibleEntryCount(@NotNull MessageMatcher matcher) {
     return getVisibleEntryCount0(levelLimit, matcher);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public int getVisibleGroupEntryMessageCount0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
@@ -239,6 +267,7 @@ final class ProtocolGroupImpl<M>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull ProtocolGroup.MessageParameterBuilder<M> setGroupMessage(@NotNull String message)
   {
@@ -249,6 +278,7 @@ final class ProtocolGroupImpl<M>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull ProtocolGroup<M> removeGroupMessage()
   {
@@ -258,6 +288,7 @@ final class ProtocolGroupImpl<M>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull ProtocolGroup<M> setName(String name)
   {
@@ -276,12 +307,14 @@ final class ProtocolGroupImpl<M>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull Optional<ProtocolGroup<M>> getGroupByName(@NotNull String name) {
     return name.equals(this.name) ? Optional.of(this) : super.getGroupByName(name);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public void forEachGroupByRegex(@NotNull String regex, @NotNull Consumer<ProtocolGroup<M>> action)
   {
@@ -295,12 +328,14 @@ final class ProtocolGroupImpl<M>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull ProtocolGroup.ProtocolMessageBuilder<M> add(@NotNull Level level) {
     return new MessageBuilder(requireNonNull(level, "level must not be null"));
   }
 
 
+  /** {@inheritDoc} */
   @Override
   @SuppressWarnings("unchecked")
   public @NotNull Protocol<M> getRootProtocol() {
@@ -308,6 +343,7 @@ final class ProtocolGroupImpl<M>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher, boolean messageOnly)
   {
@@ -320,12 +356,14 @@ final class ProtocolGroupImpl<M>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public boolean matches(@NotNull MessageMatcher matcher) {
     return matches0(levelLimit, matcher, true);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull ProtocolIterator<M> iterator(@NotNull MessageMatcher matcher)
   {
@@ -334,18 +372,21 @@ final class ProtocolGroupImpl<M>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull TagSelector tagSelector) {
     return new PropagationBuilder(tagSelector);
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull String tagSelectorExpression) {
     return propagate(factory.parseTagSelector(tagSelectorExpression));
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public @NotNull ProtocolGroup<M> set(@NotNull String parameter, Object value)
   {
@@ -376,6 +417,9 @@ final class ProtocolGroupImpl<M>
 
 
 
+  /**
+   * Message builder for messages added to this protocol group.
+   */
   private class MessageBuilder
       extends AbstractMessageBuilder<M,ProtocolGroup.ProtocolMessageBuilder<M>,ProtocolGroup.MessageParameterBuilder<M>>
       implements ProtocolGroup.ProtocolMessageBuilder<M>
@@ -395,6 +439,9 @@ final class ProtocolGroupImpl<M>
 
 
 
+  /**
+   * Internal representation of the group header message.
+   */
   private final class GroupMessage extends AbstractGenericMessage<M>
   {
     private GroupMessage(@NotNull MessageWithId<M> messageWithId) {
@@ -421,6 +468,10 @@ final class ProtocolGroupImpl<M>
 
 
 
+  /**
+   * Parameter builder for the group header message and messages added to this group. Group
+   * configuration calls are delegated to the enclosing protocol group.
+   */
   private class ParameterBuilderImpl
       extends AbstractParameterBuilder<M,ProtocolGroup.MessageParameterBuilder<M>,ProtocolGroup.ProtocolMessageBuilder<M>>
       implements ProtocolGroup.MessageParameterBuilder<M>
@@ -430,90 +481,105 @@ final class ProtocolGroupImpl<M>
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public @NotNull Visibility getVisibility() {
       return ProtocolGroupImpl.this.getVisibility();
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public @NotNull Visibility getEffectiveVisibility() {
       return ProtocolGroupImpl.this.getEffectiveVisibility();
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public @NotNull ProtocolGroup<M> setVisibility(@NotNull Visibility visibility) {
       return ProtocolGroupImpl.this.setVisibility(visibility);
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public @NotNull Level getLevelLimit() {
       return ProtocolGroupImpl.this.getLevelLimit();
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public @NotNull ProtocolGroup<M> setLevelLimit(@NotNull Level level) {
       return ProtocolGroupImpl.this.setLevelLimit(level);
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public boolean isHeaderVisible(@NotNull MessageMatcher matcher) {
       return ProtocolGroupImpl.this.isHeaderVisible(matcher);
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public @NotNull ProtocolGroup.MessageParameterBuilder<M> setGroupMessage(@NotNull String message) {
       return ProtocolGroupImpl.this.setGroupMessage(message);
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public @NotNull ProtocolGroup<M> removeGroupMessage() {
       return ProtocolGroupImpl.this.removeGroupMessage();
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public String getName() {
       return ProtocolGroupImpl.this.getName();
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public @NotNull ProtocolGroup<M> setName(String uniqueId) {
       return ProtocolGroupImpl.this.setName(uniqueId);
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public @NotNull Protocol<M> getRootProtocol() {
       return ProtocolGroupImpl.this.getRootProtocol();
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public @NotNull ProtocolIterator<M> iterator(@NotNull MessageMatcher matcher) {
       return ProtocolGroupImpl.this.iterator(matcher);
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull TagSelector tagSelector) {
       return (ProtocolGroup.TargetTagBuilder<M>)super.propagate(tagSelector);
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public @NotNull ProtocolGroup.TargetTagBuilder<M> propagate(@NotNull String tagSelectorExpression) {
       return (ProtocolGroup.TargetTagBuilder<M>)super.propagate(tagSelectorExpression);
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public @NotNull ProtocolGroup<M> set(@NotNull String parameter, Object value)
     {
@@ -522,6 +588,7 @@ final class ProtocolGroupImpl<M>
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public <T> T get(@NotNull String parameter, @NotNull Class<T> type) {
       return ProtocolGroupImpl.this.get(parameter, type);
@@ -531,6 +598,9 @@ final class ProtocolGroupImpl<M>
 
 
 
+  /**
+   * Tag propagation builder for propagation rules defined on this protocol group.
+   */
   private class PropagationBuilder
       extends AbstractPropagationBuilder<M,ProtocolGroup.ProtocolMessageBuilder<M>>
       implements ProtocolGroup.TargetTagBuilder<M>
@@ -540,12 +610,14 @@ final class ProtocolGroupImpl<M>
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public @NotNull ProtocolGroup<M> to(@NotNull String targetTagName) {
       return (ProtocolGroup<M>)super.to(targetTagName);
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public @NotNull ProtocolGroup<M> to(@NotNull String ... targetTagNames) {
       return (ProtocolGroup<M>)super.to(targetTagNames);

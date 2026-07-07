@@ -67,7 +67,7 @@ public class JsonProtocolFormatter<M> implements ProtocolFormatter<M,String>
 
 
   /**
-   * Creates a new JSON formatter with pretty-printing enabled.
+   * Creates a new JSON formatter with pretty-formatting enabled.
    */
   public JsonProtocolFormatter() {
     this(true);

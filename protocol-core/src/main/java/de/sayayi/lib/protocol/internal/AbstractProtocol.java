@@ -142,6 +142,15 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   }
 
 
+  /**
+   * Tells whether any entry of this protocol matches the given matcher, constrained by the given level limit.
+   *
+   * @param levelLimit   maximum level to consider, not {@code null}
+   * @param matcher      message matcher, not {@code null}
+   * @param messageOnly  {@code true} to match only message entries, {@code false} to include group structure
+   *
+   * @return  {@code true} if at least one matching entry exists, {@code false} otherwise
+   */
   @Override
   public boolean matches0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher, boolean messageOnly)
   {
@@ -178,6 +187,15 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   }
 
 
+  /**
+   * Returns the number of visible entries of this protocol matching the given matcher, constrained by the given level
+   * limit.
+   *
+   * @param levelLimit  maximum level to consider, not {@code null}
+   * @param matcher     message matcher, not {@code null}
+   *
+   * @return  number of visible entries &gt;= 0
+   */
   @Override
   public int getVisibleEntryCount0(@NotNull Level levelLimit, @NotNull MessageMatcher matcher)
   {
@@ -225,6 +243,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   }
 
 
+  /** {@inheritDoc} */
   @Override
   @SuppressWarnings("unchecked")
   public <T> T get(@NotNull String parameter, @NotNull Class<T> type)
@@ -298,12 +317,24 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   }
 
 
+  /**
+   * Two protocols are considered equal if they share the same unique protocol id.
+   *
+   * @param o  object to compare with
+   *
+   * @return  {@code true} if {@code o} is a protocol with the same id, {@code false} otherwise
+   */
   @Override
   public boolean equals(Object o) {
     return this == o || o instanceof AbstractProtocol && id == ((AbstractProtocol<?,?>)o).id;
   }
 
 
+  /**
+   * Returns a hash code derived from the unique protocol id.
+   *
+   * @return  hash code for this protocol
+   */
   @Override
   public int hashCode() {
     return Integer.hashCode(id);
