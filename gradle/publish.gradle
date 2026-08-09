@@ -1,0 +1,115 @@
+/*
+ * Copyright 2019 Jeroen Gremmen
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+//file:noinspection GroovyAssignabilityCheck
+//file:noinspection SpellCheckingInspection
+
+
+import org.gradle.util.internal.TextUtil
+
+
+apply plugin: 'org.danilopianini.publish-on-central'
+
+
+publishOnCentral {
+  repoOwner = 'jgremmen'
+
+  afterEvaluate {
+    projectLongName = "${project.description}"
+  }
+
+  licenseName = 'Apache License, Version 2.0'
+  licenseUrl = 'https://www.apache.org/licenses/LICENSE-2.0'
+
+  projectUrl = 'https://github.com/jgremmen/protocol'
+  scmConnection = 'scm:git:git://github.com/jgremmen/protocol.git'
+}
+
+
+publishing {
+  publications {
+    withType(MavenPublication).configureEach {
+      pom {
+        developers {
+          developer {
+            id = 'jgremmen'
+            name = 'Jeroen Gremmen'
+            email = 'jeroen.gremmen@sayayi.de'
+          }
+        }
+      }
+    }
+  }
+
+  if (snapshot)
+  {
+    repositories {
+      maven {
+        name = 'mavenCentralSnapshot'
+        url = 'https://central.sonatype.com/repository/maven-snapshots/'
+
+        mavenContent {
+          snapshotsOnly()
+        }
+
+        credentials {
+          username = rootProject.findProperty('mavenCentralPortalUsername')
+          password = rootProject.findProperty('mavenCentralPortalPassword')
+        }
+      }
+    }
+  }
+}
+
+
+tasks.register('publishToProjectLocalRepository') {
+  group = PublishingPlugin.PUBLISH_TASK_GROUP
+  description = 'Create a local repository with releasable artifacts.'
+
+  dependsOn publishOSSRHPublicationToProjectLocalRepository
+
+  outputs.dir layout.buildDirectory.dir('project-local-repository')
+}
+
+
+tasks.named('zipMavenCentralPortalPublication') {
+  mustRunAfter 'publishToProjectLocalRepository'
+}
+
+
+ext.releaseTask = tasks.register(TextUtil.toLowerCamelCase("release-${project.name}-artifacts")) {
+  group = 'release'
+  description = "Release ${project.name} ${snapshot ? 'snapshot ' : ''}artifacts to Maven Central Repository."
+
+  inputs.property('snapshot', snapshot)
+
+  dependsOn 'publishToProjectLocalRepository'
+
+  if (snapshot)
+    dependsOn 'publishOSSRHPublicationToMavenCentralSnapshotRepository'
+  else
+  {
+    dependsOn 'zipMavenCentralPortalPublication'
+    dependsOn 'validateMavenCentralPortalPublication'
+    dependsOn 'releaseMavenCentralPortalPublication'
+  }
+}
+
+
+tasks.configureEach {
+  if (name.endsWith('ToMavenLocal') || (snapshot && name.contains('MavenCentralPortal')))
+    group = null
+}

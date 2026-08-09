@@ -1,13 +1,34 @@
+/*
+ * Copyright 2022 Jeroen Gremmen
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+//file:noinspection DependencyNotationArgument
+
+
 description = 'Protocol Library Core'
 
 
-apply from: file('../gradle/javadoc.gradle')
-apply from: file('../gradle/quality.gradle')
-apply from: file('../gradle/publishing.gradle')
+configurations {
+  optionalApi
+
+  compileOnlyApi.extendsFrom(optionalApi)
+}
 
 
 dependencies {
-  compileOnly libs.message.format
+  optionalApi libs.message.format
 
   testImplementation libs.gson
 }
@@ -15,4 +36,65 @@ dependencies {
 
 compileJava {
   options.compilerArgs += [ '-Xlint:-module' ]
+}
+
+
+javadoc {
+  (options as StandardJavadocDocletOptions).with {
+    group('Protocol Core API', [
+            'de.sayayi.lib.protocol',
+            'de.sayayi.lib.protocol.exception',
+            'de.sayayi.lib.protocol.message',
+            'de.sayayi.lib.protocol.util'])
+    group('Protocol Factory', ['de.sayayi.lib.protocol.factory'])
+    group('Protocol Message Matchers', [
+            'de.sayayi.lib.protocol.matcher'])
+    group('Protocol Message Formatters', ['de.sayayi.lib.protocol.message.formatter'])
+    group('Protocol Message Processors', ['de.sayayi.lib.protocol.message.processor'])
+
+    linksOffline(
+        "https://javadoc.io/doc/org.jetbrains/annotations/${resolveVersion('annotations')}/",
+        "${rootDir}/gradle/javadocs/jetbrains-annotations")
+    linksOffline(
+        "https://javadoc.io/doc/de.sayayi.lib/message-format/${resolveVersion('message-format')}/",
+        "${rootDir}/gradle/javadocs/message-format")
+  }
+}
+
+
+publishOnCentral {
+  projectDescription = 'Core protocol library for collecting, grouping, and formatting application messages by severity and audience'
+}
+
+
+publishing {
+  publications {
+    withType(MavenPublication).configureEach {
+      pom {
+        inceptionYear = '2019'
+
+        url = "https://lib.sayayi.de/protocol/${releaseVersion}/"
+
+        withXml {
+          def optionalArtifactIds = configurations.optionalApi
+                  .resolvedConfiguration
+                  .firstLevelModuleDependencies
+                  .collect { it.moduleName }
+                  .toSet()
+
+          asNode().dependencies[0]?.dependency?.each { dependency ->
+            if (dependency.artifactId.text() in optionalArtifactIds)
+              dependency.appendNode('optional', 'true')
+          }
+        }
+      }
+    }
+  }
+}
+
+
+ext.releaseTask.configure {
+  if (snapshot) {
+    dependsOn ':protocol-core:publishOSSRHPublicationToMavenCentralSnapshotRepository'
+  }
 }

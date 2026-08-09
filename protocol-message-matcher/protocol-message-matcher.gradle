@@ -1,5 +1,25 @@
+/*
+ * Copyright 2025 Jeroen Gremmen
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+//file:noinspection DependencyNotationArgument
+
+
 plugins {
   id 'antlr'
+  id 'idea'
 }
 
 
@@ -7,29 +27,20 @@ description = 'Protocol Library Message Matcher Parser'
 
 
 configurations {
-  antlr4
+  antlr4 {
+    canBeConsumed = false
+    canBeResolved = true
+  }
 
   api.setExtendsFrom([])
-
-  implementation {
-    extendsFrom = extendsFrom.findAll { it != configurations.antlr }
-  }
 }
-
-
-apply from: file('../gradle/javadoc.gradle')
-apply from: file('../gradle/quality.gradle')
-apply from: file('../gradle/publishing.gradle')
 
 
 dependencies {
   implementation project(':protocol-core')
+  implementation libs.antlr4.ext.runtime
 
-  implementation(libs.antlr4.ext.runtime) {
-    exclude group: 'org.jetbrains'
-    exclude group: 'org.antlr'
-  }
-  implementation libs.antlr4.runtime
+  compileOnly libs.antlr4.runtime
 
   antlr4 libs.antlr4
 }
@@ -59,17 +70,44 @@ javadoc {
 }
 
 
+publishOnCentral {
+  projectDescription = 'ANTLR-based parser for converting text expressions into protocol message matchers and tag selectors'
+}
+
+
+publishing {
+  publications {
+    withType(MavenPublication).configureEach {
+      pom {
+        inceptionYear = '2025'
+
+        url = "https://lib.sayayi.de/protocol/${releaseVersion}/"
+      }
+    }
+  }
+}
+
+
+ext.releaseTask.configure {
+  if (snapshot) {
+    dependsOn ':protocol-message-matcher:publishOSSRHPublicationToMavenCentralSnapshotRepository'
+  }
+}
+
+
 clean {
-  delete file("src/main/antlr/gen")
-  delete file("src/main/gen")
-  delete fileTree("src/main/antlr").matching {
-    include "**/*.tokens"
+  delete layout.projectDirectory.dir('src/main/antlr/gen')
+  delete layout.projectDirectory.dir('src/main/gen')
+  delete layout.projectDirectory.dir('out')
+
+  delete fileTree(layout.projectDirectory.dir('src')).matching {
+    include 'main/antlr/*.tokens'
   }
 }
 
 
 idea {
   module {
-    generatedSourceDirs += generateGrammarSource.outputDirectory
+    resourceDirs += file('src/main/antlr')
   }
 }

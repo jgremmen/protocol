@@ -17,92 +17,63 @@
 description = 'Protocol Library Projects'
 
 
+def gradleDirectory = layout.projectDirectory.dir('gradle')
+
+
 allprojects {
-  layout.buildDirectory = '.build'
-
-  apply plugin: 'base'
-
   group = 'de.sayayi.lib'
   version = rootProject.libs.versions.protocol.get()
 
-  repositories {
-    maven {
-      url = 'https://oss.sonatype.org/content/repositories/snapshots/'
-      mavenContent {
-        includeGroup 'de.sayayi.lib'
-        snapshotsOnly()
-      }
-    }
+  ext.snapshot = (version as String).endsWith('-SNAPSHOT')
+  ext.releaseVersion = ext.snapshot ? (version as String)[0..-10] : version
 
-    mavenCentral()
-  }
+  layout.buildDirectory = '.build'
+
+  apply plugin: 'base'
+  apply from: gradleDirectory.file('repositories.gradle')
 }
 
 
 configure(subprojects.findAll { it.name.startsWith('protocol-') }) {
-  apply plugin: 'java-library'
-  apply plugin: 'maven-publish'
-  apply plugin: 'signing'
-  apply plugin: 'jacoco'
-  apply plugin: 'idea'
+  apply from: gradleDirectory.file('java-library.gradle')
+  apply from: gradleDirectory.file('javadoc.gradle')
+  apply from: gradleDirectory.file('publish.gradle')
+}
 
 
-  tasks.withType(JavaCompile).configureEach {
-    javaCompiler = javaToolchains.compilerFor {
-      languageVersion = JavaLanguageVersion.of(21)
-    }
+tasks.register('releaseAllDryRun', Sync) {
+  group = 'release'
+  description = 'Release all artifacts to temporary Maven repository.'
 
-    options.encoding = 'UTF-8'
-    doFirst {
-      options.compilerArgs += [ '--module-path', configurations.compileClasspath.asPath ]
-    }
+  into layout.buildDirectory.dir('repository')
+
+  configure(subprojects) { subproject ->
+    def publishTask = subproject.tasks.named('publishToProjectLocalRepository')
+    if (publishTask != null)
+      from publishTask
   }
+}
 
 
-  tasks.withType(Test).configureEach {
-    javaLauncher = javaToolchains.launcherFor {
-      languageVersion = JavaLanguageVersion.of(21)
-    }
-  }
+def snapshot = ext.snapshot
 
 
-  test {
-    useJUnitPlatform()
-  }
+tasks.register(snapshot ? 'releaseAllSnapshots' : 'releaseAll') {
+  group = 'release'
+  description = snapshot
+          ? 'Release all snapshot artifacts to Maven Central Repository.'
+          : 'Release final artifacts to Maven Central repository.'
+
+  inputs.property('snapshot', snapshot)
+
+  dependsOn ':protocol-core:releaseProtocolCoreArtifacts'
+  dependsOn ':protocol-html:releaseProtocolHtmlArtifacts'
+  dependsOn ':protocol-message-matcher:releaseProtocolMessageMatcherArtifacts'
+}
 
 
-  repositories {
-    mavenCentral()
-    maven {
-      url = 'https://artifactory.sayayi.de/artifactory/maven/'
-    }
-  }
-
-
-  configurations {
-    testAnnotationProcessor.extendsFrom annotationProcessor
-    testCompileOnly.extendsFrom compileOnlyApi
-  }
-
-
-  dependencies {
-    // java
-    compileOnlyApi rootProject.libs.jetbrains.annotations
-
-    // test
-    testAnnotationProcessor rootProject.libs.lombok
-
-    testCompileOnly rootProject.libs.lombok
-
-    testImplementation rootProject.libs.junit.jupiter.api
-    testImplementation rootProject.libs.mockito.core
-
-    testRuntimeOnly rootProject.libs.junit.jupiter.engine
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-  }
-
-
-  jar.dependsOn test
+clean {
+  delete layout.projectDirectory.dir('build')
 }
 
 
