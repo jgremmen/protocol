@@ -30,20 +30,22 @@ import static java.lang.Thread.currentThread;
  * @see SpringWebHtmlEncoder
  * @see UnbescapeHtmlEncoder
  */
+@SuppressWarnings("SpellCheckingInspection")
 public abstract class HtmlEncoder
 {
   private static final Map<String,String> ENCODER_MAP = new LinkedHashMap<>();
+  private static final Lock LOCK = new ReentrantLock();
+  private static volatile HtmlEncoder INSTANCE = null;
 
-  static {
+
+  static
+  {
     ENCODER_MAP.put("org.springframework.web.util.HtmlUtils", "SpringWebHtmlEncoder");
     ENCODER_MAP.put("com.google.common.html.HtmlEscapers", "GuavaHtmlEncoder");
     ENCODER_MAP.put("org.apache.commons.text.StringEscapeUtils", "CommonsTextHtmlEncoder");
     ENCODER_MAP.put("org.unbescape.html.HtmlEscape", "UnbescapeHtmlEncoder");
     ENCODER_MAP.put("org.owasp.encoder.Encode", "OwaspHtmlEncoder");
   }
-
-  private static final Lock LOCK = new ReentrantLock();
-  private static volatile HtmlEncoder INSTANCE = null;
 
 
   /**

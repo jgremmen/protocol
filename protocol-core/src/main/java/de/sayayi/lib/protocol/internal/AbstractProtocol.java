@@ -364,6 +364,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
     }
 
 
+    @SuppressWarnings("unchecked")
     private void findNext()
     {
       while(iterator.hasNext())
@@ -371,7 +372,6 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
         var entry = iterator.next();
         if (entry instanceof ProtocolGroup)
         {
-          //noinspection unchecked
           next = (ProtocolGroup<M>)entry;
           return;
         }

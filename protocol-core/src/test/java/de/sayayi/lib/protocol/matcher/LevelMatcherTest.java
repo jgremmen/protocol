@@ -40,12 +40,12 @@ import static org.mockito.Mockito.when;
 /**
  * @author Jeroen Gremmen
  */
-public class LevelMatcherTest
+@SuppressWarnings("unchecked")
+class LevelMatcherTest
 {
   @Test
-  public void testLevelLowest()
+  void testLevelLowest()
   {
-    //noinspection unchecked
     val message = (Message<Object>)mock(Message.class);
     when(message.getLevel()).thenReturn(LOWEST);
 
@@ -59,9 +59,8 @@ public class LevelMatcherTest
 
 
   @Test
-  public void testLevelDebug()
+  void testLevelDebug()
   {
-    //noinspection unchecked
     val message = (Message<Object>)mock(Message.class);
     when(message.getLevel()).thenReturn(DEBUG);
 
@@ -75,9 +74,8 @@ public class LevelMatcherTest
 
 
   @Test
-  public void testLevelInfo()
+  void testLevelInfo()
   {
-    //noinspection unchecked
     val message = (Message<Object>)mock(Message.class);
     when(message.getLevel()).thenReturn(INFO);
 
@@ -91,9 +89,8 @@ public class LevelMatcherTest
 
 
   @Test
-  public void testLevelWarn()
+  void testLevelWarn()
   {
-    //noinspection unchecked
     val message = (Message<Object>)mock(Message.class);
     when(message.getLevel()).thenReturn(WARN);
 
@@ -107,9 +104,8 @@ public class LevelMatcherTest
 
 
   @Test
-  public void testLevelError()
+  void testLevelError()
   {
-    //noinspection unchecked
     val message = (Message<Object>)mock(Message.class);
     when(message.getLevel()).thenReturn(ERROR);
 
@@ -125,9 +121,8 @@ public class LevelMatcherTest
 
 
   @Test
-  public void testLevelHighest()
+  void testLevelHighest()
   {
-    //noinspection unchecked
     val message = (Message<Object>)mock(Message.class);
     when(message.getLevel()).thenReturn(HIGHEST);
 

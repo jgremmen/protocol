@@ -46,12 +46,12 @@ import static org.mockito.Mockito.when;
 /**
  * @author Jeroen Gremmen
  */
-public class MessageMatchersTest
+@SuppressWarnings("unchecked")
+class MessageMatchersTest
 {
   @Test
-  public void testHasTag1()
+  void testHasTag1()
   {
-    //noinspection unchecked
     val message = (Message<Object>)mock(Message.class, CALLS_REAL_METHODS);
     when(message.getTagNames()).thenReturn(new TreeSet<>(List.of(DEFAULT_TAG_NAME, "gui")));
 
@@ -64,7 +64,7 @@ public class MessageMatchersTest
 
 
   @Test
-  public void testHasTag2()
+  void testHasTag2()
   {
     val factory = StringProtocolFactory.createPlainTextFactory();
     val protocol = factory.createProtocol();
@@ -78,9 +78,8 @@ public class MessageMatchersTest
 
 
   @Test
-  public void testHasAnyOf()
+  void testHasAnyOf()
   {
-    //noinspection unchecked
     val message = (Message<Object>)mock(Message.class, CALLS_REAL_METHODS);
     when(message.getTagNames()).thenReturn(new TreeSet<>(List.of(DEFAULT_TAG_NAME, "gui")));
 
@@ -91,9 +90,8 @@ public class MessageMatchersTest
 
 
   @Test
-  public void testHasAllOf()
+  void testHasAllOf()
   {
-    //noinspection unchecked
     val message = (Message<Object>)mock(Message.class, CALLS_REAL_METHODS);
     when(message.getTagNames()).thenReturn(new TreeSet<>(List.of(DEFAULT_TAG_NAME, "gui")));
 
@@ -104,9 +102,8 @@ public class MessageMatchersTest
 
 
   @Test
-  public void testHasNoneOf()
+  void testHasNoneOf()
   {
-    //noinspection unchecked
     val message = (Message<Object>)mock(Message.class, CALLS_REAL_METHODS);
     when(message.getTagNames()).thenReturn(new TreeSet<>(List.of(DEFAULT_TAG_NAME, "gui")));
 
@@ -117,9 +114,8 @@ public class MessageMatchersTest
 
 
   @Test
-  public void testHasParam()
+  void testHasParam()
   {
-    //noinspection unchecked
     val message = (Message<Object>)mock(Message.class, CALLS_REAL_METHODS);
     when(message.getParameterValues()).thenReturn(Map.of("id", 34));
 
@@ -130,9 +126,8 @@ public class MessageMatchersTest
 
 
   @Test
-  public void testHasParamValue1()
+  void testHasParamValue1()
   {
-    //noinspection unchecked
     val message = (Message<Object>)mock(Message.class, CALLS_REAL_METHODS);
     val params = new TreeMap<String,Object>();
 
@@ -147,9 +142,8 @@ public class MessageMatchersTest
 
 
   @Test
-  public void testHasParamValue2()
+  void testHasParamValue2()
   {
-    //noinspection unchecked
     val message = (Message<Object>)mock(Message.class, CALLS_REAL_METHODS);
     val params = new TreeMap<String,Object>();
 
@@ -165,9 +159,8 @@ public class MessageMatchersTest
 
 
   @Test
-  public void testHasMessage()
+  void testHasMessage()
   {
-    //noinspection unchecked
     val message = (Message<Object>)mock(Message.class, CALLS_REAL_METHODS);
     when(message.getMessageId()).thenReturn("MSG-0341");
 
@@ -175,19 +168,4 @@ public class MessageMatchersTest
     assertFalse(hasMessage("MSG-0001").matches(HIGHEST, message));
     assertFalse(hasMessage("").matches(HIGHEST, message));
   }
-
-/*
-  @Test
-  public void testIsTagSelector()
-  {
-    //noinspection unchecked
-    val message = (Message<Object>)mock(Message.class, CALLS_REAL_METHODS);
-    when(message.getTagNames()).thenReturn(new TreeSet<>(asList(DEFAULT_TAG_NAME, "gui")));
-
-    assertTrue(is(Tag.parse("gui")).matches(HIGHEST, message));
-    assertTrue(is(Tag.parse(DEFAULT_TAG_NAME)).matches(HIGHEST, message));
-    assertTrue(is(Tag.parse("or(gui,test)")).matches(HIGHEST, message));
-    assertFalse(is(Tag.parse("and(gui,test)")).matches(HIGHEST, message));
-  }
-*/
 }

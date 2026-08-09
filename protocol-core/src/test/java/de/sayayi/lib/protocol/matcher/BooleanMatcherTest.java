@@ -29,12 +29,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Jeroen Gremmen
  */
-public class BooleanMatcherTest
+@SuppressWarnings("unchecked")
+class BooleanMatcherTest
 {
   @Test
-  public void testMatches()
+  void testMatches()
   {
-    //noinspection unchecked
     val message = (Message<Object>)Mockito.mock(Message.class);
 
     assertTrue(MessageMatchers.any().matches(HIGHEST, message));

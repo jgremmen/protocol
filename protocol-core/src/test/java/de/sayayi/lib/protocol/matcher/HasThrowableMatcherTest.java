@@ -30,12 +30,12 @@ import static org.mockito.Mockito.when;
 /**
  * @author Jeroen Gremmen
  */
-public class HasThrowableMatcherTest
+@SuppressWarnings("unchecked")
+class HasThrowableMatcherTest
 {
   @Test
-  public void testMatchesDefault()
+  void testMatchesDefault()
   {
-    //noinspection unchecked
     val message = (Message<Object>)mock(Message.class);
     when(message.getThrowable()).thenReturn(new NullPointerException());
 
@@ -48,9 +48,8 @@ public class HasThrowableMatcherTest
 
 
   @Test
-  public void testMatchesTyped()
+  void testMatchesTyped()
   {
-    //noinspection unchecked
     val message = (Message<Object>)mock(Message.class);
     when(message.getThrowable()).thenReturn(new NullPointerException());
 

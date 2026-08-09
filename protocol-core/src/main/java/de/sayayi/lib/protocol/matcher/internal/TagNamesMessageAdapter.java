@@ -46,7 +46,6 @@ import static java.util.Collections.unmodifiableSet;
  * @author Jeroen Gremmen
  * @since 1.2.0  (refactored in 1.6.0)
  */
-@SuppressWarnings("ClassCanBeRecord")
 public final class TagNamesMessageAdapter implements Message<Object>
 {
   private final Set<String> tagNames;

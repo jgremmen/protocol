@@ -74,8 +74,7 @@ import static java.util.Objects.requireNonNull;
  */
 public final class MessageMatchers
 {
-  private MessageMatchers() {
-  }
+  private MessageMatchers() {}
 
 
   /**
@@ -229,7 +228,8 @@ public final class MessageMatchers
     else if (uniqueTagNames.isEmpty())
       return NONE;
 
-    return Disjunction.of(uniqueTagNames.stream()
+    return Disjunction.of(uniqueTagNames
+        .stream()
         .map(MessageMatchers::hasTag)
         .toArray(MessageMatcher[]::new));
   }
@@ -272,7 +272,8 @@ public final class MessageMatchers
     else if (uniqueTagNames.isEmpty())
       return hasDefaultTag ? ANY : NONE;
 
-    return Conjunction.of(uniqueTagNames.stream()
+    return Conjunction.of(uniqueTagNames
+        .stream()
         .map(MessageMatchers::hasTag)
         .toArray(MessageMatcher[]::new));
   }
