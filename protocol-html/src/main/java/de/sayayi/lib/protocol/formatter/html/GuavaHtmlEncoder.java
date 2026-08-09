@@ -37,6 +37,7 @@ public final class GuavaHtmlEncoder extends HtmlEncoder
   }
 
 
+  /** Returns a human-readable name identifying the underlying encoding library. */
   @Override
   public String toString() {
     return "Google Guava";

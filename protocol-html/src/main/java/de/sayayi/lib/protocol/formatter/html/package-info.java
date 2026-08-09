@@ -16,13 +16,15 @@
 
 /**
  * HTML formatting support for protocols. The
- * {@link de.sayayi.lib.protocol.formatter.html.HtmlProtocolFormatter HtmlProtocolFormatter}
- * renders protocol entries as an HTML list structure with CSS classes for levels and depth.
- * A {@link de.sayayi.lib.protocol.formatter.html.HtmlProtocolFormatter.WithFontAwesome
- * Font Awesome variant} adds icon support.
+ * {@link de.sayayi.lib.protocol.formatter.html.HtmlProtocolFormatter HtmlProtocolFormatter} renders protocol entries
+ * as an HTML list structure with CSS classes for levels and depth. A
+ * {@link de.sayayi.lib.protocol.formatter.html.HtmlProtocolFormatter.WithFontAwesome Font Awesome variant} adds icon
+ * support.
  * <p>
- * HTML encoding is handled by {@link de.sayayi.lib.protocol.formatter.html.HtmlEncoder
- * HtmlEncoder}, which auto-detects a supported encoding library on the classpath.
+ * HTML encoding is handled by {@link de.sayayi.lib.protocol.formatter.html.HtmlEncoder HtmlEncoder}, which
+ * auto-detects a supported encoding library on the classpath. Supported libraries include Spring Web, Google Guava,
+ * Apache Commons Text, Unbescape and OWASP Java Encoder. Custom implementations can be registered via the
+ * {@link java.util.ServiceLoader} mechanism.
  *
  * @since 0.2.0
  */

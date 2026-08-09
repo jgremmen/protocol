@@ -37,6 +37,7 @@ public final class SpringWebHtmlEncoder extends HtmlEncoder
   }
 
 
+  /** Returns a human-readable name identifying the underlying encoding library. */
   @Override
   public String toString() {
     return "Spring Web";
