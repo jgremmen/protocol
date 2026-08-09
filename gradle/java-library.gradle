@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+//file:noinspection SpellCheckingInspection
+
 
 apply plugin: 'java-library'
 apply plugin: 'com.adarshr.test-logger'

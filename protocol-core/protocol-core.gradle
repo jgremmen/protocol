@@ -15,6 +15,7 @@
  */
 
 //file:noinspection DependencyNotationArgument
+//file:noinspection SpellCheckingInspection
 
 
 description = 'Protocol Library Core'
