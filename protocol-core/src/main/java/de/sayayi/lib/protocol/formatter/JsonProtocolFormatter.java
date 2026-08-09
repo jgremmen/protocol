@@ -363,12 +363,15 @@ public class JsonProtocolFormatter<M> implements ProtocolFormatter<M,String>
   {
     writeNameBeforeValue();
 
-    if (value == null || value instanceof Boolean)
-      json.append(value);
-    else if (value instanceof CharSequence)
-      string(value.toString());
-    else if (value instanceof Number number)
-      json.append(number.longValue());
+    switch(value)
+    {
+      case null -> json.append("null");
+      case Boolean b -> json.append(b.booleanValue());
+      case CharSequence charSequence -> string(charSequence.toString());
+      case Number number -> json.append(number.longValue());
+      default -> {
+      }
+    }
   }
 
 
