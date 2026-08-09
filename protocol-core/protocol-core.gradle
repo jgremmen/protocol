@@ -1,4 +1,4 @@
-description 'Protocol Library Core'
+description = 'Protocol Library Core'
 
 
 apply from: file('../gradle/javadoc.gradle')

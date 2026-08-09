@@ -23,11 +23,11 @@ allprojects {
   apply plugin: 'base'
 
   group = 'de.sayayi.lib'
-  version = libs.versions.protocol.get()
+  version = rootProject.libs.versions.protocol.get()
 
   repositories {
     maven {
-      url 'https://oss.sonatype.org/content/repositories/snapshots/'
+      url = 'https://oss.sonatype.org/content/repositories/snapshots/'
       mavenContent {
         includeGroup 'de.sayayi.lib'
         snapshotsOnly()
@@ -74,7 +74,7 @@ configure(subprojects.findAll { it.name.startsWith('protocol-') }) {
   repositories {
     mavenCentral()
     maven {
-      url 'https://artifactory.sayayi.de/artifactory/maven/'
+      url = 'https://artifactory.sayayi.de/artifactory/maven/'
     }
   }
 
@@ -87,17 +87,17 @@ configure(subprojects.findAll { it.name.startsWith('protocol-') }) {
 
   dependencies {
     // java
-    compileOnlyApi libs.jetbrains.annotations
+    compileOnlyApi rootProject.libs.jetbrains.annotations
 
     // test
-    testAnnotationProcessor libs.lombok
+    testAnnotationProcessor rootProject.libs.lombok
 
-    testCompileOnly libs.lombok
+    testCompileOnly rootProject.libs.lombok
 
-    testImplementation libs.junit.jupiter.api
-    testImplementation libs.mockito.core
+    testImplementation rootProject.libs.junit.jupiter.api
+    testImplementation rootProject.libs.mockito.core
 
-    testRuntimeOnly libs.junit.jupiter.engine
+    testRuntimeOnly rootProject.libs.junit.jupiter.engine
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
   }
 

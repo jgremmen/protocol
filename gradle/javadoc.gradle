@@ -16,7 +16,7 @@
 
 
 javadoc {
-  title "Java Protocol Library ${version}"
+  title = "Java Protocol Library ${version}"
 
   (options as StandardJavadocDocletOptions).with {
     linksOffline 'https://javadoc.io/doc/org.jetbrains/annotations/26.0.2/',
@@ -41,5 +41,5 @@ javadoc {
     addStringOption('Xdoclint:none', '-quiet')
   }
 
-  failOnError false
+  failOnError = false
 }

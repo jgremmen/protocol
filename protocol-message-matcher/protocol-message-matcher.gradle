@@ -3,7 +3,7 @@ plugins {
 }
 
 
-description 'Protocol Library Message Matcher Parser'
+description = 'Protocol Library Message Matcher Parser'
 
 
 configurations {
@@ -11,7 +11,7 @@ configurations {
 
   api.setExtendsFrom([])
 
-  compile {
+  implementation {
     extendsFrom = extendsFrom.findAll { it != configurations.antlr }
   }
 }
