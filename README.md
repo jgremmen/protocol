@@ -1,36 +1,90 @@
-# Java Protocol Library
+# Protocol
 
-The java protocol library provides a generic solution for collecting messages, debug information and warnings. 
+Protocol is a Java library for collecting, structuring, querying, and formatting messages produced during business operations.
 
-## Overview
+It is designed for multi-step flows where one operation can produce mixed outcomes: validation details, technical diagnostics, warnings, and hard errors. Messages can be tagged for target audiences, grouped into nested execution scopes, filtered with composable matchers, and rendered as plain text trees, JSON, or HTML.
 
-Larger applications often require a proper feedback back to the caller for complex operations. 
+## Modules
 
-Let's assume a user wants to save a number of orders. The business logik will validate the data entered, calculate defaults depending on generic system settings, save it to a database and send out an email to the sales team.
+| Module | Purpose |
+| --- | --- |
+| `protocol-core` | Core API: protocol model, fluent message builders, groups, matchers, and formatters (`TechnicalProtocolFormatter`, `JsonProtocolFormatter`) |
+| `protocol-html` | HTML formatter (`HtmlProtocolFormatter` and `HtmlProtocolFormatter.WithFontAwesome`) |
+| `protocol-message-matcher` | Parser for textual matcher/tag-selector expressions used by `parseMessageMatcher(...)` and `parseTagSelector(...)` |
 
-Each part of this operation can lead to situations where the user, system administrator or other audiences need to be informed of what happened. 
+## Dependency
 
-* validation can lead to messages describing errors or inconsistencies but a message not always lead to an abortion of the operation itself. Each order can have its own set of validation messages and must be grouped accordingly.
-* calculation of defaults is something that needs to be reported to a system administrator or to the configuration team. It can assume defaults which are correct from a business perspective and do not require the operation to be aborted either.
-* saving data to the database in most cases will lead to a severe error if anything goes wrong. Yet, the validation results may have something to do with it and should be reported back.
-* Lastly, sending an email may fail and depending on the business it is either a severe error or something that has at least to be reported back.
+```gradle
+dependencies {
+  implementation("de.sayayi.lib:protocol-core:<version>")
+  implementation("de.sayayi.lib:protocol-html:<version>") // optional
+  implementation("de.sayayi.lib:protocol-message-matcher:<version>") // optional
+}
+```
 
-This example shows that various parts of the business operation can lead to a number of messages and/or errors which must be distributed to the intended audience.
+```xml
+<dependencies>
+  <dependency>
+    <groupId>de.sayayi.lib</groupId>
+    <artifactId>protocol-core</artifactId>
+    <version>${protocol.version}</version>
+  </dependency>
+  <dependency>
+    <groupId>de.sayayi.lib</groupId>
+    <artifactId>protocol-html</artifactId>
+    <version>${protocol.version}</version>
+  </dependency>
+  <dependency>
+    <groupId>de.sayayi.lib</groupId>
+    <artifactId>protocol-message-matcher</artifactId>
+    <version>${protocol.version}</version>
+  </dependency>
+</dependencies>
+```
 
-## Features
+## Example: collect structured operation output
 
-The protocol library provides the following features:
+```java
+import de.sayayi.lib.protocol.Protocol;
+import de.sayayi.lib.protocol.factory.StringProtocolFactory;
 
-* Each message has a severity level. Similar to logging libraries, the protocol library provides the standard levels `debug`,`info`,`warn`,`error`. If required, custom levels can be implemented as a replacement or in addition to the standard levels.
-* Messages can be tagged with labels. It provides a way to specify the target audience for the message. Eg. `user`, `sales-team`, `admin`.
-* Messages can be grouped. It provides a way of structuring messages like files (= messages) in directories (= groups),
-* Each message group can have a header message.
-* Searching the protocol for messages by severity level and tags.
-* Full customization for protocol formatting. There are several pre-defined, yet customizable, formatters. One of which is a html formatter with font awesome icons.
-* Message formatting libraries can be easily integrated. The library provides a couple of default implementations. Eg.: `String.format(...)` and `java.text.MessageFormat`.
+Protocol<String> protocol = StringProtocolFactory.createJavaMessageFormatFactory().createProtocol();
+
+protocol.info().forTag("api").message("Import started");
+
+var orderGroup = protocol.createGroup("order-4711")
+    .setGroupMessage("Order {0}")
+    .with("0", 4711);
+
+orderGroup.warn().forTag("validation").message("Missing value for field {0}").with("0", "deliveryDate");
+orderGroup.error(new IllegalStateException("db timeout")).forTag("ops").message("Persistence failed");
+
+protocol.info().forTag("api").message("Import finished");
+```
+
+## Example: filter and render
+
+```java
+import de.sayayi.lib.protocol.formatter.JsonProtocolFormatter;
+import static de.sayayi.lib.protocol.matcher.MessageMatchers.hasTag;
+import static de.sayayi.lib.protocol.matcher.MessageMatchers.isWarn;
+
+int warningCount = protocol.getVisibleEntryCount(isWarn().and(hasTag("validation")));
+
+String json = protocol.format(new JsonProtocolFormatter<>(), hasTag("api").or(hasTag("ops")));
+String tree = protocol.toStringTree(); // ASCII tree with levels/tags
+```
+
+## Example: expression-based matching
+
+Requires `protocol-message-matcher`.
+
+```java
+String filtered = protocol.format(new JsonProtocolFormatter<>(), "warn and any-of(validation,ops)");
+```
 
 ## Requirements
 
-* at least Java 11
-* [unbescape](https://mvnrepository.com/artifact/org.unbescape/unbescape) for the `HtmlProtocolFormatter` (optional)
-* [message-format](https://mvnrepository.com/artifact/de.sayayi.lib/message-format) for the `MessageFormatFormatter` (optional)
+- Java 21+
+- `protocol-html`: one supported HTML encoder library on the classpath (Spring Web, Guava, Commons Text, Unbescape, or OWASP Encoder)
+- `protocol-message-matcher`: ANTLR runtime (resolved transitively)
