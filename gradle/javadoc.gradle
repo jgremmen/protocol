@@ -28,7 +28,9 @@ ext.resolveVersion = { artifactName ->
 
 
 javadoc {
-  title = "${project.description} ${version}"
+  afterEvaluate {
+    title = "${project.description} ${version}"
+  }
 
   (options as StandardJavadocDocletOptions).with {
     encoding 'UTF-8'
