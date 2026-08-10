@@ -1,0 +1,45 @@
+nav:
+  - Home:
+    - index.md
+    - Version Update:
+      - changelog/version-1.7.0.md
+    - License: license.md
+  - Getting Started:
+    - getting-started/installation.md
+    - getting-started/quick-start.md
+  - Configuration:
+    - configuration/index.md
+    - Protocol Factory: configuration/protocol-factory.md
+    - Message Formatter:
+      - configuration/formatter/index.md
+      - Plain String: configuration/formatter/plain-string.md
+      - Java String Format: configuration/formatter/java-string-format.md
+      - Java Message Format: configuration/formatter/java-message-format.md
+      - Message Format: configuration/formatter/message-format.md
+      - Custom: configuration/formatter/custom-formatter.md
+    - Message Processor:
+      - configuration/processor/index.md
+      - String: configuration/processor/string.md
+      - Map: configuration/processor/map.md
+      - Properties: configuration/processor/properties.md
+      - ResourceBundle: configuration/processor/resource-bundle.md
+      - MessageAccessor: configuration/processor/message-accessor.md
+      - Custom: configuration/processor/custom-processor.md
+    - User-Defined Levels: configuration/user-defined-levels.md
+  - Core Concepts:
+    - core/protocols-and-messages.md
+    - core/levels.md
+    - core/tags.md
+    - core/groups.md
+    - core/parameters.md
+    - core/querying.md
+  - Matchers:
+    - matcher/programmatic-matchers.md
+    - matcher/expression-language.md
+  - Formatting:
+    - formatting/protocol-formatter.md
+    - formatting/technical-formatter.md
+    - formatting/json-formatter.md
+    - formatting/html-formatter.md
+    - formatting/custom-formatter.md
+    - formatting/iterating.md
