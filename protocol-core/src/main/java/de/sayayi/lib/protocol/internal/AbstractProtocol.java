@@ -42,7 +42,6 @@ import java.util.function.Consumer;
 import static java.util.Spliterator.DISTINCT;
 import static java.util.Spliterator.NONNULL;
 import static java.util.Spliterator.ORDERED;
-import static java.util.Spliterator.SORTED;
 
 
 /**
@@ -271,7 +270,7 @@ abstract class AbstractProtocol<M,B extends ProtocolMessageBuilder<M>>
   /** {@inheritDoc} */
   @Override
   public @NotNull Spliterator<ProtocolGroup<M>> groupSpliterator() {
-    return Spliterators.spliterator(groupIterator(), entries.size(), DISTINCT | ORDERED | SORTED | NONNULL);
+    return Spliterators.spliterator(groupIterator(), entries.size(), DISTINCT | ORDERED | NONNULL);
   }
 
 
