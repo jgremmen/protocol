@@ -81,11 +81,7 @@ abstract class AbstractParameterBuilder
     requireNonNull(parameterValues, "parameterValues must not be null");
 
     for(var entry: parameterValues.entrySet())
-    {
-      var key = entry.getKey();
-      if (key != null && !key.isEmpty())
-        with(key, entry.getValue());
-    }
+      with(entry.getKey(), entry.getValue());
 
     return (P)this;
   }
