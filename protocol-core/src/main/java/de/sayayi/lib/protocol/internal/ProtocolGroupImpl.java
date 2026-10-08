@@ -318,12 +318,12 @@ final class ProtocolGroupImpl<M>
   @Override
   public void forEachGroupByRegex(@NotNull String regex, @NotNull Consumer<ProtocolGroup<M>> action)
   {
-    if (name.isEmpty())
+    if (requireNonNull(regex, "regex must not be null").isEmpty())
       throw new ProtocolException("regex must not be empty");
 
-    super.forEachGroupByRegex(regex, action);
+    super.forEachGroupByRegex(regex, requireNonNull(action, "action must not be null"));
 
-    if (name.matches(regex))
+    if (name != null && name.matches(regex))
       action.accept(this);
   }
 
