@@ -592,7 +592,7 @@ public interface Protocol<M> extends ProtocolQueryable
    */
   @Contract(pure = true)
   default @NotNull String toStringTree() {
-    return format(TechnicalProtocolFormatter.getInstance());
+    return format(new TechnicalProtocolFormatter<>());
   }
 
 

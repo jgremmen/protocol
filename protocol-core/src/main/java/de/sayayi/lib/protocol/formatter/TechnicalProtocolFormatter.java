@@ -35,16 +35,10 @@ import org.jetbrains.annotations.NotNull;
  * @since 0.1.0
  */
 @SuppressWarnings("unused")
-public final class TechnicalProtocolFormatter<M> extends AbstractTreeProtocolFormatter<M>
+public final class TechnicalProtocolFormatter<M>
+    extends AbstractTreeProtocolFormatter<M>
     implements ConfiguredProtocolFormatter<M,String>
 {
-  private static final ConfiguredProtocolFormatter<?,String> INSTANCE = new TechnicalProtocolFormatter<>();
-
-
-  private TechnicalProtocolFormatter() {
-  }
-
-
   /** {@inheritDoc} */
   @Override
   public @NotNull MessageMatcher getMatcher(@NotNull ProtocolFactory<M> protocolFactory) {
@@ -64,18 +58,5 @@ public final class TechnicalProtocolFormatter<M> extends AbstractTreeProtocolFor
       s.append(",tags=").append(((Message<M>)message).getTagNames().toString().replace(", ", ","));
 
     return s.append('}').toString();
-  }
-
-
-  /**
-   * Returns a shared instance of this formatter.
-   *
-   * @param <M>  internal message object type
-   *
-   * @return  shared technical protocol formatter instance, never {@code null}
-   */
-  @SuppressWarnings("unchecked")
-  public static @NotNull <M> ConfiguredProtocolFormatter<M,String> getInstance() {
-    return (ConfiguredProtocolFormatter<M,String>)INSTANCE;
   }
 }
