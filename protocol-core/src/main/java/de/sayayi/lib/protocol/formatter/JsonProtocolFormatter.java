@@ -368,9 +368,8 @@ public class JsonProtocolFormatter<M> implements ProtocolFormatter<M,String>
       case null -> json.append("null");
       case Boolean b -> json.append(b.booleanValue());
       case CharSequence charSequence -> string(charSequence.toString());
-      case Number number -> json.append(number.longValue());
-      default -> {
-      }
+      case Number number -> json.append(number.longValue());  // only integral required/supported
+      default -> {}
     }
   }
 
