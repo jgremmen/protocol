@@ -355,7 +355,7 @@ public class JsonProtocolFormatter<M> implements ProtocolFormatter<M,String>
 
   /**
    * Writes a JSON value. Supported types are {@code null}, {@link Boolean}, {@link CharSequence}
-   * and {@link Number} (written as long).
+   * and {@link Number}. Numbers are always converted to and serialized as {@code long}.
    *
    * @param value  value to write, or {@code null}
    */
@@ -368,7 +368,7 @@ public class JsonProtocolFormatter<M> implements ProtocolFormatter<M,String>
       case null -> json.append("null");
       case Boolean b -> json.append(b.booleanValue());
       case CharSequence charSequence -> string(charSequence.toString());
-      case Number number -> json.append(number.longValue());  // only integral required/supported
+      case Number number -> json.append(number.longValue());
       default -> {}
     }
   }
