@@ -398,7 +398,6 @@ public class JsonProtocolFormatter<M> implements ProtocolFormatter<M,String>
   {
     return switch(c) {
       case '"' -> "\\\"";
-      case '\'' -> "\\'";
       case '\\' -> "\\\\";
       case '\b' -> "\\b";
       case '\f' -> "\\f";
