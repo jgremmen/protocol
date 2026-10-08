@@ -116,10 +116,10 @@ final class ProtocolSpliterator<M> implements Spliterator<DepthEntry<M>>
   /**
    * {@inheritDoc}
    * <p>
-   * Reports {@link #DISTINCT}, {@link #NONNULL}, {@link #ORDERED} and {@link #IMMUTABLE}.
+   * Reports {@link #DISTINCT}, {@link #NONNULL} and {@link #ORDERED}.
    */
   @Override
   public int characteristics() {
-    return DISTINCT | NONNULL | ORDERED | IMMUTABLE;
+    return DISTINCT | NONNULL | ORDERED;
   }
 }

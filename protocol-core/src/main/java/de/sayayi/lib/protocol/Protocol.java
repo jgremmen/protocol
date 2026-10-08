@@ -525,8 +525,8 @@ public interface Protocol<M> extends ProtocolQueryable
    * Creates a {@code Spliterator} over the elements of this protocol matched by
    * {@code matcher}, with no initial size estimate.
    * <p>
-   * The {@code Spliterator} reports {@link Spliterator#ORDERED},{@link Spliterator#DISTINCT},
-   * {@link Spliterator#NONNULL} and {@link Spliterator#IMMUTABLE}.
+   * The {@code Spliterator} reports {@link Spliterator#ORDERED},{@link Spliterator#DISTINCT} and
+   * {@link Spliterator#NONNULL}.
    *
    * @param matcher  Message matcher, never {@code null}
    *
