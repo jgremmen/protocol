@@ -47,7 +47,7 @@ public abstract class AbstractIndexedMessageFormatter<M> implements MessageForma
       try {
         var i = parseInt(parametersEntry.getKey());
 
-        if (i >> 6 == 0)  // 0..31
+        if (i >> 5 == 0)  // 0..31
         {
           if (i >= parameters.length)
           {
